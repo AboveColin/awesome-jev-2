@@ -27,8 +27,9 @@
 # the documented exception. Without that the site would keep serving last
 # week's figures and images.
 #
-# Permissions note: the one workflow here that is not read-only. It needs
-# `contents: write` to push, `issues: write` to file a notice, and
+# Permissions note: one of the two places that can push to this repository;
+# the other is lint.yml's `regenerate` job, which commits only generated files.
+# It needs `contents: write` to push, `issues: write` to file a notice, and
 # `actions: write` to dispatch the rebuild.
 #
 # Injection review: no `github.event.*` value reaches a `run:` block. The issue

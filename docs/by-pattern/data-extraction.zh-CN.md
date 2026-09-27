@@ -56,4 +56,4 @@ _从杂乱文本中取出类型化字段 —— 靠在候选中选择，而不�
 
 ---
 
-<sub>由 `scripts/build_readme.py` 从 `catalog.json` 生成。请修改目录，不要改这个文件 —— 两者不一致时 CI 会失败。</sub>
+<sub>由 `scripts/build_readme.py` 从 `catalog.json` 生成。请修改目录，不要改这个文件。</sub>

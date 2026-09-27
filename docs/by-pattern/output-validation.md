@@ -410,4 +410,4 @@ Every catalogued example of this decision — 134 of them, official first, then 
 
 ---
 
-<sub>Generated from `catalog.json` by `scripts/build_readme.py`. Edit the catalogue, not this file — CI fails if the two disagree.</sub>
+<sub>Generated from `catalog.json` by `scripts/build_readme.py`. Edit the catalogue, not this file.</sub>

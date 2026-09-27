@@ -2,8 +2,9 @@
 """Generate README.md and README.zh-CN.md from catalog.json.
 
 catalog.json is the only place a fact is edited. Both READMEs are build
-artifacts, and CI fails if they drift from the catalog, so there is no way to
-hand-patch one language and leave the other stale.
+artifacts: CI rejects a hand edit to either, and lint's regenerate job rewrites
+both on main after every change, so there is no way to hand-patch one language
+and leave the other stale.
 
 Layout logic lives in render() exactly once. The two languages differ only by
 the string pack passed in, which is what keeps them structurally identical
@@ -284,7 +285,7 @@ EN = {
     "page_other_lang": "[中文]({other})",
     "page_footer": (
         "<sub>Generated from `catalog.json` by `scripts/build_readme.py`. "
-        "Edit the catalogue, not this file — CI fails if the two disagree.</sub>"
+        "Edit the catalogue, not this file.</sub>"
     ),
     "gap": "no examples yet",
     # ---- stats ----
@@ -433,7 +434,7 @@ ZH = {
     "page_other_lang": "[English]({other})",
     "page_footer": (
         "<sub>由 `scripts/build_readme.py` 从 `catalog.json` 生成。"
-        "请修改目录，不要改这个文件 —— 两者不一致时 CI 会失败。</sub>"
+        "请修改目录，不要改这个文件。</sub>"
     ),
     "gap": "暂无例子",
     "stat_entries": "条目",

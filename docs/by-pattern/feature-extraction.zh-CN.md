@@ -32,4 +32,4 @@ _把自由文本转成数值特征，喂给下游的传统模型。_
 
 ---
 
-<sub>由 `scripts/build_readme.py` 从 `catalog.json` 生成。请修改目录，不要改这个文件 —— 两者不一致时 CI 会失败。</sub>
+<sub>由 `scripts/build_readme.py` 从 `catalog.json` 生成。请修改目录，不要改这个文件。</sub>

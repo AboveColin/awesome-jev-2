@@ -12,7 +12,8 @@ debugging.
 > [`../compat.json`](../compat.json) by
 > [`../scripts/build_compat.py`](../scripts/build_compat.py), which is the same
 > source the [Compatibility view on the site](https://kydlikebtc.github.io/awesome-jev/?view=compat)
-> reads. CI fails if they drift. The prose between the tables is hand-written.
+> reads. CI rejects a hand edit to them, and regenerates them on `main` after
+> every change to `compat.json`. The prose between the tables is hand-written.
 >
 > **Provenance.** The native row was read directly from the official raw
 > Markdown docs. Every other row was read from that platform's own

@@ -69,8 +69,8 @@ Maintainers and agent sessions (Claude, Codex and the like) push a `claude/*`
 or `codex/*` branch and open a pull request from it, and do not push to `main`
 directly. The only commits made straight to `main` are the two bots':
 `github-actions[bot]`'s weekly `metadata` refresh and `lint`'s `regenerate`
-job. Neither ever force-pushes; when `main` moves underneath one of them, it
-rebases or leaves its commit on a branch.
+job. Neither ever force-pushes `main`; when it moves underneath one of them,
+the bot rebases or leaves its commit on a branch.
 
 GitHub may hold the checks on your first pull request here until a maintainer
 clicks **Approve and run**. That is GitHub's safeguard for first-time
