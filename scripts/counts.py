@@ -38,8 +38,8 @@ def block(title: str, counter: Counter, universe: list[str] | None = None) -> No
 
 
 def main() -> int:
-    # The headline numbers are _stats' published ones; only the breakdowns
-    # below, which nothing else publishes, are counted here.
+    # The headline numbers are _stats' published ones. The breakdowns below
+    # are tallied here from the rows, for this log only.
     catalog, _retired, _patterns, _compat, schema = _stats.load()
     stats = _stats.compute()
 

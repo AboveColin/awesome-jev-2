@@ -261,9 +261,9 @@ def main() -> int:
             problems += check_leading_markers(rel, text)
 
     # Vendor facts are checked everywhere they are stated, including generated
-    # output: the README's primitive table and the SVG figures carry facts that
-    # live as constants inside build_readme.py and build_assets.py, so checking
-    # what they emit is how those constants get checked.
+    # output: the READMEs and the SVG figures carry facts that live as strings
+    # and constants in scripts/readme/ and build_assets.py, so checking what
+    # they emit is how those constants get checked.
     facts = vendor_facts()
     fact_files = sorted(
         set(files)

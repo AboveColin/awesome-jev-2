@@ -32,11 +32,19 @@ MAX_FUNCTION_LINES = 80
 
 
 def python_files() -> list[pathlib.Path]:
+    """Every .py under scripts/ and tests/ whose text names build_readme.
+
+    Both scans below look for the name build_readme, which a file cannot use
+    without spelling it, so the filter drops nothing they could find. It also
+    keeps them from parsing files that need a newer Python than the 3.11 floor
+    CONTRIBUTING.md states (discover_candidates.py uses a 3.12 f-string), which
+    made these tests error on 3.11 for a file that never mentions the shell.
+    """
     return sorted(
         path
         for folder in (ROOT / "scripts", ROOT / "tests")
         for path in folder.rglob("*.py")
-        if "__pycache__" not in path.parts
+        if "__pycache__" not in path.parts and "build_readme" in path.read_text(encoding="utf-8")
     )
 
 
