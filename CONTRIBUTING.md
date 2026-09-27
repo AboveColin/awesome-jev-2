@@ -192,8 +192,9 @@ turns red.
   instead and say which; when the repository's code neither calls Jev nor
   speaks its request shape (a reimplementation with its own interface, tooling
   about Jev), `no-jev-call-site`. A link holding no code at all, such as a list
-  of links or a community site, gets `has_code: false` rather than either. Set `read_on` to the date you actually read that file;
-  do not advance it after an automated text check. An `evidence` record is a
+  of links or a community site, gets `has_code: false` rather than either. Set
+  `read_on` to the date you actually read that file; do not advance it after an
+  automated text check. An `evidence` record is a
   citation, not a stored CI pass or proof that the integration executes.
   `evidence.kind` says what the file shows: leave it out (or write
   `call-site`) when the project calls Jev there; write `wire-shape` when it only

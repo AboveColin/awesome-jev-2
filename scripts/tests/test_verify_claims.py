@@ -135,7 +135,6 @@ class MainTest(unittest.TestCase):
         self.assertIn("checked 3 of 3 claim(s): 3 failed, 0 skipped", summary)
 
 
-
 class DiscoverTest(unittest.TestCase):
     """--discover serves every row lint now requires evidence of (I17), not only primitive claims."""
 
