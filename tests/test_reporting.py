@@ -62,6 +62,29 @@ class VerificationReportingTests(unittest.TestCase):
         self.assertFalse(_stats.link_ok({"checked": "2026-09-24", "link_status": 403}))
         self.assertTrue(_stats.link_ok({"checked": "2026-09-22", "link_status": 200}))
 
+    def test_sweep_coverage_counts_the_rows_that_share_the_newest_date(self):
+        # max(checked) alone said 2026-09-24 while 67 rows still carried the
+        # 23rd; how many rows share the newest date is the other half of it.
+        def row(slug, checked, status):
+            return {"slug": slug, "kind": "project", "patterns": [], "checked": checked, "link_status": status}
+
+        rows = [
+            row("a", "2026-09-24", 200),
+            row("b", "2026-09-24", 200),
+            row("c", "2026-09-23", 200),
+            row("d", "2026-09-25", 403),  # a date without a 2xx is not a successful check
+            row("e", None, None),
+        ]
+        schema = {"properties": {"kind": {"enum": ["project"]}}}
+        with patch.object(_stats, "load", return_value=(rows, [], [], {"platforms": []}, schema)):
+            stats = _stats.compute()
+        self.assertEqual((stats["last_sweep"], stats["sweep_coverage"]), ("2026-09-24", 2))
+        self.assertIn("| Rows whose latest successful check is on that date | 2 of 5 |", build_docs.shape_block(stats))
+        self.assertEqual(build_docs.inline_values(stats)["sweep_coverage"], 2)
+        with patch.object(_stats, "load", return_value=([row("e", None, None)], [], [], {"platforms": []}, schema)):
+            never = _stats.compute()
+        self.assertEqual((never["last_sweep"], never["sweep_coverage"]), ("never", 0))
+
     def test_citation_without_check_result_is_reported_only_as_a_record(self):
         entry = {
             "slug": "example",

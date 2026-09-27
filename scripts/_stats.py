@@ -41,6 +41,7 @@ def compute() -> dict:
     catalog, retired, patterns, compat, schema = load()
     by_pattern = Counter(p for e in catalog for p in e["patterns"])
     swept = [e["checked"] for e in catalog if link_ok(e)]
+    last_sweep = max(swept) if swept else "never"
     siblings = [
         line
         for line in (ROOT / "docs" / "sibling-lists.txt").read_text().splitlines()
@@ -52,7 +53,10 @@ def compute() -> dict:
         "official": sum(1 for e in catalog if e.get("official")),
         "link_ok": sum(1 for e in catalog if link_ok(e)),
         "link_unstamped": sum(1 for e in catalog if not link_ok(e)),
-        "last_sweep": max(swept) if swept else "never",
+        "last_sweep": last_sweep,
+        # The newest date alone reads as "everything was checked then" once a
+        # single row is stamped; this is how many rows it actually covers.
+        "sweep_coverage": swept.count(last_sweep),
         "retired": len(retired),
         # Evidence counts recorded citations, not successful CI checks or
         # executed integrations. CI results do not live in catalog.json.

@@ -16,6 +16,7 @@ is the point of dating it.
 | Official (TypeSafe AI's own) | 36 |
 | Links with a dated 2xx response record | 1204 |
 | Most recent successful link-check date (dates vary by row) | 2026-09-24 |
+| Rows whose latest successful check is on that date | 1137 of 1207 |
 | Rows with call-site text evidence recorded (not a CI pass count) | 1121 |
 | Patterns covered | 18 of 18 |
 | Chinese summaries hand-written | 196 of 1207 |
