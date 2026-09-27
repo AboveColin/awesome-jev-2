@@ -119,6 +119,24 @@ Rows recorded as `maintainer submission` (this list's maintainer adding a row on
 their own initiative) or `community submission` were not reclassified, so the
 flag's absence is not evidence that a row was not self-submitted.
 
+Since 2026-09-27, the script's verdicts are kept in git, in
+`.discover/seen.json`, rather than only in the Actions cache. GitHub evicts a
+cache nobody has read for seven days; discovery runs weekly, and its scheduled
+start on 2026-09-24 came four and a half hours late, so one late or failed run
+would have lost every verdict, and the next issue would have proposed every
+earlier candidate again as new. `discover` reads strangers' repositories and
+holds no write permission, so it leaves the file as an artifact, and the weekly
+`metadata` run commits it after checking every entry's shape (a lower-case
+repository name, one of the script's verdicts, a date); the cache stays as the fast
+path between commits, and the newer verdict for a repository wins. The file
+says what it is: what a script found in the files it read, not a judgement
+anyone made. `no-signal` does not mean a repository never calls Jev, and a
+person's decision is still a row in `catalog.json` or a line in
+`docs/declined.txt`. The same day the weekly issue became a task list: one box
+per candidate, claimed with a comment, each with the command that re-reads
+that one repository (`discover_candidates.py --only owner/name`), and the
+candidates still waiting from earlier weeks are named instead of counted.
+
 ### The bulk pass, and what it cost
 
 A second aggregation run verified the 320 most-cited repositories missing here
@@ -431,7 +449,7 @@ catalogue passed 800, and no build ever went red.
 | Model strings and limits | When the vendor or a gateway ships | One source, `compat.json`. `lint_docs` checks every copy — in docs, examples, and the generated README and figures — against it. `claims` re-reads each platform's documentation weekly and opens an issue if a recorded string disappears. |
 | Link status, stars, licences, archive status | Continuously, upstream | `metadata` weekly: stamps every link that answers, re-reads the GitHub API, rebuilds everything generated, commits it, runs `lint`'s checks on that commit (`check.py --ci --quick`: all but the preview images, which `pages` renders), pushes to `main`, and redeploys the site. It opens an issue only for a change that is more than a star count, and falls back to a branch if `main` moved underneath it. `links` weekly is the separate alarm for a dead link, which only a person may retire, and for a sweep so refused by GitHub or by other hosts that it checked little. Both jobs, and `claims`, write their counts and the GitHub budget they spent to the run's summary. The site shows the date of the sweep its figure comes from, and the status page how many rows share it. |
 | Whether cited text is still present | Continuously, upstream | `claims` is scheduled weekly to fetch each `evidence` file and report missing strings or files. Counts show citations recorded, not CI passes, and the job does not update the human `read_on` date. |
-| What the catalogue is missing | Continuously, upstream | `discover` weekly: harvests every sibling directory, reads the code of the most-cited uncatalogued repositories, searches for sibling directories not yet harvested, and files one issue. It never adds a row. |
+| What the catalogue is missing | Continuously, upstream | `discover` weekly: harvests every sibling directory, reads the code of the most-cited uncatalogued repositories, searches for sibling directories not yet harvested, and files one issue — a task list with a box per candidate to claim and the command that re-reads it. It never adds a row. Its verdicts are kept in `.discover/seen.json`, which `metadata` commits from `discover`'s artifact. |
 | The MCP package on PyPI | When `pyproject.toml`'s version changes | A release is a tag a maintainer pushes, so PyPI can lag `main`. `check_release.py` compares the two on every push to `main`, in `lint`'s `release` job: a version not yet on PyPI is a warning carrying the tag command; a version older than PyPI's newest, or `pyproject.toml` and `.claude-plugin/plugin.json` disagreeing, fails. The file comparison also runs on every pull request, as a unit test. After an upload, `publish` installs the release back from PyPI. |
 | Dated history | Never | This page's log sections are append-only and exempt from the number rules: what the first build found is true forever. |
 

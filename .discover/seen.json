@@ -1,0 +1,14 @@
+{
+  "about": [
+    "Script verdicts, not human conclusions. Nobody reviewed these entries.",
+    "scripts/discover_candidates.py read each repository's code on the date given and recorded what it found:",
+    "calls-jev: a file it read contains a Jev call-site string (a reason for a person to read it, not a catalog row);",
+    "mentions-only: no file it read calls Jev, but the README names it; no-signal: neither;",
+    "repo-gone: GitHub returned no repository; tree-unavailable: its file list could not be read.",
+    "It reads some files, not all, so no-signal does not mean a repository never calls Jev.",
+    "A verdict older than 60 days is read again.",
+    "A person's decision is a row in catalog.json or a line in docs/declined.txt, never an entry here.",
+    "Written by .github/workflows/discover.yml, committed by .github/workflows/metadata.yml; see scripts/discover_seen.py."
+  ],
+  "verdicts": {}
+}

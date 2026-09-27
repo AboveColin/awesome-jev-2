@@ -132,6 +132,7 @@ class WaitingTest(unittest.TestCase):
         body = report(waiting=self.WAITING)
         self.assertIsNone(re.search(r"^### ", body, re.M))
         self.assertIn("alpha/early", body)
+        self.assertIn("comment `claim owner/name`", body, "earlier candidates can be claimed too")
 
     def test_a_long_backlog_is_capped(self):
         waiting = [(f"o/w{i:03d}", {"on": "2026-09-24", "verdict": "calls-jev"}) for i in range(dc.WAITING_SHOWN + 5)]

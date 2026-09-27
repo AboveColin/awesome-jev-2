@@ -14,10 +14,16 @@
 # (`discover_candidates.py --only owner/name`). Candidates proposed in earlier
 # weeks and still neither catalogued nor declined are listed by name.
 #
-# Verdicts persist between runs in the Actions cache rather than in git: a
-# repository found not to call Jev is not re-read for 60 days, and a candidate
-# already proposed is listed among the earlier ones rather than as new. Nothing
-# is committed.
+# Verdicts persist between runs: a repository found not to call Jev is not
+# re-read for 60 days, and a candidate already proposed is listed among the
+# earlier ones rather than as new. They live in git, in .discover/seen.json
+# (scripts/discover_seen.py), because the Actions cache alone lost them: GitHub
+# evicts a cache after seven days without access, which is this schedule, and
+# scheduled runs start hours late. This workflow reads strangers' repositories,
+# so it holds no write permission: it leaves the verdicts as an artifact, and
+# metadata.yml, which already commits the weekly facts, commits them. The cache
+# stays as the fast path: it restores the newest run's verdicts, which the
+# committed file may not have yet, and the script keeps the newer of the two.
 #
 # Injection review: no `github.event.*` value reaches a `run:` block. The issue
 # body is read from a file the script wrote. Repository descriptions from the
@@ -47,7 +53,8 @@ jobs:
           python-version: "3.12"
 
       # Restores the newest verdict cache; a unique key per run means the
-      # updated cache is saved as a new entry at the end of the job.
+      # updated cache is saved as a new entry at the end of the job. A cache
+      # from before the verdicts moved into git (a bare mapping) still reads.
       - uses: actions/cache@v6
         with:
           path: .cache/discover-seen.json
@@ -59,8 +66,22 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           python3 scripts/discover_candidates.py --top 150 --find-lists \
-            --seen .cache/discover-seen.json --markdown /tmp/body.md > /tmp/discover.log
+            --seen .discover/seen.json --seen .cache/discover-seen.json \
+            --markdown /tmp/body.md > /tmp/discover.log
           tail -20 /tmp/discover.log
+
+      # metadata.yml takes the newest of these from a successful run on main
+      # and commits it. Kept for the longest GitHub allows, so a few missed
+      # weekly refreshes lose nothing. The path is in a dot-directory, which
+      # upload-artifact leaves out unless told otherwise.
+      - name: Leave the verdicts for the weekly refresh to commit
+        uses: actions/upload-artifact@v7
+        with:
+          name: discover-seen
+          path: .discover/seen.json
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 90
 
       - name: Open or update the discovery issue
         env:

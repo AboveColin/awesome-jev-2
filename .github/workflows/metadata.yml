@@ -24,6 +24,12 @@
 # underneath the run and the refresh no longer rebases cleanly, it falls back
 # to a branch and an issue rather than forcing.
 #
+# The run also commits the discovery verdicts (.discover/seen.json):
+# discover.yml reads strangers' repositories and holds no write permission, so
+# it leaves them as an artifact, and this run merges the newest one in. Every
+# entry is checked against a fixed shape on the way (scripts/discover_seen.py),
+# and a missing or broken artifact costs only a warning.
+#
 # A push made with GITHUB_TOKEN does not trigger other workflows, so the run
 # dispatches pages (and lint, for a visible check) itself; workflow_dispatch is
 # the documented exception. Without that the site would keep serving last
@@ -32,7 +38,8 @@
 # Permissions note: one of the two places that can push to this repository;
 # the other is lint.yml's `regenerate` job, which commits only generated files.
 # It needs `contents: write` to push, `issues: write` to file a notice, and
-# `actions: write` to dispatch the rebuild.
+# `actions: write` to dispatch the rebuild (which also lets it download the
+# discovery run's artifact).
 #
 # Injection review: no `github.event.*` value reaches a `run:` block. The issue
 # body is read from a file a script wrote, never interpolated into a shell.
@@ -113,13 +120,43 @@ jobs:
           if-no-files-found: ignore
           retention-days: 30
 
+      # The newest discovery verdicts, merged into the committed file: newest
+      # verdict per repository wins, and anything not shaped like a verdict
+      # (owner/name, a known verdict, a date) is left out with a warning.
+      # Only runs on main count, so a dispatch from a branch feeds nothing in.
+      # Never fails the refresh: without the artifact, the discovery run's
+      # Actions cache still carries the verdicts to its next run.
+      - name: Take in the latest discovery verdicts
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          run=$(gh run list --workflow discover.yml --branch main --status success \
+                  --limit 1 --json databaseId --jq '.[0].databaseId // empty')
+          if [ -z "$run" ]; then
+            echo "no successful discovery run on main to take verdicts from"
+            exit 0
+          fi
+          rm -rf /tmp/discover-seen
+          if ! gh run download "$run" --name discover-seen --dir /tmp/discover-seen; then
+            echo "::warning title=Discovery verdicts not taken in::run $run left no discover-seen artifact (expired, or the run predates it)"
+            exit 0
+          fi
+          src=$(find /tmp/discover-seen -name seen.json -type f | head -n 1)
+          if [ -z "$src" ]; then
+            echo "::warning title=Discovery verdicts not taken in::run $run's artifact holds no seen.json"
+            exit 0
+          fi
+          echo "discovery run $run"
+          python3 scripts/discover_seen.py .discover/seen.json "$src"
+
       - name: Rebuild everything generated from those facts, and commit it here
         id: commit
         run: |
           # The same generators, in the same order, as lint.yml runs, so one
           # added to regenerate.py is never missed here.
           python3 scripts/regenerate.py
-          git add -A catalog.json README.md README.zh-CN.md docs llms.txt
+          git add -A catalog.json README.md README.zh-CN.md docs llms.txt .discover
           if git diff --cached --quiet; then
             echo "nothing changed"
             echo "changed=false" >> "$GITHUB_OUTPUT"

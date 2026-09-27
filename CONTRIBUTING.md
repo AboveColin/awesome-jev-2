@@ -252,6 +252,14 @@ candidate it finds nothing to read.
 Read one and decided it does not belong? Add it to `docs/declined.txt` with a
 reason, and the weekly run stops proposing it.
 
+The script's own verdicts (which repositories it read, on what date, and what
+it found in the files it read) are kept in `.discover/seen.json`, so the weekly
+run does not read the same code again until a verdict is old (`RECHECK_DAYS` in
+`scripts/discover_seen.py`) and does not propose a candidate twice. The weekly
+`metadata` run commits that file; do not edit it by hand. It records a script's
+verdicts, not anyone's decision: yours goes in `catalog.json` or
+`docs/declined.txt`.
+
 Know a directory we are not harvesting? Add it to `docs/sibling-lists.txt`.
 That is a useful contribution on its own.
 

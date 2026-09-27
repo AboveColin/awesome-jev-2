@@ -202,6 +202,7 @@ class MetadataStepsTest(unittest.TestCase):
         files = {
             "catalog.json": "v1\n", "README.md": "generated from v1\n", "README.zh-CN.md": "zh\n",
             "docs/status.md": "status\n", "llms.txt": "llms\n", "scripts/regenerate.py": self.REGENERATE,
+            ".discover/seen.json": "{}\n",
         }
         for rel, body in files.items():
             (seed / rel).parent.mkdir(parents=True, exist_ok=True)
@@ -258,6 +259,15 @@ class MetadataStepsTest(unittest.TestCase):
         self.assertEqual(done.returncode, 0, done.stderr)
         self.assertEqual(self.outputs(), {"landed": "main"})
         self.assertEqual(self.origin_log()[0], "github-actions[bot]|chore: weekly refresh of link status and repository facts")
+
+    def test_commits_the_discovery_verdicts_it_took_in(self):
+        # The step before this one merged discover.yml's artifact (I05).
+        (self.work / ".discover" / "seen.json").write_text('{"verdicts": {}}\n')
+        done = self.bash(self.commit_step)
+        self.assertEqual(done.returncode, 0, done.stderr)
+        self.assertEqual(self.outputs(), {"changed": "true"})
+        files = self.git(self.work, "show", "--name-only", "--format=", "HEAD").split()
+        self.assertEqual(files, [".discover/seen.json"])
 
     def test_falls_back_to_a_branch_rather_than_forcing(self):
         (self.work / "catalog.json").write_text("v2\n")

@@ -40,6 +40,16 @@ from concurrent.futures import ThreadPoolExecutor
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 
 from _github import CODE_EXT, SELF, api_get, default_branch, raw_get, repo_of  # noqa: E402
+from discover_seen import (  # noqa: E402
+    PROPOSED,
+    RECHECK_DAYS,
+    VERDICTS,
+    load as load_seen,
+    merge as merge_seen,
+    parse as parse_seen,
+    report_dropped,
+    write as write_seen,
+)
 
 # The weekly issue: at most this many new boxes (the rest are saved with their
 # verdict and listed among the earlier candidates from the next run on), and at
@@ -79,12 +89,9 @@ SIBLINGS = ROOT / "docs" / "sibling-lists.txt"
 # Candidates a person read and chose not to add, one `owner/name  # reason` per
 # line. Without it the weekly run would re-propose the same rejects forever.
 DECLINED = ROOT / "docs" / "declined.txt"
-# A repository judged not to call Jev is re-read after this long: projects add
-# integrations, and a verdict from two months ago is not a verdict about today.
-RECHECK_DAYS = 60
+# RECHECK_DAYS and VERDICTS live in discover_seen.py, beside the verdict file
+# they describe.
 WORKERS = 8
-# Everything inspect() can conclude, in the order the console report lists them.
-VERDICTS = ("calls-jev", "mentions-only", "no-signal", "repo-gone", "tree-unavailable")
 
 GH = re.compile(r"https://github\.com/([A-Za-z0-9][\w.-]*)/([\w.-]+)")
 
@@ -591,8 +598,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--json", action="store_true")
     parser.add_argument(
         "--seen",
-        default="",
-        help="JSON cache of past verdicts; skips fresh ones and records this run's",
+        action="append",
+        default=[],
+        metavar="FILE",
+        help="verdict file (repeatable): all are read and merged, newest verdict per "
+        "repository winning; fresh ones are not read again; the merged verdicts, "
+        "this run's included, are written back to each (see discover_seen.py)",
     )
     parser.add_argument(
         "--markdown", default="", help="write a Markdown report here, for an issue body"
@@ -612,9 +623,15 @@ def main(argv: list[str] | None = None) -> int:
     if args.only:
         return inspect_only(args.only, as_json=args.json)
     today = dt.date.today()
-    seen: dict[str, dict] = {}
-    if args.seen and pathlib.Path(args.seen).exists():
-        seen = json.loads(pathlib.Path(args.seen).read_text())
+    # The committed .discover/seen.json and the Actions cache copy: whichever
+    # holds the newer verdict for a repository wins.
+    loaded = []
+    for path in args.seen:
+        verdicts, dropped = load_seen(path, today=today)
+        report_dropped(path, dropped)
+        print(f"{path}: {len(verdicts)} verdict(s)", file=sys.stderr)
+        loaded.append(verdicts)
+    seen: dict[str, dict] = merge_seen(*loaded)
 
     if not SIBLINGS.exists():
         print(f"error: {SIBLINGS.relative_to(ROOT)} is missing", file=sys.stderr)
@@ -660,9 +677,11 @@ def main(argv: list[str] | None = None) -> int:
     candidates = [
         (slug, n) for slug, n in cites.most_common() if slug not in have and not fresh(slug)
     ]
+    recent = sum(1 for slug in cites if slug not in have and fresh(slug))
     print(
         f"reached {reached}/{len(lists)} lists, {len(cites)} repos cited, "
-        f"{len(candidates)} not in the catalog",
+        f"{len(candidates)} not in the catalog and due a read "
+        f"({recent} read in the last {RECHECK_DAYS} days, not read again)",
         file=sys.stderr,
     )
 
@@ -693,7 +712,7 @@ def main(argv: list[str] | None = None) -> int:
     results = deduped
 
     new_hits = [
-        r for r in results if r["verdict"] == "calls-jev" and r["slug"] not in seen
+        r for r in results if r["verdict"] == PROPOSED and r["slug"] not in seen
     ]
     for r in results:
         seen[r["slug"]] = {"verdict": r["verdict"], "on": today.isoformat()}
@@ -704,11 +723,16 @@ def main(argv: list[str] | None = None) -> int:
     waiting = [
         (slug, past)
         for slug, past in seen.items()
-        if past["verdict"] == "calls-jev" and slug not in have and slug not in fresh_hits
+        if past["verdict"] == PROPOSED and slug not in have and slug not in fresh_hits
     ]
+    # Only the verdict shape reaches a file that metadata.yml commits: a slug a
+    # sibling list spelled oddly is reported here and left out.
+    kept, dropped = parse_seen({"verdicts": seen}, today=today)
+    report_dropped("this run's verdicts", dropped)
+    for path in args.seen:
+        write_seen(path, kept)
     if args.seen:
-        pathlib.Path(args.seen).parent.mkdir(parents=True, exist_ok=True)
-        pathlib.Path(args.seen).write_text(json.dumps(seen, indent=1, sort_keys=True))
+        print(f"wrote {len(kept)} verdict(s) to {', '.join(args.seen)}", file=sys.stderr)
 
     new_lists = find_new_lists(lists) if args.find_lists else []
     if args.markdown:
