@@ -176,8 +176,9 @@ That is a useful contribution on its own.
 
 Open an issue with the slug. Do not delete the row — retiring an entry means
 moving it to `retired.json` with a `notes` line explaining why, so the dead
-reference stays searchable. `scripts/check_links.py` finds them but deliberately
-never moves them; that judgement is a person's.
+reference stays searchable. `retired.json` is kept in slug order too, so run
+`python3 scripts/sort_catalog.py` after moving it. `scripts/check_links.py`
+finds them but deliberately never moves them; that judgement is a person's.
 
 ## Adding a pattern
 
