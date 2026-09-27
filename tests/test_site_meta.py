@@ -152,21 +152,28 @@ class PagesWiringTest(unittest.TestCase):
     def test_pages_rebuilds_when_a_script_it_runs_changes(self):
         # assemble_site.py now writes the meta tags with _markers.py, so a
         # change there must redeploy the site like a change to _stats.py does.
+        # Followed through every local import: _stats.py imports classify.py,
+        # whose rules feed counts in the site's stats.json.
         import ast
 
         text = (ROOT / ".github" / "workflows" / "pages.yml").read_text()
         paths = text.split("    paths:\n", 1)[1].split("\n  workflow_dispatch:", 1)[0]
         local = set()
-        for script in ("assemble_site.py", "check_site_data.py", "render_images.py"):
-            local.add(script[:-3])
-            for node in ast.walk(ast.parse((ROOT / "scripts" / script).read_text())):
+        todo = ["assemble_site", "check_site_data", "render_images"]
+        while todo:
+            script = todo.pop()
+            if script in local:
+                continue
+            local.add(script)
+            for node in ast.walk(ast.parse((ROOT / "scripts" / f"{script}.py").read_text())):
                 names = (
                     [alias.name for alias in node.names] if isinstance(node, ast.Import)
                     else [node.module] if isinstance(node, ast.ImportFrom) and node.module
                     else []
                 )
-                local.update(name for name in names if (ROOT / "scripts" / f"{name}.py").exists())
+                todo.extend(name for name in names if (ROOT / "scripts" / f"{name}.py").exists())
         self.assertIn("_markers", local)
+        self.assertIn("classify", local)
         for name in sorted(local):
             self.assertIn(f'      - "scripts/{name}.py"\n', paths, name)
 
