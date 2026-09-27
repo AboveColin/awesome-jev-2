@@ -9,9 +9,13 @@ contributor guide says how changes reach main.
 from __future__ import annotations
 
 import pathlib
+import sys
 import unittest
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "tests"))
+
+from test_mcp_caveats import load_server  # noqa: E402
 
 
 class PublishTriggerTest(unittest.TestCase):
@@ -23,6 +27,31 @@ class PublishTriggerTest(unittest.TestCase):
         self.assertEqual(listed, ["src/**", "pyproject.toml", ".github/workflows/publish.yml"])
         # Releases are still tag-driven.
         self.assertIn('  push:\n    tags:\n      - "awesome-jev-mcp-v*"\n', on)
+
+
+class ModelStringCheckTest(unittest.TestCase):
+    """publish.yml's one data-dependent smoke assertion, made on every pull
+    request. publish.yml no longer runs for a pull request that changes only
+    compat.json, so without this a compat.json edit that let the fabricated
+    `typesafe/jev-1` through would first be caught by a release tag."""
+
+    def test_the_fabricated_model_string_is_rejected_and_real_ones_are_not(self):
+        server = load_server()
+        self.assertIs(server.check_model_string(model="typesafe/jev-1")["valid"], False)
+        real = [
+            part.strip()
+            for platform in server.COMPAT["platforms"]
+            for part in platform["model"].split("·")
+            if part.strip() not in ("—", "")
+        ]
+        self.assertTrue(real, "compat.json lists no model string")
+        for model in real:
+            with self.subTest(model=model):
+                self.assertIs(server.check_model_string(model=model)["valid"], True)
+
+    def test_publish_yml_still_makes_the_same_assertion(self):
+        text = (ROOT / ".github" / "workflows" / "publish.yml").read_text()
+        self.assertIn('server.check_model_string(model="typesafe/jev-1")["valid"] is False', text)
 
 
 class LandingGuideTest(unittest.TestCase):

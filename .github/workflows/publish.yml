@@ -22,10 +22,10 @@
 # adding a row ran a second workflow (on a first-time contributor's pull
 # request, one more run held for approval) to test packaging the row cannot
 # change: the wheel copies those files in verbatim at build time. lint validates
-# the data on every pull request and imports the server against it. The one
-# data-dependent assertion here, that the fabricated `typesafe/jev-1` is still
-# rejected against compat.json, now first runs on a release tag, still before
-# anything reaches PyPI.
+# the data on every pull request and imports the server against it, and makes
+# the one data-dependent assertion here too, that the fabricated
+# `typesafe/jev-1` is still rejected against compat.json
+# (tests/test_repository_policy.py), on the source tree rather than a wheel.
 #
 # The bundled snapshot inside the wheel is the catalogue as of the tagged
 # commit — the offline last resort. The server fetches the live catalogue from
