@@ -292,6 +292,7 @@ python3 scripts/check_links.py   # sweep every URL, report only
 python3 scripts/verify_claims.py # re-read every cited call site
 python3 scripts/build_assets.py  # regenerate the README figures
 python3 scripts/build_compat.py  # regenerate the compatibility tables
+python3 scripts/regenerate.py    # or: every generator above, in order
 ```
 
 `verify_claims.py` needs `GITHUB_TOKEN` set — unauthenticated GitHub is 60
@@ -322,7 +323,8 @@ catalogue passed 800, and no build ever went red.
 
 | What changes | When | Kept current by |
 | --- | --- | --- |
-| Counts and tables about the catalogue | Whenever a row is added or edited | Generated from `catalog.json` — the READMEs by `build_readme.py`, the figures by `build_assets.py`, and every number inside the hand-written docs and `llms.txt` by `build_docs.py`. The site's link-preview tags are written into the Pages artifact at deploy by `assemble_site.py --deploy` and never committed. All numbers share one definition in `scripts/_stats.py`. `lint` fails on any drift, and `lint_docs.py` rejects a catalogue count typed anywhere else. |
+| Counts and tables about the catalogue | Whenever a row is added or edited | Generated from `catalog.json` — the READMEs by `build_readme.py`, the figures by `build_assets.py`, and every number inside the hand-written docs and `llms.txt` by `build_docs.py`. The site's link-preview tags are written into the Pages artifact at deploy by `assemble_site.py --deploy` and never committed. All numbers share one definition in `scripts/_stats.py`. `lint` regenerates all of them on every run (next row), and `lint_docs.py` rejects a catalogue count typed anywhere else. |
+| Generated files after a merge | Whenever a pull request lands | A pull request need only change the sources. `lint` runs `regenerate.py` on every event, then `check_generated.py` decides: on a pull request each generated file must be untouched since the merge base or byte-identical to the regenerated output, with every verdict in the run's summary; on `main`, drift is handed to the `regenerate` job, which rebuilds from the tip, runs the lint chain and commits `chore: regenerate from catalog.json` as `github-actions[bot]` — rebasing if `main` moved, leaving a `regenerate/<sha>` branch if that no longer applies, never force-pushing. A dispatched or manual `lint` run is strict: any drift fails. |
 | Images that show data | Same | Rendered from the data on every Pages deploy by `render_images.py` and never committed: the site's `og:image`, and the README and compatibility screenshots. The deploy refuses to publish a page that did not finish loading its data. |
 | The GitHub social preview | Never | It can only be uploaded by hand, so it is the durable card: its one figure is a floor ("800+") that growth can only make an understatement, never wrong. `description` reports whether one is uploaded. |
 | The repository description | When the count crosses a hundred, or the wording changes | Only an admin can edit it, so it states the count floored to the hundred: `_stats.pitch_public()`, the same sentence as the site's `description` and `og:description`. The `description` workflow compares the whole sentence on every push to `main`; on drift it warns and keeps one open issue, labelled `description`, holding the exact `gh repo edit` command, instead of failing a build nobody but an admin can fix. `lint` prints the would-be sentence on every run, pull requests included. Every other surface — the READMEs, `status.md`, `llms.txt`, the figures — carries the exact count. |
@@ -333,7 +335,8 @@ catalogue passed 800, and no build ever went red.
 | What the catalogue is missing | Continuously, upstream | `discover` weekly: harvests every sibling directory, reads the code of the most-cited uncatalogued repositories, searches for sibling directories not yet harvested, and files one issue. It never adds a row. |
 | Dated history | Never | This page's log sections are append-only and exempt from the number rules: what the first build found is true forever. |
 
-- `lint` runs on every push and pull request.
+- `lint` runs on every pull request, every push to `main`, and by hand; after
+  a push to `main` it also commits the regenerated files.
 - `description` runs on every push to `main`, and by hand.
 - `pages` rebuilds the site and its images whenever the data, the site or the
   rendering scripts change.
@@ -356,3 +359,21 @@ catalogue size, so while `build_docs.py` kept them in git every pull request
 that added a row also had to change the site's HTML. `check_site_data.py` holds
 both ends: a committed file carrying anything but the placeholder fails `lint`,
 and a deploy without current tags fails `pages` before anything is published.
+
+Since 2026-09-27, a pull request no longer has to carry generated files, and
+`lint` no longer fails a pull request because one is stale. Every pull request
+that added a row used to change twenty-odd generated files, so any two open at
+once conflicted, and each had to be brought up to date by hand before it could
+merge. Now `lint` regenerates everything itself and judges each generated file
+by event. On a pull request, a file the pull request did not touch may be
+stale, since the bot rebuilds it after the merge; a file it did touch must be
+exactly what the generators write, because anything else is a hand edit the bot
+would silently overwrite. On `main`, the `regenerate` job commits the rebuilt
+files, so `main` is behind its own sources for the minute between a merge and
+that commit, and a dispatched `lint` run on `main` remains strict. This relaxes
+the rule this section used to state as "`lint` fails on any drift": drift is
+now repaired by a commit rather than refused at review. `.gitattributes` marks
+the wholly generated files (both READMEs, `docs/by-pattern/`, `docs/assets/`)
+`linguist-generated`, so GitHub collapses them in a pull request's diff; files
+that are hand-written around generated blocks are not marked, because their
+prose still needs reading.

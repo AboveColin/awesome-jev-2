@@ -9,33 +9,46 @@ So the bar is: **could a reader act on this row without opening the link?**
 
 ## Adding an entry
 
-1. Add an object to `catalog.json` at its place in `slug` order. The file is
-   sorted by slug and `lint.py` fails if it is not, so the easiest route is to
-   add the row anywhere and run `python3 scripts/sort_catalog.py`, which moves
-   rows into place and changes nothing else. A sorted file is what lets two
-   pull requests adding different rows merge without conflicting; when every
-   row was appended at the end, they all edited the same lines. Required
-   fields: `slug`, `title`, `summary`, `summary_zh`, `url`, `kind`,
-   `patterns`, `sources`, `license`.
+1. Add an object to `catalog.json`. Required fields: `slug`, `title`,
+   `summary`, `summary_zh`, `url`, `kind`, `patterns`, `sources`, `license`.
+   The file is kept in `slug` order, so add the row anywhere and let
+   `sort_catalog.py` move it into place; it changes nothing else. A sorted
+   file is what lets two pull requests adding different rows merge without
+   conflicting.
 2. Run the checks:
 
 ```bash
-python3 scripts/sort_catalog.py \
-  && python3 scripts/lint.py \
-  && python3 scripts/build_readme.py \
-  && python3 scripts/build_assets.py \
-  && python3 scripts/build_docs.py \
-  && python3 scripts/lint_docs.py
+python3 scripts/sort_catalog.py && python3 scripts/lint.py
 ```
 
-`build_assets.py` regenerates the README's SVG figures, and `build_docs.py`
-refills every generated number in `docs/status.md`, `docs/sources.md` and
-`llms.txt`. CI fails if any of them are stale, because a figure that disagrees
-with the catalog is worse than no figure. The site's link-preview tags are not
-in git at all: the Pages deploy writes them.
+3. Open a pull request. `catalog.json` alone is enough.
 
-3. Commit `catalog.json`, both generated READMEs, and whatever else those
-   scripts rewrote. CI fails if any of it drifts.
+### Generated files are optional
+
+The READMEs, the pages under `docs/by-pattern/`, the figures in `docs/assets/`
+and the generated numbers in `docs/status.md`, `docs/sources.md`,
+`docs/compatibility.md` and `llms.txt` are all derived from the JSON files at
+the root. You do not need to regenerate them. CI regenerates everything on
+every run, and after your pull request is merged, `github-actions[bot]`
+commits the regenerated files to `main` as `chore: regenerate from
+catalog.json`. Leaving them out also keeps two pull requests that add
+different rows from conflicting over the generated files.
+
+If you do include a generated file, it must be exactly what the generators
+write. CI checks each generated file your pull request changes, and lists the
+verdict for every one in the run's summary. A hand edit fails, because the bot
+would silently overwrite it on `main`. To change what a generated file says,
+change `catalog.json` or the generator in `scripts/`.
+
+To see the result locally, or to run the whole chain CI runs:
+
+```bash
+python3 scripts/regenerate.py      # every generator, in order
+python3 scripts/lint_docs.py       # no stale numbers; vendor facts agree with compat.json
+python3 scripts/check_generated.py pr --base origin/main   # CI's verdict on your branch
+```
+
+Use whichever remote points at this repository in place of `origin`.
 
 No Python dependencies are needed. The schema validator is self-contained.
 
@@ -44,6 +57,10 @@ To preview the site locally:
 ```bash
 python3 scripts/assemble_site.py && python3 -m http.server --directory site
 ```
+
+A local preview has no link-preview tags: `site/index.html` keeps a
+placeholder in git, and only the Pages deploy (`assemble_site.py --deploy`)
+writes them.
 
 ## Numbers in prose
 

@@ -47,6 +47,11 @@ are worth copying; at least one gate deliberately fails closed.
 ## Workflows
 
 The GitHub Actions workflows in this repository interpolate no
-`github.event.*` value into any shell, hold read-only `contents` permission
-except where Pages requires otherwise, and never write to the catalog. If you
-find a path that breaks any of those, please report it.
+`github.event.*` value into any shell, and hold read-only `contents`
+permission except in three places: the Pages deploy; the weekly `metadata`
+refresh, which commits machine-checkable facts (link status, stars, licences,
+archive status) to `catalog.json` and the files generated from them; and
+`lint`'s `regenerate` job, which commits only generated files and runs only
+for a push to `main`, never for a pull request. No workflow writes a human
+judgement — a summary, a pattern, a retirement — into the catalog. If you find
+a path that breaks any of those, please report it.

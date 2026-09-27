@@ -156,7 +156,9 @@ class CheckDescriptionTest(unittest.TestCase):
 
 
 class WorkflowWiringTest(unittest.TestCase):
-    """Lint stays read-only and never checks what it cannot fix."""
+    """Lint's checks stay read-only and never check what they cannot fix.
+    (Its one write-scoped job, `regenerate`, is covered by
+    scripts/tests/test_check_generated.py.)"""
 
     def test_lint_no_longer_checks_the_live_description(self):
         lint = (ROOT / ".github/workflows/lint.yml").read_text()

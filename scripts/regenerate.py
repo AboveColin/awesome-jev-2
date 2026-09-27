@@ -1,0 +1,83 @@
+#!/usr/bin/env python3
+"""Run every generator, so a tree's generated files match its sources.
+
+The sources are catalog.json, retired.json, compat.json, patterns.json,
+taxonomy.json and collections.json. Everything listed in OUTPUTS below is
+derived from them, whole or in marked blocks, and is never edited by hand.
+
+Since 2026-09-27 a pull request does not have to carry that output. lint.yml
+runs this on every event; on main its `regenerate` job commits the result as
+github-actions[bot]. Run it yourself to see what your change will look like,
+or to include the regenerated files in a pull request. That is optional, but
+if you do include one, check_generated.py requires it to be exactly what this
+writes.
+
+Stdlib only, like the rest of scripts/.
+
+Run: python3 scripts/regenerate.py
+     python3 scripts/regenerate.py --list    # the output paths present, one per line
+"""
+
+from __future__ import annotations
+
+import argparse
+import pathlib
+import subprocess
+import sys
+
+SCRIPTS = pathlib.Path(__file__).resolve().parent
+ROOT = SCRIPTS.parent
+
+# In order, with what each writes. build_readme.py draws the README covers
+# before it writes anything, so a cover that no longer fits stops the run
+# before a single file has changed.
+GENERATORS = (
+    ("build_readme.py", "README.md, README.zh-CN.md, docs/by-pattern/ and the README covers"),
+    ("build_assets.py", "the coverage and primitive figures in docs/assets/"),
+    ("build_docs.py", "the generated values in docs/status.md, docs/sources.md and llms.txt"),
+    ("build_compat.py", "the generated tables in docs/compatibility.md"),
+)
+
+# Every path those generators write: files they own outright and hand-written
+# files carrying their marker blocks alike. check_generated.py compares these
+# and the regenerate job commits these; nothing outside them is ever touched.
+# .gitattributes marks only the wholly generated ones linguist-generated.
+OUTPUTS = (
+    "README.md",
+    "README.zh-CN.md",
+    "docs/by-pattern",
+    "docs/assets",
+    "docs/status.md",
+    "docs/sources.md",
+    "docs/compatibility.md",
+    "llms.txt",
+)
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
+    parser.add_argument(
+        "--list", action="store_true", help="print the OUTPUTS present in this tree, one per line, and exit"
+    )
+    args = parser.parse_args(argv)
+    if args.list:
+        # Fed to `git add -A --pathspec-from-file=-` by the regenerate job, and
+        # git rejects the whole list if one path matches nothing.
+        print("\n".join(path for path in OUTPUTS if (ROOT / path).exists()))
+        return 0
+
+    for script, writes in GENERATORS:
+        print(f"::: {script} — {writes}", flush=True)
+        done = subprocess.run([sys.executable, str(SCRIPTS / script)])
+        if done.returncode:
+            print(
+                f"error: {script} failed (exit {done.returncode}); the generators after it did not run",
+                file=sys.stderr,
+            )
+            return done.returncode
+    print(f"regenerated with {len(GENERATORS)} generators; outputs: {', '.join(OUTPUTS)}")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

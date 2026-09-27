@@ -1,6 +1,32 @@
-# Injection review: no `github.event.*` value (issue/PR title, body, branch
-# name) is interpolated into any `run:` block in this workflow, so there is no
-# attacker-controlled string reaching a shell. Permissions are read-only.
+# Validates every pull request and every push to main, and keeps the generated
+# files on main in step with their sources.
+#
+# Since 2026-09-27 a pull request only has to change the sources (catalog.json
+# and the other root JSON files). Every run regenerates every generated file
+# with scripts/regenerate.py, validates the result, and then
+# scripts/check_generated.py decides what the regenerated tree means:
+#   pull_request       each generated file must be untouched by the pull
+#                      request, or byte-identical to what the generators
+#                      produce; every file's verdict goes to the step summary.
+#   push to main       drift is expected after a merge and is not a failure:
+#                      the regenerate job below commits it.
+#   workflow_dispatch  strict, any drift fails. metadata.yml dispatches one
+#                      after it lands.
+# One path per event, so a merge never turns main red and then green again.
+#
+# Permissions: read-only, except the regenerate job, which holds
+# `contents: write` for itself alone and runs only for a push to main, never
+# for a pull request, so code from a fork never runs with a write token. It
+# commits as github-actions[bot]. A push made with GITHUB_TOKEN triggers no
+# other workflow, and none needs to run: nothing Pages builds from is
+# generated (the link-preview tags are written at deploy), and the push that
+# changed a source already triggered pages and description. So, unlike
+# metadata.yml, it holds no `actions: write` and dispatches nothing.
+#
+# Injection review: no `github.event.*` value is interpolated into any `run:`
+# block, so no attacker-controlled string (issue/PR title, body, branch name)
+# reaches a shell. The event name and ref appear only in `if:` expressions and
+# in the runner's own GITHUB_EVENT_NAME, never spliced into a script.
 name: lint
 
 on:
@@ -16,8 +42,14 @@ jobs:
   catalog:
     name: Validate catalog and generated READMEs
     runs-on: ubuntu-latest
+    outputs:
+      drift: ${{ steps.generated.outputs.drift }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          # The pull-request check compares the pull request's head with its
+          # merge base, so it needs the history behind the merge commit.
+          fetch-depth: 0
 
       - uses: actions/setup-python@v5
         with:
@@ -56,22 +88,14 @@ jobs:
       - name: Preview images render with the current catalogue
         run: python3 scripts/render_images.py
 
-      # `git status --porcelain`, not `git diff --quiet`: the pattern pages are
-      # created and deleted as patterns gain or lose entries, and git diff cannot
-      # see an untracked file. The first example of an empty pattern would make
-      # the README link to a page nobody committed, with this step still green.
-      - name: READMEs and pattern pages are in sync with catalog.json
-        run: |
-          python3 scripts/build_readme.py
-          drift=$(git status --porcelain -- README.md README.zh-CN.md docs/by-pattern)
-          if [ -n "$drift" ]; then
-            echo "::error::README.md / README.zh-CN.md / docs/by-pattern are out of sync with catalog.json."
-            echo "Run 'python3 scripts/build_readme.py' and commit the result, including new or deleted pages."
-            echo "$drift"
-            exit 1
-          fi
-          echo "READMEs and pattern pages in sync"
+      # Every event validates the regenerated tree, not whatever generated
+      # files happen to be committed; check_generated below judges those.
+      - name: Regenerate every generated file from the sources
+        run: python3 scripts/regenerate.py
 
+      # Run after regenerating, these also prove each generator idempotent. A
+      # generator that wrote something different on every run would have the
+      # regenerate job commit on every push.
       - name: compatibility.md is in sync with compat.json
         run: python3 scripts/build_compat.py --check
 
@@ -86,18 +110,17 @@ jobs:
       - name: Docs carry no stale numbers and agree with compat.json
         run: python3 scripts/lint_docs.py
 
-      - name: README figures are in sync with catalog.json
+      - name: README covers fit and are current
+        run: python3 scripts/build_readme_cover.py --check
+
+      - name: Generated files are current, or left for the bot
+        id: generated
         run: |
-          python3 scripts/build_readme_cover.py --check
-          python3 scripts/build_assets.py
-          drift=$(git status --porcelain -- docs/assets)
-          if [ -n "$drift" ]; then
-            echo "::error::docs/assets/*.svg are out of sync with catalog.json."
-            echo "Run 'python3 scripts/build_readme.py' and 'python3 scripts/build_assets.py', then commit the result."
-            echo "$drift"
-            exit 1
-          fi
-          echo "figures in sync"
+          case "$GITHUB_EVENT_NAME" in
+            pull_request) python3 scripts/check_generated.py pr --base HEAD^1 --head HEAD^2 ;;
+            push)         python3 scripts/check_generated.py push ;;
+            *)            python3 scripts/check_generated.py strict ;;
+          esac
 
       # The published repository description is checked by description.yml, not
       # here: no workflow token can edit it, so its drift is an issue for a
@@ -105,3 +128,79 @@ jobs:
       # the tree is on main, so a pull request shows the change before merge.
       - name: Catalog stats
         run: python3 scripts/counts.py
+
+  # Commits what the catalog job found out of date on main. Rebuilds from the
+  # tip of main rather than the pushed commit: when several merges land close
+  # together, commits regenerated from each pushed commit would conflict with
+  # one another, while the tip includes them all. The whole lint chain passes
+  # before anything is committed. If main moves during the run and the commit
+  # no longer rebases cleanly, it never forces: the result goes to a branch,
+  # and the run for the newer push regenerates main itself.
+  regenerate:
+    name: Commit regenerated files to main
+    needs: catalog
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.catalog.outputs.drift == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    # One at a time and never cancelled. A run queued behind another finds
+    # main already regenerated and commits nothing.
+    concurrency:
+      group: regenerate
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Regenerate on the tip of main, then lint it all
+        run: |
+          python3 scripts/regenerate.py
+          python3 scripts/lint.py
+          python3 scripts/build_compat.py --check
+          python3 scripts/build_docs.py --check
+          python3 scripts/lint_docs.py
+          python3 scripts/build_readme_cover.py --check
+
+      - name: Commit to main, or fall back to a branch if main moved
+        id: land
+        run: |
+          # Only what the generators write; nothing else is ever staged.
+          python3 scripts/regenerate.py --list | git add -A --pathspec-from-file=-
+          if git diff --cached --quiet; then
+            echo "nothing to commit: main is already regenerated"
+            echo "landed=none" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          base=$(git rev-parse --short HEAD)
+          files=$(git diff --cached --name-only)
+          count=$(printf '%s\n' "$files" | wc -l | tr -d ' ')
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -q -m "chore: regenerate from catalog.json" \
+            -m "Rebuilt by the lint workflow's regenerate job from the sources at $base ($count files):" \
+            -m "$files"
+
+          # Someone may have pushed while this ran. Rebase onto them; if that
+          # no longer applies cleanly, never force: leave it on a branch.
+          # --autostash: anything else a run left behind was not staged above,
+          # and must not stop the rebase either.
+          if git pull -q --rebase --autostash origin main && git push -q origin HEAD:main; then
+            echo "landed=main" >> "$GITHUB_OUTPUT"
+            echo "regenerated $count files; landed on main as $(git rev-parse --short HEAD)"
+            printf '## Regenerated on main\n\n%s files rebuilt from the sources at `%s`.\n' \
+              "$count" "$base" >> "$GITHUB_STEP_SUMMARY"
+          else
+            git rebase --abort 2>/dev/null || true
+            branch="regenerate/$base"
+            git push -q origin "HEAD:refs/heads/$branch" --force
+            echo "landed=$branch" >> "$GITHUB_OUTPUT"
+            echo "::warning title=Regenerated files are not on main::main moved during the run and the commit no longer rebased cleanly, so it is on branch $branch. The run for the newer push regenerates main itself; delete the branch once it has."
+            printf '## Regenerated files are on a branch\n\n`main` moved during the run, so the commit is on `%s`. The run for the newer push regenerates `main` itself.\n' \
+              "$branch" >> "$GITHUB_STEP_SUMMARY"
+          fi
