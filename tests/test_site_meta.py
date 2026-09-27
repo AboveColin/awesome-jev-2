@@ -149,6 +149,27 @@ class PagesWiringTest(unittest.TestCase):
         self.assertIn("run: python3 scripts/assemble_site.py --deploy\n", text)
         self.assertIn("run: python3 scripts/check_site_data.py --deploy\n", text)
 
+    def test_pages_rebuilds_when_a_script_it_runs_changes(self):
+        # assemble_site.py now writes the meta tags with _markers.py, so a
+        # change there must redeploy the site like a change to _stats.py does.
+        import ast
+
+        text = (ROOT / ".github" / "workflows" / "pages.yml").read_text()
+        paths = text.split("    paths:\n", 1)[1].split("\n  workflow_dispatch:", 1)[0]
+        local = set()
+        for script in ("assemble_site.py", "check_site_data.py", "render_images.py"):
+            local.add(script[:-3])
+            for node in ast.walk(ast.parse((ROOT / "scripts" / script).read_text())):
+                names = (
+                    [alias.name for alias in node.names] if isinstance(node, ast.Import)
+                    else [node.module] if isinstance(node, ast.ImportFrom) and node.module
+                    else []
+                )
+                local.update(name for name in names if (ROOT / "scripts" / f"{name}.py").exists())
+        self.assertIn("_markers", local)
+        for name in sorted(local):
+            self.assertIn(f'      - "scripts/{name}.py"\n', paths, name)
+
     def test_metadata_no_longer_commits_the_site(self):
         text = (ROOT / ".github" / "workflows" / "metadata.yml").read_text()
         add = next(line for line in text.splitlines() if "git add" in line)

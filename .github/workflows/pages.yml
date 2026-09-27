@@ -18,6 +18,7 @@ on:
       - "taxonomy.json"
       - "collections.json"
       - "scripts/_stats.py"
+      - "scripts/_markers.py"
       - "scripts/assemble_site.py"
       - "scripts/check_collections.py"
       - "scripts/check_site_data.py"
