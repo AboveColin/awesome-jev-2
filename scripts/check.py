@@ -231,12 +231,14 @@ def missing_tool(need: str) -> str | None:
     if need == "node":
         return None if shutil.which("node") else "node is not on PATH"
     if need == "chrome":
-        import render_images  # the one place that knows where Chrome may be
-
         try:
+            import render_images  # the one place that knows where Chrome may be
+
             render_images.find_chrome()
         except SystemExit:
             return "no Chrome found (set CHROME to a Chrome or Chromium binary)"
+        except Exception as exc:  # a broken render_images.py: run the step, which fails on it
+            print(f"    could not look for Chrome ({type(exc).__name__}: {exc}); running the step", flush=True)
     return None
 
 
@@ -371,10 +373,16 @@ def report(results: list[Result], seconds: float, out: TextIO) -> None:
         tail = f"{r.seconds:.1f} s" if r.status == "ok" else r.detail
         print(f"  {label:<8} {r.step.name:<17} {tail}", file=out)
     failed = [r.step.name for r in results if r.status == "failed"]
+    not_run = [f"{r.step.name} ({r.detail})" for r in results if r.status == "skipped"]
     if failed:
         print(f"FAILED: {', '.join(failed)}. Rerun one alone: {COMMAND} --only {failed[0]}", file=out)
+    elif not results:
+        print("No step ran.", file=out)
+    elif not_run:
+        # A skipped check did not pass; name it rather than say "All checks passed".
+        print(f"No check failed. Not run, so not passed: {'; '.join(not_run)}.", file=out)
     else:
-        print("All checks passed." if results else "No step ran.", file=out)
+        print("All checks passed.", file=out)
     out.flush()
 
 
@@ -416,8 +424,9 @@ def list_steps(opts: Options, out: TextIO) -> None:
         print(f"      {step.display(extra)}", file=out)
 
 
-def names(value: str | None, parser: argparse.ArgumentParser) -> frozenset[str]:
-    chosen = frozenset(name.strip() for name in (value or "").split(",") if name.strip())
+def names(values: Iterable[str] | None, parser: argparse.ArgumentParser) -> frozenset[str]:
+    """Step names from repeatable, comma-separated --only/--skip values."""
+    chosen = frozenset(name.strip() for value in values or () for name in value.split(",") if name.strip())
     unknown = sorted(chosen - set(BY_NAME))
     if unknown:
         parser.error(f"unknown step {', '.join(unknown)}; the steps are {', '.join(BY_NAME)}")
@@ -442,8 +451,12 @@ def main(argv: list[str] | None = None) -> int:
         "--base", metavar="REV",
         help=f"judge generated files as CI judges a pull request against REV (--fix: {DEFAULT_BASE})",
     )
-    parser.add_argument("--only", metavar="NAME,...", help="run only these steps (names from --list)")
-    parser.add_argument("--skip", metavar="NAME,...", help="leave these steps out")
+    # Repeatable, so a wrapper's --skip and the caller's add up instead of one
+    # replacing the other.
+    parser.add_argument(
+        "--only", metavar="NAME,...", action="append", help="run only these steps (names from --list; repeatable)"
+    )
+    parser.add_argument("--skip", metavar="NAME,...", action="append", help="leave these steps out (repeatable)")
     parser.add_argument("--list", action="store_true", help="print every step and whether this mode runs it")
     args = parser.parse_args(argv)
     if args.ci and (args.fix or args.base):

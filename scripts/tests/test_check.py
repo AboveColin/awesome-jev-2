@@ -463,6 +463,24 @@ class RunnerTest(unittest.TestCase):
         self.assertIn("| 2 | `lint` ", table)
         self.assertIn("| **failed** | exit 1: python3 scripts/lint.py |", table)
 
+    def test_a_skipped_check_is_not_reported_as_passed(self):
+        run = FakeRun(check.Options(), missing={"node": "node is not on PATH"})
+        out = io.StringIO()
+        check.report(run.results, 1.0, out)
+        self.assertNotIn("All checks passed", out.getvalue())
+        self.assertIn("No check failed. Not run, so not passed: node (node is not on PATH).", out.getvalue())
+        out = io.StringIO()
+        check.report(FakeRun(check.Options()).results, 1.0, out)
+        self.assertIn("All checks passed.", out.getvalue())
+
+    def test_a_broken_render_script_is_run_not_skipped(self):
+        # If render_images.py cannot even be imported, the step must run and
+        # fail on it, not be skipped as "no Chrome" nor crash the whole run.
+        from unittest.mock import patch
+
+        with patch.dict(sys.modules, {"render_images": None}), patch("sys.stdout", io.StringIO()):
+            self.assertIsNone(check.missing_tool("chrome"))
+
     def test_escape(self):
         self.assertEqual(check.escape("a: b, c%\nd"), "a: b, c%25%0Ad")
         self.assertEqual(check.escape("a: b, c", prop=True), "a%3A b%2C c")
@@ -491,6 +509,15 @@ class CommandLineTest(unittest.TestCase):
         done = self.check_py("--ci", "--only", "sort")
         self.assertEqual(done.returncode, 2)
         self.assertIn("selects no step", done.stderr)
+
+    def test_only_and_skip_add_up_when_repeated(self):
+        # .claude/check.sh passes --skip render and then the caller's arguments.
+        done = self.check_py("--list", "--skip", "render", "--skip", "release,counts")
+        self.assertEqual(done.returncode, 0, done.stderr)
+        for name in ("render", "release", "counts"):
+            self.assertRegex(done.stdout, rf"\b{name}\b.*not run: named by --skip")
+        done = self.check_py("--list", "--only", "lint", "--only", "json")
+        self.assertEqual(len(re.findall(r"\bruns$", done.stdout, re.M)), 2, done.stdout)
 
     def test_one_real_step_in_ci_mode(self):
         with tempfile.TemporaryDirectory() as tmp:
