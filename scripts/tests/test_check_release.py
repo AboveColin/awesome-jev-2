@@ -39,7 +39,7 @@ WORKFLOWS = ROOT / ".github" / "workflows"
 class FakePyPI:
     """Answers /pypi/<package>/json with a status and body, counting hits."""
 
-    def __init__(self, status: int = 200, body: bytes | None = None):
+    def __init__(self, status: int = 200, body: bytes | None = None, length: int | None = None):
         self.status, self.body, self.hits = status, body or b"", 0
         outer = self
 
@@ -49,6 +49,10 @@ class FakePyPI:
                 outer.path = self.path
                 self.send_response(outer.status)
                 self.send_header("Content-Type", "application/json")
+                if length is not None:
+                    # Promise more than is sent, then hang up: a cut connection.
+                    self.send_header("Content-Length", str(length))
+                    self.close_connection = True
                 self.end_headers()
                 self.wfile.write(outer.body)
 
@@ -160,8 +164,8 @@ class MainTest(unittest.TestCase):
             code = check_release.main([*argv, *(["--root", str(root)] if root else [])])
         return code, out.getvalue()
 
-    def pypi(self, status=200, body=None) -> FakePyPI:
-        server = FakePyPI(status, body)
+    def pypi(self, status=200, body=None, length=None) -> FakePyPI:
+        server = FakePyPI(status, body, length)
         self.addCleanup(server.close)
         return server
 
@@ -214,6 +218,14 @@ class MainTest(unittest.TestCase):
         self.assertEqual(self.status(), "status=skipped")
         self.assertEqual(self.run_check("--pypi", closed_port_url(), root=Tree(self).root)[0], 0)
         self.assertEqual(self.status(), "status=skipped")
+
+    def test_an_answer_cut_off_midway_is_skipped_not_a_crash(self):
+        # http.client raises IncompleteRead, which is not an OSError.
+        server = self.pypi(body=releases("0.1.0")[:20], length=4096)
+        code, out = self.run_check("--pypi", server.url, root=Tree(self).root)
+        self.assertEqual((code, self.status()), (0, "status=skipped"))
+        self.assertEqual(server.hits, 2)
+        self.assertIn("IncompleteRead", out)
 
     def test_disagreeing_declarations_fail_before_any_network(self):
         for tree in (Tree(self, "0.2.0", "0.1.0"), Tree(self, marketplace="0.3.0")):

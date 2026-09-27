@@ -20,8 +20,8 @@ Verdicts, written to $GITHUB_OUTPUT as `status=`:
   mismatch   pyproject.toml and .claude-plugin/plugin.json (and marketplace.json,
              if it ever declares one) disagree. Fails, without the network.
   skipped    PyPI could not be read: unreachable, a timeout, a 5xx, an answer
-             that is not the JSON API. Exit 0, after one retry: a network hiccup
-             is not a release problem.
+             cut off midway or that is not the JSON API. Exit 0, after one
+             retry: a network hiccup is not a release problem.
   offline    --offline: only the files were compared.
 
 lint.yml runs it on every push to main and never on a pull request, where a
@@ -38,6 +38,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import http.client
 import json
 import os
 import pathlib
@@ -116,6 +117,10 @@ def fetch(url: str) -> tuple[str, list[str] | str | None]:
             reason = f"the answer is not JSON ({exc.__class__.__name__})"
         except (urllib.error.URLError, OSError) as exc:
             reason = f"{exc.__class__.__name__}: {getattr(exc, 'reason', exc)}"
+        except http.client.HTTPException as exc:
+            # A connection cut mid-answer (IncompleteRead) or a malformed
+            # status line is not an OSError, and is no more a release problem.
+            reason = f"{exc.__class__.__name__}: the answer broke off or was malformed"
         if attempt == 1:
             print(f"  attempt 1: {reason}; retrying in {RETRY_DELAY:g}s")
             time.sleep(RETRY_DELAY)
