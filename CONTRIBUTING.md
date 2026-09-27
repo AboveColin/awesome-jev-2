@@ -195,6 +195,14 @@ turns red.
 - **`question_types`** — only the primitives the code _actually_ calls. Read the
   call site; do not infer from the README. Several projects describe "scoring"
   while using only `noul`. The primitive is `noul`, never `binary`.
+- **`primitives_seen`** — leave it out; the weekly `metadata` run writes it
+  (`python3 scripts/verify_claims.py --write-signals`). It lists the primitives
+  whose request or answer shape — `"type": "choice"`, `Noul(`, `.noul` and the
+  like — appears in the one file `evidence` cites: a text signal about that
+  file, not a reading of the call. It never stands in for `question_types`: no
+  filter, count or lint rule reads it as a primitive claim, and a shape in a
+  file (a type definition, a test double) is not a call. Lint allows it only on
+  a row with `evidence`.
 - **`evidence`** — the file you read the row's code in (for a row with
   `question_types`, the file you read that claim in), and strings from it that
   substantiate it. This is what makes the claim re-checkable rather than

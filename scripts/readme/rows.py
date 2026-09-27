@@ -253,13 +253,19 @@ def split_unindexed(rows: list[dict]) -> tuple[list[dict], list[dict]]:
     return [entry for entry in rows if not _stats.not_indexed_by_pattern(entry)], later
 
 
-def unindexed_note(strings: dict, key: str, **values: object) -> str:
-    """The paragraph under a "not yet indexed by pattern" heading (`key` is
-    unindexed_readme or unindexed_page), marked where a model wrote the Chinese."""
+def marked(strings: dict, key: str, **values: object) -> str:
+    """strings[key] filled in, with " <sub>(机翻)</sub>" after it where a model
+    wrote the Chinese (ZH_MACHINE)."""
     note = strings[key].format(**values)
     if strings["lang_code"] == "zh" and key in ZH_MACHINE:
         note += " <sub>(机翻)</sub>"
     return note
+
+
+def unindexed_note(strings: dict, key: str, **values: object) -> str:
+    """The paragraph under a "not yet indexed by pattern" heading (`key` is
+    unindexed_readme or unindexed_page), marked where a model wrote the Chinese."""
+    return marked(strings, key, **values)
 
 
 def group_by_pattern(catalog: list[dict]) -> dict[str, list[dict]]:

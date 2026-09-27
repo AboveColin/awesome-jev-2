@@ -69,6 +69,7 @@ FULL = {
     "repo_license": "MIT",
     "package": {"registry": "pypi", "name": "demo-row", "url": "https://pypi.org/project/demo-row/"},
     "evidence": {"path": "demo.py", "matched": ["from jev import"], "kind": "call-site", "read_on": "2026-09-01"},
+    "primitives_seen": ["choice", "noul"],
     "official": False,
     "published": "2026-01-02",
     "first_seen": "2026-09-01",
@@ -171,16 +172,16 @@ class EntryInvariantTest(FindingsAssertions):
         for url in ("https://github.com/someone/demo-row", "https://example.com/demo-row"):
             with self.subTest(url=url):
                 self.assertOnly(
-                    lint_row(row(FULL, evidence=DROP, url=url, repo=DROP)),
+                    lint_row(row(FULL, evidence=DROP, primitives_seen=DROP, url=url, repo=DROP)),
                     "error",
                     "demo-row: claims primitives but carries neither evidence nor evidence_none",
                     "python3 scripts/verify_claims.py --discover --only demo-row",
                 )
-        self.assertClean(lint_row(row(FULL, evidence=DROP, evidence_none="docs-page")))
+        self.assertClean(lint_row(row(FULL, evidence=DROP, primitives_seen=DROP, evidence_none="docs-page")))
 
     def test_code_in_a_github_repository_needs_evidence_or_a_reason(self):
         # I17: keyed on question_types alone, 34 rows with code carried neither.
-        plain = row(FULL, question_types=DROP, evidence=DROP)
+        plain = row(FULL, question_types=DROP, evidence=DROP, primitives_seen=DROP)
         for where in ({}, {"url": "https://example.com/demo-row"}):
             with self.subTest(**where):
                 message = self.assertOnly(
@@ -215,6 +216,41 @@ class EntryInvariantTest(FindingsAssertions):
         # A GitHub repo field is enough when the canonical url is elsewhere.
         self.assertClean(lint_row(row(FULL, url="https://example.com/demo-row")))
 
+    def test_primitive_text_signals_need_the_file_they_describe(self):
+        # I14: primitives_seen is about the file evidence cites; with no file it says nothing.
+        without_code = {"question_types": DROP, "has_code": False, "languages": DROP}
+        for extra in (without_code, {"evidence_none": "docs-page"}):
+            with self.subTest(extra=sorted(extra)):
+                self.assertOnly(
+                    lint_row(row(FULL, evidence=DROP, **extra)),
+                    "error",
+                    "demo-row: has primitives_seen but no evidence",
+                    "verify_claims.py --write-signals",
+                )
+
+    def test_primitive_text_signals_hold_only_primitive_names(self):
+        for bad, fragment in (
+            (["binary"], "primitives_seen[0]"),
+            ([], "primitives_seen"),
+            (["noul", "noul"], "primitives_seen"),
+            ("noul", "primitives_seen"),
+        ):
+            with self.subTest(value=bad):
+                self.assertOnly(lint_row(row(FULL, primitives_seen=bad)), "error", fragment)
+
+    def test_a_text_signal_is_never_a_primitive_claim(self):
+        # Neither rule keyed on question_types reads primitives_seen: a row with
+        # signals and no reading claims nothing, with or without code.
+        signal_only = row(FULL, question_types=DROP)
+        self.assertClean(lint_row(signal_only))
+        self.assertClean(lint_row(row(signal_only, has_code=False, languages=DROP)))
+        # And a reading still needs code, whatever the signals say.
+        self.assertOnly(
+            lint_row(row(FULL, has_code=False, languages=DROP)),
+            "error",
+            "question_types set but has_code is not true",
+        )
+
     def test_evidence_and_evidence_none_are_exclusive(self):
         self.assertOnly(
             lint_row(row(FULL, evidence_none="docs-page")),
@@ -236,7 +272,9 @@ class EntryInvariantTest(FindingsAssertions):
                 )
         self.assertClean(lint_row(row(FULL, kind="alternative", evidence=row(FULL["evidence"], kind="wire-shape"))))
         # Without evidence there is nothing to mark.
-        self.assertClean(lint_row(row(FULL, kind="alternative", evidence=DROP, evidence_none="docs-page")))
+        self.assertClean(
+            lint_row(row(FULL, kind="alternative", evidence=DROP, primitives_seen=DROP, evidence_none="docs-page"))
+        )
         # Any other row may cite any kind of file: an adapter backed by other
         # models mirrors Jev's shape too.
         for kind in ("call-site", "wire-shape", "example-only"):

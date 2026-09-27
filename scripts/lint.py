@@ -78,6 +78,12 @@ DRAFT_FIELD = "_draft"
 # and shown as a call site, which it is not.
 ALTERNATIVE_EVIDENCE_KIND = "wire-shape"
 
+# A script's text signal about the one file `evidence` cites (verify_claims.py
+# --write-signals). Without that file it says nothing. It is never a claim
+# about primitives: every rule below that asks what a row claims reads
+# question_types, and none reads this.
+PRIMITIVES_SEEN = "primitives_seen"
+
 # `summary_source: curated` says a person wrote the summary for this catalogue,
 # so CONTRIBUTING's "no marketing copy" is theirs to keep, and lint warns when a
 # word from this list or an emoji is in it. A summary labelled as the project's
@@ -309,6 +315,12 @@ def check_entry_invariants(
         )
     if entry.get("evidence") and entry.get("evidence_none"):
         report.err(path, f"{slug}: has both evidence and evidence_none; they are exclusive")
+    if PRIMITIVES_SEEN in entry and not entry.get("evidence"):
+        report.err(
+            path,
+            f"{slug}: has {PRIMITIVES_SEEN} but no evidence: it is a text signal about the file "
+            "evidence cites, written by verify_claims.py --write-signals; remove it",
+        )
     evidence = entry.get("evidence")
     if (
         entry.get("kind") == "alternative"

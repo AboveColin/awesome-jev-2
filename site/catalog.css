@@ -80,6 +80,9 @@ main { padding-top: 19px; }
 .pick-reason > span { color: var(--amber); }
 .risks { margin: 12px 0 8px; }
 .p { font-size: 12px; line-height: 1.5; overflow-wrap: anywhere; }
+/* A script's text signal about a primitive, drawn apart from a person's reading (.p.q). */
+.p.sig { border-style: dashed; color: var(--fg-3); }
+.sig-about { margin: 4px 0 0; color: var(--fg-3); font-size: 12px; }
 .p.f { color: var(--alert); border-color: #753e3a; }
 .verification { display: flex; flex-wrap: wrap; gap: 5px 16px; color: var(--fg-3); font-size: 12px; margin: 14px 0 10px; }
 .verification time { font: 11px var(--mono); margin-left: 4px; }

@@ -63,6 +63,11 @@ def main() -> int:
     )
     print(f"code, no cite  {stats['has_code_unbacked']} (neither evidence nor evidence_none)")
     print(
+        f"primitives     {stats['primitive_rows']} read by a person (question_types), "
+        f"{stats['primitive_signal_rows']} with a text signal in the cited file (primitives_seen), "
+        f"{stats['primitive_signal_only_rows']} of them with no question_types"
+    )
+    print(
         f"review queue   {stats['review_examples_dir']} under examples/, "
         f"{stats['review_single_model_name']} on one model name or host, "
         f"{stats['review_tool_selection_broad']} tool-selection on dropped keywords (docs/review-queue.md)"

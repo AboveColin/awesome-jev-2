@@ -60,6 +60,9 @@ class CountsTest(unittest.TestCase):
             "summary_upstream_stale": 7013,
             "summary_curated": 7014,
             "summary_unlabelled": 7015,
+            "primitive_rows": 7020,
+            "primitive_signal_rows": 7021,
+            "primitive_signal_only_rows": 7022,
         }
         with patch.object(_stats, "compute", return_value=fake):
             text = run_counts()
@@ -73,6 +76,8 @@ class CountsTest(unittest.TestCase):
             "review queue   7009 under examples/, 7010 on one model name or host, "
             "7016 tool-selection on dropped keywords (docs/review-queue.md)",
             "code, no cite  7011 (neither evidence nor evidence_none)",
+            "primitives     7020 read by a person (question_types), 7021 with a text signal in the cited file "
+            "(primitives_seen), 7022 of them with no question_types",
             "patterns       7017 equal the keyword rules' suggestion (no review recorded), 7018 patterns_reviewed, "
             "7019 overview rows with code not yet indexed by pattern",
             "summaries      7012 upstream-description, 7013 upstream-description-stale, 7014 curated, 7015 unlabelled",

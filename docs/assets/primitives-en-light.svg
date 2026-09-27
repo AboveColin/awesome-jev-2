@@ -1,23 +1,40 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="660" height="214" viewBox="0 0 660 214" role="img" aria-label="What one request returns">
-<style>.t{font:600 15px ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,monospace;fill:#1f2328}.g{font:17px ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,monospace;fill:#1a7f37}.n{font:600 14px ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,monospace;fill:#1f2328}.d{font:11.5px -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;fill:#59636e}.w{font:11.5px -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;fill:#cf222e}.k{font:11px ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,monospace;fill:#818b98}</style>
+<svg xmlns="http://www.w3.org/2000/svg" width="660" height="286" viewBox="0 0 660 286" role="img" aria-label="What one request returns">
+<style>.t{font:600 15px ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,monospace;fill:#1f2328}.g{font:17px ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,monospace;fill:#1a7f37}.n{font:600 14px ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,monospace;fill:#1f2328}.d{font:11.5px -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;fill:#59636e}.w{font:11.5px -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;fill:#cf222e}.k{font:11px ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,monospace;fill:#818b98}.c{font:600 12px ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,monospace;fill:#1f2328}</style>
 <text x="12" y="21" class="t">What one request returns</text>
 <text x="12" y="40" class="k">one state, many questions — evaluated in parallel</text>
-<rect x="12" y="58" width="206" height="128" rx="3" fill="none" stroke="#d1d9e0"/>
+<rect x="12" y="58" width="206" height="172" rx="3" fill="none" stroke="#d1d9e0"/>
 <rect x="12" y="58" width="206" height="2" fill="#1a7f37"/>
 <text x="26" y="90" class="g">◆</text>
 <text x="26" y="116" class="n">choice</text>
 <text x="26" y="140" class="d">1 of ≤255</text>
 <text x="26" y="162" class="d">+ probabilities, confidence</text>
-<rect x="233" y="58" width="206" height="128" rx="3" fill="none" stroke="#d1d9e0"/>
+<line x1="26" y1="178" x2="204" y2="178" stroke="#d1d9e0" stroke-width="1"/>
+<text x="26" y="198" class="d">read by a person</text>
+<text x="204" y="198" class="c" text-anchor="end">80 rows</text>
+<text x="26" y="218" class="k">text signal only</text>
+<text x="204" y="218" class="k" text-anchor="end">412 rows</text>
+<rect x="233" y="58" width="206" height="172" rx="3" fill="none" stroke="#d1d9e0"/>
 <rect x="233" y="58" width="206" height="2" fill="#1a7f37"/>
 <text x="247" y="90" class="g">▮</text>
 <text x="247" y="116" class="n">score</text>
 <text x="247" y="140" class="d">2–10 levels</text>
 <text x="247" y="162" class="d">+ legend, probabilities, confidence</text>
-<rect x="454" y="58" width="206" height="128" rx="3" fill="none" stroke="#d1d9e0"/>
+<line x1="247" y1="178" x2="425" y2="178" stroke="#d1d9e0" stroke-width="1"/>
+<text x="247" y="198" class="d">read by a person</text>
+<text x="425" y="198" class="c" text-anchor="end">50 rows</text>
+<text x="247" y="218" class="k">text signal only</text>
+<text x="425" y="218" class="k" text-anchor="end">207 rows</text>
+<rect x="454" y="58" width="206" height="172" rx="3" fill="none" stroke="#d1d9e0"/>
 <rect x="454" y="58" width="206" height="2" fill="#cf222e"/>
 <text x="468" y="90" class="g">◐</text>
 <text x="468" y="116" class="n">noul</text>
 <text x="468" y="140" class="d">0–1 probability</text>
 <text x="468" y="162" class="w">no confidence field</text>
+<line x1="468" y1="178" x2="646" y2="178" stroke="#d1d9e0" stroke-width="1"/>
+<text x="468" y="198" class="d">read by a person</text>
+<text x="646" y="198" class="c" text-anchor="end">71 rows</text>
+<text x="468" y="218" class="k">text signal only</text>
+<text x="646" y="218" class="k" text-anchor="end">451 rows</text>
+<text x="12" y="252" class="k">read by a person: rows whose question_types a person recorded from the code</text>
+<text x="12" y="269" class="k">text signal only: the cited file contains its shape (primitives_seen); nobody read the call</text>
 </svg>

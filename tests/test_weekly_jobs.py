@@ -116,7 +116,7 @@ class MetadataLogsTest(unittest.TestCase):
         body = "\n".join(lines)
         self.assertIn("        if: always()", lines)
         self.assertIn("        uses: actions/upload-artifact@v7", lines)
-        for path in ("/tmp/links.log", "/tmp/refresh.log", "/tmp/digest.md"):
+        for path in ("/tmp/links.log", "/tmp/refresh.log", "/tmp/signals.log", "/tmp/digest.md"):
             self.assertIn(f"            {path}", lines, path)
         self.assertIn("if-no-files-found: ignore", body)
         order = [text.index(f"      - name: {name}") for name in (
@@ -140,6 +140,68 @@ class MetadataLogsTest(unittest.TestCase):
         for name, body in (("blocked", blocked), ("skipped", skipped), ("gone", gone)):
             with self.subTest(case=name):
                 self.assertIsNotNone(re.search(pattern, body), body)
+
+
+SIGNALS_STUB = """#!/bin/bash
+# Plays verify_claims.py --write-signals: STUB_EXIT is its exit code.
+[ "$1 $2" = "scripts/verify_claims.py --write-signals" ] || { echo "unexpected: $*" >&2; exit 9; }
+echo "  + some-row: choice, noul"
+echo "wrote catalog.json"
+echo "primitive text signals: 1 row(s) with evidence; 1 added, 0 changed, 0 removed, 0 unchanged; 0 not read"
+exit "$STUB_EXIT"
+"""
+
+
+class MetadataSignalsTest(unittest.TestCase):
+    """I14: the weekly run records primitives_seen after the refresh and before
+    the commit, and a crash there never costs the week's refresh."""
+
+    NAME = "Record the primitive text signals in each cited file"
+
+    def setUp(self):
+        self.text = (WORKFLOWS / "metadata.yml").read_text()
+        self.lines = step_lines(self.text, self.NAME)
+
+    def test_it_runs_between_the_refresh_and_the_commit(self):
+        order = [self.text.index(f"      - name: {name}") for name in (
+            "Refresh stars, licences and archive status",
+            self.NAME,
+            "Keep the sweep and refresh logs",
+            "Rebuild everything generated from those facts, and commit it here",
+        )]
+        self.assertEqual(order, sorted(order))
+        self.assertIn("        continue-on-error: true", self.lines)
+        self.assertIn("          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}", self.lines)
+        commit = run_block(step_lines(self.text, "Rebuild everything generated from those facts, and commit it here"))
+        self.assertIn("git add -A catalog.json ", commit)
+
+    def run_step(self, exit_code: int) -> subprocess.CompletedProcess:
+        tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(tmp.cleanup)
+        folder = pathlib.Path(tmp.name)
+        stub = folder / "bin" / "python3"
+        stub.parent.mkdir()
+        stub.write_text(SIGNALS_STUB)
+        stub.chmod(stub.stat().st_mode | stat.S_IXUSR)
+        script = run_block(self.lines).replace("/tmp/", f"{folder}/")
+        env = {**os.environ, "PATH": f"{folder / 'bin'}{os.pathsep}{os.environ['PATH']}", "STUB_EXIT": str(exit_code)}
+        return subprocess.run(
+            ["bash", "--noprofile", "--norc", "-e", "-c", script],
+            cwd=folder, env=env, capture_output=True, text=True,
+        )
+
+    def test_the_counts_end_the_log_and_the_exit_code_is_kept(self):
+        for code in (0, 1):
+            with self.subTest(exit=code):
+                done = self.run_step(code)
+                self.assertEqual(done.returncode, code, done.stderr)
+                self.assertEqual(done.stdout.strip().splitlines()[-1][:22], "primitive text signals")
+
+    def test_claims_stays_read_only_and_never_writes_signals(self):
+        claims = (WORKFLOWS / "claims.yml").read_text()
+        self.assertIn("  contents: read\n", claims)
+        self.assertNotIn("contents: write", claims)
+        self.assertNotIn("--write-signals", claims)
 
 
 class ClaimsWorkflowTest(unittest.TestCase):

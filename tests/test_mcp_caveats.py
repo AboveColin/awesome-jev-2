@@ -128,5 +128,38 @@ class PatternsReviewedTest(unittest.TestCase):
         self.assertIn("not yet indexed by pattern", doc)
 
 
+class PrimitiveSignalTest(unittest.TestCase):
+    """A text signal about a primitive is not a primitive claim (I14)."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.server = load_server()
+
+    def test_the_question_type_filter_reads_only_a_persons_reading(self):
+        base = {"title": "T", "url": "https://github.com/a/b", "summary": "s", "kind": "project",
+                "patterns": ["tool-selection"], "has_code": True}
+        rows = [
+            dict(base, slug="seen-only", primitives_seen=["noul"]),
+            dict(base, slug="read", question_types=["noul"]),
+            dict(base, slug="read-other", question_types=["choice"], primitives_seen=["noul"]),
+        ]
+        with patch.object(self.server, "CATALOG", rows):
+            found = self.server.search_examples(question_type="noul", limit=50)
+        self.assertEqual([r["slug"] for r in found["results"]], ["read"])
+
+    def test_compact_rows_never_present_the_signal_as_question_types(self):
+        entry = {"slug": "x", "title": "T", "url": "u", "summary": "s", "kind": "project",
+                 "patterns": ["overview"], "primitives_seen": ["choice"]}
+        compact = self.server._compact(entry)
+        self.assertNotIn("question_types", compact)
+        self.assertNotIn("primitives_seen", compact)
+
+    def test_the_tool_description_tells_the_two_apart(self):
+        doc = self.server.get_example.__doc__
+        self.assertIn("`primitives_seen`", doc)
+        self.assertIn("A shape in a file is not a", doc)
+        self.assertIn("never matches", self.server.search_examples.__doc__)
+
+
 if __name__ == "__main__":
     unittest.main()

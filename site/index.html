@@ -998,7 +998,7 @@
     </footer>
 
     <script type="module">
-      import { SORTS, verification, evidenceKind, evidenceUrl, isIndependentReport, compareEntries, matchesEntry, queryFromState, shareUrl, stateFromQuery, summaryMarks, notIndexedByPattern } from "./catalog-core.mjs";
+      import { SORTS, verification, evidenceKind, evidenceUrl, isIndependentReport, compareEntries, matchesEntry, queryFromState, shareUrl, stateFromQuery, summaryMarks, notIndexedByPattern, primitiveLayers } from "./catalog-core.mjs";
       const STR = {
         en: {
           eyebrow: "Jev Decision Atlas · community index",
@@ -1018,6 +1018,8 @@
           unindexed_last: "Projects and plugins with code that nobody has recorded reading against the patterns come last, under “Not yet indexed by pattern” ({n}).",
           third_party: "Third-party report", review_scope: "A dated citation is not a current CI result or a runtime test.",
           signals: "Recorded matching text", added: "Added", stars: "Repository stars", author: "Author", read_context: "Source context",
+          prims_read: "Primitives read by a person", prims_signal: "Text signal only",
+          prims_signal_about: "The cited file contains this primitive’s request or answer shape (primitives_seen). A script found the text; nobody recorded reading the code call it.",
           reason: "Why this pick", caution: "Before you use it", notes: "Editor’s note", empty_help: "Try a broader phrase or reset the filters.",
           trust_short: "Source checks ≠ runtime tests.", trust_link: "What we check ↗", patterns_count: "patterns",
           latest_check: "Latest successful link check", load_error: "The catalogue could not be loaded. Try again or browse the repository.", retry: "Try again",
@@ -1052,6 +1054,11 @@
           p_limit: "Limits",
           p_for: "Used for",
           p_watch: "Watch out",
+          p_read: "Read by a person",
+          p_signal: "Text signal only",
+          p_rows: "{n} rows",
+          p_layers:
+            "Under each primitive, two counts that are never added together. <b>Read by a person</b>: rows whose <code>question_types</code> records someone reading the code call it. <b>Text signal only</b>: rows where nobody recorded that, but the one file the row cites contains the primitive’s request or answer shape (<code>primitives_seen</code>, written by a weekly script). A shape in a file is not a call.",
           p_shape_h: "The shape of a call",
           p_shape_p:
             "One <b>state</b>, many <b>questions</b>. The state is read once and every question is evaluated against it in parallel, which is why asking five things costs roughly what asking one costs plus the question tokens — and why speculative fan-out is a real technique rather than a waste.",
@@ -1093,6 +1100,9 @@
           unindexed_last: "没有任何人对照决策模式阅读过记录的带代码项目和插件排在最后，列在“尚未按模式索引”之下（{n} 行）。",
           third_party: "第三方评测", review_scope: "带日期的引用不代表最新 CI 已通过，也不代表代码已运行。",
           signals: "记录的匹配文本", added: "收录日期", stars: "仓库星标", author: "作者", read_context: "来源说明",
+          // The Chinese of the primitive-layer strings here and in the primitives view (p_read … p_layers) is model-written; a person who revises it drops this note.
+          prims_read: "人读确认的原语", prims_signal: "仅文本信号",
+          prims_signal_about: "所引文件含有这个原语的请求或回答结构（primitives_seen）。这是脚本找到的文本，没有人记录读过代码确认调用。",
           reason: "精选理由", caution: "使用前留意", notes: "编辑备注", empty_help: "试试更宽泛的关键词，或重置筛选条件。",
           trust_short: "来源核查 ≠ 运行验证。", trust_link: "了解核验范围 ↗", patterns_count: "类场景",
           latest_check: "最近成功检查日期", load_error: "目录暂时无法加载，请重试或前往 GitHub 浏览。", retry: "重试",
@@ -1127,6 +1137,11 @@
           p_limit: "限制",
           p_for: "用来",
           p_watch: "注意",
+          p_read: "人读确认",
+          p_signal: "仅文本信号",
+          p_rows: "{n} 条",
+          p_layers:
+            "每个原语下方有两个互不相加的数。<b>人读确认</b>：<code>question_types</code> 记录了有人读过代码、确认调用该原语的行。<b>仅文本信号</b>：没有这样的记录，但该行所引的那一个文件含有这个原语的请求或回答结构（<code>primitives_seen</code>，由每周运行的脚本写入）。文件里出现结构不等于调用。",
           p_shape_h: "一次调用的形状",
           p_shape_p:
             "一个 <b>state</b>，多个 <b>questions</b>。state 只被读一次，所有问题并行地对它求值 —— 这就是为什么问五件事的成本约等于问一件事加上问题本身的 token，也是为什么「推测性并行扇出」是一个真实可用的技巧而不是浪费。",
@@ -1424,6 +1439,9 @@
         const technical = [
           ...(e.languages || []), ...(e.platforms || []), ...e.patterns.map(p => lbl(PAT, p)),
         ].map(x => `<span class="p">${esc(x)}</span>`).join("");
+        // A person's reading and a script's text signal, each under its own label.
+        const prims = primitiveLayers(e);
+        const primPills = (names, cls) => `<div class="pills">${names.map(q => `<span class="${cls}">${QGLYPH[q] || ""} ${esc(q)}</span>`).join("")}</div>`;
         const permalink = `?lang=${L}#${encodeURIComponent(e.slug)}`;
         return `<article class="card ${flags.length ? "flagged" : ""}"${first ? ` id="${esc(e.slug)}"` : ""}>
           <div class="ct-row">
@@ -1449,13 +1467,15 @@
             <summary>${S().details}</summary>
             <div class="evidence-content">
               <p>${S().review_scope} ${S().performance}${L === "zh" ? "。" : "."}</p>
-              <div class="pills">${(e.question_types || []).map(q => `<span class="p q">${QGLYPH[q] || ""} ${esc(q)}</span>`).join("")}${technical}</div>
+              <div class="pills">${technical}</div>
               <dl>
                 <dt>${S().added}</dt><dd>${esc(e.first_seen || "—")}</dd>
                 ${e.stars != null ? `<dt>${S().stars}</dt><dd>${Number(e.stars).toLocaleString()}</dd>` : ""}
                 ${e.author ? `<dt>${S().author}</dt><dd>${esc(e.author.name)}</dd>` : ""}
                 <dt>${citeLabel}</dt><dd>${e.evidence ? `${esc(e.evidence.path)}${v.codeRead ? ` · ${esc(v.codeRead)}` : ""}` : S().code_missing}</dd>
                 ${e.evidence ? `<dt>${S().signals}</dt><dd>${e.evidence.matched.map(x => `<code>${esc(x)}</code>`).join(" ")}</dd>` : ""}
+                ${prims.read.length ? `<dt>${S().prims_read}</dt><dd>${primPills(prims.read, "p q")}</dd>` : ""}
+                ${prims.signalOnly.length ? `<dt>${S().prims_signal}</dt><dd>${primPills(prims.signalOnly, "p sig")}<p class="sig-about">${S().prims_signal_about}</p></dd>` : ""}
                 ${e.evidence_none ? `<dt>${S().read_context}</dt><dd>${esc(evidenceContext(e.evidence_none))}</dd>` : ""}
               </dl>
               ${pick && note ? `<p><b>${S().notes}</b> ${esc(note)}</p>` : ""}
@@ -1673,6 +1693,13 @@
         scrollTo({ top: 0, behavior: "instant" });
       }
 
+      // Counts from stats.json (scripts/_stats.py primitive_layers), the same
+      // figures the README's primitives image draws.
+      const layerCount = (name, layer) => {
+        const n = STATS.primitive_layers?.[name]?.[layer];
+        return n == null ? "—" : Number(n).toLocaleString();
+      };
+
       function renderPrims() {
         const i = I();
         const el = document.getElementById("view-prims");
@@ -1687,9 +1714,12 @@
               <dt>${S().p_returns}</dt><dd>${p.r[i]}</dd>
               <dt>${S().p_limit}</dt><dd>${p.l[i]}</dd>
               <dt>${S().p_for}</dt><dd>${p.f[i]}</dd>
+              <dt>${S().p_read}</dt><dd>${S().p_rows.replace("{n}", layerCount(p.n, "read"))}</dd>
+              <dt>${S().p_signal}</dt><dd>${S().p_rows.replace("{n}", layerCount(p.n, "signal_only"))}</dd>
             </dl>
           </div>`,
           ).join("")}</div>
+          <p>${S().p_layers}</p>
           ${PRIMS.map(
             (p) =>
               `<div class="callout warn"><p><code>${p.n}</code> — ${S().p_watch}: ${p.w[i]}</p></div>`,

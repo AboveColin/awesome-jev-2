@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import {
   compareEntries, evidenceKind, evidenceUrl, matchesEntry, verification, isIndependentReport, EVIDENCE_KINDS,
   queryFromState, shareUrl, stateFromQuery, TOGGLES, VIEWS, SUMMARY_SOURCES, MARKED_SOURCES, summaryMarks,
-  UNINDEXED_KINDS, notIndexedByPattern,
+  UNINDEXED_KINDS, notIndexedByPattern, PRIMITIVES, primitiveLayers,
 } from "../site/catalog-core.mjs";
 import { readFileSync } from "node:fs";
 
@@ -34,6 +34,20 @@ test("a summary in the project's own words is marked, and Chinese says when a mo
   assert.deepEqual(summaryMarks(row("bare"), "zh"), []);
   assert.deepEqual(summaryMarks(row("odd", {summary_source: "toString", zh_machine: "yes"}), "zh"), []);
   assert.deepEqual(MARKED_SOURCES, SUMMARY_SOURCES.slice(1));
+});
+
+test("a text signal about a primitive never becomes a person's reading of it", () => {
+  const schema = JSON.parse(readFileSync(new URL("../schema/entry.schema.json", import.meta.url)));
+  assert.deepEqual(PRIMITIVES, schema.properties.question_types.items.enum);
+  assert.deepEqual(PRIMITIVES, schema.properties.primitives_seen.items.enum);
+  const both = row("both", {question_types: ["noul", "choice"], primitives_seen: ["score", "noul"]});
+  assert.deepEqual(primitiveLayers(both), {read: ["choice", "noul"], signalOnly: ["score"]});
+  assert.deepEqual(primitiveLayers(row("seen", {primitives_seen: ["noul"]})), {read: [], signalOnly: ["noul"]});
+  assert.deepEqual(primitiveLayers(row("none")), {read: [], signalOnly: []});
+  // Searching for a primitive finds a reading, not a text match.
+  const state = {q: "noul"};
+  assert.equal(matchesEntry(row("seen", {primitives_seen: ["noul"]}), state), false);
+  assert.equal(matchesEntry(row("read", {question_types: ["noul"]}), state), true);
 });
 
 test("an overview project or plugin with code is not yet indexed by pattern until someone reads it", () => {

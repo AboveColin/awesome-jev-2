@@ -50,6 +50,20 @@ export function notIndexedByPattern(entry) {
     && Boolean(entry.has_code) && UNINDEXED_KINDS.includes(entry.kind) && !entry.patterns_reviewed;
 }
 
+// The Jev primitives in the schema's order, and the two records of which ones a
+// row uses, never merged. question_types is a person's reading of the code
+// calling them. primitives_seen is a script's text signal: the one file the
+// row's evidence cites contains their request or answer shape, which is not a
+// call. signalOnly is what the signal adds to the reading. scripts/_stats.py
+// signal_only() is the same rule for the generated pages and the figures.
+export const PRIMITIVES = ["choice", "score", "noul"];
+
+export function primitiveLayers(entry) {
+  const read = PRIMITIVES.filter(p => (entry.question_types || []).includes(p));
+  const signalOnly = PRIMITIVES.filter(p => (entry.primitives_seen || []).includes(p) && !read.includes(p));
+  return { read, signalOnly };
+}
+
 export function evidenceUrl(entry) {
   if (!entry.evidence?.path) return null;
   for (const candidate of [entry.repo, entry.url]) {
@@ -104,6 +118,8 @@ export function matchesEntry(entry, state, collectionSlugs = null, labels = "") 
   if (state.off && !entry.official) return false;
   if (state.noflag && (entry.flags || []).length) return false;
   if (state.indep && !isIndependentReport(entry)) return false;
+  // question_types and not primitives_seen: a search for a primitive finds the
+  // rows a person read calling it, never rows a text match alone suggests.
   const hay = [entry.title, entry.summary, entry.summary_zh, entry.notes, entry.notes_zh,
     entry.slug, ...(entry.platforms || []), ...(entry.languages || []), ...entry.patterns,
     ...(entry.question_types || []), entry.author?.name, entry.repo_license, entry.url, labels]

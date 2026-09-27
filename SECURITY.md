@@ -49,8 +49,9 @@ are worth copying; at least one gate deliberately fails closed.
 The GitHub Actions workflows in this repository interpolate no
 `github.event.*` value into any shell, and hold read-only `contents`
 permission except in two places: the weekly `metadata` refresh, which commits
-machine-checkable facts (link status, stars, licences, archive status, and
-whether each summary is its repository's own description) to
+machine-checkable facts (link status, stars, licences, archive status,
+whether each summary is its repository's own description, and which
+primitives' request shapes each cited file's text contains) to
 `catalog.json` and the files generated from them, and the discovery verdicts
 in `.discover/seen.json` (`discover` reads strangers' repositories, so it holds
 no write permission and leaves them as an artifact; each entry is checked

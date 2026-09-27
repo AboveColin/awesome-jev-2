@@ -67,6 +67,13 @@ UNINDEXED_KINDS = ("project", "plugin")
 # text, which is why docs/sources.md counts them apart from the rest.
 SUMMARY_SOURCES = ("curated", "upstream-description", "upstream-description-stale")
 
+# The Jev primitives, in the schema's order. Two layers of evidence about them,
+# never merged: `question_types` is a person's reading of the code calling a
+# primitive; `primitives_seen` is a script's text signal that the one file a
+# row's evidence cites contains the primitive's request or answer shape
+# (scripts/verify_claims.py). A count of primitive claims reads the first only.
+PRIMITIVES = ("choice", "score", "noul")
+
 
 def load() -> tuple[list[dict], list[dict], list[dict], dict, dict]:
     catalog = json.loads((ROOT / "catalog.json").read_text())
@@ -101,6 +108,27 @@ def single_model_name(entry: dict) -> bool:
     """Machine signal: the citation rests on one model name or the API host."""
     matched = (entry.get("evidence") or {}).get("matched") or []
     return len(matched) == 1 and matched[0] in MODEL_NAMES_AND_HOST
+
+
+def signal_only(entry: dict) -> list[str]:
+    """The primitives the cited file's text shows (primitives_seen) that no
+    person recorded reading (question_types), in PRIMITIVES order."""
+    read = set(entry.get("question_types") or [])
+    seen = set(entry.get("primitives_seen") or [])
+    return [name for name in PRIMITIVES if name in seen and name not in read]
+
+
+def primitive_layers(catalog: list[dict]) -> dict[str, dict[str, int]]:
+    """Per primitive: rows a person read calling it, and rows where only the
+    text signal shows it. The two never overlap, so they may be shown side by
+    side; neither is a count of the other."""
+    return {
+        name: {
+            "read": sum(1 for e in catalog if name in (e.get("question_types") or [])),
+            "signal_only": sum(1 for e in catalog if name in signal_only(e)),
+        }
+        for name in PRIMITIVES
+    }
 
 
 def not_indexed_by_pattern(entry: dict) -> bool:
@@ -184,6 +212,14 @@ def compute() -> dict:
         "primitive_rows_cited": sum(
             1 for e in catalog if e.get("question_types") and e.get("evidence")
         ),
+        # A script's text signal, counted apart and never added to the above:
+        # rows whose cited file contains a primitive's request or answer
+        # shape, and of those, rows where no person recorded any primitive.
+        "primitive_signal_rows": sum(1 for e in catalog if e.get("primitives_seen")),
+        "primitive_signal_only_rows": sum(
+            1 for e in catalog if e.get("primitives_seen") and not e.get("question_types")
+        ),
+        "primitive_layers": primitive_layers(catalog),
         "no_licence": sum(1 for e in catalog if e.get("repo_license") == "unknown"),
         # summary_source: the project's own description word for word; taken
         # from it and no longer matching; written for this catalogue; not

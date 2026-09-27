@@ -173,6 +173,10 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -254,6 +258,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -314,7 +323,10 @@
         "typesafe_systemone",
         "jev-latest"
       ]
-    }
+    },
+    "primitives_seen": [
+      "noul"
+    ]
   },
   {
     "slug": "agent",
@@ -346,6 +358,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -391,6 +406,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -448,7 +468,11 @@
         "jev-latest"
       ],
       "read_on": "2026-09-24"
-    }
+    },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ]
   },
   {
     "slug": "agent-fastpath",
@@ -483,6 +507,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -529,6 +556,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -578,6 +608,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -724,6 +757,10 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -773,7 +810,10 @@
         "score"
       ],
       "read_on": "2026-09-22"
-    }
+    },
+    "primitives_seen": [
+      "score"
+    ]
   },
   {
     "slug": "agi-jev-containment",
@@ -808,6 +848,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -888,6 +932,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -950,7 +998,12 @@
         "Noul"
       ],
       "read_on": "2026-09-22"
-    }
+    },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ]
   },
   {
     "slug": "ai-elo-ranker",
@@ -983,6 +1036,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -1167,6 +1223,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -1246,6 +1305,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -1369,6 +1433,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -1414,6 +1481,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -1462,6 +1534,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -1536,6 +1611,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -1590,6 +1670,10 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -1628,6 +1712,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -1676,6 +1765,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -1730,6 +1824,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "rust"
@@ -1873,6 +1970,11 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -1913,6 +2015,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -1970,6 +2075,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "zh_machine": true,
     "languages": [
       "javascript"
@@ -2244,6 +2352,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -2569,6 +2681,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -2641,6 +2756,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -2687,6 +2805,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -2918,6 +3040,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "score"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -2956,6 +3081,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -3243,7 +3372,10 @@
         "Noul"
       ],
       "read_on": "2026-09-22"
-    }
+    },
+    "primitives_seen": [
+      "noul"
+    ]
   },
   {
     "slug": "captaincore",
@@ -3276,6 +3408,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -3321,6 +3458,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -3416,6 +3558,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -3509,6 +3654,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -3563,6 +3711,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "zh_machine": true,
     "languages": [
       "c"
@@ -3602,6 +3753,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -3656,6 +3810,10 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -3697,6 +3855,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -3742,6 +3903,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -3851,7 +4017,12 @@
         "choice"
       ],
       "read_on": "2026-09-22"
-    }
+    },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ]
   },
   {
     "slug": "claude-jev",
@@ -3885,6 +4056,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -3939,6 +4115,11 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -3977,6 +4158,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -4031,6 +4217,10 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -4070,6 +4260,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -4161,6 +4355,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -4256,6 +4453,10 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "notes": "Instruction-driven Codex subagent routing; no tool-boundary enforcement or measured savings are claimed. Hosted Jev needs a key and receives the sanitized task summary. Its author disclosed that it was built with Codex assistance and that a Codex agent prepared this submission; the flag records that disclosure, not a defect.",
     "author": {
       "name": "suenot",
@@ -4390,6 +4591,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -4482,6 +4686,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -4536,6 +4745,10 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -5239,6 +5452,11 @@
       "kind": "wire-shape",
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "c"
@@ -5341,7 +5559,10 @@
         "Choice"
       ],
       "read_on": "2026-09-22"
-    }
+    },
+    "primitives_seen": [
+      "choice"
+    ]
   },
   {
     "slug": "cultivar",
@@ -5374,6 +5595,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -5419,6 +5644,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -5591,6 +5821,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -5645,6 +5880,11 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -5723,6 +5963,11 @@
       "kind": "wire-shape",
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -5773,6 +6018,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -5826,6 +6076,11 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -5871,6 +6126,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -5910,6 +6168,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -6067,7 +6328,12 @@
         "Noul"
       ],
       "read_on": "2026-09-22"
-    }
+    },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ]
   },
   {
     "slug": "deepseek-harness-jev-pre-compaction",
@@ -6100,6 +6366,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -6155,6 +6424,9 @@
       "kind": "wire-shape",
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -6254,6 +6526,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -6482,6 +6757,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -6527,6 +6805,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -6571,6 +6854,11 @@
       "kind": "wire-shape",
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -6620,6 +6908,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -6668,6 +6960,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -6714,6 +7010,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -6810,6 +7110,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -6950,6 +7253,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -7005,6 +7311,10 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -7045,6 +7355,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -7141,6 +7454,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -7321,6 +7639,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -7470,7 +7793,12 @@
         "choice"
       ],
       "read_on": "2026-09-22"
-    }
+    },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ]
   },
   {
     "slug": "ego-jev",
@@ -7547,6 +7875,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -7600,6 +7931,11 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "javascript"
@@ -7683,6 +8019,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -7820,6 +8159,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -7865,6 +8207,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -7909,6 +8254,11 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -7967,7 +8317,10 @@
         "Choice"
       ],
       "read_on": "2026-09-22"
-    }
+    },
+    "primitives_seen": [
+      "choice"
+    ]
   },
   {
     "slug": "example-fan-out",
@@ -8015,7 +8368,11 @@
         "Noul"
       ],
       "read_on": "2026-09-22"
-    }
+    },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ]
   },
   {
     "slug": "example-three-primitives",
@@ -8064,7 +8421,12 @@
         "Noul"
       ],
       "read_on": "2026-09-22"
-    }
+    },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ]
   },
   {
     "slug": "example-tool-selection",
@@ -8111,7 +8473,11 @@
         "Noul"
       ],
       "read_on": "2026-09-22"
-    }
+    },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ]
   },
   {
     "slug": "extremely-specific-council",
@@ -8144,6 +8510,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -8190,6 +8561,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -8244,6 +8618,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -8299,7 +8676,10 @@
         "/v1/systemone"
       ],
       "read_on": "2026-09-22"
-    }
+    },
+    "primitives_seen": [
+      "noul"
+    ]
   },
   {
     "slug": "fastbrowse",
@@ -8445,7 +8825,11 @@
         "Noul"
       ],
       "read_on": "2026-09-22"
-    }
+    },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ]
   },
   {
     "slug": "financialpredictionjev",
@@ -8478,6 +8862,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -8570,6 +8957,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -8695,6 +9087,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -9153,6 +9548,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -9198,6 +9596,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -9297,6 +9698,11 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -9344,6 +9750,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -9385,6 +9794,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -9430,6 +9843,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -9525,6 +9941,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -9573,6 +9994,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -9647,6 +10071,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -9703,7 +10130,10 @@
         "noul"
       ],
       "read_on": "2026-09-22"
-    }
+    },
+    "primitives_seen": [
+      "noul"
+    ]
   },
   {
     "slug": "hermes-jev",
@@ -9791,6 +10221,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -9829,6 +10262,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -9874,6 +10312,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -9935,7 +10376,12 @@
         "choice"
       ],
       "read_on": "2026-09-22"
-    }
+    },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ]
   },
   {
     "slug": "himalaya-jev-mail-classify",
@@ -9977,6 +10423,10 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -10014,6 +10464,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -10059,6 +10512,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -10130,6 +10588,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -10184,6 +10645,11 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -10222,6 +10688,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -10267,6 +10736,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -10368,6 +10842,11 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -10455,6 +10934,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -10517,7 +11000,12 @@
         "choice"
       ],
       "read_on": "2026-09-22"
-    }
+    },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ]
   },
   {
     "slug": "inbox-zero-jev",
@@ -10565,7 +11053,10 @@
         "choice"
       ],
       "read_on": "2026-09-22"
-    }
+    },
+    "primitives_seen": [
+      "noul"
+    ]
   },
   {
     "slug": "instruct-jev",
@@ -10596,6 +11087,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -10641,6 +11137,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -10686,6 +11185,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -10740,6 +11242,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "zh_machine": true,
     "languages": [
       "javascript"
@@ -10780,6 +11285,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -10826,6 +11336,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -10918,6 +11431,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -11015,6 +11531,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -11073,7 +11593,11 @@
         "choice"
       ],
       "read_on": "2026-09-22"
-    }
+    },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ]
   },
   {
     "slug": "jcr",
@@ -11151,6 +11675,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -11293,6 +11820,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -11430,6 +11960,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -11528,6 +12063,10 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -11669,6 +12208,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -11708,6 +12250,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -11761,6 +12307,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -11802,6 +12351,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -11848,6 +12400,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -11983,6 +12538,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -12164,6 +12724,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -12211,6 +12774,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -12263,6 +12829,11 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "languages": [
       "javascript"
     ],
@@ -12403,6 +12974,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -12532,6 +13106,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -12576,6 +13155,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -12621,6 +13205,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -12669,6 +13256,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -12712,6 +13302,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -12761,6 +13354,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -12816,6 +13412,10 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "javascript"
@@ -12863,6 +13463,10 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -12956,6 +13560,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -12995,6 +13602,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -13040,6 +13650,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -13094,6 +13707,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -13234,6 +13850,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -13274,6 +13893,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -13326,6 +13948,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -13421,6 +14046,10 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "javascript"
@@ -13467,6 +14096,10 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "javascript"
@@ -13600,6 +14233,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -13651,6 +14287,11 @@
       "kind": "wire-shape",
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -13751,6 +14392,10 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -13790,6 +14435,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -13889,6 +14537,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "javascript"
@@ -13935,6 +14586,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -14019,6 +14673,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -14122,6 +14779,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "javascript"
@@ -14161,6 +14821,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -14409,6 +15074,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -14463,6 +15133,11 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -14501,6 +15176,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -14590,6 +15270,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -14769,6 +15452,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -14862,6 +15549,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -14906,6 +15597,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -14950,6 +15646,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -14995,6 +15695,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -15142,6 +15847,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -15195,6 +15903,11 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -15242,6 +15955,11 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "rust"
@@ -15427,6 +16145,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -15522,6 +16243,11 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -15607,6 +16333,10 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -15705,6 +16435,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -15851,6 +16584,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -15990,6 +16726,10 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -16084,6 +16824,11 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -16136,7 +16881,11 @@
         "choice"
       ],
       "read_on": "2026-09-22"
-    }
+    },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ]
   },
   {
     "slug": "jev-cua",
@@ -16179,6 +16928,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "zh_machine": true,
     "languages": [
       "swift"
@@ -16267,6 +17019,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -16369,6 +17124,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -16643,6 +17401,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -16699,6 +17462,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "languages": [
       "javascript"
     ],
@@ -16778,6 +17544,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "score"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -16870,6 +17639,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -17007,6 +17781,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -17073,7 +17850,12 @@
         "Noul"
       ],
       "read_on": "2026-09-22"
-    }
+    },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ]
   },
   {
     "slug": "jev-dsh-decision",
@@ -17106,6 +17888,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -17200,6 +17985,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -17425,6 +18215,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -17472,6 +18267,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -17529,6 +18327,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -17667,6 +18468,11 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -17755,6 +18561,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -17803,6 +18612,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -17857,6 +18671,11 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -18076,6 +18895,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -18218,6 +19042,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -18266,6 +19093,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -18314,6 +19144,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -18362,6 +19196,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -18412,6 +19249,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -18504,6 +19345,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -18557,6 +19401,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "zh_machine": true,
     "languages": [
       "javascript"
@@ -18594,6 +19441,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -18698,6 +19550,11 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "go"
@@ -18784,6 +19641,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -18827,6 +19688,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -18874,6 +19739,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -18927,6 +19795,11 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "go"
@@ -19109,6 +19982,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -19164,6 +20040,11 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -19258,6 +20139,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -19400,6 +20284,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -19447,6 +20334,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -19486,6 +20376,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -19578,6 +20471,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -19669,6 +20565,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -19807,6 +20706,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -19899,6 +20801,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -20001,6 +20906,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -20151,6 +21059,11 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -20189,6 +21102,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -20235,6 +21151,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -20326,6 +21245,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -20427,6 +21349,10 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "javascript"
@@ -20511,6 +21437,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -20556,6 +21485,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -20601,6 +21534,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -20646,6 +21583,9 @@
       "kind": "wire-shape",
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -20707,6 +21647,11 @@
       "kind": "wire-shape",
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -20852,6 +21797,10 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "javascript"
@@ -20945,6 +21894,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -21081,6 +22033,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "javascript"
@@ -21175,6 +22130,11 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -21213,6 +22173,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -21366,6 +22330,11 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -21413,6 +22382,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -21505,6 +22477,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "java"
@@ -21588,6 +22563,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -21733,6 +22711,10 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -21816,6 +22798,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -21868,6 +22855,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "zh_machine": true,
     "languages": [
       "javascript"
@@ -21918,6 +22908,11 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -21965,6 +22960,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -22004,6 +23002,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -22069,7 +23070,11 @@
         "Noul"
       ],
       "read_on": "2026-09-22"
-    }
+    },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ]
   },
   {
     "slug": "jev-nlgrep",
@@ -22102,6 +23107,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -22156,6 +23164,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -22245,6 +23256,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -22299,6 +23315,11 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -22346,6 +23367,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -22386,6 +23410,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -22433,6 +23461,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -22488,6 +23521,10 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "javascript"
@@ -22569,6 +23606,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -22667,6 +23709,11 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -22706,6 +23753,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -22799,6 +23850,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -22892,6 +23948,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -22982,6 +24041,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -23133,6 +24197,11 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -23182,6 +24251,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -23220,6 +24292,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -23274,6 +24350,10 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -23312,6 +24392,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -23363,6 +24446,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -23459,6 +24545,11 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -23505,6 +24596,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -23543,6 +24637,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -23681,6 +24780,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -23743,7 +24847,12 @@
         "choice"
       ],
       "read_on": "2026-09-22"
-    }
+    },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ]
   },
   {
     "slug": "jev-quantum",
@@ -23872,6 +24981,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -24012,6 +25125,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -24146,6 +25263,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -24278,6 +25398,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -24378,6 +25503,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -24425,6 +25553,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -24605,6 +25736,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -24742,6 +25876,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -24803,7 +25941,10 @@
         "choice"
       ],
       "read_on": "2026-09-22"
-    }
+    },
+    "primitives_seen": [
+      "noul"
+    ]
   },
   {
     "slug": "jev-review-thiago-ss",
@@ -24846,6 +25987,10 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -24888,6 +26033,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -24942,6 +26091,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "score"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -24987,6 +26139,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -25025,6 +26180,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -25070,6 +26229,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -25207,6 +26369,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -25306,6 +26473,11 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "rust"
@@ -25344,6 +26516,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -25397,6 +26572,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "zh_machine": true,
     "languages": [
       "rust"
@@ -25435,6 +26613,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -25480,6 +26663,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "score"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -25526,6 +26712,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -25581,6 +26772,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -25619,6 +26813,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -25664,6 +26861,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -25770,7 +26970,12 @@
         "choice"
       ],
       "read_on": "2026-09-22"
-    }
+    },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ]
   },
   {
     "slug": "jev-secret-detection",
@@ -25804,6 +27009,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -25862,6 +27070,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -25945,6 +27156,11 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -25999,6 +27215,11 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -26037,6 +27258,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -26128,6 +27352,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -26174,6 +27401,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -26221,6 +27453,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -26267,6 +27504,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -26412,6 +27652,10 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "javascript"
@@ -26450,6 +27694,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -26511,7 +27758,10 @@
         "choice"
       ],
       "read_on": "2026-09-22"
-    }
+    },
+    "primitives_seen": [
+      "choice"
+    ]
   },
   {
     "slug": "jev-skillful",
@@ -26544,6 +27794,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -26597,6 +27851,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -26691,6 +27948,11 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -26729,6 +27991,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -26830,6 +28095,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -26919,6 +28187,9 @@
       ],
       "read_on": "2026-09-23"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -26973,6 +28244,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -27018,6 +28292,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -27063,6 +28340,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -27164,6 +28446,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -27252,6 +28537,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -27480,6 +28768,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -27570,6 +28861,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -27615,6 +28910,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -27714,6 +29014,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -27760,6 +29063,11 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -27902,6 +29210,11 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -27952,6 +29265,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "javascript"
@@ -27990,6 +29306,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -28043,6 +29362,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "languages": [
       "javascript"
     ],
@@ -28172,6 +29494,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -28218,6 +29543,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -28272,6 +29600,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -28399,6 +29730,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -28453,6 +29787,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -28592,6 +29929,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -28676,6 +30016,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -28744,7 +30089,10 @@
         "choice"
       ],
       "read_on": "2026-09-22"
-    }
+    },
+    "primitives_seen": [
+      "choice"
+    ]
   },
   {
     "slug": "jev-ultrafast-mcp",
@@ -28929,6 +30277,10 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "swift"
@@ -28969,6 +30321,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -29022,6 +30377,11 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "javascript"
@@ -29151,6 +30511,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -29341,6 +30704,11 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "javascript"
@@ -29467,6 +30835,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -29520,6 +30891,11 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -29568,6 +30944,11 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -29614,6 +30995,10 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score"
+    ],
     "languages": [
       "python"
     ],
@@ -29651,6 +31036,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -29708,6 +31097,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -29746,6 +31138,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -29802,6 +31197,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -29884,6 +31282,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -30261,6 +31664,11 @@
       "kind": "wire-shape",
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -30357,6 +31765,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -30404,6 +31815,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -30543,6 +31957,11 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -30679,6 +32098,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -30760,6 +32182,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -30815,6 +32242,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -30858,6 +32288,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -30956,6 +32390,10 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "languages": [
       "typescript"
     ],
@@ -31052,6 +32490,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -31090,6 +32531,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -31135,6 +32579,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -31180,6 +32627,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -31419,6 +32869,11 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -31460,6 +32915,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -31653,6 +33113,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "go"
@@ -31692,6 +33155,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -31735,6 +33202,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -31779,6 +33249,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -31833,6 +33306,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -31871,6 +33347,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -31916,6 +33395,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -32105,6 +33587,9 @@
       "kind": "wire-shape",
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -32156,6 +33641,11 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "languages": [
       "java"
     ],
@@ -32425,6 +33915,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -32469,6 +33962,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -32649,6 +34145,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -32748,6 +34247,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -32798,6 +34300,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -32844,6 +34349,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "score"
+    ],
     "zh_machine": true,
     "languages": [
       "javascript"
@@ -32936,6 +34444,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -32972,6 +34483,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -33029,6 +34544,11 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -33075,6 +34595,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -33158,6 +34681,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -33207,6 +34733,9 @@
       ],
       "read_on": "2026-09-23"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-23",
     "flags": [
       "self-submitted"
@@ -33260,6 +34789,11 @@
       "kind": "wire-shape",
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -33350,6 +34884,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -33398,6 +34937,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -33453,6 +34995,10 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -33500,6 +35046,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -33675,6 +35224,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -33718,6 +35272,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -33762,6 +35319,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -33807,6 +35367,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -33911,6 +35476,10 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -33958,6 +35527,10 @@
       ],
       "read_on": "2026-09-23"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "first_seen": "2026-09-23",
     "flags": [
       "unverified-claims",
@@ -34006,6 +35579,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -34063,6 +35639,10 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -34148,6 +35728,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -34375,6 +35960,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -34433,6 +36023,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -34614,6 +36207,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -34796,6 +36392,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -34895,6 +36496,10 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -35047,6 +36652,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -35174,6 +36782,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -35268,6 +36880,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -35408,6 +37023,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -35472,7 +37092,12 @@
         "choice"
       ],
       "read_on": "2026-09-22"
-    }
+    },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ]
   },
   {
     "slug": "kiln-jev-adapter",
@@ -35549,6 +37174,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "score"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -35594,6 +37222,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -35639,6 +37272,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -35743,7 +37379,10 @@
         "score"
       ],
       "read_on": "2026-09-22"
-    }
+    },
+    "primitives_seen": [
+      "noul"
+    ]
   },
   {
     "slug": "lanebreak",
@@ -35776,6 +37415,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -35824,6 +37468,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -35917,6 +37566,10 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -36018,7 +37671,10 @@
         "Noul"
       ],
       "read_on": "2026-09-22"
-    }
+    },
+    "primitives_seen": [
+      "noul"
+    ]
   },
   {
     "slug": "langfuse-typesafe-observability",
@@ -36165,6 +37821,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -36209,6 +37868,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -36314,6 +37978,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -36352,6 +38019,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -36543,6 +38213,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -36723,6 +38396,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -36777,6 +38453,11 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -36869,6 +38550,11 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -36908,6 +38594,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -37029,6 +38718,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -37154,6 +38846,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -37211,6 +38908,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -37257,6 +38957,11 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -37432,6 +39137,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -37621,6 +39329,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -37666,6 +39378,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -37720,6 +39436,10 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -37768,6 +39488,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -37814,6 +39537,10 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -37855,6 +39582,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -37900,6 +39631,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -37947,6 +39683,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -38068,6 +39807,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -38159,6 +39901,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -38257,6 +40003,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -38295,6 +40044,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -38487,6 +40240,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -38527,6 +40283,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -38766,7 +40525,11 @@
         "evaluate({ model: 'typesafe-ai/jev'"
       ],
       "kind": "wire-shape"
-    }
+    },
+    "primitives_seen": [
+      "choice",
+      "score"
+    ]
   },
   {
     "slug": "nearhere-three-way-comparison",
@@ -38841,7 +40604,11 @@
         "Noul"
       ],
       "read_on": "2026-09-22"
-    }
+    },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ]
   },
   {
     "slug": "netlify-ai-gateway-jev",
@@ -38955,6 +40722,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -39142,6 +40912,10 @@
       "kind": "wire-shape",
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "javascript"
@@ -39277,6 +41051,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -39331,6 +41109,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -39372,6 +41153,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -39419,6 +41203,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -39515,6 +41304,9 @@
       "kind": "wire-shape",
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -39582,7 +41374,10 @@
         "choice"
       ],
       "read_on": "2026-09-22"
-    }
+    },
+    "primitives_seen": [
+      "noul"
+    ]
   },
   {
     "slug": "open-jev",
@@ -39725,6 +41520,11 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "javascript"
@@ -39771,6 +41571,9 @@
       "kind": "wire-shape",
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -40056,7 +41859,12 @@
       ],
       "kind": "wire-shape",
       "read_on": "2026-09-22"
-    }
+    },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ]
   },
   {
     "slug": "openjev",
@@ -40144,6 +41952,11 @@
       "kind": "wire-shape",
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -40295,6 +42108,11 @@
       "kind": "wire-shape",
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -40348,6 +42166,9 @@
       "kind": "wire-shape",
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "zh_machine": true,
     "flags": [
       "not-jev"
@@ -40436,6 +42257,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -40516,6 +42342,11 @@
       "kind": "wire-shape",
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -40613,7 +42444,10 @@
         "Noul"
       ],
       "read_on": "2026-09-22"
-    }
+    },
+    "primitives_seen": [
+      "noul"
+    ]
   },
   {
     "slug": "openwhisper",
@@ -40645,6 +42479,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -40780,6 +42618,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -40870,6 +42711,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -40921,6 +42766,10 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -41001,6 +42850,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "score"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -41204,7 +43056,12 @@
         "jev-1.13"
       ],
       "read_on": "2026-09-22"
-    }
+    },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ]
   },
   {
     "slug": "pg-typesafe",
@@ -41235,6 +43092,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -41280,6 +43142,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -41370,6 +43235,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -41462,6 +43332,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -41506,6 +43380,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -41605,6 +43484,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -41697,6 +43579,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -41749,6 +43634,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -41787,6 +43675,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -41886,6 +43778,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -41934,6 +43829,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -41980,6 +43878,10 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -42017,6 +43919,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -42061,6 +43966,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -42115,6 +44023,11 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -42162,6 +44075,11 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -42200,6 +44118,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "score"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -42254,6 +44175,11 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -42292,6 +44218,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -42337,6 +44267,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -42384,6 +44317,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -42484,6 +44422,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -42525,6 +44466,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -42580,6 +44524,10 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -42666,6 +44614,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -42757,6 +44708,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -42800,6 +44754,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -42844,6 +44801,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -42958,7 +44918,11 @@
         "Noul"
       ],
       "read_on": "2026-09-22"
-    }
+    },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ]
   },
   {
     "slug": "profanity-checker",
@@ -42989,6 +44953,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -43035,6 +45002,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -43080,6 +45050,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -43125,6 +45100,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -43173,6 +45151,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -43224,6 +45205,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -43267,6 +45251,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -43315,6 +45304,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -43396,6 +45388,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -43444,6 +45439,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -43532,6 +45532,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -43637,6 +45641,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "rust"
@@ -43693,7 +45700,10 @@
         "Noul"
       ],
       "read_on": "2026-09-22"
-    }
+    },
+    "primitives_seen": [
+      "noul"
+    ]
   },
   {
     "slug": "refgarden",
@@ -43727,6 +45737,9 @@
       "kind": "wire-shape",
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -43897,6 +45910,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -43955,6 +45971,11 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -43993,6 +46014,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -44038,6 +46064,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -44130,6 +46159,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -44178,6 +46210,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -44223,6 +46259,11 @@
       "kind": "wire-shape",
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -44447,6 +46488,11 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -44622,6 +46668,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -44720,6 +46769,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -44904,6 +46956,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -44995,6 +47050,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -45041,6 +47099,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -45134,6 +47195,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -45242,7 +47307,10 @@
         "choice"
       ],
       "read_on": "2026-09-22"
-    }
+    },
+    "primitives_seen": [
+      "noul"
+    ]
   },
   {
     "slug": "semif",
@@ -45310,6 +47378,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -45354,6 +47426,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -45411,6 +47487,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -45498,6 +47577,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -45543,6 +47627,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -45588,6 +47675,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -45642,6 +47732,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -45690,7 +47783,10 @@
         "{\"type\": \"noul\", \"noul\": value}"
       ],
       "kind": "wire-shape"
-    }
+    },
+    "primitives_seen": [
+      "noul"
+    ]
   },
   {
     "slug": "skill-router",
@@ -45723,6 +47819,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -45811,6 +47910,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -45864,6 +47966,10 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -45906,6 +48012,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -45952,6 +48062,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -46042,6 +48155,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -46089,6 +48205,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -46132,6 +48253,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -46226,6 +48351,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -46279,6 +48407,10 @@
       "kind": "wire-shape",
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "rust"
@@ -46376,6 +48508,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -46473,6 +48608,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -46518,6 +48656,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -46624,6 +48767,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "c"
@@ -46674,6 +48820,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "c"
@@ -46804,6 +48953,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -46856,6 +49009,11 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -46992,6 +49150,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -47081,6 +49242,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -47275,6 +49441,11 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -47410,6 +49581,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -47497,6 +49671,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -47541,6 +49720,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -47645,6 +49827,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -47866,6 +50051,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -47920,6 +50110,10 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "javascript"
@@ -47959,6 +50153,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -48004,6 +50201,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -48050,6 +50250,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -48258,6 +50461,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -48310,6 +50517,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -48357,6 +50567,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -48399,6 +50612,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -48539,6 +50755,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -48584,6 +50803,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -48631,6 +50854,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -48686,6 +50912,11 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -48727,6 +50958,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -48780,6 +51014,11 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -48818,6 +51057,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -48954,6 +51196,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -49098,6 +51345,10 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "languages": [
       "javascript"
     ],
@@ -49182,6 +51433,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -49317,6 +51571,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -49437,6 +51694,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -49483,6 +51744,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -49539,6 +51804,11 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "go"
@@ -49633,6 +51903,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "java"
@@ -49674,6 +51947,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -49719,6 +51997,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -50030,6 +52311,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -50075,6 +52361,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -50123,6 +52412,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -50217,6 +52509,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -50262,6 +52557,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -50307,6 +52607,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -50395,6 +52698,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -50600,6 +52907,11 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "go"
@@ -50698,6 +53010,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "go"
@@ -50737,6 +53052,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -50859,6 +53177,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -50913,6 +53236,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -50954,6 +53280,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -51101,6 +53431,10 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -51147,6 +53481,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -51287,7 +53624,10 @@
         "Noul"
       ],
       "read_on": "2026-09-22"
-    }
+    },
+    "primitives_seen": [
+      "noul"
+    ]
   },
   {
     "slug": "typesafe-mattneel",
@@ -51329,6 +53669,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "elixir"
@@ -51474,6 +53817,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "zh_machine": true,
     "languages": [
       "javascript"
@@ -51515,6 +53861,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -51769,6 +54119,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -51824,6 +54179,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -51938,6 +54296,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -52168,6 +54531,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -52443,6 +54809,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -52509,7 +54878,12 @@
         "choice"
       ],
       "read_on": "2026-09-22"
-    }
+    },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ]
   },
   {
     "slug": "typesafe-sdk-kotlin",
@@ -52702,7 +55076,11 @@
         "Noul"
       ],
       "read_on": "2026-09-22"
-    }
+    },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ]
   },
   {
     "slug": "typesafe-sdk-ruby",
@@ -52744,6 +55122,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "ruby"
@@ -52881,6 +55262,10 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "swift"
@@ -53060,6 +55445,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -53191,6 +55579,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -53269,6 +55660,11 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -53532,6 +55928,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -53576,6 +55975,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -53621,6 +56023,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -53775,6 +56181,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -53819,6 +56228,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -54007,6 +56419,9 @@
       "kind": "wire-shape",
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -54094,6 +56509,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -54148,6 +56566,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -54188,6 +56609,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -54289,6 +56713,11 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "languages": [
       "python"
     ],
@@ -54337,6 +56766,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "javascript"
@@ -54383,6 +56815,11 @@
       "kind": "wire-shape",
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -54491,6 +56928,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -54589,6 +57029,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "zh_machine": true,
     "languages": [
       "python"
@@ -54644,7 +57087,10 @@
         "choice"
       ],
       "read_on": "2026-09-22"
-    }
+    },
+    "primitives_seen": [
+      "choice"
+    ]
   },
   {
     "slug": "wrongstack",
@@ -54678,6 +57124,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -54813,6 +57264,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -54901,6 +57355,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {

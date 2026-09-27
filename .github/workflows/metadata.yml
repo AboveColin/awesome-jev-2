@@ -1,9 +1,10 @@
 # Weekly refresh of every machine-checkable fact in catalog.json: link status
-# (`checked`, `link_status`), and stars, licences, archive status and whether
+# (`checked`, `link_status`), stars, licences, archive status and whether
 # each summary is its repository's own description (`summary_source`) from the
-# GitHub API. Everything generated from those facts is rebuilt in the same run
-# and committed on the runner, and lint's checks (scripts/check.py) have to
-# pass on that commit before anything is pushed.
+# GitHub API, and which primitives' request or answer shapes each row's cited
+# file contains (`primitives_seen`). Everything generated from those facts is
+# rebuilt in the same run and committed on the runner, and lint's checks
+# (scripts/check.py) have to pass on that commit before anything is pushed.
 #
 # Link stamping used to be nobody's job. links.yml reports dead links but never
 # writes, so `checked` froze at the first sweep while the site went on saying
@@ -14,6 +15,8 @@
 # patterns and question_types are human judgements, and retiring a dead row
 # needs a human-written reason, so neither happens here. `summary_source`
 # records a text comparison, never who wrote a summary: `curated` is a person's.
+# `primitives_seen` records a text match in one file, never which primitives
+# the code calls: that is `question_types`, and only a person writes it.
 #
 # Delivery: commits straight to main, because every fact here is mechanical and
 # lint's checks have passed on the commit before it is pushed. It used to
@@ -109,6 +112,23 @@ jobs:
           python3 scripts/refresh_metadata.py --write --digest /tmp/digest.md > /tmp/refresh.log
           tail -3 /tmp/refresh.log
 
+      # The primitives whose request or answer shape each row's cited file
+      # contains, as primitives_seen: a text signal about that one file, not a
+      # person's reading and never question_types. Files come from the raw
+      # host, outside the API budget; the API is asked only about a file
+      # missing or changed at HEAD, and a rate limit leaves a row as it was.
+      # A crash costs this step, not the week's refresh: nothing is written
+      # before the last row is read, and lint's checks run on the commit.
+      - name: Record the primitive text signals in each cited file
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          code=0
+          python3 scripts/verify_claims.py --write-signals > /tmp/signals.log || code=$?
+          tail -n 1 /tmp/signals.log
+          exit "$code"
+
       # Every row's verdict, for when the summary's counts need explaining.
       - name: Keep the sweep and refresh logs
         if: always()
@@ -118,6 +138,7 @@ jobs:
           path: |
             /tmp/links.log
             /tmp/refresh.log
+            /tmp/signals.log
             /tmp/digest.md
           if-no-files-found: ignore
           retention-days: 30

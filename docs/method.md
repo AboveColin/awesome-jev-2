@@ -162,6 +162,35 @@ descriptions of `evidence` and `evidence_none` no longer tie them to
 `question_types`, and `_stats` counts rows with code citing nothing and giving
 no reason on any host (none that day), which `docs/status.md` publishes.
 
+Since 2026-09-27, the weekly refresh also records which primitives' request or
+answer shapes each cited file contains, as `primitives_seen`, and every surface
+keeps it apart from `question_types`. A person's reading named the primitives
+of 100 rows (72 of them citing a file), while the claims job fetched 1,129
+cited files every week and kept nothing but a substring test. The file of every
+claim that still holds is now searched for four written forms: the request's
+`type` field (`"type": "choice"` in JSON, a Python dict or a JS object,
+`type: 'noul'` in a TS type, `"type" => "score"` in Ruby, PHP or Elixir, also
+inside an escaped JSON string), the SDKs' `Choice(`, `Score(` and `Noul(`
+constructors (not `click.Choice(`), and `.noul`. The bare words, `.choice`,
+`.score`, `type="noul"` as a keyword argument (the test doubles that build fake
+answers) and Vercel's `boolean` do not count. The first run read all 1,129
+files from the raw host in under two minutes, asking the API 13 times: 655 rows
+got a signal (choice in 443, score in 219, noul in 486), 608 of them rows with
+no `question_types`, and 25 of them alternatives whose file speaks the shape
+without building on Jev. Against the 72 cited readings it agreed exactly on 29,
+showed fewer primitives on 9 and none on 25 (a wrapper that builds the request
+from variables writes no shape out), and more on 9: TypeScript unions declaring
+all three types, fixtures, and helpers for primitives the code never calls.
+That is why it is a signal about a file and not about what the code calls. The
+field is written only by `verify_claims.py --write-signals` in the metadata run
+(a read the rate limit stops leaves a row as it was; a file that no longer holds
+its claim loses the signal); lint allows it only beside `evidence`; and nothing
+that asks what a row claims reads it: lint's rules, the site's search, the MCP
+server's `question_type` filter and the published claim counts read
+`question_types` alone. The README's primitives figure, `docs/status.md`,
+`llms.txt` and the site show the two side by side under separate names, read by
+a person and text signal only, and never add them.
+
 ## Discovery is crowdsourced, verification is not
 
 There are dozens of Jev directories. Each is a different person's sweep of the

@@ -116,7 +116,7 @@
       "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
     },
     "question_types": {
-      "description": "Which Jev question primitives the example actually calls. The yes/no primitive is named `noul`, not `binary`. Omit when the entry contains no code.",
+      "description": "Which Jev question primitives the example actually calls. The yes/no primitive is named `noul`, not `binary`. Omit when the entry contains no code. A person's reading of the call site; primitives_seen is a script's text signal and never stands in for it.",
       "type": "array",
       "maxItems": 3,
       "uniqueItems": true,
@@ -274,6 +274,21 @@
           "type": "string",
           "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
         }
+      }
+    },
+    "primitives_seen": {
+      "description": "Machine text signal, not a person's reading: the Jev primitives whose request or answer shape (a `\"type\": \"choice\"` field, a `Noul(` constructor, a `.noul` read and the like) scripts/verify_claims.py found written in the one file evidence.path cites. It does not say the code calls them, and it is not question_types, which records the primitives a person read the code calling; nothing counts it as one. Written only by `verify_claims.py --write-signals` in the weekly metadata run: set from each read of that file that still holds the claim, removed when the file shows no shape or no longer holds the claim, left as it was when no read happened (a rate limit). Do not edit it by hand. Only on a row with evidence.",
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 3,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": [
+          "choice",
+          "score",
+          "noul"
+        ]
       }
     },
     "evidence_none": {

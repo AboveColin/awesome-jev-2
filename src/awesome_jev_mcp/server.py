@@ -166,7 +166,9 @@ def search_examples(
         pattern: a decision pattern key, e.g. "safety-gating"
         kind: resource form, e.g. "project", "official-docs", "benchmark"
         language: e.g. "python", "typescript", "rust"
-        question_type: restrict to examples calling this primitive
+        question_type: restrict to examples a person read calling this
+            primitive (question_types); a script's text signal
+            (primitives_seen) never matches
         platform: e.g. "cloudflare-workers-ai", "langchain", "typesafe-api"
         query: free text matched against title, summary, notes and platforms
         official_only: only material published by TypeSafe AI
@@ -273,6 +275,13 @@ def get_example(slug: str) -> dict[str, Any]:
     project's description, and `overview` is what those rules give when nothing
     matches, so a project or plugin with code filed only under `overview` and
     no `patterns_reviewed` is not yet indexed by pattern rather than a survey.
+
+    `question_types` lists the primitives a person read the code calling.
+    `primitives_seen` is something else: a weekly script's text signal that the
+    one file `evidence` cites contains those primitives' request or answer
+    shape (`"type": "choice"`, `Noul(`, `.noul`). A shape in a file is not a
+    call, nobody read it, and search_examples(question_type=...) never matches
+    on it.
 
     Args:
         slug: the row's stable id, as returned by search_examples

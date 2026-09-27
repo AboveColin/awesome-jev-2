@@ -61,6 +61,13 @@ EN = {
     "th_returns": "Returns",
     "th_limit": "Limits",
     "th_for": "Used for",
+    "prims_layers": (
+        "Under each primitive, two counts that are never added together: rows whose `question_types` "
+        "records a person reading the code call it, and rows where only a text signal shows it — the "
+        "weekly refresh found its request or answer shape in the one file the row cites "
+        "(`primitives_seen`), which does not show that the code calls it. "
+        "See [what is verified](#what-is-verified-and-what-is-not)."
+    ),
     "prims_after": (
         "Input is **text only** — string, JSON object, or array of text. Context is **64k** tokens "
         "per request, **32k** for the state plus the longest question. Output tokens are free. "
@@ -141,6 +148,14 @@ EN = {
         "authors'. {curated} summaries are marked as written for this catalogue, and {unlabelled} "
         "carry no record either way. The weekly refresh compares each summary with its repository's "
         "description and labels a match; only a person marks a summary as written here."
+    ),
+    "verified_primitives": (
+        "**Which primitives** — {read} rows name in `question_types` the primitives a person read the "
+        "code calling. Apart from those, {signal} rows carry `primitives_seen`, a machine text signal: "
+        "the weekly refresh found a primitive's request or answer shape (`\"type\": \"choice\"`, "
+        "`Noul(`, `.noul`) in the one file the row cites. A shape in a file is not a call, and "
+        "{signal_only} of those rows carry no `question_types`, so the signal is all that is recorded "
+        "about their primitives. No filter, count or rule here reads the signal as a primitive claim."
     ),
     "verified_no": (
         "**Runtime and performance not independently tested here** — treat every catalogue entry "
@@ -259,6 +274,11 @@ ZH = {
     "th_returns": "返回",
     "th_limit": "限制",
     "th_for": "用来",
+    "prims_layers": (
+        "每个原语下方有两个互不相加的数：先是 `question_types` 记录了有人读过代码、确认调用该原语的行数；"
+        "再是只有文本信号的行数 —— 每周刷新在该行所引的那一个文件中找到了它的请求或回答结构"
+        "（`primitives_seen`），这并不表明代码调用了它。见[哪些经过核实](#哪些经过核实哪些没有)。"
+    ),
     "prims_after": (
         "输入**仅支持文本** —— 字符串、JSON 对象、或文本数组。上下文每次请求 **64k** token，"
         "其中 state 加最长的那个问题占 **32k**。输出 token 免费。"
@@ -332,6 +352,13 @@ ZH = {
         "{unlabelled} 条未作记录。每周刷新会把每条英文摘要与其仓库描述比对并标出相同者；"
         "只有人才能把摘要标为本目录撰写。"
     ),
+    "verified_primitives": (
+        "**用了哪些原语** —— 有 {read} 行在 `question_types` 中记录了有人读代码时确认调用的原语。"
+        "另有 {signal} 行带 `primitives_seen`，这是机器文本信号：每周刷新在该行所引的那一个文件中"
+        "找到了某个原语的请求或回答结构（`\"type\": \"choice\"`、`Noul(`、`.noul`）。"
+        "文件里出现这种结构不等于调用；其中 {signal_only} 行没有 `question_types`，"
+        "这个信号就是关于它们所用原语的全部记录。本目录的筛选、计数和规则都不会把它当作原语声明。"
+    ),
     "verified_no": (
         "**本仓库未独立验证运行与性能** —— 所有目录条目默认都未经本仓库实测，没有 "
         "`code-untested` 标签也不代表已测试。被收录的基准是原作者的测量，本目录没有独立复现。"
@@ -403,7 +430,10 @@ ZH = {
 # `zh_machine` makes for a catalogue row, and rendered the same way, with
 # "(机翻)" after it. A person who rewrites one removes its key from here.
 ZH_MACHINE = frozenset(
-    {"stars_note", "verified_recheck", "verified_summaries", "license_summaries", "unindexed_readme", "unindexed_page"}
+    {
+        "stars_note", "verified_recheck", "verified_summaries", "license_summaries", "unindexed_readme",
+        "unindexed_page", "prims_layers", "verified_primitives",
+    }
 )
 
 # The non-catalog parts of the repo, so navigation is a table rather than a

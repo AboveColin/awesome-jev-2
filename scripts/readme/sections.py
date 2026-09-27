@@ -29,6 +29,7 @@ from .rows import (
     esc,
     group_by_pattern,
     label,
+    marked,
     page_name,
     site_link,
     source_marks,
@@ -258,6 +259,10 @@ def what_jev_returns(page: Page) -> list[str]:
     )
     add("</picture>")
     add("")
+    # Read by a person (question_types) and text signal only (primitives_seen),
+    # as the figure counts them.
+    add(marked(strings, "prims_layers"))
+    add("")
     add(strings["prims_after"])
     add("")
     return out
@@ -466,12 +471,20 @@ def what_is_verified(page: Page) -> list[str]:
     )
     if lang == "zh" and "verified_summaries" in ZH_MACHINE:
         summaries += " <sub>(机翻)</sub>"
+    # A person's reading and a script's text signal, counted apart.
+    primitives = marked(
+        strings,
+        "verified_primitives",
+        read=stats["primitive_rows"],
+        signal=stats["primitive_signal_rows"],
+        signal_only=stats["primitive_signal_only_rows"],
+    )
     out: list[str] = []
     add = out.append
 
     add(f"## {strings['verified_h']}")
     add("")
-    for text in [strings['verified_yes'].format(**stats), strings['verified_read'], summaries, recheck, strings['verified_no']]:
+    for text in [strings['verified_yes'].format(**stats), strings['verified_read'], summaries, recheck, primitives, strings['verified_no']]:
         add(f"- {text}")
         add("")
     add("")
