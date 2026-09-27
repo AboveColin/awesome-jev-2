@@ -19,8 +19,8 @@
 # not happen, one row went on claiming both an MIT licence and no licence at all.
 # Judgement calls still go to people: a dead link is links.yml's alarm, a moved
 # call site is claims.yml's issue, and anything here that is not a number moving
-# — a licence changing, a project archived, a repository gone — opens an issue
-# after it lands. If main moved underneath the run and the refresh no longer
+# — a licence changing, a project archived, a repository gone or blocked, rows
+# the API budget left unread — opens an issue after it lands. If main moved underneath the run and the refresh no longer
 # rebases cleanly, it falls back to a branch and an issue rather than forcing.
 #
 # A push made with GITHUB_TOKEN does not trigger other workflows, so the run
@@ -82,8 +82,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Not piped: the default shell has no pipefail, and a rate-limited run
-          # must fail this step rather than carry on as if it had refreshed.
+          # GraphQL in batches of a hundred, REST for whatever that leaves. A
+          # blocked repository or a spent budget costs those rows, not the run:
+          # what was read is written, the digest counts what was not, and the
+          # counts and the budget left go to the job summary. Not piped: the
+          # default shell has no pipefail, and a crash must still fail the step.
           python3 scripts/refresh_metadata.py --write --digest /tmp/digest.md > /tmp/refresh.log
           tail -3 /tmp/refresh.log
 
@@ -153,7 +156,7 @@ jobs:
           repo="${GITHUB_REPOSITORY}"
           if [ "$LANDED" = "main" ]; then
             # Stars alone are not worth anyone's attention.
-            if ! grep -qE "Worth a look|did not resolve" /tmp/digest.md; then
+            if ! grep -qE "Worth a look|did not resolve|were not re-read" /tmp/digest.md; then
               echo "only star counts moved; landed silently"
               exit 0
             fi

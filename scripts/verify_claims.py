@@ -10,6 +10,13 @@ This script closes that gap. For every row with `evidence`, it fetches that file
 from the repository's default branch and asserts every string in
 `evidence.matched` still appears.
 
+The file is read first at `HEAD` on raw.githubusercontent.com, which resolves
+to the default branch without the API call per repository that asking for the
+branch name costs. That resolution is observed behaviour, not documented, so
+only a pass is taken from it: a file missing or changed at HEAD is read again at
+the default branch the API names, and that read is what gets reported. A GitHub
+rate limit leaves a claim unchecked (`skipped`), never failed.
+
 Deliberately not pinned to a commit. Pinning would verify a historical snapshot
 forever and never notice a removal, which defeats the purpose. The cost is that
 an upstream rename reports `path-gone`; that is a false positive a person
@@ -34,7 +41,17 @@ import re
 import sys
 from concurrent.futures import ThreadPoolExecutor
 
-from _github import CODE_EXT, api_get, default_branch, raw_get, repo_of
+from _github import (
+    CODE_EXT,
+    RateLimited,
+    api_get,
+    default_branch,
+    log_usage,
+    raw_get,
+    repo_of,
+    step_summary,
+    usage_lines,
+)
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 
@@ -69,7 +86,6 @@ WORKERS = 6
 
 def check(entry: dict) -> dict:
     slug = entry["slug"]
-    evidence = entry["evidence"]
     repo = repo_of(entry)
     if not repo:
         return {
@@ -77,6 +93,17 @@ def check(entry: dict) -> dict:
             "status": "no-repo",
             "detail": "row has no GitHub repository",
         }
+    try:
+        return read_claim(slug, repo, entry["evidence"])
+    except RateLimited as exc:
+        return {"slug": slug, "status": "skipped", "detail": f"not checked: {exc}"}
+
+
+def read_claim(slug: str, repo: str, evidence: dict) -> dict:
+    # A pass at HEAD is a pass; anything else is judged at the named branch.
+    body = raw_get(repo, "HEAD", evidence["path"])
+    if body is not None and all(needle in body for needle in evidence["matched"]):
+        return {"slug": slug, "status": "ok", "detail": f"{repo}@HEAD:{evidence['path']}"}
 
     branch = default_branch(repo)
     if not branch:
@@ -220,11 +247,26 @@ def main() -> int:
     with ThreadPoolExecutor(max_workers=WORKERS) as pool:
         results = list(pool.map(check, todo))
 
-    failed = [r for r in results if r["status"] not in ("ok",)]
+    # A claim the rate limit kept us from reading is neither a pass nor a
+    # failure. Counting it as either would be the false report this avoids.
+    skipped = [r for r in results if r["status"] == "skipped"]
+    failed = [r for r in results if r["status"] not in ("ok", "skipped")]
+    step_summary(
+        "## Cited call sites\n\n"
+        + f"- checked {len(results) - len(skipped)} of {len(results)} claim(s): "
+        + f"{len(failed)} failed, {len(skipped)} skipped (GitHub rate limit)\n"
+        + "".join(f"- {line}\n" for line in usage_lines())
+    )
+    if skipped:
+        print(
+            f"::warning title=Claims not checked::{len(skipped)} of {len(results)} "
+            "cited call sites were not read: GitHub rate limit. They are not failures.",
+            file=sys.stderr,
+        )
     if args.json:
         print(
             json.dumps(
-                {"checked": len(results), "failed": failed},
+                {"checked": len(results), "failed": failed, "skipped": skipped},
                 indent=2,
                 ensure_ascii=False,
             )
@@ -233,10 +275,13 @@ def main() -> int:
         for r in results:
             mark = "ok  " if r["status"] == "ok" else r["status"].upper()
             print(f"  {mark:<12} {r['slug']}  {r['detail']}")
-        print(f"\n{len(results) - len(failed)}/{len(results)} claims still hold")
+        held = len(results) - len(failed) - len(skipped)
+        tail = f"; {len(skipped)} not checked (GitHub rate limit)" if skipped else ""
+        print(f"\n{held}/{len(results)} claims still hold{tail}")
         if failed:
             print("\nFailures need a person: an upstream rename is a false positive,")
             print("a removed integration means the row's question_types is now wrong.")
+    log_usage()
 
     return 1 if failed else 0
 

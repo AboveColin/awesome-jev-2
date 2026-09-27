@@ -22,6 +22,15 @@ Usage:
   python3 scripts/refresh_metadata.py            # report drift, change nothing
   python3 scripts/refresh_metadata.py --write    # apply it
   python3 scripts/refresh_metadata.py --json     # machine-readable report
+  python3 scripts/refresh_metadata.py --via rest # one REST request per row
+  python3 scripts/refresh_metadata.py --compare  # read both ways, list differences
+
+Facts are read with batched GraphQL queries, a hundred repositories each; a
+row GraphQL cannot answer is read over REST, which also remains the whole path
+with `--via rest`. `--compare` showed the two give the same facts before the
+weekly job switched. A blocked repository, or a GitHub budget that runs out,
+costs the rows involved, never the run: whatever was read is still written, and
+the digest says what was not.
 """
 
 from __future__ import annotations
@@ -34,43 +43,177 @@ from concurrent.futures import ThreadPoolExecutor
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 
-from _github import SELF, api_get, repo_of  # noqa: E402
+from _github import (  # noqa: E402
+    SELF,
+    RateLimited,
+    api_get,
+    graphql_request,
+    log_usage,
+    repo_of,
+    step_summary,
+    usage_lines,
+)
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 CATALOG = ROOT / "catalog.json"
 WORKERS = 6
+
+# Repositories per GraphQL query. Each is one aliased `repository` lookup, and
+# a query of a hundred costs one point of the GraphQL budget, so the whole
+# catalogue is about a dozen requests where REST needs one per repository.
+BATCH = 100
+FIELDS = "nameWithOwner url stargazerCount isArchived licenseInfo { spdxId }"
 
 # SELF is imported from _github: rows pointing at this repository are its own
 # runnable examples, and stamping them with this repo's own star count would be
 # both meaningless and circular.
 
 
-def fetch(entry: dict) -> dict | None:
-    """Current facts for one row, or None when the repo did not resolve."""
-    repo = repo_of(entry)
-    if not repo:
-        return None
-    data = api_get(f"/repos/{repo}")
-    if not isinstance(data, dict) or "stargazers_count" not in data:
-        return {"slug": entry["slug"], "repo": repo, "gone": True}
+def facts(entry: dict, repo: str, *, stars: int, spdx: str, archived: bool,
+          full_name: str | None, html_url: str | None) -> dict:
+    return {
+        "slug": entry["slug"],
+        "repo": repo,
+        "state": "ok",
+        "stars": stars,
+        "repo_license": spdx,
+        "archived": archived,
+        # GitHub follows a renamed or transferred repository with a redirect,
+        # so the old URL keeps answering 200 and no link check ever notices.
+        # The canonical name is the fact; the catalogue should hold it.
+        "full_name": full_name or repo,
+        "html_url": html_url,
+    }
 
+
+def from_rest(entry: dict, repo: str, data: dict) -> dict:
     # GitHub reports NOASSERTION for a LICENSE file it cannot identify — custom
     # or modified terms — which is different from having none at all, so it is
     # kept as-is. Only a repository with no licence file becomes "unknown".
     spdx = ((data.get("license") or {}).get("spdx_id") or "").strip() or "unknown"
-    return {
-        "slug": entry["slug"],
-        "repo": repo,
-        "gone": False,
-        "stars": data["stargazers_count"],
-        "repo_license": spdx,
-        "archived": bool(data.get("archived")),
-        # GitHub follows a renamed or transferred repository with a redirect,
-        # so the old URL keeps answering 200 and no link check ever notices.
-        # The canonical name is the fact; the catalogue should hold it.
-        "full_name": data.get("full_name") or repo,
-        "html_url": data.get("html_url"),
-    }
+    return facts(
+        entry, repo, stars=data["stargazers_count"], spdx=spdx,
+        archived=bool(data.get("archived")), full_name=data.get("full_name"),
+        html_url=data.get("html_url"),
+    )
+
+
+def from_graphql(entry: dict, repo: str, node: dict) -> dict:
+    """The same facts from GraphQL's names for them. `repository(owner, name)`
+    follows renames like REST's redirect; licenseInfo is null where REST's
+    licence is, and spdxId is NOASSERTION where REST's spdx_id is."""
+    spdx = ((node.get("licenseInfo") or {}).get("spdxId") or "").strip() or "unknown"
+    return facts(
+        entry, repo, stars=node["stargazerCount"], spdx=spdx,
+        archived=bool(node.get("isArchived")), full_name=node.get("nameWithOwner"),
+        html_url=node.get("url"),
+    )
+
+
+def outcome(entry: dict, repo: str, state: str, detail: str = "") -> dict:
+    return {"slug": entry["slug"], "repo": repo, "state": state, "detail": detail}
+
+
+def fetch(entry: dict) -> dict | None:
+    """Current facts for one row over REST, or None when the row names no GitHub
+    repository. Any other failure is a state, never an exception: a blocked
+    repository or a spent budget costs this row, not the run."""
+    repo = repo_of(entry)
+    if not repo:
+        return None
+    try:
+        data = api_get(f"/repos/{repo}")
+    except RateLimited as exc:
+        return outcome(entry, repo, "skipped", exc.detail)
+    if isinstance(data, dict) and data.get("blocked"):
+        return outcome(entry, repo, "blocked", f"HTTP {data['status']}: {data.get('message') or 'no reason given'}")
+    if not isinstance(data, dict) or "stargazers_count" not in data:
+        return outcome(entry, repo, "gone")
+    return from_rest(entry, repo, data)
+
+
+def query_for(batch: list[tuple[str, int]]) -> tuple[str, dict]:
+    """One query for up to BATCH repositories, aliased r0, r1, …. Owners and
+    names travel as variables, never pasted into the query text."""
+    params, lookups, variables = [], [], {}
+    for alias, (repo, _) in enumerate(batch):
+        owner, name = repo.split("/", 1)
+        variables[f"o{alias}"] = owner
+        variables[f"n{alias}"] = name
+        params.append(f"$o{alias}: String!, $n{alias}: String!")
+        lookups.append(f"r{alias}: repository(owner: $o{alias}, name: $n{alias}) {{ {FIELDS} }}")
+    query = (
+        f"query({', '.join(params)}) {{ rateLimit {{ cost remaining }} "
+        + " ".join(lookups)
+        + " }"
+    )
+    return query, variables
+
+
+def fetch_graphql(rows: list[dict]) -> tuple[list[dict | None], list[int]]:
+    """Facts for every row GraphQL answers, and the positions it did not.
+
+    Only an alias that came back with its fields counts. Not found, blocked,
+    a failed query or a spent GraphQL budget all leave the row to REST, whose
+    answer — gone, blocked, skipped — is the one this script has always given."""
+    results: list[dict | None] = [None] * len(rows)
+    left: list[int] = []
+    todo = [(repo_of(entry), position) for position, entry in enumerate(rows)]
+    batches = [todo[start : start + BATCH] for start in range(0, len(todo), BATCH)]
+    for number, batch in enumerate(batches, 1):
+        try:
+            answer = graphql_request(*query_for(batch))
+        except RateLimited:
+            answer = None
+        data = (answer or {}).get("data") or {}
+        cost = data.get("rateLimit") or {}
+        answered = 0
+        for alias, (repo, position) in enumerate(batch):
+            node = data.get(f"r{alias}")
+            if isinstance(node, dict) and isinstance(node.get("stargazerCount"), int):
+                results[position] = from_graphql(rows[position], repo, node)
+                answered += 1
+            else:
+                left.append(position)
+        print(
+            f"graphql batch {number}/{len(batches)}: {answered} of {len(batch)} answered"
+            + (f", cost {cost.get('cost')}, {cost.get('remaining')} points left" if cost else ", no answer"),
+            file=sys.stderr,
+        )
+    return results, left
+
+
+def fetch_all(rows: list[dict], *, via: str = "graphql") -> list[dict | None]:
+    """Facts for every row: GraphQL in batches, REST for whatever it left."""
+    if via == "graphql":
+        results, left = fetch_graphql(rows)
+    else:
+        results, left = [None] * len(rows), list(range(len(rows)))
+    if left:
+        if via == "graphql":
+            print(f"reading {len(left)} row(s) over REST", file=sys.stderr)
+        with ThreadPoolExecutor(max_workers=WORKERS) as pool:
+            for position, fresh in zip(left, pool.map(fetch, [rows[i] for i in left])):
+                results[position] = fresh
+    return results
+
+
+COMPARED = ("state", "stars", "repo_license", "archived", "full_name", "html_url")
+
+
+def compare(rows: list[dict]) -> list[str]:
+    """Read every row both ways and name each fact the two disagree on. Nothing
+    is written; this is how the GraphQL path was shown to match REST."""
+    rest = fetch_all(rows, via="rest")
+    graph, _ = fetch_graphql(rows)
+    differences = []
+    for entry, a, b in zip(rows, rest, graph):
+        if a is None or b is None:
+            continue  # GraphQL did not answer: the refresh reads this row over REST anyway
+        for key in COMPARED:
+            if a.get(key) != b.get(key):
+                differences.append(f"{entry['slug']} ({a['repo']}): {key} rest={a.get(key)} graphql={b.get(key)}")
+    return differences
 
 
 def diff_for(entry: dict, fresh: dict) -> list[tuple[str, object, object]]:
@@ -150,6 +293,17 @@ def main() -> int:
         default="",
         help="also write a Markdown summary to this path, for an issue body",
     )
+    parser.add_argument(
+        "--via",
+        choices=("graphql", "rest"),
+        default="graphql",
+        help="graphql (default): batched, REST for what it leaves; rest: one request per row",
+    )
+    parser.add_argument(
+        "--compare",
+        action="store_true",
+        help="read the rows both ways and list any fact they disagree on; writes nothing",
+    )
     args = parser.parse_args()
 
     catalog = json.loads(CATALOG.read_text())
@@ -160,15 +314,32 @@ def main() -> int:
     ]
     print(f"refreshing {len(rows)} row(s) with a GitHub repository\n", file=sys.stderr)
 
-    with ThreadPoolExecutor(max_workers=WORKERS) as pool:
-        results = list(pool.map(fetch, rows))
+    if args.compare:
+        differences = compare(rows)
+        for line in differences:
+            print(f"  {line}")
+        print(f"\n{len(differences)} difference(s) between REST and GraphQL across {len(rows)} row(s)")
+        log_usage()
+        return 1 if differences else 0
+
+    # Nothing below raises for one row or for a spent budget: every row comes
+    # back with a state, so the rows that were read are always written.
+    results = fetch_all(rows, via=args.via)
 
     report: list[dict] = []
     gone: list[str] = []
+    blocked: list[dict] = []
+    skipped: list[str] = []
     for entry, fresh in zip(rows, results):
         if fresh is None:
             continue
-        if fresh["gone"]:
+        if fresh["state"] == "skipped":
+            skipped.append(entry["slug"])
+            continue
+        if fresh["state"] == "blocked":
+            blocked.append(fresh)
+            continue
+        if fresh["state"] == "gone":
             gone.append(f"{entry['slug']} ({fresh['repo']})")
             continue
         changes = diff_for(entry, fresh)
@@ -188,14 +359,36 @@ def main() -> int:
         CATALOG.write_text(json.dumps(catalog, indent=2, ensure_ascii=False) + "\n")
 
     if args.digest:
-        pathlib.Path(args.digest).write_text(digest(report, gone, len(rows)))
+        pathlib.Path(args.digest).write_text(
+            digest(report, gone, len(rows), blocked=blocked, skipped=len(skipped))
+        )
+
+    tally = (
+        f"checked {len(rows) - len(skipped)} of {len(rows)} row(s): "
+        f"{len(skipped)} skipped (GitHub API budget), {len(blocked)} blocked, "
+        f"{len(gone)} did not resolve"
+    )
+    step_summary(
+        "## Repository facts\n\n"
+        + f"- {tally}\n"
+        + f"- {'applied' if args.write else 'would change'} {len(report)} row(s)\n"
+        + "".join(f"- {line}\n" for line in usage_lines())
+    )
 
     if args.json:
         print(
             json.dumps(
-                {"changed": report, "unreachable": gone}, indent=2, ensure_ascii=False
+                {
+                    "changed": report,
+                    "unreachable": gone,
+                    "blocked": [{"slug": b["slug"], "repo": b["repo"], "detail": b["detail"]} for b in blocked],
+                    "skipped": skipped,
+                },
+                indent=2,
+                ensure_ascii=False,
             )
         )
+        log_usage()
         return 0
 
     for item in report:
@@ -214,31 +407,52 @@ def main() -> int:
         print(
             "  These need a person: a rename is fixable, a deletion means retiring the row."
         )
+    if blocked:
+        print(f"\n  {len(blocked)} repository(ies) GitHub refuses to serve:")
+        for item in blocked:
+            print(f"      {item['slug']} ({item['repo']}) {item['detail']}")
+    if skipped:
+        print(
+            f"\n  {len(skipped)} row(s) not re-read: the GitHub API budget ran out. "
+            "They keep their previous facts."
+        )
 
     verb = "applied" if args.write else "would change"
-    print(f"\n{verb} {len(report)} row(s) of {len(rows)}")
+    print(f"\n{tally}")
+    print(f"{verb} {len(report)} row(s) of {len(rows)}")
     if report and not args.write:
         print("Run with --write to apply.")
+    log_usage()
     return 0
 
 
-def digest(report: list[dict], gone: list[str], checked: int) -> str:
+def digest(
+    report: list[dict],
+    gone: list[str],
+    checked: int,
+    *,
+    blocked: list[dict] | None = None,
+    skipped: int = 0,
+) -> str:
     """What a person needs from a weekly refresh, in a form that fits an issue.
 
     Stars move on most rows every week; listing each one produced a report far
     past GitHub's 65,536-character issue body limit, so the notice for a
     refresh would have failed to post. Star-only changes are counted. Anything
-    else — a licence changing, a project archived, a repository gone — is the
-    reason a person reads this at all, and is listed in full.
+    else — a licence changing, a project archived, a repository gone or blocked,
+    rows the API budget left unread — is the reason a person reads this at all.
+    Unread rows are counted, not listed: on a bad week that is most of them.
     """
+    blocked = blocked or []
     stars_only = [r for r in report if {c["field"] for c in r["changes"]} == {"stars"}]
     notable = [r for r in report if r not in stars_only]
+    read = f"{checked - skipped} of {checked}" if skipped else f"{checked}"
     lines = [
-        f"Re-read {checked} repositories: {len(report)} rows changed, "
+        f"Re-read {read} repositories: {len(report)} rows changed, "
         f"{len(stars_only)} of them stars only.",
         "",
     ]
-    if notable:
+    if notable or blocked:
         lines += ["**Worth a look before merging:**", ""]
         for item in notable:
             parts = [
@@ -249,6 +463,10 @@ def digest(report: list[dict], gone: list[str], checked: int) -> str:
                 if c["field"] != "stars"
             ]
             lines.append(f"- `{item['slug']}` ({item['repo']}): " + "; ".join(parts))
+        for item in blocked:
+            lines.append(
+                f"- `{item['slug']}` ({item['repo']}): GitHub refuses to serve it ({item['detail']})"
+            )
         lines.append("")
     if gone:
         lines += [
@@ -259,7 +477,14 @@ def digest(report: list[dict], gone: list[str], checked: int) -> str:
         ]
         lines += [f"- {item}" for item in gone]
         lines.append("")
-    if not notable and not gone:
+    if skipped:
+        lines += [
+            f"**{skipped} repositories were not re-read** — the GitHub API budget ran "
+            "out before they were reached. They keep their previous facts; the run's "
+            "summary says what was spent.",
+            "",
+        ]
+    if not notable and not gone and not blocked and not skipped:
         lines += ["Nothing but star counts moved.", ""]
     return "\n".join(lines)
 

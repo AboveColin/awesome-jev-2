@@ -4,21 +4,57 @@ Extracted because verify_claims.py and refresh_metadata.py both need the same
 four things — a token, an API call, a raw file, and the owner/name out of a row
 — and two copies of that would drift. Dependency-free like the rest of the repo:
 urllib only, so CI stays `setup-python` with no install step.
+
+Rate limits and blocked repositories are told apart (since 2026-09-27). GitHub
+answers an exhausted budget with 403 or 429 and says so — `x-ratelimit-remaining:
+0`, a `retry-after` header, or "rate limit" in the message — and answers a
+repository it will not serve (a DMCA or terms-of-service block) with 403 or 451
+and none of that. The first is about this run; the second is about one row.
+Both used to be the same SystemExit, so one blocked repository ended a weekly
+refresh before it had written anything, while a 429 passed for a missing row.
+
+  * blocked      -> api_get returns {"blocked": True, "status", "message"}
+  * rate limited -> wait what GitHub asks (at most RATE_WAIT_CAP seconds), retry
+                    once, then raise RateLimited and send nothing more on that
+                    budget for the rest of the run
+  * nearly spent -> below the reserve, RateLimited without sending, until the
+                    budget resets
+
+RateLimited is a SystemExit(2), so a caller that does not handle it stops the
+way every caller always did. The weekly jobs catch it per row, count the row as
+skipped and keep what they already read. Every response's x-ratelimit-* headers
+are recorded; usage_lines() says what a run spent and what is left.
 """
 
 from __future__ import annotations
 
+import http.client
 import json
 import os
 import re
 import sys
+import threading
 import time
 import urllib.error
 import urllib.request
+from collections import Counter
+from dataclasses import dataclass
 
 API = "https://api.github.com"
 RAW = "https://raw.githubusercontent.com"
 TIMEOUT = 25
+
+# The longest a rate-limited request waits before its one retry. A weekly job
+# that sleeps out an hour-long reset would only fail later; one that stops
+# keeps what it has.
+RATE_WAIT_CAP = 90
+# A secondary limit may name no time at all; GitHub's guidance is then to wait
+# at least a minute.
+SECONDARY_WAIT = 60
+# Stop spending a budget this close to empty (a tenth of it, for a small one):
+# the job's own later steps — filing an issue, dispatching the site rebuild —
+# run on the same token.
+RESERVE = 50
 
 # This repository's own owner/name. Lives here because three scripts need it for
 # three different reasons — building links, excluding self-referencing rows from
@@ -55,54 +91,286 @@ CODE_EXT: tuple[str, ...] = tuple(e for exts in LANG_EXT.values() for e in exts)
 
 _branches: dict[str, str] = {}
 
+# 451 is GitHub's answer for a repository taken down on a legal notice; 403
+# without any rate-limit signal is its answer for a terms-of-service block.
+BLOCKED = (403, 451)
+
+
+class RateLimited(SystemExit):
+    """GitHub will not answer on this budget for a while — the run's problem,
+    not a row's. Exit code 2, so an unhandled one ends the run as before."""
+
+    def __init__(self, resource: str, detail: str):
+        super().__init__(2)
+        self.resource = resource
+        self.detail = detail
+
+    def __str__(self) -> str:
+        return f"GitHub {self.resource} rate limit: {self.detail}"
+
+
+@dataclass
+class Window:
+    limit: int
+    remaining: int
+    reset: float  # epoch seconds, as x-ratelimit-reset gives it
+
+
+class Usage:
+    """What this process spent, per budget: "core" and "search" (REST),
+    "graphql", and "raw" (raw.githubusercontent.com, which sends no budget
+    headers). Worker threads share it, hence the lock."""
+
+    def __init__(self) -> None:
+        self.lock = threading.Lock()
+        self.requests: Counter = Counter()
+        self.unsent: Counter = Counter()
+        self.windows: dict[str, Window] = {}
+        self.closed: dict[str, tuple[float, str]] = {}
+        self.limited = 0
+        self.blocked = 0
+        self.waited = 0.0
+
+
+USAGE = Usage()
+
+
+def reset_usage() -> None:
+    """Forget what was spent. A script is one run; tests start each case clean."""
+    global USAGE
+    USAGE = Usage()
+    _branches.clear()
+
+
+def _sleep(seconds: float) -> None:
+    time.sleep(seconds)
+
+
+def _now() -> float:
+    return time.time()
+
+
+def _clock(epoch: float) -> str:
+    return time.strftime("%H:%M UTC", time.gmtime(epoch))
+
+
+def _int(value: object) -> int | None:
+    try:
+        return int(str(value).strip())
+    except (TypeError, ValueError):
+        return None
+
 
 def token() -> str | None:
     return os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN")
 
 
-def api_get(path: str) -> dict | list | None:
-    """GET an API path. Returns None on anything but success, except a rate
-    limit, which stops the run — continuing would silently produce a report
-    full of false negatives."""
-    req = urllib.request.Request(
-        f"{API}{path}",
-        headers={
-            "Accept": "application/vnd.github+json",
-            "User-Agent": "awesome-jev",
-            **({"Authorization": f"Bearer {token()}"} if token() else {}),
-        },
+def _reserve(limit: int) -> int:
+    return min(RESERVE, limit // 10)
+
+
+def _note(resource: str, head) -> None:
+    """Record a response's budget. Answers arrive out of order — worker threads,
+    and GitHub's own servers, which do not always agree on the window — so
+    until the recorded window has reset, the lowest remaining count wins."""
+    if not head:
+        return
+    limit, remaining, reset = (
+        _int(head.get(f"X-RateLimit-{name}")) for name in ("Limit", "Remaining", "Reset")
     )
+    if limit is None or remaining is None or reset is None:
+        return
+    with USAGE.lock:
+        old = USAGE.windows.get(resource)
+        if old is None or _now() >= old.reset or remaining < old.remaining:
+            USAGE.windows[resource] = Window(limit, remaining, float(reset))
+
+
+def _close(resource: str, until: float, detail: str) -> None:
+    """Send nothing more on this budget until `until`; say so once."""
+    with USAGE.lock:
+        if resource in USAGE.closed:
+            return
+        USAGE.closed[resource] = (until, detail)
+    when = "this run" if until == float("inf") else f"until {_clock(until)}"
+    print(f"GitHub {resource}: {detail}; sending nothing more on it {when}", file=sys.stderr)
+
+
+def _check_open(resource: str) -> None:
+    """Raise RateLimited, sending nothing, while this budget is closed — for the
+    rest of the run after a limit that outlasted its retry, or until the reset
+    once it is under the reserve."""
+    now = _now()
+    with USAGE.lock:
+        closed = USAGE.closed.get(resource)
+        if closed is not None and now >= closed[0]:
+            del USAGE.closed[resource]
+            closed = None
+        window = USAGE.windows.get(resource)
+    if (
+        closed is None
+        and window is not None
+        and now < window.reset
+        and window.remaining < _reserve(window.limit)
+    ):
+        _close(
+            resource,
+            window.reset,
+            f"{window.remaining} of {window.limit} left, under the reserve of {_reserve(window.limit)}",
+        )
+    with USAGE.lock:
+        closed = USAGE.closed.get(resource)
+        if closed is not None:
+            USAGE.unsent[resource] += 1
+    if closed is not None:
+        raise RateLimited(resource, closed[1])
+
+
+def _limit_wait(code: int, head, body: bytes) -> float | None:
+    """Seconds GitHub asks for when this answer is a rate limit; None when it is
+    anything else — a blocked repository, a missing one, a server error."""
+    if code not in (403, 429):
+        return None
+    head = head or {}
+    retry_after = _int(head.get("Retry-After"))
+    remaining = _int(head.get("X-RateLimit-Remaining"))
+    reset = _int(head.get("X-RateLimit-Reset"))
+    said = "rate limit" in body.decode("utf-8", "replace").lower()
+    if code == 403 and retry_after is None and remaining != 0 and not said:
+        return None
+    if retry_after is not None:
+        return float(max(retry_after, 0))
+    if remaining == 0 and reset is not None:
+        return max(reset - _now(), 0) + 1
+    return float(SECONDARY_WAIT)
+
+
+def _request(req: urllib.request.Request, resource: str) -> tuple[int, bytes, object]:
+    """(status, body, headers) for one request. Status 0 means no answer.
+
+    A rate limit is waited out once, when GitHub names a wait no longer than
+    RATE_WAIT_CAP; a longer one, or one still there after the retry, closes the
+    budget and raises RateLimited."""
+    for attempt in (1, 2):
+        _check_open(resource)
+        with USAGE.lock:
+            USAGE.requests[resource] += 1
+        try:
+            with urllib.request.urlopen(req, timeout=TIMEOUT) as response:
+                body = response.read()
+                _note(resource, response.headers)
+                return response.status, body, response.headers
+        except urllib.error.HTTPError as exc:
+            try:
+                body = exc.read() or b""
+            except Exception:  # noqa: BLE001 - the status is what matters
+                body = b""
+            _note(resource, exc.headers)
+            wait = _limit_wait(exc.code, exc.headers, body)
+            if wait is None:
+                if exc.code in BLOCKED and resource != "raw":
+                    with USAGE.lock:
+                        USAGE.blocked += 1
+                return exc.code, body, exc.headers
+            with USAGE.lock:
+                USAGE.limited += 1
+            if attempt == 1 and wait <= RATE_WAIT_CAP:
+                print(
+                    f"GitHub {resource}: HTTP {exc.code}, waiting {wait:.0f} s before one retry",
+                    file=sys.stderr,
+                )
+                with USAGE.lock:
+                    USAGE.waited += wait
+                _sleep(wait)
+                continue
+            if attempt == 1:
+                until = _now() + wait
+                detail = f"HTTP {exc.code}, asked to wait {wait:.0f} s (this run waits at most {RATE_WAIT_CAP} s)"
+            else:
+                until = float("inf")
+                detail = f"HTTP {exc.code} again after the wait"
+            _close(resource, until, detail)
+            raise RateLimited(resource, detail) from exc
+        except (urllib.error.URLError, http.client.HTTPException, OSError, ValueError):
+            return 0, b"", None
+    raise AssertionError("unreachable: the second attempt returns or raises")
+
+
+def _headers(accept: str | None = "application/vnd.github+json") -> dict[str, str]:
+    return {
+        **({"Accept": accept} if accept else {}),
+        "User-Agent": "awesome-jev",
+        **({"Authorization": f"Bearer {token()}"} if token() else {}),
+    }
+
+
+def api_fetch(path: str) -> tuple[int, dict | list | None]:
+    """(HTTP status, parsed JSON body) for a GET on an API path; status 0 means
+    no answer (timeout, reset connection). Raises RateLimited."""
+    req = urllib.request.Request(f"{API}{path}", headers=_headers())
+    status, body, _ = _request(req, "search" if path.startswith("/search/") else "core")
     try:
-        with urllib.request.urlopen(req, timeout=TIMEOUT) as response:
-            return json.loads(response.read())
-    except urllib.error.HTTPError as exc:
-        if exc.code == 403:
-            print(
-                "error: GitHub rate limit. Set GITHUB_TOKEN; unauthenticated is 60/hour.",
-                file=sys.stderr,
-            )
-            raise SystemExit(2) from exc
+        data = json.loads(body) if body else None
+    except ValueError:
+        data = None
+    return status, data
+
+
+def api_get(path: str) -> dict | list | None:
+    """The body of a successful GET; {"blocked": True, "status", "message"} for
+    a repository GitHub refuses to serve; None for anything else (missing, no
+    answer). A rate limit raises RateLimited rather than returning None —
+    continuing would silently turn every remaining row into a false negative."""
+    status, data = api_fetch(path)
+    if 200 <= status < 300:
+        return data
+    if status in BLOCKED:
+        message = data.get("message", "") if isinstance(data, dict) else ""
+        return {"blocked": True, "status": status, "message": message}
+    return None
+
+
+def graphql_request(query: str, variables: dict | None = None) -> dict | None:
+    """POST a read-only GraphQL query and return the whole answer, `errors`
+    beside `data`: a batch of aliased lookups fails one alias at a time. None
+    without a token, or without a usable answer after one retry. Raises
+    RateLimited, including for a 200 whose only error is RATE_LIMITED."""
+    if not token():
         return None
-    except Exception:  # noqa: BLE001 - a sweep must not die on one row
-        return None
+    payload = json.dumps({"query": query, **({"variables": variables} if variables else {})}).encode()
+    for attempt in (1, 2):
+        req = urllib.request.Request(
+            f"{API}/graphql", data=payload, headers=_headers(None), method="POST"
+        )
+        status, body, _ = _request(req, "graphql")
+        if 200 <= status < 300:
+            try:
+                answer = json.loads(body)
+            except ValueError:
+                answer = None
+            if isinstance(answer, dict):
+                errors = answer.get("errors") or []
+                if not answer.get("data") and any(e.get("type") == "RATE_LIMITED" for e in errors):
+                    detail = "a GraphQL answer of RATE_LIMITED"
+                    _close("graphql", float("inf"), detail)
+                    raise RateLimited("graphql", detail)
+                return answer
+        elif 0 < status < 500:
+            return None  # refused for a reason a retry will not change
+        if attempt == 1:
+            _sleep(1.5)
+    return None
 
 
 def graphql(query: str) -> dict | None:
-    """POST a read-only GraphQL query. Some repository facts — whether a custom
-    social preview is uploaded, for one — are not exposed over REST."""
-    if not token():
-        return None
-    req = urllib.request.Request(
-        f"{API}/graphql",
-        data=json.dumps({"query": query}).encode(),
-        headers={"Authorization": f"Bearer {token()}", "User-Agent": "awesome-jev"},
-        method="POST",
-    )
+    """The `data` of a read-only GraphQL query, or None. For informational
+    callers — whether a custom social preview is uploaded is not exposed over
+    REST — which degrade to "unknown", a rate limit included."""
     try:
-        with urllib.request.urlopen(req, timeout=TIMEOUT) as response:
-            return json.loads(response.read()).get("data")
-    except Exception:  # noqa: BLE001 - informational callers degrade to "unknown"
+        answer = graphql_request(query)
+    except RateLimited:
         return None
+    return (answer or {}).get("data")
 
 
 def raw_get(repo: str, branch: str, path: str, *, retries: int = 1) -> str | None:
@@ -113,23 +381,60 @@ def raw_get(repo: str, branch: str, path: str, *, retries: int = 1) -> str | Non
     first three failures on an 805-row sweep were exactly that — the path was
     still there on the next request — which would have opened a weekly issue
     for nothing and taught everyone to ignore it.
+
+    A 429 is not a miss either: it is waited out once like an API rate limit,
+    and one that persists raises RateLimited instead of calling the file gone.
+    `branch` may be "HEAD", which the raw host resolves to the default branch.
     """
     req = urllib.request.Request(
         f"{RAW}/{repo}/{branch}/{path}", headers={"User-Agent": "awesome-jev"}
     )
     for attempt in range(retries + 1):
-        try:
-            with urllib.request.urlopen(req, timeout=TIMEOUT) as response:
-                return response.read().decode("utf-8", "replace")
-        except urllib.error.HTTPError as exc:
-            # A real 404 will not become a 200 on a retry.
-            if exc.code == 404:
-                return None
-        except Exception:  # noqa: BLE001
-            pass
+        status, body, _ = _request(req, "raw")
+        if 200 <= status < 300:
+            return body.decode("utf-8", "replace")
+        # A real 404 will not become a 200 on a retry.
+        if status == 404:
+            return None
         if attempt < retries:
-            time.sleep(1.5)
+            _sleep(1.5)
     return None
+
+
+def usage_lines() -> list[str]:
+    """What this run spent and what is left, one line per budget, for the log
+    and the job summary. Clock times are absolute (UTC)."""
+    with USAGE.lock:
+        names = sorted(set(USAGE.requests) | set(USAGE.unsent))
+        if not names:
+            return ["GitHub: no requests made"]
+        lines = []
+        for name in names:
+            line = f"GitHub {name}: {USAGE.requests[name]} request(s)"
+            window = USAGE.windows.get(name)
+            if window is not None:
+                line += f"; {window.remaining} of {window.limit} left, resets {_clock(window.reset)}"
+            if USAGE.unsent[name]:
+                line += f"; {USAGE.unsent[name]} not sent (budget closed)"
+            lines.append(line)
+        lines.append(
+            f"GitHub answers: {USAGE.limited} rate-limited, {USAGE.blocked} blocked; "
+            f"waited {USAGE.waited:.0f} s"
+        )
+    return lines
+
+
+def log_usage() -> None:
+    for line in usage_lines():
+        print(line, file=sys.stderr)
+
+
+def step_summary(markdown: str) -> None:
+    """Append to the job summary when running in GitHub Actions; else nothing."""
+    path = os.environ.get("GITHUB_STEP_SUMMARY")
+    if path:
+        with open(path, "a", encoding="utf-8") as handle:
+            handle.write(markdown + "\n")
 
 
 def repo_of(entry: dict) -> str | None:

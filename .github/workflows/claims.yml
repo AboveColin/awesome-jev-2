@@ -32,7 +32,11 @@ jobs:
       - name: Verify claims
         id: verify
         env:
-          # 5000 requests/hour instead of the unauthenticated 60.
+          # The workflow token's budget, which GitHub documents as 1,000 REST
+          # requests an hour per repository, instead of the unauthenticated 60.
+          # Files are read at HEAD on the raw host, so the API is asked only
+          # about a file not found there. The job summary says what was spent;
+          # a rate limit leaves a claim unchecked, not failed.
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set +e
