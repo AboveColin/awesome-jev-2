@@ -11,6 +11,8 @@ import pathlib
 
 from _github import SELF as REPO
 
+from .strings import ZH_MACHINE
+
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 CATALOG = ROOT / "catalog.json"
 PATTERNS_FILE = ROOT / "patterns.json"
@@ -102,17 +104,65 @@ def flags_of(entry: dict, lang: str) -> str:
     return " ".join(tags) if tags else "—"
 
 
-def sort_key(entry: dict) -> tuple:
-    """Official first, then rows with code, then stars, then title.
+# Stars print as a band, never as the count, and rows sort by the band. The
+# weekly refresh re-reads every count; printed and sorted exactly, they rewrote
+# over a thousand generated lines a week (b8bae37: 220 rows, every one of them a
+# star count only, 32 generated files) and reordered rows on the pattern pages,
+# for a precision no reader of a list needs. Now only a row that crosses a floor
+# changes a line.
+# catalog.json keeps the exact count, and the site and the MCP server show and
+# sort by it. Floors low to high; a count under the first prints nothing.
+STAR_BANDS = (
+    (10, "★10+"),
+    (100, "★100+"),
+    (1_000, "★1k+"),
+    (10_000, "★10k+"),
+    (100_000, "★100k+"),
+)
 
-    Slug is the final tie-break. Forks often share a title and a star count
-    (several rows are all "jev-mcp" with ★2), and without it their order was
-    their position in catalog.json, so re-sorting the file reshuffled the README.
+
+def star_band(stars: int | None) -> int:
+    """How many band floors the count reaches: 0 (none, or under 10) to 5."""
+    return sum(1 for floor, _ in STAR_BANDS if (stars or 0) >= floor)
+
+
+def star_label(stars: int | None) -> str:
+    """The band as a list prints it, e.g. "★1k+"; empty under the first floor."""
+    band = star_band(stars)
+    return STAR_BANDS[band - 1][1] if band else ""
+
+
+def stars_note(strings: dict, *, catalog: str) -> str:
+    """The sentence that says what a band is and how rows are ordered.
+
+    `catalog` is the relative link to catalog.json from the page it goes on.
+    """
+    lang = strings["lang_code"]
+    labels = [label_ for _, label_ in STAR_BANDS]
+    bands = strings["list_sep"].join(labels[:-1]) + strings["list_and"] + labels[-1]
+    note = strings["stars_note"].format(
+        bands=bands, floor=STAR_BANDS[0][0], catalog=catalog, site=f"{SITE}?lang={lang}"
+    )
+    if lang == "zh" and "stars_note" in ZH_MACHINE:
+        note += " <sub>(机翻)</sub>"
+    return note
+
+
+def sort_key(entry: dict) -> tuple:
+    """Official first, then rows with code, then star band, then title.
+
+    The band, not the count (see STAR_BANDS): inside a band rows go by title,
+    so a count that moves inside its band moves no row.
+
+    Slug is the final tie-break. Forks often share a title and a band (several
+    rows are all "jev-mcp" with a handful of stars), and without it their order
+    was their position in catalog.json, so re-sorting the file reshuffled the
+    README.
     """
     return (
         not entry.get("official", False),
         not entry.get("has_code", False),
-        -(entry.get("stars") or 0),
+        -star_band(entry.get("stars")),
         entry["title"].lower(),
         entry["slug"],
     )
@@ -147,8 +197,9 @@ def entry_list(entries: list[dict], strings: dict, *, notes: bool = False, readm
         # Signals go on a dim second line: kind, popularity, author, language,
         # primitives, then caveats last so they read as the final word.
         bits = [f"`{label(KIND_LABELS, entry['kind'], lang)}`"]
-        if entry.get("stars") is not None:
-            bits.append(f"★{entry['stars']:,}")
+        stars = star_label(entry.get("stars"))
+        if stars:
+            bits.append(stars)
         if entry.get("author"):
             bits.append(esc(entry["author"]["name"]))
         for item in entry.get("languages", []):

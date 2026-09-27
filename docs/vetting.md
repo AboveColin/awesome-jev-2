@@ -45,7 +45,10 @@ deliberately fails closed. Copy that shape, not the shape that trusts the score.
       result, and a string match does not prove the call runs.
 - [ ] **Is it maintained?** `single-commit` and `archived` exist because this
       ecosystem is days old and a four-figure star count can sit on top of one
-      commit. Check the last push date yourself.
+      commit. Check the last push date yourself. The READMEs and pattern pages
+      show stars only as a band such as ★1k+: a popularity signal, not a
+      quality verdict, and silent on upkeep. The exact count is in
+      `catalog.json` and on the site.
 - [ ] **Can you legally use it?** `no-license` means no `LICENSE` file, whatever
       a README badge claims. `repo_license` records what the repository actually
       declares. Several otherwise good projects ship none.

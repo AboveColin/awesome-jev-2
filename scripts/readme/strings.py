@@ -93,6 +93,14 @@ EN = {
         "of making it. Caveats appear as short tags — the full note for each row is in "
         "[`catalog.json`](catalog.json) and on [the site]({site})."
     ),
+    "stars_note": (
+        "★ gives a repository's GitHub stars as a band — {bands}; rows with no repository or "
+        "under {floor} stars show none. Rows run official first, then with code, then by band, "
+        "then by title. A band is a popularity signal, not a quality verdict; the exact count, "
+        "as last read from GitHub, is in [`catalog.json`]({catalog}) and on [the site]({site})."
+    ),
+    "list_sep": ", ",
+    "list_and": " and ",
     "kinds_h": "By resource kind",
     "kinds_intro": "The same rows grouped by what you will find when you open the link.",
     "th_find": "What you will find",
@@ -158,9 +166,9 @@ EN = {
     "pattern_more": "**{shown} of {n}** shown · [all {n} on one page →]({page}) · [filter on the site]({site})",
     "pattern_all": "All {n} shown · [on its own page]({page}) · [filter on the site]({site})",
     "page_intro": (
-        "Every catalogued example of this decision — {n} of them, official first, then rows "
-        "with code, then by stars. The same rows, with caveats, are in [the index]({readme}); "
-        "[the site]({site}) can filter them further by language, primitive and kind."
+        "Every catalogued example of this decision — {n} of them. The same rows, with caveats, "
+        "are in [the index]({readme}); [the site]({site}) can filter them further by language, "
+        "primitive and kind."
     ),
     "page_other_lang": "[中文]({other})",
     "page_footer": (
@@ -248,6 +256,13 @@ ZH = {
         "主索引。每个标题是智能体必须做的一个决策；下面的行是做这个决策的例子。"
         "警示以短标记呈现 —— 每行的完整备注在 [`catalog.json`](catalog.json) 和[站点]({site})里。"
     ),
+    "stars_note": (
+        "★ 以区间给出仓库的 GitHub star 数 —— {bands}；没有仓库或不足 {floor} 星的行不显示。"
+        "排序：官方优先，其次是含代码的，再按区间，最后按标题。区间只反映热度，不代表质量；"
+        "最近一次从 GitHub 读到的精确数字在 [`catalog.json`]({catalog}) 和[站点]({site})上。"
+    ),
+    "list_sep": "、",
+    "list_and": "、",
     "kinds_h": "按资源形态",
     "kinds_intro": "同样这些行，按你点开链接后会看到什么来分组。",
     "th_find": "点开会看到",
@@ -308,7 +323,7 @@ ZH = {
     "pattern_more": "已显示 **{shown} / {n}** 条 · [在单独页面查看全部 {n} 条 →]({page}) · [在站点上筛选]({site})",
     "pattern_all": "已显示全部 {n} 条 · [单独页面]({page}) · [在站点上筛选]({site})",
     "page_intro": (
-        "这个决策的全部已收录例子 —— 共 {n} 条，官方优先，其次是含代码的，再按 star 排序。"
+        "这个决策的全部已收录例子 —— 共 {n} 条。"
         "同样这些行及其警示也在[索引]({readme})里；[站点]({site})还能按语言、原语和形态进一步筛选。"
     ),
     "page_other_lang": "[English]({other})",
@@ -324,6 +339,11 @@ ZH = {
     "stat_patterns": "覆盖模式",
     "stat_retired": "已退休",
 }
+
+# ZH keys whose Chinese a model wrote rather than a person: the same disclosure
+# `zh_machine` makes for a catalogue row, and rendered the same way, with
+# "(机翻)" after it. A person who rewrites one removes its key from here.
+ZH_MACHINE = frozenset({"stars_note"})
 
 # The non-catalog parts of the repo, so navigation is a table rather than a
 # scattering of inline links the reader has to hunt for.

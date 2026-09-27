@@ -7,7 +7,17 @@ from __future__ import annotations
 
 import pathlib
 
-from .rows import PATTERN_LABELS, ROOT, anchor, entry_list, group_by_pattern, label, page_name, site_link
+from .rows import (
+    PATTERN_LABELS,
+    ROOT,
+    anchor,
+    entry_list,
+    group_by_pattern,
+    label,
+    page_name,
+    site_link,
+    stars_note,
+)
 from .strings import EN, ZH
 
 PAGES_DIR = ROOT / "docs" / "by-pattern"
@@ -33,6 +43,8 @@ def render_page(key: str, rows: list[dict], strings: dict) -> str:
             readme=f"../../{readme}#{anchor(name)}",
             site=site_link(key, lang),
         ),
+        "",
+        stars_note(strings, catalog="../../catalog.json"),
         "",
     ]
     out.extend(entry_list(rows, strings))

@@ -212,10 +212,12 @@ def search_examples(
 
         rows = [e for e in rows if all(t in hay(e) for t in terms)]
 
-    # Official first, then rows with code, then popularity — the same order the
-    # README uses, so a reader and an agent see the same thing first. Slug last,
-    # as in the README, so rows that tie on everything else (forks sharing a
-    # title and star count) do not fall back to their position in the file.
+    # Official first, then rows with code, then popularity — the README's order,
+    # so a reader and an agent see much the same thing first. The README compares
+    # stars by band (★10+, ★100+, …) and then goes by title; here the exact count
+    # decides, as on the site. Slug last, as in the README, so rows that tie on
+    # everything else (forks sharing a title and star count) do not fall back to
+    # their position in the file.
     rows = sorted(
         rows,
         key=lambda e: (

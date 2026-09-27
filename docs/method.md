@@ -226,6 +226,23 @@ have not had time to correlate. That is why `stars` is documented in the schema
 as "a popularity signal, not a quality verdict", and why `single-commit`,
 `no-license`, `archived` and `shadow-mode-only` exist as flags.
 
+Since 2026-09-27, the READMEs and the pattern pages print `stars` as a band —
+★10+, ★100+, ★1k+, ★10k+ or ★100k+, and nothing under 10 — and order rows by
+band, then title, where they used to print and sort by the exact count. Most
+counts move every week, so every weekly refresh rewrote over a thousand
+generated lines for a precision no reader of a list needs: the refresh of
+2026-09-23 (b8bae37) changed 220 rows, all of them stars only, and 32 generated
+files. Replaying that refresh through today's generator, exact counts change
+1,158 lines each way in 32 files; bands change 24 lines each way in 6 files,
+all of them the 3 rows that crossed the 10-star floor. `catalog.json`
+keeps the exact count and still changes every week; the site and the MCP server
+still show and sort by it, so inside a band their order can differ from the
+README's. The README's link to the site screenshot still changes with any edit
+to `catalog.json`, because the site it shows sorts by the exact count.
+`scripts/tests/test_star_bands.py` moves every count inside its band on a copy
+of the catalogue, runs every generator, and requires every generated file to
+come out the same except that link.
+
 ## Field precedence
 
 When sources disagree:

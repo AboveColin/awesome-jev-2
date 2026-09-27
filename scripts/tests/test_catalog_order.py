@@ -1,7 +1,7 @@
 """File order of catalog.json must never decide what a reader sees.
 
-Rows that tie on every display key (same official/has_code/stars and a title
-that differs only in case, e.g. two forks both called "jev-mcp") used to fall
+Rows that tie on every display key (same official/has_code/star band and a
+title that differs only in case, e.g. two forks both called "jev-mcp") used to fall
 back to their position in catalog.json. Sorting the file, or two PRs inserting
 rows in a different order, would then silently reshuffle the README.
 """
@@ -41,7 +41,9 @@ class DisplayOrderTest(unittest.TestCase):
         self.assertEqual(got, ["a-row", "b-row"])
 
     def test_slug_is_only_the_last_resort(self):
-        rows = [row("a-row", stars=1), row("z-row", stars=9)]
+        # 1 and 10 stars are in different bands (none, ★10+); 1 and 9 would tie
+        # since the README sorts by band (I22), which test_star_bands pins.
+        rows = [row("a-row", stars=1), row("z-row", stars=10)]
         got = [e["slug"] for e in sorted(rows, key=build_readme.sort_key)]
         self.assertEqual(got, ["z-row", "a-row"])
 

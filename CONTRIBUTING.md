@@ -150,7 +150,10 @@ turns red.
   official. The linter checks this.
 - **`stars`**, **`repo_license`** — from the GitHub API on the date you add the
   row, not from a README badge. Several repos have a licence badge and no
-  `LICENSE` file; that gets the `no-license` flag.
+  `LICENSE` file; that gets the `no-license` flag. The READMEs and pattern
+  pages print only the band a count falls in (★10+, ★100+, …, nothing under
+  10) and sort by it; the exact number stays in the row, and the weekly
+  refresh keeps it current.
 - **`sources`** — at least one, so the row is attributable. Name where you found
   it, not where it lives. Two fixed strings name submissions made directly to
   this repository, and they mean different things:

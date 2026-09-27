@@ -31,6 +31,7 @@ from .rows import (
     label,
     page_name,
     site_link,
+    stars_note,
     summary_of,
 )
 from .strings import DATA_FILES, REPO_FILES
@@ -55,11 +56,13 @@ START_HERE = [
 # pattern. Collapsing hides rows from the eye, not from the download, the
 # renderer or anyone reading the raw file.
 #
-# Ten is enough to show what a pattern looks like in practice, in the same
+# Ten is enough to show what a pattern looks like in practice, in nearly the
 # order the site and the MCP server use — official first, then code, then
-# stars — so all three surfaces agree on what comes first. Each pattern also
-# gets its own generated page, which is a URL worth having for its own sake:
-# "every safety-gating example" can now be linked to.
+# stars — so the surfaces agree on what comes first. The README compares stars
+# by band (rows.STAR_BANDS) and then goes by title, where the site and the MCP
+# server compare the exact count. Each pattern also gets its own generated
+# page, which is a URL worth having for its own sake: "every safety-gating
+# example" can now be linked to.
 INLINE_PER_PATTERN = 10
 
 
@@ -352,6 +355,8 @@ def by_decision_pattern(page: Page) -> list[str]:
     add(f"## {strings['patterns_h']}")
     add("")
     add(strings["patterns_intro"].replace("{site}", SITE))
+    add("")
+    add(stars_note(strings, catalog="catalog.json"))
     add("")
     for key in live_patterns:
         name = label(PATTERN_LABELS, key, lang)
