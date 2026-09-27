@@ -340,6 +340,11 @@ catalogue passed 800, and no build ever went red.
 - `description` runs on every push to `main`, and by hand.
 - `pages` rebuilds the site and its images whenever the data, the site or the
   rendering scripts change.
+- `publish` builds and smoke-tests the MCP package on a pull request that
+  changes the package (`src/`, `pyproject.toml` or the workflow itself), and
+  uploads it only from a release tag. Since 2026-09-27 a pull request that
+  changes only data no longer runs it: the wheel copies the data in verbatim,
+  and `lint` already validates it.
 
 Since 2026-09-27, the repository description and the site's meta description
 state the catalogue size floored to the hundred rather than exactly, and the

@@ -17,6 +17,16 @@
 # steps a release depends on are exercised long before the irreversible one.
 # Only a tag reaches the publish job.
 #
+# "Touch the package" means its code, its metadata or this file. It used to
+# include catalog.json, compat.json and patterns.json, so every pull request
+# adding a row ran a second workflow (on a first-time contributor's pull
+# request, one more run held for approval) to test packaging the row cannot
+# change: the wheel copies those files in verbatim at build time. lint validates
+# the data on every pull request and imports the server against it. The one
+# data-dependent assertion here, that the fabricated `typesafe/jev-1` is still
+# rejected against compat.json, now first runs on a release tag, still before
+# anything reaches PyPI.
+#
 # The bundled snapshot inside the wheel is the catalogue as of the tagged
 # commit — the offline last resort. The server fetches the live catalogue from
 # main at run time, so a release is needed for server changes, not data ones.
@@ -33,9 +43,6 @@ on:
     paths:
       - "src/**"
       - "pyproject.toml"
-      - "catalog.json"
-      - "compat.json"
-      - "patterns.json"
       - ".github/workflows/publish.yml"
 
 permissions:

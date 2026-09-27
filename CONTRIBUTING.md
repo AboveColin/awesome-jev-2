@@ -62,6 +62,21 @@ A local preview has no link-preview tags: `site/index.html` keeps a
 placeholder in git, and only the Pages deploy (`assemble_site.py --deploy`)
 writes them.
 
+## How changes reach `main`
+
+Every change lands through a pull request, the maintainer's own included.
+Maintainers and agent sessions (Claude, Codex and the like) push a `claude/*`
+or `codex/*` branch and open a pull request from it, and do not push to `main`
+directly. The only commits made straight to `main` are the two bots':
+`github-actions[bot]`'s weekly `metadata` refresh and `lint`'s `regenerate`
+job. Neither ever force-pushes; when `main` moves underneath one of them, it
+rebases or leaves its commit on a branch.
+
+GitHub may hold the checks on your first pull request here until a maintainer
+clicks **Approve and run**. That is GitHub's safeguard for first-time
+contributors to a repository, not a verdict on your change, and it stops once
+you have had a pull request merged.
+
 ## Numbers in prose
 
 Never type a catalogue count into a doc. Every one that was typed by hand froze
