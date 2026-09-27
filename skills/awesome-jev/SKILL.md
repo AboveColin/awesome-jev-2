@@ -64,7 +64,9 @@ answering from a cache or from the snapshot it was installed with — say so whe
 you rely on it, the same way you would pass on a row's caveat flags.
 
 The Claude Code plugin for this repository starts the server for you. Elsewhere,
-`pip install awesome-jev-mcp` and run `awesome-jev-mcp`.
+`pip install awesome-jev-mcp` and run `awesome-jev-mcp`. If pip finds no such
+package, install it from the repository instead:
+`pip install git+https://github.com/kydlikebtc/awesome-jev`.
 
 Without it, read
 [`catalog.json`](https://raw.githubusercontent.com/kydlikebtc/awesome-jev/main/catalog.json)

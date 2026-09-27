@@ -8,10 +8,18 @@
 # nothing to leak and nothing to rotate.
 #
 # To release:
-#   1. set `version` in pyproject.toml and merge it to main
+#   1. set `version` in pyproject.toml and .claude-plugin/plugin.json, and
+#      merge it to main
 #   2. git tag awesome-jev-mcp-v<version> <that commit> && git push origin <tag>
 # The build job refuses a tag that does not match pyproject.toml, because a
-# PyPI version, once uploaded, can never be uploaded again.
+# PyPI version, once uploaded, can never be uploaded again. The smoke job then
+# installs the release back from PyPI, as a reader would.
+#
+# The first release also needs, once: a pending trusted publisher on PyPI
+# (project awesome-jev-mcp, owner kydlikebtc, repository awesome-jev, workflow
+# publish.yml, environment pypi) and the `pypi` environment in this
+# repository's settings. Until a version is uploaded, lint's `release` job
+# (scripts/check_release.py) warns on every push to main that it is pending.
 #
 # The build job also runs on pull requests that touch the package, so the exact
 # steps a release depends on are exercised long before the irreversible one.
@@ -136,3 +144,46 @@ jobs:
           path: dist/
 
       - uses: pypa/gh-action-pypi-publish@release/v1
+
+  # The build job proved the wheel works; this proves PyPI serves it. It checks
+  # out nothing, so what it imports can only have come from the index. PyPI can
+  # take a moment to list a fresh upload, so an install that finds nothing is
+  # retried; an install that succeeds and then fails to import is a broken
+  # release, and fails at once.
+  smoke:
+    name: The release installs from PyPI
+    if: startsWith(github.ref, 'refs/tags/awesome-jev-mcp-v')
+    needs: publish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Install the release from PyPI, retrying while the index catches up
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          version="${TAG#awesome-jev-mcp-v}"
+          python3 -m venv "$RUNNER_TEMP/released"
+          cd "$RUNNER_TEMP"
+          for attempt in 1 2 3 4 5; do
+            if "$RUNNER_TEMP/released/bin/pip" install --quiet --no-cache-dir "awesome-jev-mcp==$version"; then
+              "$RUNNER_TEMP/released/bin/python" - "$version" <<'PY'
+          import importlib.metadata, sys
+
+          from awesome_jev_mcp import data
+
+          want = sys.argv[1]
+          got = importlib.metadata.version("awesome-jev-mcp")
+          assert got == want, f"PyPI served {got}, the tag says {want}"
+          assert data._read_dir(data.BUNDLED), "the release carries no bundled snapshot"
+          print(f"ok: awesome-jev-mcp {got} installs from PyPI, imports and carries its snapshot")
+          PY
+              exit 0
+            fi
+            echo "attempt $attempt of 5: awesome-jev-mcp==$version does not install from PyPI yet"
+            if [ "$attempt" -lt 5 ]; then sleep 30; fi
+          done
+          echo "::error title=Release does not install::awesome-jev-mcp==$version was uploaded but did not install from PyPI in 5 attempts over two minutes"
+          exit 1

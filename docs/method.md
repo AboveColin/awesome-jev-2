@@ -333,18 +333,20 @@ catalogue passed 800, and no build ever went red.
 | Link status, stars, licences, archive status | Continuously, upstream | `metadata` weekly: stamps every link that answers, re-reads the GitHub API, rebuilds everything generated, runs the whole lint chain, commits to `main`, and redeploys the site. It opens an issue only for a change that is more than a star count, and falls back to a branch if `main` moved underneath it. `links` weekly is the separate alarm for a dead link, which only a person may retire. The site shows the date of the sweep its figure comes from. |
 | Whether cited text is still present | Continuously, upstream | `claims` is scheduled weekly to fetch each `evidence` file and report missing strings or files. Counts show citations recorded, not CI passes, and the job does not update the human `read_on` date. |
 | What the catalogue is missing | Continuously, upstream | `discover` weekly: harvests every sibling directory, reads the code of the most-cited uncatalogued repositories, searches for sibling directories not yet harvested, and files one issue. It never adds a row. |
+| The MCP package on PyPI | When `pyproject.toml`'s version changes | A release is a tag a maintainer pushes, so PyPI can lag `main`. `check_release.py` compares the two on every push to `main`, in `lint`'s `release` job: a version not yet on PyPI is a warning carrying the tag command; a version older than PyPI's newest, or `pyproject.toml` and `.claude-plugin/plugin.json` disagreeing, fails. The file comparison also runs on every pull request, as a unit test. After an upload, `publish` installs the release back from PyPI. |
 | Dated history | Never | This page's log sections are append-only and exempt from the number rules: what the first build found is true forever. |
 
 - `lint` runs on every pull request, every push to `main`, and by hand; after
-  a push to `main` it also commits the regenerated files.
+  a push to `main` it also commits the regenerated files and asks PyPI whether
+  the MCP package's version is released.
 - `description` runs on every push to `main`, and by hand.
 - `pages` rebuilds the site and its images whenever the data, the site or the
   rendering scripts change.
 - `publish` builds and smoke-tests the MCP package on a pull request that
   changes the package (`src/`, `pyproject.toml` or the workflow itself), and
-  uploads it only from a release tag. Since 2026-09-27 a pull request that
-  changes only data no longer runs it: the wheel copies the data in verbatim,
-  and `lint` already validates it.
+  uploads it only from a release tag, then installs that release back from
+  PyPI. Since 2026-09-27 a pull request that changes only data no longer runs
+  it: the wheel copies the data in verbatim, and `lint` already validates it.
 
 Since 2026-09-27, the repository description and the site's meta description
 state the catalogue size floored to the hundred rather than exactly, and the
@@ -364,6 +366,20 @@ catalogue size, so while `build_docs.py` kept them in git every pull request
 that added a row also had to change the site's HTML. `check_site_data.py` holds
 both ends: a committed file carrying anything but the placeholder fails `lint`,
 and a deploy without current tags fails `pages` before anything is published.
+
+Since 2026-09-27, `lint` checks on every push to `main` that the MCP
+package's version is on PyPI (`check_release.py`). The package README, the
+agent skill and `llms.txt` told everyone outside Claude Code to
+`pip install awesome-jev-mcp`, and PyPI had never heard of it: `publish`
+uploads only from a release tag, no tag had been pushed, and no check looked
+at PyPI, so the documented route failed at its first step while every build
+stayed green. A version not yet on PyPI is reported, not failed, because it is
+the normal state between merging a version bump and pushing its tag, and only
+a maintainer can push the tag; a version older than PyPI's newest fails,
+because an uploaded version can never be uploaded again. An unreachable PyPI
+is `skipped`. The same three documents now also give
+`pip install git+https://github.com/kydlikebtc/awesome-jev`, which builds the
+same package from the repository.
 
 Since 2026-09-27, a pull request no longer has to carry generated files, and
 `lint` no longer fails a pull request because one is stale. Every pull request

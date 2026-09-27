@@ -37,8 +37,9 @@ awesome-jev-mcp
 
 It speaks stdio, so any MCP client works. The catalogue it serves is fetched
 from the repository's `main`, not frozen into the release, so a release only
-needs upgrading for changes to the server itself. To run the server as it is on
-`main` rather than as released:
+needs upgrading for changes to the server itself. If pip finds no
+`awesome-jev-mcp` to install, or to run the server as it is on `main` rather
+than as released, install it from the repository:
 
 ```bash
 pip install git+https://github.com/kydlikebtc/awesome-jev

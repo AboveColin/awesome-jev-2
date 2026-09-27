@@ -33,6 +33,9 @@ Run:
     pip install awesome-jev-mcp
     awesome-jev-mcp
 
+If pip finds no such package, install the same server from the repository:
+    pip install git+https://github.com/kydlikebtc/awesome-jev
+
 From a checkout, `python3 -m awesome_jev_mcp` does the same thing and serves the
 working tree rather than the published catalogue.
 """

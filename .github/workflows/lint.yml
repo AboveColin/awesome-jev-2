@@ -23,6 +23,13 @@
 # changed a source already triggered pages and description. So, unlike
 # metadata.yml, it holds no `actions: write` and dispatches nothing.
 #
+# The release job asks PyPI whether pyproject.toml's version of the MCP package
+# has been published (scripts/check_release.py). Only for a push to main: on a
+# pull request a version bump is expected to be unreleased, and the network
+# must not decide whether a pull request passes. The half that needs no
+# network — every file declaring the version agrees — runs in the catalog
+# job's unit tests on every event.
+#
 # Injection review: no `github.event.*` value is interpolated into any `run:`
 # block, so no attacker-controlled string (issue/PR title, body, branch name)
 # reaches a shell. The event name and ref appear only in `if:` expressions and
@@ -208,3 +215,20 @@ jobs:
             printf '## Regenerated files are on a branch\n\n`main` moved during the run, so the commit is on `%s`. A push to `main` by a person starts a lint run that regenerates `main` itself. A push by a bot (the weekly `metadata` refresh) starts none: if `main` is still behind, re-run this workflow run, which regenerates from the tip of `main`. Then delete the branch.\n' \
               "$branch" >> "$GITHUB_STEP_SUMMARY"
           fi
+
+  # Its own job, so PyPI being unreachable, or a release still pending its tag,
+  # never holds up the regenerate job. Pending is a warning; a version older
+  # than PyPI's newest, or files that disagree on it, fail.
+  release:
+    name: MCP package version is released on PyPI
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: pyproject.toml, plugin.json and PyPI agree
+        run: python3 scripts/check_release.py
