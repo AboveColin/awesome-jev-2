@@ -1,0 +1,258 @@
+"""The discovery issue's description as a queue (I05, phase C): each candidate's
+state derived from the repository's files, rendered the same way every time.
+
+A candidate is a repository .discover/seen.json records as calls-jev. It is
+catalogued when a row in catalog.json links to it, catalogued and since
+retired when only retired.json does, declined when docs/declined.txt names it,
+and otherwise still to read. No network.
+"""
+
+from __future__ import annotations
+
+import contextlib
+import io
+import json
+import pathlib
+import random
+import re
+import sys
+import tempfile
+import unittest
+
+ROOT = pathlib.Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT / "scripts"))
+
+import discover_candidates as dc  # noqa: E402
+import discover_seen as ds  # noqa: E402
+import queue_sync as qs  # noqa: E402
+from readme import rows as readme_rows  # noqa: E402
+
+
+def v(on: str, verdict: str = "calls-jev") -> dict:
+    return {"on": on, "verdict": verdict}
+
+
+def entry(slug: str, url: str, **extra) -> dict:
+    return {"slug": slug, "url": url, **extra}
+
+
+SEEN = {
+    "acme/listed": v("2026-09-17"),
+    "acme/two-rows": v("2026-09-17"),
+    "acme/via-repo": v("2026-09-10"),
+    "gone/away": v("2026-09-03"),
+    "no/thanks": v("2026-09-24"),
+    "both/ways": v("2026-09-24"),
+    "zeta/late": v("2026-09-24"),
+    "alpha/early": v("2026-09-03"),
+    "aaa/newest": v("2026-09-24"),
+    "quiet/one": v("2026-09-24", "no-signal"),
+    "readme/only": v("2026-09-24", "mentions-only"),
+}
+CATALOG = [
+    entry("listed", "https://github.com/Acme/Listed"),
+    entry("two-rows-b", "https://github.com/acme/two-rows/tree/main/examples/b"),
+    entry("two-rows-a", "https://github.com/acme/two-rows"),
+    entry("via-repo", "https://docs.example.com/guide", repo="https://github.com/acme/via-repo"),
+    entry("both-ways", "https://github.com/both/ways"),
+    entry("not-a-candidate", "https://github.com/some/other"),
+]
+RETIRED = [entry("gone-away", "https://github.com/gone/away", link_status=404)]
+DECLINED = {"no/thanks": "README claims Jev, code never calls it", "both/ways": "declined first"}
+
+
+def derive(seen=SEEN, catalog=CATALOG, retired=RETIRED, declined=DECLINED):
+    return {c.repo: c for c in qs.derive(seen, catalog, retired, declined)}
+
+
+class DeriveTest(unittest.TestCase):
+    def test_each_candidate_gets_the_state_the_files_give_it(self):
+        got = {repo: c.state for repo, c in derive().items()}
+        self.assertEqual(got, {
+            "acme/listed": "catalogued",
+            "acme/two-rows": "catalogued",
+            "acme/via-repo": "catalogued",
+            "gone/away": "retired",
+            "no/thanks": "declined",
+            "both/ways": "catalogued",
+            "zeta/late": "open",
+            "alpha/early": "open",
+            "aaa/newest": "open",
+        })
+
+    def test_only_calls_jev_verdicts_are_candidates(self):
+        self.assertNotIn("quiet/one", derive())
+        self.assertNotIn("readme/only", derive())
+        self.assertEqual(qs.derive({}, CATALOG, RETIRED, DECLINED), [])
+
+    def test_a_row_matches_by_url_or_repo_whatever_the_case(self):
+        got = derive()
+        self.assertEqual(got["acme/listed"].rows, ("listed",))
+        self.assertEqual(got["acme/via-repo"].rows, ("via-repo",))
+        self.assertEqual(got["acme/two-rows"].rows, ("two-rows-a", "two-rows-b"), "every row, by slug")
+
+    def test_a_row_wins_over_a_retirement_and_either_over_a_decline(self):
+        got = derive(retired=RETIRED + [entry("listed-old", "https://github.com/acme/listed", link_status=410)])
+        self.assertEqual((got["acme/listed"].state, got["acme/listed"].rows), ("catalogued", ("listed",)))
+        got = derive(declined={**DECLINED, "gone/away": "x"})
+        self.assertEqual(got["gone/away"].state, "retired")
+        self.assertEqual(derive()["both/ways"].state, "catalogued")
+
+    def test_a_decline_keeps_its_reason_and_the_read_date_travels(self):
+        got = derive()
+        self.assertEqual(got["no/thanks"].reason, "README claims Jev, code never calls it")
+        self.assertEqual(got["alpha/early"].read_on, "2026-09-03")
+
+    def test_rows_that_are_not_objects_or_not_on_github_are_skipped(self):
+        got = derive(catalog=["junk", entry("elsewhere", "https://example.com/acme/listed")] + CATALOG[1:])
+        self.assertEqual(got["acme/listed"].state, "open")
+
+
+class RenderTest(unittest.TestCase):
+    def body(self, **kwargs) -> str:
+        return qs.render(qs.derive(SEEN, CATALOG, RETIRED, DECLINED), **kwargs)
+
+    def test_each_state_has_its_line(self):
+        lines = self.body().splitlines()
+        for line in (
+            "- [ ] [alpha/early](https://github.com/alpha/early) · read 2026-09-03 · "
+            "`python3 scripts/discover_candidates.py --only alpha/early`",
+            f"- [x] [acme/listed](https://github.com/acme/listed) → [`listed`]({qs.SITE}?lang=en#listed)",
+            f"- [x] [acme/two-rows](https://github.com/acme/two-rows) → [`two-rows-a`]({qs.SITE}?lang=en#two-rows-a),"
+            f" [`two-rows-b`]({qs.SITE}?lang=en#two-rows-b)",
+            "- [x] [gone/away](https://github.com/gone/away) → `gone-away`, since retired (`retired.json`)",
+            "- [x] ~~[no/thanks](https://github.com/no/thanks)~~ · declined: README claims Jev, code never calls it",
+        ):
+            self.assertIn(line, lines)
+
+    def test_counts_and_order(self):
+        body = self.body()
+        self.assertIn("**3** to read · **4** catalogued · **1** declined · **1** catalogued and since retired", body)
+        opened = re.findall(r"^- \[ \] \[([^\]]+)\]", body, re.M)
+        self.assertEqual(opened, ["alpha/early", "aaa/newest", "zeta/late"], "oldest read first, then by name")
+        done = re.findall(r"^- \[x\] \[([^\]]+)\]", body, re.M)
+        self.assertEqual(done, ["acme/listed", "acme/two-rows", "acme/via-repo", "both/ways", "gone/away"])
+        self.assertLess(body.index("### To read"), body.index("<summary>Catalogued (4)</summary>"))
+        self.assertLess(body.index("<summary>Catalogued (4)</summary>"), body.index("<summary>Declined (1)</summary>"))
+        self.assertIn("<summary>Catalogued (4)</summary>\n\n- [x]", body, "a blank line lets the list render")
+
+    def test_says_how_to_claim_in_both_languages_only_when_something_is_open(self):
+        body = self.body()
+        self.assertIn(dc.CLAIM_EN, body)
+        self.assertIn(dc.CLAIM_ZH, body)
+        self.assertLess(body.index("comment `claim owner/name`"), body.index("- [ ] "))
+        zh = next(line for line in body.splitlines() if line.startswith("发现队列"))
+        self.assertTrue(zh.endswith(" <sub>(机翻)</sub>"), "model-written Chinese is marked")
+        settled = qs.render(qs.derive({"no/thanks": v("2026-09-24")}, CATALOG, RETIRED, DECLINED))
+        self.assertNotIn("claim owner/name", settled)
+        self.assertIn("Nothing to read: every candidate so far is catalogued or declined.", settled)
+        self.assertIn("No candidate yet", qs.render([]))
+
+    def test_the_description_says_it_is_written_by_a_script(self):
+        first = self.body().splitlines()[0]
+        self.assertTrue(first.startswith("<!-- Written by scripts/queue_sync.py"), first)
+        self.assertTrue(first.endswith("-->"))
+
+    def test_a_decline_reason_cannot_ping_or_start_markup(self):
+        body = qs.render(qs.derive({"no/thanks": v("2026-09-24")}, [], [], {"no/thanks": "@someone | <b>x</b>"}))
+        line = next(line for line in body.splitlines() if "no/thanks" in line and "declined" in line)
+        self.assertIn("@⁠someone \\| &lt;b>x&lt;/b>", line)
+        self.assertIn("declined: no reason given",
+                      qs.render(qs.derive({"no/thanks": v("2026-09-24")}, [], [], {"no/thanks": ""})))
+
+    def test_same_files_same_bytes_whatever_their_order(self):
+        body = self.body()
+        rng = random.Random(5)
+        for _ in range(20):
+            seen = dict(rng.sample(list(SEEN.items()), len(SEEN)))
+            catalog = rng.sample(CATALOG, len(CATALOG))
+            declined = dict(rng.sample(list(DECLINED.items()), len(DECLINED)))
+            self.assertEqual(qs.render(qs.derive(seen, catalog, RETIRED, declined)), body)
+
+    def test_no_date_but_the_reads(self):
+        body = self.body()
+        self.assertEqual(set(re.findall(r"\d{4}-\d{2}-\d{2}", body)), {"2026-09-03", "2026-09-24"})
+        self.assertNotRegex(body, r"(?i)\b(today|ago|yesterday)\b")
+
+    def test_long_lists_are_capped_and_the_whole_fits_github(self):
+        seen = {f"owner-{i:04d}/{'n' * 60}-{i}": v("2026-09-24") for i in range(3000)}
+        declined = {repo: "x" * 150 for repo in list(seen)[:1500]}
+        body = qs.body(qs.derive(seen, [], [], declined))
+        self.assertLessEqual(len(body), qs.MAX_CHARS)
+        shown = len(re.findall(r"^- \[ \] ", body, re.M))
+        self.assertLess(shown, 1500)
+        self.assertIn(f"- …and {1500 - shown} more, not shown to keep this description under GitHub's limit.", body)
+        self.assertEqual(body, qs.body(qs.derive(dict(reversed(list(seen.items()))), [], [], declined)))
+        small = self.body(open_shown=1, done_shown=2)
+        self.assertEqual(len(re.findall(r"^- \[ \] ", small, re.M)), 1)
+        self.assertEqual(small.count("- …and 2 more"), 2, "two of three to read, two of four catalogued")
+
+    def test_the_site_link_is_the_sites(self):
+        self.assertEqual(qs.SITE, readme_rows.SITE)
+
+
+class CommandTest(unittest.TestCase):
+    def setUp(self):
+        tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(tmp.cleanup)
+        self.root = pathlib.Path(tmp.name)
+        (self.root / "docs").mkdir()
+        (self.root / "catalog.json").write_text(json.dumps(CATALOG))
+        (self.root / "retired.json").write_text(json.dumps(RETIRED))
+        (self.root / "docs" / "declined.txt").write_text(
+            "# comment line\n" + "".join(f"{repo}  # {why}\n" for repo, why in DECLINED.items())
+        )
+        ds.write(self.root / ".discover" / "seen.json", SEEN)
+
+    def run_main(self, *argv: str) -> tuple[int, str, str]:
+        out, err = io.StringIO(), io.StringIO()
+        with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+            code = qs.main(["--root", str(self.root), *argv])
+        return code, out.getvalue(), err.getvalue()
+
+    def test_writes_the_description_and_logs_the_counts(self):
+        target = self.root / "queue.md"
+        code, out, err = self.run_main("--out", str(target))
+        self.assertEqual(code, 0, err)
+        self.assertEqual(out, "")
+        self.assertEqual(target.read_text(encoding="utf-8"), qs.body(qs.derive(SEEN, CATALOG, RETIRED, DECLINED)))
+        self.assertIn("discovery queue: 9 candidate(s) among 11 verdict(s): 3 open, 4 catalogued, 1 retired, 1 declined",
+                      err)
+        self.assertIn(f"wrote {target}", err)
+
+    def test_prints_it_without_out(self):
+        code, out, _ = self.run_main()
+        self.assertEqual(code, 0)
+        self.assertTrue(out.startswith("<!-- Written by scripts/queue_sync.py"))
+
+    def test_a_verdict_file_entry_of_the_wrong_shape_is_reported_and_left_out(self):
+        path = self.root / ".discover" / "seen.json"
+        data = json.loads(path.read_text())
+        data["verdicts"]["Bad Name/x"] = v("2026-09-24")
+        path.write_text(json.dumps(data))
+        code, out, err = self.run_main()
+        self.assertEqual(code, 0)
+        self.assertIn("::warning title=Discovery verdicts left out::.discover/seen.json: 1 entry", err)
+        self.assertNotIn("Bad Name", out)
+
+    def test_no_verdict_file_is_an_empty_queue_and_no_catalogue_is_an_error(self):
+        (self.root / ".discover" / "seen.json").unlink()
+        (self.root / "docs" / "declined.txt").unlink()
+        code, out, _ = self.run_main()
+        self.assertEqual(code, 0)
+        self.assertIn("No candidate yet", out)
+        (self.root / "catalog.json").unlink()
+        code, _, err = self.run_main()
+        self.assertEqual(code, 1)
+        self.assertIn("error:", err)
+
+    def test_runs_on_this_repository(self):
+        out, err = io.StringIO(), io.StringIO()
+        with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+            self.assertEqual(qs.main([]), 0)
+        self.assertIn("discovery queue:", err.getvalue())
+        self.assertLessEqual(len(out.getvalue()), qs.MAX_CHARS)
+
+
+if __name__ == "__main__":
+    unittest.main()

@@ -183,6 +183,19 @@ on, since the schema accepts a one-character summary and does not require
 second gate, and it matches text and compares facts; a maintainer still reads
 the call site.
 
+Since 2026-09-27, the discovery issue's description is the queue itself: every
+repository the verdicts record as `calls-jev`, each shown as catalogued (a row
+in `catalog.json` links to it), catalogued and since retired, declined (a line
+in `docs/declined.txt`), or still to read. `scripts/queue_sync.py` derives
+those states from the four files on every weekly run, and the same files
+always give the same text, so the workflow rewrites the description only when
+a state changed. No state is stored anywhere, and a person's decision still
+comes only from the catalogue or the declined list, never from the verdict
+file. Before this the issue was a thread of weekly comments whose boxes only
+someone with write access could tick. One gap remains: a candidate catalogued
+under a newer name than the one the sibling lists cite shows as still to read,
+because the verdict file keeps the cited name.
+
 ### The bulk pass, and what it cost
 
 A second aggregation run verified the 320 most-cited repositories missing here
@@ -496,7 +509,7 @@ catalogue passed 800, and no build ever went red.
 | Model strings and limits | When the vendor or a gateway ships | One source, `compat.json`. `lint_docs` checks every copy — in docs, examples, and the generated README and figures — against it. `claims` re-reads each platform's documentation weekly and opens an issue if a recorded string disappears. |
 | Link status, stars, licences, archive status | Continuously, upstream | `metadata` weekly: stamps every link that answers, re-reads the GitHub API, rebuilds everything generated, commits it, runs `lint`'s checks on that commit (`check.py --ci --quick`: all but the preview images, which `pages` renders), pushes to `main`, and redeploys the site. It opens an issue only for a change that is more than a star count, and falls back to a branch if `main` moved underneath it. `links` weekly is the separate alarm for a dead link, which only a person may retire, and for a sweep so refused by GitHub or by other hosts that it checked little. Both jobs, and `claims`, write their counts and the GitHub budget they spent to the run's summary. The site shows the date of the sweep its figure comes from, and the status page how many rows share it. |
 | Whether cited text is still present | Continuously, upstream | `claims` is scheduled weekly to fetch each `evidence` file and report missing strings or files. Counts show citations recorded, not CI passes, and the job does not update the human `read_on` date. |
-| What the catalogue is missing | Continuously, upstream | `discover` weekly: harvests every sibling directory, reads the code of the most-cited uncatalogued repositories, searches for sibling directories not yet harvested, and files one issue — a task list with a box per candidate to claim and the command that re-reads it. It never adds a row. Its verdicts are kept in `.discover/seen.json`, which `metadata` commits from `discover`'s artifact. |
+| What the catalogue is missing | Continuously, upstream | `discover` weekly: harvests every sibling directory, reads the code of the most-cited uncatalogued repositories, searches for sibling directories not yet harvested, and keeps one issue: its description is the queue of every candidate, ticked or struck through from `catalog.json`, `retired.json` and `docs/declined.txt` (`queue_sync.py`), and each week's new candidates are a comment, a box per candidate to claim with the command that re-reads it. It never adds a row. Its verdicts are kept in `.discover/seen.json`, which `metadata` commits from `discover`'s artifact. |
 | The MCP package on PyPI | When `pyproject.toml`'s version changes | A release is a tag a maintainer pushes, so PyPI can lag `main`. `check_release.py` compares the two on every push to `main`, in `lint`'s `release` job: a version not yet on PyPI is a warning carrying the tag command; a version older than PyPI's newest, or `pyproject.toml` and `.claude-plugin/plugin.json` disagreeing, fails. The file comparison also runs on every pull request, as a unit test. After an upload, `publish` installs the release back from PyPI. |
 | Dated history | Never | This page's log sections are append-only and exempt from the number rules: what the first build found is true forever. |
 

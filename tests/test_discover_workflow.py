@@ -22,27 +22,43 @@ sys.path.insert(0, str(ROOT / "scripts"))
 import discover_seen  # noqa: E402
 from test_weekly_jobs import run_block, step_lines  # noqa: E402
 
-# Plays gh: logs each call, one per line; `issue list` prints $STUB_EXISTING;
-# `issue create` fails when it is asked for a label named in $STUB_MISSING.
+# Plays gh: logs each call, one per line; `issue list` prints $STUB_EXISTING,
+# `issue view` prints $STUB_CURRENT (the open issue's description), `issue
+# create` prints the new issue's URL, or fails when it is asked for a label
+# named in $STUB_MISSING.
 GH_STUB = """#!/bin/bash
 printf '%s\\n' "$*" >> "$STUB_LOG"
 if [ "$1 $2" = "issue list" ]; then
   echo "$STUB_EXISTING"
   exit 0
 fi
-if [ "$1 $2" = "issue create" ] && [ -n "$STUB_MISSING" ]; then
-  for arg in "$@"; do
-    if [ "$arg" = "$STUB_MISSING" ]; then
-      echo "could not add label: '$arg' not found" >&2
-      exit 1
-    fi
-  done
+if [ "$1 $2" = "issue view" ]; then
+  printf '%s\\n' "$STUB_CURRENT"
+  exit 0
+fi
+if [ "$1 $2" = "issue create" ]; then
+  if [ -n "$STUB_MISSING" ]; then
+    for arg in "$@"; do
+      if [ "$arg" = "$STUB_MISSING" ]; then
+        echo "could not add label: '$arg' not found" >&2
+        exit 1
+      fi
+    done
+  fi
+  echo "https://github.com/kydlikebtc/awesome-jev/issues/99"
 fi
 exit 0
 """
 
+QUEUE = "<!-- Written by scripts/queue_sync.py -->\n\nThe discovery queue.\n\n- [ ] [a/b](https://github.com/a/b)\n"
+NEW = "### 2 new candidates with a call site\n"
+NOTHING_NEW = "No new candidate with a call site this week.\n\n<details>\n"
+
 
 class IssueStepTest(unittest.TestCase):
+    """The description is the queue (queue_sync.py), rewritten when it changed;
+    a week with something new also gets its report as a comment."""
+
     NAME = "Open or update the discovery issue"
 
     def setUp(self):
@@ -55,11 +71,13 @@ class IssueStepTest(unittest.TestCase):
         stub.chmod(stub.stat().st_mode | stat.S_IXUSR)
         self.log = self.dir / "gh.log"
         self.body = self.dir / "body.md"
+        self.queue = self.dir / "queue.md"
         text = (WORKFLOWS / "discover.yml").read_text()
         self.script = run_block(step_lines(text, self.NAME)).replace("/tmp/", f"{self.dir}/")
 
-    def run_step(self, body: str, existing: str = "", missing: str = "") -> list[str]:
+    def run_step(self, body: str, existing: str = "", missing: str = "", current: str = "") -> list[str]:
         self.body.write_text(body)
+        self.queue.write_text(QUEUE)
         self.log.write_text("")
         env = {
             **os.environ,
@@ -67,6 +85,7 @@ class IssueStepTest(unittest.TestCase):
             "STUB_LOG": str(self.log),
             "STUB_EXISTING": existing,
             "STUB_MISSING": missing,
+            "STUB_CURRENT": current,
         }
         done = subprocess.run(
             ["bash", "--noprofile", "--norc", "-e", "-c", self.script],
@@ -75,36 +94,77 @@ class IssueStepTest(unittest.TestCase):
         self.assertEqual(done.returncode, 0, done.stderr)
         return [line for line in self.log.read_text().splitlines() if not line.startswith("label create")]
 
-    def creates(self, calls: list[str]) -> list[str]:
-        return [call for call in calls if call.startswith("issue create")]
+    def of(self, calls: list[str], verb: str) -> list[str]:
+        return [call for call in calls if call.startswith(f"issue {verb}")]
 
-    def test_nothing_new_posts_nothing(self):
+    def test_nothing_new_and_no_issue_posts_nothing(self):
         # Earlier candidates alone never make a heading (test_discover_report).
-        self.assertEqual(self.run_step("No new candidate with a call site this week.\n\n<details>\n"), [])
+        calls = self.run_step(NOTHING_NEW)
+        self.assertEqual(calls, ["issue list --state open --label discovery --json number --jq .[0].number"])
+
+    def test_the_queue_is_rewritten_every_week_it_changed(self):
+        calls = self.run_step(NOTHING_NEW, existing="14", current="an older queue")
+        self.assertIn("issue view 14 --json body --jq .body", calls)
+        self.assertEqual(self.of(calls, "edit"), [f"issue edit 14 --body-file {self.queue}"])
+        self.assertEqual(self.of(calls, "comment"), [], "nothing new, so no comment")
+        self.assertEqual(self.of(calls, "create"), [])
+
+    def test_an_unchanged_queue_is_left_alone(self):
+        for current in (QUEUE, QUEUE.replace("\n", "\r\n")):
+            with self.subTest(crlf="\r" in current):
+                calls = self.run_step(NOTHING_NEW, existing="14", current=current.rstrip("\n"))
+                self.assertEqual(self.of(calls, "edit"), [])
 
     def test_a_new_week_comments_on_the_open_issue(self):
-        calls = self.run_step("### 2 new candidates with a call site\n", existing="14")
+        calls = self.run_step(NEW, existing="14", current=QUEUE.rstrip("\n"))
         self.assertEqual(calls[-1], f"issue comment 14 --body-file {self.body}")
-        self.assertEqual(self.creates(calls), [])
+        self.assertEqual(self.of(calls, "create") + self.of(calls, "edit"), [])
 
-    def test_a_new_issue_asks_for_help(self):
-        calls = self.run_step("### 1 new candidate with a call site\n")
+    def test_a_new_issue_holds_the_queue_and_the_report_is_its_first_comment(self):
+        calls = self.run_step(NEW)
         self.assertEqual(
-            self.creates(calls),
-            [f"issue create --title Discovery: candidates to read --label discovery --label help wanted --body-file {self.body}"],
+            self.of(calls, "create"),
+            [f"issue create --title Discovery: candidates to read --label discovery --label help wanted "
+             f"--body-file {self.queue}"],
+        )
+        self.assertEqual(
+            calls[-1], f"issue comment https://github.com/kydlikebtc/awesome-jev/issues/99 --body-file {self.body}"
         )
 
     def test_without_help_wanted_it_keeps_the_label_next_week_looks_for(self):
-        calls = self.run_step("### 1 new candidate with a call site\n", missing="help wanted")
-        self.assertEqual(len(self.creates(calls)), 2)
+        calls = self.run_step(NEW, missing="help wanted")
+        self.assertEqual(len(self.of(calls, "create")), 2)
         self.assertEqual(
-            self.creates(calls)[-1],
-            f"issue create --title Discovery: candidates to read --label discovery --body-file {self.body}",
+            self.of(calls, "create")[-1],
+            f"issue create --title Discovery: candidates to read --label discovery --body-file {self.queue}",
         )
+        self.assertTrue(calls[-1].startswith("issue comment https://"), calls[-1])
 
     def test_without_any_label_it_still_files_the_issue(self):
-        calls = self.run_step("### 1 new candidate with a call site\n", missing="discovery")
-        self.assertEqual(self.creates(calls)[-1], f"issue create --title Discovery: candidates to read --body-file {self.body}")
+        calls = self.run_step(NEW, missing="discovery")
+        self.assertEqual(self.of(calls, "create")[-1],
+                         f"issue create --title Discovery: candidates to read --body-file {self.queue}")
+        self.assertTrue(calls[-1].startswith("issue comment https://"), calls[-1])
+
+
+class QueueStepTest(unittest.TestCase):
+    NAME = "Write the discovery queue"
+
+    def test_writes_the_queue_after_the_verdicts_and_before_the_issue(self):
+        text = workflow("discover.yml")
+        self.assertIn("        run: python3 scripts/queue_sync.py --out /tmp/queue.md", step_lines(text, self.NAME))
+        order = [step_index(text, name) for name in (
+            "Discover", "Leave the verdicts for the weekly refresh to commit", self.NAME,
+            "Open or update the discovery issue",
+        )]
+        self.assertEqual(order, sorted(order))
+
+    def test_the_queue_script_reads_the_file_discover_writes(self):
+        # discover.yml's Discover step writes this run's verdicts here; the
+        # queue must be built from them, not from the committed copy alone.
+        run = run_block(step_lines(workflow("discover.yml"), "Discover"))
+        self.assertIn("--seen .discover/seen.json", run)
+        self.assertIn('".discover" / "seen.json"', (ROOT / "scripts" / "queue_sync.py").read_text())
 
 
 def workflow(name: str) -> str:

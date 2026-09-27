@@ -387,15 +387,20 @@ def inspect(slug: str) -> dict:
     return {**out, "verdict": "mentions-only" if mentions else "no-signal"}
 
 
-def read_declined() -> dict[str, str]:
-    if not DECLINED.exists():
-        return {}
+def parse_declined(text: str) -> dict[str, str]:
+    """owner/name, lower-cased, to the reason given, from docs/declined.txt's lines."""
     out = {}
-    for line in DECLINED.read_text().splitlines():
+    for line in text.splitlines():
         body, _, reason = line.partition("#")
         if body.strip():
             out[body.strip().lower()] = reason.strip()
     return out
+
+
+def read_declined() -> dict[str, str]:
+    if not DECLINED.exists():
+        return {}
+    return parse_declined(DECLINED.read_text())
 
 
 def find_new_lists(lists: list[str]) -> list[dict]:

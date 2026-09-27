@@ -269,9 +269,16 @@ result; neither `checked` nor `evidence.read_on` is a substitute.
 ## Finding things to add
 
 The weekly `discover` workflow does this for you and keeps an open issue
-labelled `discovery` with what it found. Each week's list is a task list: one
-box per repository whose code calls Jev, with its call site, and under it the
-command that reads that one repository again:
+labelled `discovery`. Its description is the queue: every repository the run
+has found calling Jev, ticked once `catalog.json` has its row, struck through
+once `docs/declined.txt` declines it, and otherwise waiting to be read.
+`scripts/queue_sync.py` derives those states from `catalog.json`,
+`retired.json`, `docs/declined.txt` and `.discover/seen.json`, and the weekly
+run rewrites the description with them, so nobody ticks a box by hand: merging
+the pull request that adds the row or the decline is what ticks it. Each
+week's new candidates arrive as a comment, a task list with one box per
+repository, its call site, and under it the command that reads that one
+repository again:
 
 ```bash
 python3 scripts/discover_candidates.py --only owner/name
