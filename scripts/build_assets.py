@@ -82,7 +82,7 @@ STRINGS = {
         "rows": "{n} rows",
         "legend": (
             "read by a person: rows whose question_types a person recorded from the code",
-            "text signal only: the cited file contains its shape (primitives_seen); nobody read the call",
+            "text signal only: its shape is in the cited file (primitives_seen); no reading records it",
         ),
     },
     "zh": {
@@ -100,7 +100,7 @@ STRINGS = {
         "rows": "{n} 条",
         "legend": (
             "人读确认：有人读过代码、记入 question_types 的行",
-            "仅文本信号：所引文件含其请求或回答结构（primitives_seen），无人读过该调用 (机翻)",
+            "仅文本信号：所引文件含其请求或回答结构（primitives_seen），人读记录中没有它 (机翻)",
         ),
     },
 }
