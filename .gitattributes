@@ -1,0 +1,15 @@
+# Files written whole by scripts/ from catalog.json and the other root JSON
+# files. GitHub collapses their diffs in pull requests and leaves them out of
+# the language statistics, so a reviewer sees the row that changed rather than
+# twenty regenerated files. Never edit them by hand: change the source and the
+# generator, and lint.yml regenerates them (see CONTRIBUTING.md).
+#
+# Deliberately not listed: docs/status.md, docs/sources.md,
+# docs/compatibility.md, llms.txt and site/index.html. Those are hand-written
+# prose that carries generated marker blocks, and their prose is reviewed like
+# any other file. The leading slash keeps examples/README.md and the package
+# README, which are hand-written, out of the README patterns.
+/README.md linguist-generated
+/README.zh-CN.md linguist-generated
+/docs/by-pattern/** linguist-generated
+/docs/assets/*.svg linguist-generated
