@@ -21,6 +21,7 @@ Usage:
   python3 scripts/discover_candidates.py                 # top 40 candidates
   python3 scripts/discover_candidates.py --top 100
   python3 scripts/discover_candidates.py --json > out.json
+  python3 scripts/discover_candidates.py --only owner/name   # re-read one candidate
 """
 
 from __future__ import annotations
@@ -40,6 +41,38 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 
 from _github import CODE_EXT, SELF, api_get, default_branch, raw_get, repo_of  # noqa: E402
 
+# The weekly issue: at most this many new boxes (the rest are saved with their
+# verdict and listed among the earlier candidates from the next run on), and at
+# most this many earlier candidates, so a comment stays well under GitHub's
+# 65,536-character limit.
+NEW_SHOWN = 60
+WAITING_SHOWN = 100
+# Printed under every box. It re-reads that one repository with the code below
+# and prints the same verdict, call site and matched strings. Not
+# verify_claims.py --discover: that one proposes evidence only for rows already
+# in catalog.json, and says "0 row(s)" for a candidate.
+COMMAND = "python3 scripts/discover_candidates.py --only {slug}"
+CONTRIBUTING_URL = f"https://github.com/{SELF}/blob/main/CONTRIBUTING.md#adding-an-entry"
+DECLINED_URL = f"https://github.com/{SELF}/blob/main/docs/declined.txt"
+CLAIM_EN = (
+    "Each box is a repository whose code a script found calling Jev: a reason to "
+    "read it, not a catalog row. To take one, comment `claim owner/name` on this "
+    "issue so two people do not read the same code, then read the call site and "
+    f"open a pull request adding its row ([Adding an entry]({CONTRIBUTING_URL})). "
+    "If it does not belong, open a pull request adding it to "
+    f"[`docs/declined.txt`]({DECLINED_URL}) with the reason instead. The command "
+    "under a box re-reads that repository now and prints the verdict, the call "
+    "site and the strings it matched."
+)
+# Model-written, so marked the way the README marks machine Chinese.
+CLAIM_ZH = (
+    "每个复选框是一个仓库：脚本在它的代码里找到了 Jev 调用——这是去读代码的理由，"
+    "不是一条目录记录。想认领一条，先在本 issue 评论 `claim owner/name`，免得两个人读同一份代码；"
+    f"然后阅读调用点，提交添加该行的 pull request（[添加条目]({CONTRIBUTING_URL})）。"
+    f"若它不该收录，就提交 pull request 把它加进 [`docs/declined.txt`]({DECLINED_URL}) 并写明理由。"
+    "复选框下的命令会立即重读该仓库，打印判定、调用点和匹配到的字符串。 <sub>(机翻)</sub>"
+)
+
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 CATALOG = ROOT / "catalog.json"
 SIBLINGS = ROOT / "docs" / "sibling-lists.txt"
@@ -50,6 +83,8 @@ DECLINED = ROOT / "docs" / "declined.txt"
 # integrations, and a verdict from two months ago is not a verdict about today.
 RECHECK_DAYS = 60
 WORKERS = 8
+# Everything inspect() can conclude, in the order the console report lists them.
+VERDICTS = ("calls-jev", "mentions-only", "no-signal", "repo-gone", "tree-unavailable")
 
 GH = re.compile(r"https://github\.com/([A-Za-z0-9][\w.-]*)/([\w.-]+)")
 
@@ -213,7 +248,18 @@ def classify(desc, name, lang):
 
 
 def slug_of(owner: str, name: str) -> str:
-    return f"{owner.lower()}/{re.sub(r'\\.git$', '', name).lower()}"
+    name = re.sub(r"\.git$", "", name)
+    return f"{owner.lower()}/{name.lower()}"
+
+
+def only_slug(text: str) -> str | None:
+    """owner/name, or a github.com URL of one, as a slug; None otherwise."""
+    match = re.fullmatch(
+        r"(?:https://github\.com/)?([A-Za-z0-9][\w.-]*)/([\w.-]+?)/?", text.strip()
+    )
+    if not match or match.group(2) in (".", ".."):
+        return None
+    return slug_of(*match.groups())
 
 
 def fetch_readme(repo_url: str) -> tuple[str, str]:
@@ -371,16 +417,66 @@ def inert(text: str, limit: int = 100) -> str:
     return text.replace("@", "@\u2060").replace("|", "\\|").replace("<", "&lt;")
 
 
+def code_span(text: str, limit: int = 120) -> str:
+    """A path from a stranger's repository, shown as inline code in the issue.
+    Without a backtick it cannot end the span early, and inside the span an @
+    pings nobody and brackets cannot close the link around it."""
+    return " ".join(str(text).split())[:limit].replace("`", "'")
+
+
+def blob_url(repo_url: str, path: str) -> str:
+    """The file on the default branch. Percent-encoded, so a space or a
+    parenthesis in the path cannot end the Markdown link."""
+    return f"{repo_url}/blob/HEAD/{urllib.parse.quote(path, safe='/')}"
+
+
+def task_lines(r: dict) -> list[str]:
+    """One new candidate: a box to tick, and the command that re-reads it."""
+    warn = " ⚠ test file" if r.get("evidence_is_test") else ""
+    call_site = f"[`{code_span(r['evidence_path'])}`]({blob_url(r['url'], r['evidence_path'])})"
+    return [
+        f"- [ ] [{r['slug']}]({r['url']}) · cited by {r['cited_by']} · ★{r.get('stars', 0)}"
+        f" · call site {call_site}{warn}"
+        f" · suggested {r['suggested_kind']} / {', '.join(r['suggested_patterns'])}",
+        f"  `{COMMAND.format(slug=r['slug'])}`",
+    ]
+
+
+def waiting_lines(waiting: list[tuple[str, dict]]) -> list[str]:
+    """Candidates proposed in earlier weeks, by name, oldest verdict first."""
+    shown = sorted(waiting, key=lambda item: (item[1]["on"], item[0]))[:WAITING_SHOWN]
+    n = len(waiting)
+    lines = [
+        "<details>",
+        f"<summary>{n} candidate{'s' if n != 1 else ''} from earlier weeks "
+        f"{'are' if n != 1 else 'is'} still neither catalogued nor declined</summary>",
+        "",
+    ]
+    lines += [
+        f"- [ ] [{slug}](https://github.com/{slug}) · read {entry['on']}"
+        f" · `{COMMAND.format(slug=slug)}`"
+        for slug, entry in shown
+    ]
+    if n > len(shown):
+        lines.append(f"- …and {n - len(shown)} more, not shown to keep this comment short.")
+    return lines + ["", "</details>", ""]
+
+
 def report_markdown(
     results: list[dict],
     new_hits: list[dict],
-    waiting: list[str],
+    waiting: list[tuple[str, dict]],
     new_lists: list[dict],
     reached: int,
     total_lists: int,
 ) -> str:
     """The weekly discovery issue. A shortlist for a person, never a row: each
-    candidate still has to be read and summarised before it enters the catalog."""
+    candidate still has to be read and summarised before it enters the catalog.
+
+    A GitHub task list, so a person can say which one they are reading, with
+    the command that re-reads each candidate. `waiting` is (slug, verdict) for
+    candidates proposed in earlier weeks, printed by name; they alone never add
+    a `### ` heading, which is what discover.yml posts on."""
     counts = collections.Counter(r["verdict"] for r in results)
     lines = [
         f"Harvested {reached}/{total_lists} sibling lists and read the code of "
@@ -389,31 +485,27 @@ def report_markdown(
         + ".",
         "",
     ]
+    if new_hits or waiting:
+        lines += [CLAIM_EN, "", CLAIM_ZH, ""]
     if new_hits:
+        ranked = sorted(new_hits, key=lambda r: (-r["cited_by"], -r.get("stars", 0), r["slug"]))
         lines += [
             f"### {len(new_hits)} new candidate{'s' if len(new_hits) != 1 else ''} with a call site",
             "",
-            "| Repository | Cited by | ★ | Call site | Suggested |",
-            "| --- | --- | --- | --- | --- |",
         ]
-        for r in sorted(new_hits, key=lambda r: (-r["cited_by"], -r.get("stars", 0)))[:60]:
-            branch_path = f"{r['url']}/blob/HEAD/{r['evidence_path']}"
-            warn = " ⚠ test file" if r.get("evidence_is_test") else ""
-            lines.append(
-                f"| [{r['slug']}]({r['url']}) | {r['cited_by']} | {r.get('stars', 0)} "
-                f"| [`{r['evidence_path']}`]({branch_path}){warn} "
-                f"| {r['suggested_kind']} · {', '.join(r['suggested_patterns'])} |"
-            )
+        for r in ranked[:NEW_SHOWN]:
+            lines += task_lines(r)
+        if len(ranked) > NEW_SHOWN:
+            lines += [
+                "",
+                f"Showing {NEW_SHOWN} of {len(ranked)}; the rest are listed among "
+                "the earlier candidates from the next run on.",
+            ]
         lines.append("")
     else:
         lines += ["No new candidate with a call site this week.", ""]
     if waiting:
-        lines += [
-            f"{len(waiting)} candidates proposed in earlier weeks are still neither "
-            "catalogued nor declined. Add each, or decline it in "
-            "`docs/declined.txt` with a reason.",
-            "",
-        ]
+        lines += waiting_lines(waiting)
     if new_lists:
         lines += [
             f"### {len(new_lists)} possible sibling director{'ies' if len(new_lists) != 1 else 'y'}",
@@ -434,7 +526,66 @@ def report_markdown(
     return "\n".join(lines)
 
 
-def main() -> int:
+def print_results(results: list[dict]) -> None:
+    """The console report, grouped by verdict. A harvest shows how many lists
+    cite each repository; a single --only read has no such count."""
+    by_verdict = collections.Counter(r["verdict"] for r in results)
+    for verdict in VERDICTS:
+        rows = [r for r in results if r["verdict"] == verdict]
+        if not rows:
+            continue
+        print(f"\n=== {verdict} ({len(rows)}) ===")
+        for r in rows:
+            cited = f"{r['cited_by']:>2} lists  " if "cited_by" in r else ""
+            print(f"  {cited}★{r.get('stars', 0):<7} {r['slug']}")
+            if verdict == "calls-jev":
+                print(f"          {r['evidence_path']}  -> {r['matched']}")
+                print(f"          {blob_url(r['url'], r['evidence_path'])}")
+                print(
+                    f"          suggested: {r['suggested_kind']} / "
+                    f"{', '.join(r['suggested_patterns'])}  (check it)"
+                )
+            if r.get("description"):
+                print(f"          {r['description'][:96]}")
+
+    print(f"\n{dict(by_verdict)}")
+    print(
+        "\nA `calls-jev` verdict means a call site was found, not that the row is "
+        "ready.\nSomeone still has to read it and write the summary — that is the "
+        "whole point."
+    )
+
+
+def catalogued(catalog: list[dict]) -> set[str]:
+    """owner/name of every catalogued GitHub repository, lower-cased."""
+    return {repo.lower() for repo in (repo_of(e) for e in catalog) if repo}
+
+
+def inspect_only(text: str, *, as_json: bool) -> int:
+    """`--only owner/name`: the command the discovery issue prints under each
+    box. Reads that one repository now, as the weekly run did, and prints the
+    same verdict. No harvest, and no verdict file is read or written: a
+    person's run proposes nothing to anyone."""
+    slug = only_slug(text)
+    if not slug:
+        print(f"error: --only takes owner/name or its GitHub URL, not {text!r}", file=sys.stderr)
+        return 2
+    catalog = json.loads(CATALOG.read_text())
+    if slug in catalogued(catalog):
+        print(f"note: {slug} is already in catalog.json")
+    declined = read_declined()
+    if slug in declined:
+        print(f"note: {slug} was declined in docs/declined.txt: {declined[slug] or '(no reason given)'}")
+    print(f"reading {slug}", file=sys.stderr)
+    result = inspect(slug)
+    if as_json:
+        print(json.dumps([result], indent=2, ensure_ascii=False))
+    else:
+        print_results([result])
+    return 0
+
+
+def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--top", type=int, default=40, help="candidates to verify")
     parser.add_argument("--json", action="store_true")
@@ -451,7 +602,15 @@ def main() -> int:
         action="store_true",
         help="also search GitHub for sibling directories not yet in sibling-lists.txt",
     )
-    args = parser.parse_args()
+    parser.add_argument(
+        "--only",
+        default="",
+        metavar="OWNER/NAME",
+        help="read just this repository now and print its verdict (no harvest, no verdict file)",
+    )
+    args = parser.parse_args(argv)
+    if args.only:
+        return inspect_only(args.only, as_json=args.json)
     today = dt.date.today()
     seen: dict[str, dict] = {}
     if args.seen and pathlib.Path(args.seen).exists():
@@ -482,9 +641,7 @@ def main() -> int:
             cites[slug_of(owner, name)] += 1
 
     catalog = json.loads(CATALOG.read_text())
-    have = {repo_of(e) for e in catalog}
-    have |= {(repo_of(e) or "").lower() for e in catalog}
-    have = {h.lower() for h in have if h}
+    have = catalogued(catalog)
     # Sibling lists themselves are already catalogued or deliberately excluded.
     have |= {slug_of(*GH.match(u).groups()) for u in lists if GH.match(u)}
     declined = read_declined()
@@ -492,7 +649,7 @@ def main() -> int:
 
     def fresh(slug: str) -> bool:
         """Read recently enough that reading it again would only repeat the
-        verdict. A candidate already proposed is counted as waiting instead —
+        verdict. A candidate already proposed is listed as waiting instead —
         re-reading it every week spent a third of each run's budget on
         repositories that were already on a person's list."""
         past = seen.get(slug)
@@ -535,18 +692,20 @@ def main() -> int:
         deduped.append(r)
     results = deduped
 
-    # Proposed before, still neither catalogued nor declined: counted, not
-    # re-listed, so the weekly issue shows what is new rather than a wall.
-    waiting = [
-        slug
-        for slug, past in seen.items()
-        if past["verdict"] == "calls-jev" and slug not in have
-    ]
     new_hits = [
         r for r in results if r["verdict"] == "calls-jev" and r["slug"] not in seen
     ]
     for r in results:
         seen[r["slug"]] = {"verdict": r["verdict"], "on": today.isoformat()}
+    # Proposed before, still neither catalogued nor declined: listed by name
+    # under the new ones, with this run's re-reads already applied, so one that
+    # stopped calling Jev drops out.
+    fresh_hits = {r["slug"] for r in new_hits}
+    waiting = [
+        (slug, past)
+        for slug, past in seen.items()
+        if past["verdict"] == "calls-jev" and slug not in have and slug not in fresh_hits
+    ]
     if args.seen:
         pathlib.Path(args.seen).parent.mkdir(parents=True, exist_ok=True)
         pathlib.Path(args.seen).write_text(json.dumps(seen, indent=1, sort_keys=True))
@@ -561,36 +720,7 @@ def main() -> int:
         print(json.dumps(results, indent=2, ensure_ascii=False))
         return 0
 
-    by_verdict = collections.Counter(r["verdict"] for r in results)
-    for verdict in (
-        "calls-jev",
-        "mentions-only",
-        "no-signal",
-        "repo-gone",
-        "tree-unavailable",
-    ):
-        rows = [r for r in results if r["verdict"] == verdict]
-        if not rows:
-            continue
-        print(f"\n=== {verdict} ({len(rows)}) ===")
-        for r in rows:
-            head = f"  {r['cited_by']:>2} lists  ★{r.get('stars', 0):<7} {r['slug']}"
-            print(head)
-            if verdict == "calls-jev":
-                print(f"          {r['evidence_path']}  -> {r['matched']}")
-                print(
-                    f"          suggested: {r['suggested_kind']} / "
-                    f"{', '.join(r['suggested_patterns'])}  (check it)"
-                )
-            if r.get("description"):
-                print(f"          {r['description'][:96]}")
-
-    print(f"\n{dict(by_verdict)}")
-    print(
-        "\nA `calls-jev` verdict means a call site was found, not that the row is "
-        "ready.\nSomeone still has to read it and write the summary — that is the "
-        "whole point."
-    )
+    print_results(results)
     return 0
 
 

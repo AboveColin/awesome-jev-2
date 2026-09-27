@@ -222,7 +222,21 @@ result; neither `checked` nor `evidence.read_on` is a substitute.
 ## Finding things to add
 
 The weekly `discover` workflow does this for you and keeps an open issue
-labelled `discovery` with what it found. To run it by hand:
+labelled `discovery` with what it found. Each week's list is a task list: one
+box per repository whose code calls Jev, with its call site, and under it the
+command that reads that one repository again:
+
+```bash
+python3 scripts/discover_candidates.py --only owner/name
+```
+
+To take one, comment `claim owner/name` on the issue, so two people do not
+read the same code; the first comment wins, and nothing arbitrates beyond
+that. Then read the call site and add the row as described above. Candidates
+from earlier weeks that are still neither catalogued nor declined are listed by
+name under the new ones.
+
+To run the whole harvest by hand:
 
 ```bash
 python3 scripts/discover_candidates.py --top 40
@@ -232,6 +246,8 @@ This harvests every list in `docs/sibling-lists.txt`, ranks repositories by how
 many cite each, and reads the candidate's code before reporting. A `calls-jev`
 verdict means a call site was found — it is a shortlist, not a row. Read it,
 write the summary yourself, and keep the evidence path the scan produced.
+`verify_claims.py --discover` is for rows already in `catalog.json`; for a
+candidate it finds nothing to read.
 
 Read one and decided it does not belong? Add it to `docs/declined.txt` with a
 reason, and the weekly run stops proposing it.

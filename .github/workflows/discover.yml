@@ -8,15 +8,21 @@
 # not yet harvested, and files what it found as one issue.
 #
 # It never adds a row. A call site found by a script is a reason for a person to
-# read the code; the catalogue's whole claim is that someone did.
+# read the code; the catalogue's whole claim is that someone did. So the issue is
+# a task list: one box per candidate, a `claim owner/name` comment to take one,
+# and under each box the command that re-reads that repository
+# (`discover_candidates.py --only owner/name`). Candidates proposed in earlier
+# weeks and still neither catalogued nor declined are listed by name.
 #
 # Verdicts persist between runs in the Actions cache rather than in git: a
 # repository found not to call Jev is not re-read for 60 days, and a candidate
-# already proposed is counted rather than listed again. Nothing is committed.
+# already proposed is listed among the earlier ones rather than as new. Nothing
+# is committed.
 #
 # Injection review: no `github.event.*` value reaches a `run:` block. The issue
 # body is read from a file the script wrote. Repository descriptions from the
-# search API land in that body as Markdown text, never in a shell.
+# search API and file paths from a candidate's tree land in that body as
+# Markdown text (neutralised by inert() and code_span()), never in a shell.
 name: discover
 
 on:
@@ -68,12 +74,18 @@ jobs:
           gh label create discovery --color 8250df \
             --description "Candidates the weekly discovery run found" 2>/dev/null || true
 
+          # `help wanted` is one of GitHub's default labels: reading a call site
+          # and writing two lines is work anyone can pick up. A repository
+          # without it (a fork) still gets the `discovery` label, which is how
+          # next week's run finds this issue again.
           existing=$(gh issue list --state open --label discovery --json number --jq '.[0].number')
           if [ -n "$existing" ]; then
             gh issue comment "$existing" --body-file /tmp/body.md
           else
             gh issue create --title "Discovery: candidates to read" \
-              --label discovery --body-file /tmp/body.md \
+              --label discovery --label "help wanted" --body-file /tmp/body.md \
+              || gh issue create --title "Discovery: candidates to read" \
+                   --label discovery --body-file /tmp/body.md \
               || gh issue create --title "Discovery: candidates to read" \
                    --body-file /tmp/body.md
           fi

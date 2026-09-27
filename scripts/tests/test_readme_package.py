@@ -37,8 +37,9 @@ def python_files() -> list[pathlib.Path]:
     Both scans below look for the name build_readme, which a file cannot use
     without spelling it, so the filter drops nothing they could find. It also
     keeps them from parsing files that need a newer Python than the 3.11 floor
-    CONTRIBUTING.md states (discover_candidates.py uses a 3.12 f-string), which
-    made these tests error on 3.11 for a file that never mentions the shell.
+    CONTRIBUTING.md states (discover_candidates.py needed 3.12 for an f-string
+    until I05), which made these tests error on 3.11 for a file that never
+    mentions the shell.
     """
     return sorted(
         path
