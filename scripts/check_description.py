@@ -133,7 +133,7 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     # The whole sentence is compared, not just its number. The same sentence is
-    # the site's og:description (build_docs.py), so an exact match here is what
+    # the site's og:description (assemble_site.py), so an exact match here is what
     # guarantees a link to the repo and a link to the site say the same thing.
     command = edit_command(expected)
     print("drift: the published repository description differs from the catalogue's pitch.")

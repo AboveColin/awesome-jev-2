@@ -24,7 +24,7 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
 import _stats
-import build_docs
+import assemble_site
 import check_description
 
 
@@ -53,7 +53,7 @@ class PublicCountTest(unittest.TestCase):
         self.assertNotIn("verified examples", pitch)
 
     def test_site_meta_description_is_the_same_rounded_sentence(self):
-        meta = build_docs.meta_block({"entries": 1207})
+        meta = assemble_site.meta_block({"entries": 1207})
         pitch = _stats.pitch_public({"entries": 1207}).replace("'", "&#x27;")
         self.assertIn(f'<meta name="description" content="{pitch}" />', meta)
         self.assertIn(f'<meta property="og:description" content="{pitch}" />', meta)

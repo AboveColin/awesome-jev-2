@@ -76,7 +76,8 @@ jobs:
         run: python3 scripts/build_compat.py --check
 
       # status.md, sources.md, llms.txt and the site's meta tags all froze at
-      # the first build's 148 entries because nothing regenerated them.
+      # the first build's 148 entries because nothing regenerated them. (The
+      # meta tags are now written at deploy; check_site_data guards them.)
       - name: Generated numbers in the docs are current
         run: python3 scripts/build_docs.py --check
 

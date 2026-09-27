@@ -29,9 +29,10 @@ python3 scripts/sort_catalog.py \
 ```
 
 `build_assets.py` regenerates the README's SVG figures, and `build_docs.py`
-refills every generated number in `docs/status.md`, `docs/sources.md`,
-`llms.txt` and the site's meta tags. CI fails if any of them are stale, because
-a figure that disagrees with the catalog is worse than no figure.
+refills every generated number in `docs/status.md`, `docs/sources.md` and
+`llms.txt`. CI fails if any of them are stale, because a figure that disagrees
+with the catalog is worse than no figure. The site's link-preview tags are not
+in git at all: the Pages deploy writes them.
 
 3. Commit `catalog.json`, both generated READMEs, and whatever else those
    scripts rewrote. CI fails if any of it drifts.

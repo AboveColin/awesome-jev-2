@@ -322,7 +322,7 @@ catalogue passed 800, and no build ever went red.
 
 | What changes | When | Kept current by |
 | --- | --- | --- |
-| Counts and tables about the catalogue | Whenever a row is added or edited | Generated from `catalog.json` — the READMEs by `build_readme.py`, the figures by `build_assets.py`, and every number inside the hand-written docs, `llms.txt` and the site's meta tags by `build_docs.py`. All numbers share one definition in `scripts/_stats.py`. `lint` fails on any drift, and `lint_docs.py` rejects a catalogue count typed anywhere else. |
+| Counts and tables about the catalogue | Whenever a row is added or edited | Generated from `catalog.json` — the READMEs by `build_readme.py`, the figures by `build_assets.py`, and every number inside the hand-written docs and `llms.txt` by `build_docs.py`. The site's link-preview tags are written into the Pages artifact at deploy by `assemble_site.py --deploy` and never committed. All numbers share one definition in `scripts/_stats.py`. `lint` fails on any drift, and `lint_docs.py` rejects a catalogue count typed anywhere else. |
 | Images that show data | Same | Rendered from the data on every Pages deploy by `render_images.py` and never committed: the site's `og:image`, and the README and compatibility screenshots. The deploy refuses to publish a page that did not finish loading its data. |
 | The GitHub social preview | Never | It can only be uploaded by hand, so it is the durable card: its one figure is a floor ("800+") that growth can only make an understatement, never wrong. `description` reports whether one is uploaded. |
 | The repository description | When the count crosses a hundred, or the wording changes | Only an admin can edit it, so it states the count floored to the hundred: `_stats.pitch_public()`, the same sentence as the site's `description` and `og:description`. The `description` workflow compares the whole sentence on every push to `main`; on drift it warns and keeps one open issue, labelled `description`, holding the exact `gh repo edit` command, instead of failing a build nobody but an admin can fix. `lint` prints the would-be sentence on every run, pull requests included. Every other surface — the READMEs, `status.md`, `llms.txt`, the figures — carries the exact count. |
@@ -347,3 +347,12 @@ made `main` red after every merged row, in the one check CI could never repair
 social preview's, stays true as the catalogue grows and goes stale once per
 hundred rows. Until then the two surfaces show a smaller number than the
 READMEs; that difference is deliberate, and the READMEs are the exact figure.
+
+Since 2026-09-27, the site's link-preview tags (`description`, `og:*`,
+`twitter:card`) are written into `site/index.html` only in the Pages artifact,
+by `assemble_site.py --deploy`, from the same stats as the rest of the page.
+Git keeps a placeholder between the `meta` markers. The tags quote the
+catalogue size, so while `build_docs.py` kept them in git every pull request
+that added a row also had to change the site's HTML. `check_site_data.py` holds
+both ends: a committed file carrying anything but the placeholder fails `lint`,
+and a deploy without current tags fails `pages` before anything is published.

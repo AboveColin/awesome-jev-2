@@ -38,6 +38,15 @@ def replace_block(text: str, name: str, body: str, *, where: str) -> str:
     return f"{head}{start}\n{body}\n{indent}{end}{tail}"
 
 
+def read_block(text: str, name: str, *, where: str) -> str:
+    """The body between a block's markers, as written. Missing markers are
+    fatal for the same reason as in replace_block."""
+    start, end = f"<!-- {name}:start -->", f"<!-- {name}:end -->"
+    if start not in text or end not in text:
+        raise SystemExit(f"error: {where} is missing the {start} / {end} markers")
+    return text.partition(start)[2].partition(end)[0]
+
+
 def replace_inline(text: str, values: dict[str, object], *, where: str) -> str:
     """Refill every inline marker. An unknown key is fatal for the same reason."""
 

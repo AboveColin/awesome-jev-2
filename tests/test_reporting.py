@@ -11,6 +11,7 @@ from unittest.mock import patch
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "scripts"))
 
 import _stats
+import assemble_site
 import build_docs
 import build_readme
 import lint_docs
@@ -91,7 +92,7 @@ class VerificationReportingTests(unittest.TestCase):
         self.assertIn("没有 `code-untested` 标签也不代表已测试", chinese)
         self.assertIn("`recommendation`", english)
         self.assertNotIn("verified examples", _stats.pitch_public(stats))
-        self.assertNotIn("verified examples", build_docs.meta_block(stats))
+        self.assertNotIn("verified examples", assemble_site.meta_block(stats))
 
 
 class ReadmePreviewTests(unittest.TestCase):

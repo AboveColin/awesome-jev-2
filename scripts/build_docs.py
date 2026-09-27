@@ -8,11 +8,14 @@ fourteen linked projects had no licence when the real number was 171, and the
 site's link-preview text still said 148. None of that was ever wrong on the day
 it was written. It became wrong silently, which is worse.
 
+The site's link-preview tags are no longer here: since 2026-09-27 they are
+written at deploy by `assemble_site.py --deploy`, and git keeps a placeholder.
+
 The rule this enforces: a number describing the catalogue may appear only where
 something re-derives it. Here that means one of
 
   * a block — `<!-- name:start -->` … `<!-- name:end -->` — whose whole body is
-    generated (a table, a list, a group of meta tags), or
+    generated (a table or a list), or
   * an inline value — `<!--n:key-->805<!--/n-->` — inside a hand-written sentence.
 
 Both are invisible once rendered. The prose around them stays hand-written.
@@ -27,7 +30,6 @@ Run: python3 scripts/build_docs.py
 from __future__ import annotations
 
 import argparse
-import html
 import pathlib
 import re
 import sys
@@ -39,8 +41,6 @@ import _stats  # noqa: E402
 from _markers import normalise, replace_block, replace_inline  # noqa: E402
 
 ROOT = _stats.ROOT
-SITE = "https://kydlikebtc.github.io/awesome-jev/"
-OG_IMAGE = f"{SITE}img/og.png"
 
 LICENCE_LABEL = {
     "unknown": "None declared",
@@ -185,39 +185,6 @@ def row_licences_block(catalog: list[dict]) -> str:
     )
 
 
-# ---- site/index.html -------------------------------------------------------
-
-
-def meta_block(s: dict) -> str:
-    """Link-preview tags. og:description is the same sentence as the GitHub
-    repository description — both come from _stats.pitch_public, with the count
-    floored to the hundred — so a link to the site and a link to the repo can
-    no longer describe different catalogues. The image alt keeps the exact
-    count, because the card it describes is rendered with live data."""
-    text = html.escape(_stats.pitch_public(s), quote=True)
-    alt = html.escape(
-        "awesome-jev — "
-        f"{s['entries']} public resources for TypeSafe AI's Jev, indexed by the "
-        "decision each one makes.",
-        quote=True,
-    )
-    tags = [
-        f'<meta name="description" content="{text}" />',
-        '<meta property="og:title" content="awesome-jev" />',
-        f'<meta property="og:description" content="{text}" />',
-        '<meta property="og:type" content="website" />',
-        f'<meta property="og:url" content="{SITE}" />',
-        # Rendered from site/card.html with live data on every deploy, never
-        # committed — so the preview image is exactly as current as the site.
-        f'<meta property="og:image" content="{OG_IMAGE}" />',
-        '<meta property="og:image:width" content="1280" />',
-        '<meta property="og:image:height" content="640" />',
-        f'<meta property="og:image:alt" content="{alt}" />',
-        '<meta name="twitter:card" content="summary_large_image" />',
-    ]
-    return "\n".join("    " + tag for tag in tags)
-
-
 # ---- driver ----------------------------------------------------------------
 
 
@@ -254,7 +221,6 @@ def render() -> dict[pathlib.Path, str]:
             "licences": licences_block(catalog),
             "row-licences": row_licences_block(catalog),
         },
-        "site/index.html": {"meta": meta_block(s)},
         "llms.txt": {},
     }
 
@@ -297,7 +263,7 @@ def main() -> int:
                 file=sys.stderr,
             )
             return 1
-        print("generated values in docs, llms.txt and site meta are up to date")
+        print("generated values in docs/status.md, docs/sources.md and llms.txt are up to date")
         return 0
 
     print(("rewrote " + ", ".join(rel)) if stale else "nothing to update")

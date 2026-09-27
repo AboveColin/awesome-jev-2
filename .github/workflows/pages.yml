@@ -48,10 +48,15 @@ jobs:
       - name: Assemble the site
         # Copies every runtime data file and writes stats.json; the same script
         # a local preview uses, so the two cannot assemble different sites.
-        run: python3 scripts/assemble_site.py
+        # --deploy also writes the link-preview tags into index.html, from the
+        # same stats: git keeps only a placeholder there, so a pull request
+        # adding a row no longer has to change the site's HTML.
+        run: python3 scripts/assemble_site.py --deploy
 
+      # Refuses to publish without current link-preview tags, as well as with
+      # a stale or truncated copy of the data.
       - name: Sanity-check the catalog and curated entry points
-        run: python3 scripts/check_site_data.py
+        run: python3 scripts/check_site_data.py --deploy
 
       # The og:image, the durable social card and the README screenshots are
       # rendered here from the data just assembled, and served from Pages. They
