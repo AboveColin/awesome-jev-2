@@ -244,7 +244,9 @@ def get_example(slug: str) -> dict[str, Any]:
     for entry in CATALOG:
         if entry["slug"] == slug:
             return entry
-    close = [e["slug"] for e in CATALOG if slug.lower() in e["slug"].lower()][:5]
+    # Sorted rather than taken in file order: the copy that answered may be a
+    # checkout mid-edit or an AWESOME_JEV_CATALOG directory, not the sorted file.
+    close = sorted(e["slug"] for e in CATALOG if slug.lower() in e["slug"].lower())[:5]
     return {
         "error": f"no entry with slug {slug!r}",
         "did_you_mean": close or None,
