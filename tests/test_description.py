@@ -172,6 +172,8 @@ class WorkflowWiringTest(unittest.TestCase):
         self.assertIn("  workflow_dispatch:\n", text)
         self.assertNotIn("pull_request", text)
         self.assertIn("--label description", text)
+        # A dispatch from a branch must not open or close the issue.
+        self.assertIn("    if: github.ref == 'refs/heads/main'\n", text)
         # No event payload reaches a shell.
         self.assertNotIn("github.event", text.split("\non:")[1])
 

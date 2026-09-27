@@ -29,6 +29,9 @@ concurrency:
 jobs:
   description:
     name: Published description matches the catalogue
+    # Only main's sentence is the one to publish. A dispatch from another
+    # branch would otherwise open or close the issue on that branch's say-so.
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
