@@ -13,6 +13,7 @@
 - [ ] `stars` / `repo_license` came from the GitHub API, not a badge
 - [ ] Caveats are flagged, and any flag needing an explanation has a `notes` line
 - [ ] `summary_zh` is hand-written, or `zh_machine: true` is set
+- [ ] A row started from a discovery draft (`--drafts`): I read its call site myself, checked the `kind`, `patterns` and `languages` the script guessed, and deleted `_draft`. Leave unticked otherwise.
 - [ ] This is my own project (I wrote or maintain it): its row has a source `{"catalog": "author submission", "url": <this pull request>}` and `self-submitted` in `flags`. Leave unticked otherwise.
 
 ## If you added a pattern

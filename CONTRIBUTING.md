@@ -283,6 +283,29 @@ that. Then read the call site and add the row as described above. Candidates
 from earlier weeks that are still neither catalogued nor declined are listed by
 name under the new ones.
 
+To start the row from what the script already knows, add `--drafts drafts`:
+
+```bash
+python3 scripts/discover_candidates.py --only owner/name --drafts drafts
+```
+
+That also writes `drafts/<slug>.json`, a draft row: the URL, GitHub's stars
+and licence, the call site's path and the strings matched there, and the
+keyword rules' guess at `kind` and `patterns` are filled in; `summary`,
+`summary_zh` and `evidence.read_on` are left for you, and so is `sources`,
+since a single read cannot know where you found the repository. Its first
+field, `_draft`, lists what is left to do. Read the call site, complete the
+row, delete `_draft`, and move the row into `catalog.json`. `drafts/` is
+ignored by git, and the command never writes over a draft that is already
+there.
+
+`lint.py` refuses any row that still has a `_draft` field, and that is the
+only thing that keeps a draft out as it is. Do not count on anything else to
+catch an unfinished one: an empty `summary` fails, but a one-word summary
+passes, and `read_on` is optional. The review card on your pull request is a
+second gate that compares facts and matches text; neither it nor lint reads
+the code for you.
+
 To run the whole harvest by hand:
 
 ```bash

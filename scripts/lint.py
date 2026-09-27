@@ -64,6 +64,14 @@ SELF_SUBMISSION_NEAR_MISS = re.compile(r"\b(?:author|self)[\s_-]*submi", re.IGNO
 # scripts/review_rows.py holds a pull request's new rows to the same list.
 FLAGS_NEEDING_NOTES = ("ai-generated", "unverified-claims", "code-untested")
 
+# The first field of every draft row scripts/discover_drafts.py writes: what a
+# script filled in and what a person still has to do. A row that still has it
+# is a script's findings, not a row anyone completed, and this is the only rule
+# that keeps one out as it is (an empty summary fails, but one word passes).
+# The schema does not know the field either, so such a row fails twice; this
+# message is the one that says why.
+DRAFT_FIELD = "_draft"
+
 
 class Findings(NamedTuple):
     """What a check found, in order. Errors fail the build; warnings are advice."""
@@ -232,6 +240,13 @@ def check_entry_invariants(
     slug = entry.get("slug", "?")
     if today is None:
         today = dt.date.today()
+
+    if DRAFT_FIELD in entry:
+        report.err(
+            path,
+            f"{slug}: is a discovery draft, not a row: read the call site, complete it as its "
+            f"{DRAFT_FIELD!r} lines say, then delete that field",
+        )
 
     # An entry claiming code should say what language it is in, and a question
     # type is a claim about code. These keep `has_code` filters trustworthy.

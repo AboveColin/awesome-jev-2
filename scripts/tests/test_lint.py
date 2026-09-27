@@ -343,6 +343,23 @@ class EntryInvariantTest(FindingsAssertions):
             "flagged no-license but repo_license is 'MIT'",
         )
 
+    def test_a_discovery_draft_is_refused(self):
+        # I05: the one rule that keeps a draft from discover_drafts.py out as it
+        # is. The schema refuses the unknown field too; this says why.
+        for base, retired in ((FULL, False), (RETIRED, True)):
+            with self.subTest(retired=retired):
+                where = "retired.json[0]" if retired else PATH
+                drafted = row(base, **{lint.DRAFT_FIELD: ["Draft written by a script."]})
+                self.assertOnly(
+                    lint.check_entry_invariants(drafted, where, retired=retired, today=TODAY),
+                    "error",
+                    f"{base['slug']}: is a discovery draft, not a row",
+                    f"'{lint.DRAFT_FIELD}'",
+                )
+                errors, _ = lint_row(drafted, retired=retired)
+                self.assertEqual(len(errors), 2, errors)
+                self.assertIn(f"unknown field '{lint.DRAFT_FIELD}'", errors[0])
+
 
 class SchemaValidatorTest(FindingsAssertions):
     """validate() against the real schema: each keyword it enforces, on a field that uses it."""

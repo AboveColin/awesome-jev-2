@@ -22,6 +22,8 @@ Usage:
   python3 scripts/discover_candidates.py --top 100
   python3 scripts/discover_candidates.py --json > out.json
   python3 scripts/discover_candidates.py --only owner/name   # re-read one candidate
+  python3 scripts/discover_candidates.py --only owner/name --drafts drafts
+      # ...and write drafts/<slug>.json, a draft row to complete (discover_drafts.py)
 """
 
 from __future__ import annotations
@@ -50,6 +52,7 @@ from discover_seen import (  # noqa: E402
     report_dropped,
     write as write_seen,
 )
+import discover_drafts  # noqa: E402
 
 # The weekly issue: at most this many new boxes (the rest are saved with their
 # verdict and listed among the earlier candidates from the next run on), and at
@@ -72,7 +75,9 @@ CLAIM_EN = (
     "If it does not belong, open a pull request adding it to "
     f"[`docs/declined.txt`]({DECLINED_URL}) with the reason instead. The command "
     "under a box re-reads that repository now and prints the verdict, the call "
-    "site and the strings it matched."
+    "site and the strings it matched. Add `--drafts drafts` to it and it also "
+    "writes `drafts/<slug>.json`: the row with what the script found filled in, "
+    "for you to complete. lint refuses it until its `_draft` field is gone."
 )
 # Model-written, so marked the way the README marks machine Chinese.
 CLAIM_ZH = (
@@ -80,7 +85,9 @@ CLAIM_ZH = (
     "不是一条目录记录。想认领一条，先在本 issue 评论 `claim owner/name`，免得两个人读同一份代码；"
     f"然后阅读调用点，提交添加该行的 pull request（[添加条目]({CONTRIBUTING_URL})）。"
     f"若它不该收录，就提交 pull request 把它加进 [`docs/declined.txt`]({DECLINED_URL}) 并写明理由。"
-    "复选框下的命令会立即重读该仓库，打印判定、调用点和匹配到的字符串。 <sub>(机翻)</sub>"
+    "复选框下的命令会立即重读该仓库，打印判定、调用点和匹配到的字符串；"
+    "加上 `--drafts drafts` 还会写出 `drafts/<slug>.json`：已填好脚本所知信息的草稿行，由你补全。"
+    "在删掉其中的 `_draft` 字段之前，lint 会拒绝它。 <sub>(机翻)</sub>"
 )
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
@@ -568,11 +575,12 @@ def catalogued(catalog: list[dict]) -> set[str]:
     return {repo.lower() for repo in (repo_of(e) for e in catalog) if repo}
 
 
-def inspect_only(text: str, *, as_json: bool) -> int:
+def inspect_only(text: str, *, as_json: bool, drafts: str = "") -> int:
     """`--only owner/name`: the command the discovery issue prints under each
     box. Reads that one repository now, as the weekly run did, and prints the
     same verdict. No harvest, and no verdict file is read or written: a
-    person's run proposes nothing to anyone."""
+    person's run proposes nothing to anyone. With `drafts`, a candidate that
+    calls Jev and is neither catalogued nor declined also gets a draft row."""
     slug = only_slug(text)
     if not slug:
         print(f"error: --only takes owner/name or its GitHub URL, not {text!r}", file=sys.stderr)
@@ -580,10 +588,13 @@ def inspect_only(text: str, *, as_json: bool) -> int:
     catalog = json.loads(CATALOG.read_text())
     # With --json the notes go to stderr, so stdout stays one JSON document.
     notes = sys.stderr if as_json else sys.stdout
+    known = ""
     if slug in catalogued(catalog):
-        print(f"note: {slug} is already in catalog.json", file=notes)
+        known = "already in catalog.json"
+        print(f"note: {slug} is {known}", file=notes)
     declined = read_declined()
     if slug in declined:
+        known = "declined in docs/declined.txt"
         print(
             f"note: {slug} was declined in docs/declined.txt: {declined[slug] or '(no reason given)'}",
             file=notes,
@@ -594,6 +605,9 @@ def inspect_only(text: str, *, as_json: bool) -> int:
         print(json.dumps([result], indent=2, ensure_ascii=False))
     else:
         print_results([result])
+    if drafts:
+        # Not a harvest, so nothing says which list cited it: sources is left to the person.
+        discover_drafts.report([result], drafts, sourced=False, skip=known)
     return 0
 
 
@@ -624,9 +638,17 @@ def main(argv: list[str] | None = None) -> int:
         metavar="OWNER/NAME",
         help="read just this repository now and print its verdict (no harvest, no verdict file)",
     )
+    parser.add_argument(
+        "--drafts",
+        default="",
+        metavar="DIR",
+        help="also write DIR/<slug>.json, a draft catalog row, for each repository found "
+        "calling Jev (never over an existing file); lint refuses a draft until a person "
+        "completes it (see discover_drafts.py)",
+    )
     args = parser.parse_args(argv)
     if args.only:
-        return inspect_only(args.only, as_json=args.json)
+        return inspect_only(args.only, as_json=args.json, drafts=args.drafts)
     today = dt.date.today()
     # The committed .discover/seen.json and the Actions cache copy: whichever
     # holds the newer verdict for a repository wins.
@@ -715,6 +737,10 @@ def main(argv: list[str] | None = None) -> int:
         seen_urls.add(key)
         deduped.append(r)
     results = deduped
+    if args.drafts:
+        # Every one of these was cited by a sibling list, and none is catalogued or declined.
+        hits = [r for r in results if r["verdict"] == PROPOSED]
+        discover_drafts.report(hits, args.drafts, sourced=True)
 
     # New = calls Jev now and was not proposed before. A repository read before
     # and found quiet, then read again after RECHECK_DAYS and found calling Jev,

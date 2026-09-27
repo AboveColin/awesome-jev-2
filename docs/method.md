@@ -169,6 +169,20 @@ per candidate, claimed with a comment, each with the command that re-reads
 that one repository (`discover_candidates.py --only owner/name`), and the
 candidates still waiting from earlier weeks are named instead of counted.
 
+Since 2026-09-27, a candidate can start as a draft row:
+`discover_candidates.py --drafts DIR` writes one per repository found calling
+Jev, with what the script read filled in (the URL, GitHub's stars and licence,
+the call site's path and the strings matched there) and the keyword rules'
+kind and patterns labelled as guesses, and leaves the summaries,
+`evidence.read_on` and, for a single `--only` read, `sources` to the person
+who reads the code. A draft's first field, `_draft`, is what keeps it out of
+the catalogue as it is: the schema knows no such field, and a rule of
+`lint.py`'s own names it and says what is left to do. Nothing else is relied
+on, since the schema accepts a one-character summary and does not require
+`read_on`. The review card on the pull request that adds the row is the
+second gate, and it matches text and compares facts; a maintainer still reads
+the call site.
+
 ### The bulk pass, and what it cost
 
 A second aggregation run verified the 320 most-cited repositories missing here
