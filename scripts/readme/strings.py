@@ -1,4 +1,4 @@
-"""Every reader-facing sentence the READMEs and pattern pages print.
+"""The reader-facing sentences the READMEs and pattern pages print.
 
 EN and ZH are one pack per language with the same keys; render() and
 render_page() take a pack, which is what keeps the two READMEs structurally
@@ -6,7 +6,8 @@ identical instead of slowly diverging. The two tables below are bilingual rows
 rather than packs because each row pairs a path with its description.
 
 A few short labels (the reading-map summary, back links, the maintenance-check
-captions) are still chosen inline in sections.py by language.
+captions, the caveat label in rows.py) are still chosen inline by language, and
+coverage_note() in sections.py writes its own EN and zh sentences.
 """
 
 from __future__ import annotations
