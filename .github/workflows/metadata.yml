@@ -84,9 +84,9 @@ jobs:
 
       - name: Rebuild everything generated from those facts, then lint it all
         run: |
-          python3 scripts/build_readme.py
-          python3 scripts/build_assets.py
-          python3 scripts/build_docs.py
+          # The same generators, in the same order, as lint.yml runs, so one
+          # added to regenerate.py is never missed here.
+          python3 scripts/regenerate.py
           python3 scripts/lint.py
           python3 scripts/build_compat.py --check
           python3 scripts/build_docs.py --check

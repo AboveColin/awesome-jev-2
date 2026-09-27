@@ -175,6 +175,21 @@ class PagesWiringTest(unittest.TestCase):
         add = next(line for line in text.splitlines() if "git add" in line)
         self.assertNotIn("site/index.html", add)
 
+    def test_metadata_regenerates_with_every_generator(self):
+        # Its own list of generators would miss one added to regenerate.py,
+        # and the strict lint it dispatches after landing would then go red.
+        import regenerate
+
+        text = (ROOT / ".github" / "workflows" / "metadata.yml").read_text()
+        self.assertIn("          python3 scripts/regenerate.py\n", text)
+        for script, _ in regenerate.GENERATORS:
+            self.assertNotIn(f"          python3 scripts/{script}\n", text)
+        add = next(line for line in text.splitlines() if "git add" in line)
+        for output in regenerate.OUTPUTS:
+            self.assertTrue(
+                output in add.split() or output.split("/", 1)[0] in add.split(), f"metadata.yml does not stage {output}"
+            )
+
 
 if __name__ == "__main__":
     unittest.main()
