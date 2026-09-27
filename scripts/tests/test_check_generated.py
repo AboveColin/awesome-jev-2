@@ -424,12 +424,13 @@ class LintWorkflowTest(unittest.TestCase):
 
 
 class WorkflowStepsTest(GitCase):
-    """lint.yml's own shell, run as GitHub runs it: bash -eo pipefail."""
+    """lint.yml's own shell, run as GitHub runs a step that names no `shell:`:
+    `bash -e`, without pipefail, so a failure inside a pipeline is not fatal."""
 
     def bash(self, script: str, cwd: pathlib.Path, **env: str) -> subprocess.CompletedProcess:
         full = {**os.environ, "GITHUB_OUTPUT": str(self.output), "GITHUB_STEP_SUMMARY": str(self.summary), **env}
         return subprocess.run(
-            ["bash", "--noprofile", "--norc", "-eo", "pipefail", "-c", script],
+            ["bash", "--noprofile", "--norc", "-e", "-c", script],
             cwd=cwd, env=full, capture_output=True, text=True,
         )
 
@@ -510,6 +511,19 @@ class WorkflowStepsTest(GitCase):
         self.assertEqual(sorted(committed), ["README.md", "docs/by-pattern/b.md"])
         self.assertIn("(2 files)", run_git(origin, "log", "-1", "--format=%b", "main"))
         self.assertIn("## Regenerated on main", self.summary_text())
+
+    def test_a_failing_output_list_stops_the_step_and_stages_nothing(self):
+        # Piped straight into `git add -A`, a failed `--list` is an empty
+        # pathspec list, which stages the whole tree: the bot would commit
+        # catalog.json and whatever else the run left behind.
+        origin, work = self.origin_and_clone()
+        self.write(work, "README.md", "generated from v2\n")
+        self.write(work, "catalog.json", "must never be committed by the bot\n")
+        self.write(work, "scripts/regenerate.py", "import sys\nsys.exit(3)\n")
+        done = self.bash(workflow_step(self.LAND), work)
+        self.assertNotEqual(done.returncode, 0, done.stdout)
+        self.assertEqual(run_git(work, "diff", "--cached", "--name-only"), "")
+        self.assertEqual(len(self.origin_log(origin)), 1)
 
     def test_rebases_onto_an_unrelated_push(self):
         origin, work = self.origin_and_clone()

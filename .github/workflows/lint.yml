@@ -134,8 +134,9 @@ jobs:
   # together, commits regenerated from each pushed commit would conflict with
   # one another, while the tip includes them all. The whole lint chain passes
   # before anything is committed. If main moves during the run and the commit
-  # no longer rebases cleanly, it never forces: the result goes to a branch,
-  # and the run for the newer push regenerates main itself.
+  # no longer rebases cleanly, it never forces: the result goes to a branch. A
+  # newer push by a person starts its own run, which regenerates main; a push
+  # by a bot (metadata.yml) starts none, so the warning says to re-run this one.
   regenerate:
     name: Commit regenerated files to main
     needs: catalog
@@ -169,8 +170,11 @@ jobs:
       - name: Commit to main, or fall back to a branch if main moved
         id: land
         run: |
-          # Only what the generators write; nothing else is ever staged.
-          python3 scripts/regenerate.py --list | git add -A --pathspec-from-file=-
+          # Only what the generators write; nothing else is ever staged. The
+          # list is read before it is piped: the default shell has no pipefail,
+          # and `git add -A` given an empty list stages the whole tree.
+          outputs=$(python3 scripts/regenerate.py --list)
+          printf '%s\n' "$outputs" | git add -A --pathspec-from-file=-
           if git diff --cached --quiet; then
             echo "nothing to commit: main is already regenerated"
             echo "landed=none" >> "$GITHUB_OUTPUT"
@@ -200,7 +204,7 @@ jobs:
             branch="regenerate/$base"
             git push -q origin "HEAD:refs/heads/$branch" --force
             echo "landed=$branch" >> "$GITHUB_OUTPUT"
-            echo "::warning title=Regenerated files are not on main::main moved during the run and the commit no longer rebased cleanly, so it is on branch $branch. The run for the newer push regenerates main itself; delete the branch once it has."
-            printf '## Regenerated files are on a branch\n\n`main` moved during the run, so the commit is on `%s`. The run for the newer push regenerates `main` itself.\n' \
+            echo "::warning title=Regenerated files are not on main::main moved during the run and the commit no longer rebased cleanly, so it is on branch $branch. A push to main by a person starts a lint run that regenerates main itself. A push by a bot (the weekly metadata refresh) starts none: if main is still behind, re-run this workflow run, which regenerates from the tip of main. Then delete the branch."
+            printf '## Regenerated files are on a branch\n\n`main` moved during the run, so the commit is on `%s`. A push to `main` by a person starts a lint run that regenerates `main` itself. A push by a bot (the weekly `metadata` refresh) starts none: if `main` is still behind, re-run this workflow run, which regenerates from the tip of `main`. Then delete the branch.\n' \
               "$branch" >> "$GITHUB_STEP_SUMMARY"
           fi
