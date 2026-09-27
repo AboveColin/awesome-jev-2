@@ -118,7 +118,7 @@ class WaitingTest(unittest.TestCase):
         self.assertIn("<summary>2 candidates from earlier weeks are still neither catalogued nor declined</summary>", body)
         lines = body.splitlines()
         self.assertIn(
-            "- [ ] [alpha/early](https://github.com/alpha/early) · read 2026-09-17"
+            "- [ ] [alpha/early](https://github.com/alpha/early) · read by script 2026-09-17"
             " · `python3 scripts/discover_candidates.py --only alpha/early`",
             lines,
         )

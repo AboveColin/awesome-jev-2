@@ -95,15 +95,24 @@ def instructions(result: dict, *, sourced: bool, today: dt.date) -> list[str]:
             "That file looks like a test. Find the call site in the implementation and cite "
             "that instead: a mocked string is weaker proof than a real call."
         )
+    if languages_of(result["evidence_path"]):
+        guesses = (
+            "kind and patterns are keyword guesses from the repository's description, and "
+            "languages comes from the call site's file extension: check all three."
+        )
+    else:
+        guesses = (
+            "kind and patterns are keyword guesses from the repository's description: check "
+            "both. languages is left out, as the call site's file extension names no language "
+            "the catalogue knows: add it from the code."
+        )
     lines += [
         "Write summary and summary_zh from what the code does, not from its README (set "
         "zh_machine to true if a tool wrote the Chinese). Add question_types for the "
         "primitives the call site uses, platforms for how it reaches Jev, and evidence.read_on "
         "for the day you read the file.",
-        "kind and patterns are keyword guesses from the repository's description, and "
-        "languages comes from the call site's file extension: check all three. stars, "
-        "repo_license and the archived and no-license flags are GitHub's answers on the "
-        "draft's date. first_seen is the day the row enters the catalogue.",
+        guesses + " stars, repo_license and the archived and no-license flags are GitHub's "
+        "answers on the draft's date. first_seen is the day the row enters the catalogue.",
         "Add any other flag a reader needs (CONTRIBUTING.md, 'Flags are the point'); "
         "self-submitted goes with an 'author submission' source if this is your own project.",
     ]

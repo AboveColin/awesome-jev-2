@@ -155,6 +155,15 @@ class DraftRowTest(unittest.TestCase):
         self.assertNotIn("languages", self.draft(evidence_path="bin/jev"))
         self.assertNotIn("languages", self.draft(evidence_path="queries/jev.sql"))
 
+    def test_a_missing_language_is_named_as_a_thing_to_add(self):
+        # lint only warns about has_code without languages, so the draft says it.
+        text = " ".join(self.draft(evidence_path="bin/jev")[dd.DRAFT_FIELD])
+        self.assertIn("languages is left out", text)
+        self.assertNotIn("check all three", text)
+        text = " ".join(self.draft()[dd.DRAFT_FIELD])
+        self.assertIn("check all three", text)
+        self.assertNotIn("languages is left out", text)
+
     def test_a_test_file_is_called_out(self):
         text = " ".join(self.draft(evidence_is_test=True)[dd.DRAFT_FIELD])
         self.assertIn("looks like a test", text)

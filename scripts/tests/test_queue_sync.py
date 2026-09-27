@@ -115,7 +115,7 @@ class RenderTest(unittest.TestCase):
     def test_each_state_has_its_line(self):
         lines = self.body().splitlines()
         for line in (
-            "- [ ] [alpha/early](https://github.com/alpha/early) · read 2026-09-03 · "
+            "- [ ] [alpha/early](https://github.com/alpha/early) · read by script 2026-09-03 · "
             "`python3 scripts/discover_candidates.py --only alpha/early`",
             f"- [x] [acme/listed](https://github.com/acme/listed) → [`listed`]({qs.SITE}?lang=en#listed)",
             f"- [x] [acme/two-rows](https://github.com/acme/two-rows) → [`two-rows-a`]({qs.SITE}?lang=en#two-rows-a),"
@@ -132,9 +132,12 @@ class RenderTest(unittest.TestCase):
         self.assertEqual(opened, ["alpha/early", "aaa/newest", "zeta/late"], "oldest read first, then by name")
         done = re.findall(r"^- \[x\] \[([^\]]+)\]", body, re.M)
         self.assertEqual(done, ["acme/listed", "acme/two-rows", "acme/via-repo", "both/ways", "gone/away"])
-        self.assertLess(body.index("### To read"), body.index("<summary>Catalogued (4)</summary>"))
-        self.assertLess(body.index("<summary>Catalogued (4)</summary>"), body.index("<summary>Declined (1)</summary>"))
-        self.assertIn("<summary>Catalogued (4)</summary>\n\n- [x]", body, "a blank line lets the list render")
+        self.assertLess(body.index("### To read · 待读"), body.index("<summary>Catalogued · 已收录 (4)</summary>"))
+        self.assertLess(body.index("<summary>Catalogued · 已收录 (4)</summary>"),
+                        body.index("<summary>Declined · 已拒收 (1)</summary>"))
+        self.assertLess(body.index("<summary>Declined · 已拒收 (1)</summary>"),
+                        body.index("<summary>Catalogued and since retired · 收录后已退役 (1)</summary>"))
+        self.assertIn("<summary>Catalogued · 已收录 (4)</summary>\n\n- [x]", body, "a blank line lets the list render")
 
     def test_says_how_to_claim_in_both_languages_only_when_something_is_open(self):
         body = self.body()
@@ -147,6 +150,26 @@ class RenderTest(unittest.TestCase):
         self.assertNotIn("claim owner/name", settled)
         self.assertIn("Nothing to read: every candidate so far is catalogued or declined.", settled)
         self.assertIn("No candidate yet", qs.render([]))
+
+    def test_headings_counts_and_notes_are_in_both_languages(self):
+        # Principle f: the description is read by people in either language,
+        # and the Chinese is marked as model-written.
+        body = self.body()
+        self.assertIn("待读 **3** · 已收录 **4** · 已拒收 **1** · 收录后已退役 **1** <sub>(机翻)</sub>", body)
+        self.assertIn("本描述里的中文（包括下面的标题和计数）都由模型写成。 <sub>(机翻)</sub>", body)
+        settled = qs.render(qs.derive({"no/thanks": v("2026-09-24")}, CATALOG, RETIRED, DECLINED))
+        self.assertIn("没有待读的候选：迄今每个候选都已收录或已拒收。 <sub>(机翻)</sub>", settled)
+        self.assertIn("还没有候选：", qs.render([]))
+        self.assertIn("另有 2 个未列出", self.body(open_shown=1, done_shown=2))
+        for heading in re.findall(r"^(?:### |<summary>)(.+?)(?: \(\d+\)</summary>)?$", body, re.M):
+            self.assertRegex(heading, r"[a-z] · [\u4e00-\u9fff]", "every heading in both languages")
+
+    def test_an_open_date_is_the_scripts_read_not_a_persons(self):
+        # Principle c: a person's reading and a script's are different claims.
+        opened = [line for line in self.body().splitlines() if line.startswith("- [ ] ")]
+        self.assertTrue(opened)
+        for line in opened:
+            self.assertRegex(line, r" · read by script \d{4}-\d{2}-\d{2} · ")
 
     def test_the_description_says_it_is_written_by_a_script(self):
         first = self.body().splitlines()[0]

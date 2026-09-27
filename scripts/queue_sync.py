@@ -75,8 +75,17 @@ INTRO_ZH = (
     "发现队列：每周 `discover` 运行找到的、代码调用 Jev 的每个仓库，以及它目前的状态。"
     "打勾表示已收录，删除线表示已拒收。状态取自 `catalog.json`、`retired.json` 和 "
     "`docs/declined.txt`，所以合并添加该行或拒收它的 pull request 才会打勾，本描述在下一次"
-    "每周运行时更新。每周的新候选及其调用点见下方评论。 <sub>(机翻)</sub>"
+    "每周运行时更新。每周的新候选及其调用点见下方评论。本描述里的中文（包括下面的标题和计数）"
+    "都由模型写成。 <sub>(机翻)</sub>"
 )
+# Each list's heading, in both languages (the Chinese is model-written, as
+# INTRO_ZH says).
+TITLES = {
+    "open": ("To read", "待读"),
+    "catalogued": ("Catalogued", "已收录"),
+    "declined": ("Declined", "已拒收"),
+    "retired": ("Catalogued and since retired", "收录后已退役"),
+}
 
 
 @dataclasses.dataclass(frozen=True)
@@ -128,7 +137,8 @@ def link(repo: str) -> str:
 
 def line_for(c: Candidate) -> str:
     if c.state == "open":
-        return f"- [ ] {link(c.repo)} · read {c.read_on} · `{COMMAND.format(slug=c.repo)}`"
+        # The script's read, not a person's: nobody has read an open one yet.
+        return f"- [ ] {link(c.repo)} · read by script {c.read_on} · `{COMMAND.format(slug=c.repo)}`"
     if c.state == "catalogued":
         rows = ", ".join(f"[`{slug}`]({SITE}?lang=en#{slug})" for slug in c.rows)
         return f"- [x] {link(c.repo)} → {rows}"
@@ -140,13 +150,20 @@ def line_for(c: Candidate) -> str:
 
 
 def more(n: int) -> list[str]:
-    return [f"- …and {n} more, not shown to keep this description under GitHub's limit."] if n else []
+    if not n:
+        return []
+    return [f"- …and {n} more, not shown to keep this description under GitHub's limit. "
+            f"另有 {n} 个未列出，以免本描述超出 GitHub 的长度上限。"]
 
 
-def done_section(title: str, items: list[Candidate], shown: int) -> list[str]:
+def title(state: str) -> str:
+    return " · ".join(TITLES[state])
+
+
+def done_section(state: str, items: list[Candidate], shown: int) -> list[str]:
     if not items:
         return []
-    lines = ["<details>", f"<summary>{title} ({len(items)})</summary>", ""]
+    lines = ["<details>", f"<summary>{title(state)} ({len(items)})</summary>", ""]
     lines += [line_for(c) for c in items[:shown]] + more(len(items) - min(shown, len(items)))
     return lines + ["", "</details>", ""]
 
@@ -160,18 +177,23 @@ def render(candidates: list[Candidate], *, open_shown: int = OPEN_SHOWN, done_sh
         f"**{len(by['open'])}** to read · **{len(by['catalogued'])}** catalogued · "
         f"**{len(by['declined'])}** declined · **{len(by['retired'])}** catalogued and since retired",
         "",
+        " · ".join(f"{TITLES[s][1]} **{len(by[s])}**" for s in ("open", "catalogued", "declined", "retired"))
+        + " <sub>(机翻)</sub>",
+        "",
     ]
     if by["open"]:
-        lines += [CLAIM_EN, "", CLAIM_ZH, "", "### To read", ""]
+        lines += [CLAIM_EN, "", CLAIM_ZH, "", f"### {title('open')}", ""]
         lines += [line_for(c) for c in by["open"][:open_shown]]
         lines += more(len(by["open"]) - min(open_shown, len(by["open"]))) + [""]
     elif candidates:
-        lines += ["Nothing to read: every candidate so far is catalogued or declined.", ""]
+        lines += ["Nothing to read: every candidate so far is catalogued or declined.", "",
+                  "没有待读的候选：迄今每个候选都已收录或已拒收。 <sub>(机翻)</sub>", ""]
     else:
-        lines += ["No candidate yet: `.discover/seen.json` records no repository found calling Jev.", ""]
-    lines += done_section("Catalogued", by["catalogued"], done_shown)
-    lines += done_section("Declined", by["declined"], done_shown)
-    lines += done_section("Catalogued and since retired", by["retired"], done_shown)
+        lines += ["No candidate yet: `.discover/seen.json` records no repository found calling Jev.", "",
+                  "还没有候选：`.discover/seen.json` 没有记录任何被发现调用 Jev 的仓库。 <sub>(机翻)</sub>", ""]
+    lines += done_section("catalogued", by["catalogued"], done_shown)
+    lines += done_section("declined", by["declined"], done_shown)
+    lines += done_section("retired", by["retired"], done_shown)
     return "\n".join(lines).rstrip("\n") + "\n"
 
 

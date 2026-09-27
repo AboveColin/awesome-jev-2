@@ -74,7 +74,7 @@ CLAIM_EN = (
     f"open a pull request adding its row ([Adding an entry]({CONTRIBUTING_URL})). "
     "If it does not belong, open a pull request adding it to "
     f"[`docs/declined.txt`]({DECLINED_URL}) with the reason instead. The command "
-    "under a box re-reads that repository now and prints the verdict, the call "
+    "with each box re-reads that repository now and prints the verdict, the call "
     "site and the strings it matched. Add `--drafts drafts` to it and it also "
     "writes `drafts/<slug>.json`: the row with what the script found filled in, "
     "for you to complete. lint refuses it until its `_draft` field is gone."
@@ -85,7 +85,7 @@ CLAIM_ZH = (
     "不是一条目录记录。想认领一条，先在本 issue 评论 `claim owner/name`，免得两个人读同一份代码；"
     f"然后阅读调用点，提交添加该行的 pull request（[添加条目]({CONTRIBUTING_URL})）。"
     f"若它不该收录，就提交 pull request 把它加进 [`docs/declined.txt`]({DECLINED_URL}) 并写明理由。"
-    "复选框下的命令会立即重读该仓库，打印判定、调用点和匹配到的字符串；"
+    "每个复选框附带的命令会立即重读该仓库，打印判定、调用点和匹配到的字符串；"
     "加上 `--drafts drafts` 还会写出 `drafts/<slug>.json`：已填好脚本所知信息的草稿行，由你补全。"
     "在删掉其中的 `_draft` 字段之前，lint 会拒绝它。 <sub>(机翻)</sub>"
 )
@@ -472,7 +472,7 @@ def waiting_lines(waiting: list[tuple[str, dict]]) -> list[str]:
         "",
     ]
     lines += [
-        f"- [ ] [{slug}](https://github.com/{slug}) · read {entry['on']}"
+        f"- [ ] [{slug}](https://github.com/{slug}) · read by script {entry['on']}"
         f" · `{COMMAND.format(slug=slug)}`"
         for slug, entry in shown
     ]
