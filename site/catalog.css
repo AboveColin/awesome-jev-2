@@ -73,6 +73,7 @@ main { padding-top: 19px; }
 .badge { font: 11px var(--sans); letter-spacing: 0; text-transform: none; }
 .anchor { opacity: 1; margin-left: auto; padding: 0 5px; }
 .sum { font-size: 15px; line-height: 1.65; max-width: 80ch; margin-bottom: 10px; overflow-wrap: anywhere; }
+.src-mark { display: inline-block; margin-left: 6px; padding: 0 5px; border: 1px solid var(--rule-2); border-radius: 3px; color: var(--fg-3); font: 11px/1.6 var(--sans); vertical-align: 1px; white-space: nowrap; }
 .note { font-size: 14px; border: 0; padding: 0; margin: 8px 0 12px; }
 .pick-reason, .pick-caution { color: var(--fg-2); font-size: 13px; margin: 5px 0; line-height: 1.6; max-width: 85ch; }
 .pick-reason > span, .pick-caution > span { color: var(--fg-3); margin-right: 6px; }

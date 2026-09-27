@@ -31,6 +31,7 @@ from .rows import (
     label,
     page_name,
     site_link,
+    source_marks,
     stars_note,
     summary_of,
 )
@@ -450,12 +451,21 @@ def what_is_verified(page: Page) -> list[str]:
     )
     if lang == "zh" and "verified_recheck" in ZH_MACHINE:
         recheck += " <sub>(机翻)</sub>"
+    summaries = strings["verified_summaries"].format(
+        upstream=stats["summary_upstream"],
+        stale=stats["summary_upstream_stale"],
+        curated=stats["summary_curated"],
+        unlabelled=stats["summary_unlabelled"],
+        **source_marks(lang),
+    )
+    if lang == "zh" and "verified_summaries" in ZH_MACHINE:
+        summaries += " <sub>(机翻)</sub>"
     out: list[str] = []
     add = out.append
 
     add(f"## {strings['verified_h']}")
     add("")
-    for text in [strings['verified_yes'].format(**stats), strings['verified_read'], recheck, strings['verified_no']]:
+    for text in [strings['verified_yes'].format(**stats), strings['verified_read'], summaries, recheck, strings['verified_no']]:
         add(f"- {text}")
         add("")
     add("")
@@ -525,7 +535,10 @@ def contributing_and_licence(page: Page) -> list[str]:
     add("")
     add(strings["contrib_body"])
     add("")
-    add(strings["license_body"])
+    quoted = strings["license_summaries"].format(**source_marks(lang))
+    if lang == "zh" and "license_summaries" in ZH_MACHINE:
+        quoted += " <sub>(机翻)</sub>"
+    add(strings["license_body"] + ("" if lang == "zh" else " ") + quoted)
     add("")
     checks_label = "维护检查" if lang == "zh" else "Maintenance checks"
     links_label = "定期链接检查" if lang == "zh" else "Scheduled link checks"

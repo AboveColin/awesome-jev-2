@@ -27,7 +27,8 @@ def row(slug: str, repo: str, **extra: object) -> dict:
 # The same four repositories as REST and GraphQL describe them.
 REST = {
     "a/mit": {"stargazers_count": 10, "license": {"spdx_id": "MIT"}, "archived": False,
-              "full_name": "a/mit", "html_url": "https://github.com/a/mit"},
+              "full_name": "a/mit", "html_url": "https://github.com/a/mit",
+              "description": "Routes support tickets with a choice."},
     "a/none": {"stargazers_count": 0, "license": None, "archived": False,
                "full_name": "a/none", "html_url": "https://github.com/a/none"},
     "a/other": {"stargazers_count": 5, "license": {"spdx_id": "NOASSERTION"}, "archived": True,
@@ -37,7 +38,8 @@ REST = {
 }
 GRAPHQL = {
     "a/mit": {"nameWithOwner": "a/mit", "url": "https://github.com/a/mit", "stargazerCount": 10,
-              "isArchived": False, "licenseInfo": {"spdxId": "MIT"}},
+              "isArchived": False, "licenseInfo": {"spdxId": "MIT"},
+              "description": "Routes support tickets with a choice."},
     "a/none": {"nameWithOwner": "a/none", "url": "https://github.com/a/none", "stargazerCount": 0,
                "isArchived": False, "licenseInfo": None},
     "a/other": {"nameWithOwner": "a/other", "url": "https://github.com/a/other", "stargazerCount": 5,
@@ -73,6 +75,96 @@ class FactsTest(Quiet):
     def test_licence_mapping(self):
         self.assertEqual(rm.from_rest(row("x", "a/none"), "a/none", REST["a/none"])["repo_license"], "unknown")
         self.assertEqual(rm.from_graphql(row("x", "a/other"), "a/other", GRAPHQL["a/other"])["repo_license"], "NOASSERTION")
+
+    def test_the_description_is_kept_both_ways(self):
+        # I21: summary_source compares the summary with it, so both paths keep it.
+        want = "Routes support tickets with a choice."
+        self.assertEqual(rm.from_rest(row("x", "a/mit"), "a/mit", REST["a/mit"])["description"], want)
+        self.assertEqual(rm.from_graphql(row("x", "a/mit"), "a/mit", GRAPHQL["a/mit"])["description"], want)
+        self.assertIsNone(rm.from_rest(row("x", "a/none"), "a/none", {**REST["a/none"], "description": ""})["description"])
+        self.assertIsNone(rm.from_graphql(row("x", "a/none"), "a/none", GRAPHQL["a/none"])["description"])
+        self.assertIn("description", rm.FIELDS.split())
+        self.assertIn("description", rm.COMPARED)
+
+
+class SummarySourceTest(unittest.TestCase):
+    """I21: summary_source records whether the summary is the repository's own
+    description. Identical labels it; a labelled summary that stops matching is
+    stale; `curated` is a person's and never written or overwritten here."""
+
+    SAME = "Routes support tickets with a choice."
+
+    def source(self, current, summary, description):
+        entry = {"slug": "x", "summary": summary}
+        if current is not None:
+            entry["summary_source"] = current
+        return rm.summary_source_for(entry, description)
+
+    def test_the_rules(self):
+        up, stale, curated = rm.UPSTREAM, rm.UPSTREAM_STALE, rm.CURATED
+        other = "A different sentence someone wrote."
+        cases = [
+            # current, description,          expected
+            (None,    self.SAME,               up),
+            (None,    other,                   None),
+            (None,    None,                    None),
+            (None,    "",                      None),
+            (up,      self.SAME,               None),
+            (up,      other,                   stale),
+            (up,      None,                    stale),
+            (stale,   self.SAME,               up),
+            (stale,   other,                   None),
+            (curated, self.SAME,               None),
+            (curated, other,                   None),
+            (curated, None,                    None),
+        ]
+        for current, description, expected in cases:
+            with self.subTest(current=current, description=description):
+                self.assertEqual(self.source(current, self.SAME, description), expected)
+
+    def test_case_whitespace_and_one_final_full_stop_do_not_count(self):
+        for description in (
+            "routes SUPPORT tickets with a choice",
+            "Routes  support\ttickets with a choice.",
+            "  Routes support tickets with a choice . ",
+        ):
+            with self.subTest(description=description):
+                self.assertEqual(self.source(None, self.SAME, description), rm.UPSTREAM)
+        self.assertEqual(self.source(None, "按意图路由工单。", "按意图路由工单"), rm.UPSTREAM)
+
+    def test_nothing_else_is_forgiven(self):
+        for description in (
+            "Routes support tickets with a choice and a score.",  # the summary was cut short
+            "Routes support tickets with a choice..",            # two full stops
+            "Routes support tickets - with a choice.",           # one character changed
+        ):
+            with self.subTest(description=description):
+                self.assertIsNone(self.source(None, self.SAME, description))
+
+    def test_curated_is_never_produced(self):
+        for current in (None, rm.CURATED, rm.UPSTREAM, rm.UPSTREAM_STALE):
+            for description in (self.SAME, "Other.", None):
+                with self.subTest(current=current, description=description):
+                    self.assertNotEqual(self.source(current, self.SAME, description), rm.CURATED)
+
+    def test_a_row_without_a_summary_is_left_alone(self):
+        self.assertIsNone(rm.summary_source_for({"slug": "x"}, self.SAME))
+
+    def test_diff_and_apply_place_the_field_after_summary(self):
+        entry = {"slug": "x", "summary": self.SAME, "summary_zh": "路由工单", "stars": 10, "repo_license": "MIT"}
+        fresh = rm.from_rest(entry, "a/mit", REST["a/mit"])
+        changes = rm.diff_for(entry, fresh)
+        self.assertEqual(changes, [("summary_source", None, rm.UPSTREAM)])
+        rm.apply(entry, fresh, changes)
+        self.assertEqual(list(entry), ["slug", "summary", "summary_source", "summary_zh", "stars", "repo_license"])
+        self.assertEqual(entry["summary_source"], rm.UPSTREAM)
+        # A value already present keeps its place.
+        entry["summary"] = "Rewritten by hand."
+        changes = rm.diff_for(entry, fresh)
+        self.assertEqual(changes, [("summary_source", rm.UPSTREAM, rm.UPSTREAM_STALE)])
+        rm.apply(entry, fresh, changes)
+        self.assertEqual(list(entry)[2], "summary_source")
+        self.assertEqual(entry["summary_source"], rm.UPSTREAM_STALE)
 
 
 class RestTest(Quiet):
@@ -225,6 +317,58 @@ class MainTest(Quiet):
         self.assertIn("## Repository facts", text)
         self.assertIn("checked 1 of 1 row(s): 0 skipped (GitHub API budget), 0 blocked, 0 did not resolve", text)
         self.assertIn("GitHub", text)
+
+    def test_only_field_writes_that_field_and_nothing_else(self):
+        # I21's backfill: `--only-field summary_source --write` labels summaries
+        # and leaves stars, licences, flags and names exactly as they were.
+        catalog = [
+            row("a-mit", "a/mit", summary="Routes support tickets with a choice", stars=1, repo_license="GPL-3.0"),
+            row("b-old", "a/old", summary="Something else", stars=1, repo_license="MIT", flags=["archived"]),
+        ]
+        answers = {"a/mit": REST["a/mit"], "a/old": REST["a/old"]}
+        code, out, written, digest = self.run_main(catalog, answers, "--write", "--only-field", "summary_source")
+        self.assertEqual(code, 0)
+        expected = [dict(catalog[0]), dict(catalog[1])]
+        rm.put_after(expected[0], "summary_source", rm.UPSTREAM, "summary")
+        self.assertEqual(written, expected)
+        self.assertEqual(list(written[0])[:4], ["slug", "url", "summary", "summary_source"])
+        self.assertIn("summary_source: None -> upstream-description", out)
+        self.assertNotIn("stars:", out)
+        self.assertIn("applied 1 row(s) of 2", out)
+        self.assertIn("only these changes: summary_source", self.err.getvalue())
+
+    def test_the_digest_counts_labels_and_lists_stale_summaries(self):
+        catalog = [
+            row("a-mit", "a/mit", summary="Routes support tickets with a choice", stars=1, repo_license="MIT"),
+            row("b-other", "a/other", summary="Was the description once.", summary_source=rm.UPSTREAM,
+                stars=5, repo_license="NOASSERTION", flags=["archived"]),
+        ]
+        answers = {"a/mit": REST["a/mit"], "a/other": {**REST["a/other"], "description": "Says something new now."}}
+        _, _, written, digest = self.run_main(catalog, answers, "--write")
+        self.assertEqual([r.get("summary_source") for r in written], [rm.UPSTREAM, rm.UPSTREAM_STALE])
+        self.assertIn("1 summaries are now labelled `upstream-description`", digest)
+        self.assertIn("**Worth a look before merging:**", digest)
+        self.assertIn("- `b-other` (a/other): summary_source upstream-description → upstream-description-stale", digest)
+        self.assertNotIn("`a-mit`", digest, "a label that only records a match is counted, not listed")
+        self.assertNotIn("Nothing but star counts moved", digest)
+
+    def test_a_week_of_labels_only_is_not_called_star_counts(self):
+        change = {"field": "summary_source", "from": None, "to": rm.UPSTREAM}
+        stars = {"field": "stars", "from": 1, "to": 2}
+        text = rm.digest([{"slug": "a", "repo": "o/a", "changes": [change, stars]}], [], 1)
+        self.assertIn("1 summaries are now labelled `upstream-description`", text)
+        self.assertNotIn("Nothing but star counts moved", text)
+        self.assertNotIn("Worth a look", text)
+
+    def test_a_listed_row_does_not_list_its_label(self):
+        # A licence change is worth a look; the label that came with it is only counted.
+        report = [{"slug": "a", "repo": "o/a", "changes": [
+            {"field": "repo_license", "from": "MIT", "to": "Apache-2.0"},
+            {"field": "summary_source", "from": None, "to": rm.UPSTREAM},
+        ]}]
+        text = rm.digest(report, [], 1)
+        self.assertIn("- `a` (o/a): repo_license MIT → Apache-2.0\n", text)
+        self.assertNotIn("summary_source None", text)
 
     def test_a_quiet_week_digest_is_unchanged(self):
         code, out, _, digest = self.run_main(

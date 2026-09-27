@@ -994,7 +994,7 @@
     </footer>
 
     <script type="module">
-      import { SORTS, verification, evidenceKind, evidenceUrl, isIndependentReport, compareEntries, matchesEntry, queryFromState, shareUrl, stateFromQuery } from "./catalog-core.mjs";
+      import { SORTS, verification, evidenceKind, evidenceUrl, isIndependentReport, compareEntries, matchesEntry, queryFromState, shareUrl, stateFromQuery, summaryMarks } from "./catalog-core.mjs";
       const STR = {
         en: {
           eyebrow: "Jev Decision Atlas · community index",
@@ -1008,6 +1008,7 @@
           details: "Evidence & technical details", link_ok: "Link checked", link_missing: "Link not checked", link_failed: "Link check unsuccessful",
           code_read: "Call-site citation", code_missing: "No call-site citation", runtime: "Code not run by this catalogue", performance: "Performance not reproduced",
           cite_wire_shape: "Wire-shape citation, not a Jev integration", cite_example_only: "Example-only citation", evidence_file: "View cited file ↗",
+          mark_zh_machine: "machine-translated", mark_zh_machine_about: "A model translated this Chinese summary; no person wrote it.",
           third_party: "Third-party report", review_scope: "A dated citation is not a current CI result or a runtime test.",
           signals: "Recorded matching text", added: "Added", stars: "Repository stars", author: "Author", read_context: "Source context",
           reason: "Why this pick", caution: "Before you use it", notes: "Editor’s note", empty_help: "Try a broader phrase or reset the filters.",
@@ -1077,6 +1078,8 @@
           code_read: "调用点记录", code_missing: "无调用点记录", runtime: "本目录未运行验证", performance: "性能未复现",
           // The Chinese of the three evidence.kind labels below is model-written; a person who revises it drops this note.
           cite_wire_shape: "接口形态记录，并非 Jev 集成", cite_example_only: "仅示例记录", evidence_file: "查看引用文件 ↗",
+          // mark_zh_machine is the READMEs' own mark; its tooltip below is model-written, like the summary-source labels in taxonomy.json.
+          mark_zh_machine: "机翻", mark_zh_machine_about: "这条中文摘要由模型翻译，不是人写的。",
           third_party: "第三方评测", review_scope: "带日期的引用不代表最新 CI 已通过，也不代表代码已运行。",
           signals: "记录的匹配文本", added: "收录日期", stars: "仓库星标", author: "作者", read_context: "来源说明",
           reason: "精选理由", caution: "使用前留意", notes: "编辑备注", empty_help: "试试更宽泛的关键词，或重置筛选条件。",
@@ -1141,6 +1144,8 @@
       let PAT = {},
         KIND = {},
         FLAG = {},
+        SRC = {},
+        SRC_ABOUT = {},
         STATS = {},
         P_ORDER = [],
         F_ORDER = [],
@@ -1385,6 +1390,12 @@
 
       const seenIds = new Set();
 
+      // The summary's provenance marks, the READMEs' "(upstream description)" and "(机翻)".
+      const summaryMarkup = (e) => summaryMarks(e, L)
+        .map(m => m === "zh-machine" ? [S().mark_zh_machine, S().mark_zh_machine_about] : [lbl(SRC, m), (SRC_ABOUT[m] || [])[I()]])
+        .map(([text, about]) => `<span class="src-mark"${about ? ` title="${esc(about)}"` : ""}>${esc(text)}</span>`)
+        .join("");
+
       function card(e) {
         const sum = local(e, "summary");
         const note = local(e, "notes");
@@ -1411,7 +1422,7 @@
             ${isIndep(e) ? `<span class="badge kd">${S().third_party}</span>` : ""}
             <a class="anchor" href="${permalink}" aria-label="${L === "zh" ? "此条目的永久链接" : "Permalink to this entry"}">#</a>
           </div>
-          <p class="sum">${esc(sum)}</p>
+          <p class="sum">${esc(sum)}${summaryMarkup(e)}</p>
           ${pick ? `<p class="pick-reason"><span>${S().reason}</span> ${esc(local(pick, "reason"))}</p><p class="pick-caution"><span>${S().caution}</span> ${esc(local(pick, "caution"))}</p>` : note ? `<p class="note">${esc(note)}</p>` : ""}
           ${flags.length ? `<div class="pills risks">${flags.map(f => `<span class="p f">${esc(lbl(FLAG, f))}</span>`).join("")}</div>` : ""}
           <div class="verification">
@@ -1776,6 +1787,9 @@
           P_ORDER = patterns.patterns.map((x) => x.key);
           KIND = labelsFrom(taxonomy.kinds, false);
           FLAG = labelsFrom(taxonomy.flags, false);
+          // Whose words a summary is (summary_source): label, and its blurb as the tooltip.
+          SRC = labelsFrom(taxonomy.summary_sources || [], false);
+          SRC_ABOUT = Object.fromEntries((taxonomy.summary_sources || []).map((x) => [x.key, [x.blurb_en, x.blurb_zh]]));
           // Caveat order is taxonomy.json's, like the README's; a flag added
           // there sorts into place here with no second list to update.
           F_ORDER = taxonomy.flags.map((x) => x.key);

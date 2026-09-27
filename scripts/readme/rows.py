@@ -42,6 +42,12 @@ KIND_LABELS = {
 FLAG_LABELS = {
     f["key"]: (f["en"], f["zh"], f["blurb_en"], f["blurb_zh"]) for f in _TAXONOMY["flags"]
 }
+SUMMARY_SOURCE_LABELS = {
+    s["key"]: (s["en"], s["zh"], s["blurb_en"], s["blurb_zh"]) for s in _TAXONOMY["summary_sources"]
+}
+# summary_source values a summary is marked with wherever it is shown: the
+# project's own words. `curated` is how a list is read anyway, so it gets none.
+MARKED_SOURCES = ("upstream-description", "upstream-description-stale")
 
 LANG_LABELS = {
     "python": "Py",
@@ -89,10 +95,23 @@ def label(mapping: dict, key: str, lang: str, *, field: int = 0) -> str:
 
 
 def summary_of(entry: dict, lang: str) -> str:
+    """The row's summary with its provenance marks: whose words it is
+    (summary_source), then, for Chinese, whether a model translated it."""
     text = entry["summary_zh"] if lang == "zh" else entry["summary"]
+    source = entry.get("summary_source")
+    if source in MARKED_SOURCES:
+        text += f" <sub>({label(SUMMARY_SOURCE_LABELS, source, lang)})</sub>"
     if lang == "zh" and entry.get("zh_machine"):
         text += " <sub>(机翻)</sub>"
     return esc(text)
+
+
+def source_marks(lang: str) -> dict[str, str]:
+    """The two marks by name, for the sentences that explain them."""
+    return {
+        "upstream_mark": label(SUMMARY_SOURCE_LABELS, MARKED_SOURCES[0], lang),
+        "stale_mark": label(SUMMARY_SOURCE_LABELS, MARKED_SOURCES[1], lang),
+    }
 
 
 # Stars print as a band, never as the count, and rows sort by the band. The

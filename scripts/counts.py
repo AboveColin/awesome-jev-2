@@ -66,6 +66,11 @@ def main() -> int:
         f"review queue   {stats['review_examples_dir']} under examples/, "
         f"{stats['review_single_model_name']} on one model name or host (docs/review-queue.md)"
     )
+    print(
+        f"summaries      {stats['summary_upstream']} upstream-description, "
+        f"{stats['summary_upstream_stale']} upstream-description-stale, {stats['summary_curated']} curated, "
+        f"{stats['summary_unlabelled']} unlabelled (summary_source)"
+    )
     if stats["entries"]:
         print(f"zh hand-written {stats['zh_hand']}/{stats['entries']}")
 

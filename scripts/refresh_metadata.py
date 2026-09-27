@@ -11,9 +11,14 @@ It touches ONLY facts a machine can check:
   repo_license   <- license.spdx_id, or "unknown" when none is declared
   archived flag  <- the repository's own archived field
   no-license flag<- whether a licence is declared
+  summary_source <- whether summary is the repository's own description
 
 Summaries, notes, patterns and question_types are human judgements and are
-never touched. `archived` follows GitHub's own flag rather than a
+never touched. summary_source records a comparison, not a judgement: the
+summary is identical to the description GitHub serves (letter case, runs of
+whitespace and one final full stop aside) or it is not. See
+summary_source_for() for the rules; the one it never breaks is that only a
+person writes `curated`. `archived` follows GitHub's own flag rather than a
 no-push-in-N-days heuristic, because the catalog's whole stance is to state
 checkable facts rather than guesses — the cost is missing projects that are
 quietly unmaintained without being formally archived.
@@ -24,6 +29,8 @@ Usage:
   python3 scripts/refresh_metadata.py --json     # machine-readable report
   python3 scripts/refresh_metadata.py --via rest # one REST request per row
   python3 scripts/refresh_metadata.py --compare  # read both ways, list differences
+  python3 scripts/refresh_metadata.py --only-field summary_source --write
+                                                 # apply one kind of change, nothing else
 
 Facts are read with batched GraphQL queries, a hundred repositories each; a
 row GraphQL cannot answer is read over REST, which also remains the whole path
@@ -62,7 +69,17 @@ WORKERS = 6
 # a query of a hundred costs one point of the GraphQL budget, so the whole
 # catalogue is about a dozen requests where REST needs one per repository.
 BATCH = 100
-FIELDS = "nameWithOwner url stargazerCount isArchived licenseInfo { spdxId }"
+FIELDS = "nameWithOwner url stargazerCount isArchived licenseInfo { spdxId } description"
+
+# summary_source values (schema/entry.schema.json). The refresh writes the two
+# upstream ones; CURATED is a person's statement and the refresh leaves it be.
+CURATED = "curated"
+UPSTREAM = "upstream-description"
+UPSTREAM_STALE = "upstream-description-stale"
+
+# The kinds of change diff_for() proposes, in the order it proposes them.
+# --only-field applies a subset and leaves every other one unwritten.
+CHANGE_FIELDS = ("stars", "repo_license", "renamed", "flags", "summary_source")
 
 # SELF is imported from _github: rows pointing at this repository are its own
 # runnable examples, and stamping them with this repo's own star count would be
@@ -70,7 +87,7 @@ FIELDS = "nameWithOwner url stargazerCount isArchived licenseInfo { spdxId }"
 
 
 def facts(entry: dict, repo: str, *, stars: int, spdx: str, archived: bool,
-          full_name: str | None, html_url: str | None) -> dict:
+          full_name: str | None, html_url: str | None, description: str | None) -> dict:
     return {
         "slug": entry["slug"],
         "repo": repo,
@@ -83,6 +100,9 @@ def facts(entry: dict, repo: str, *, stars: int, spdx: str, archived: bool,
         # The canonical name is the fact; the catalogue should hold it.
         "full_name": full_name or repo,
         "html_url": html_url,
+        # The repository's own one-line description, as GitHub serves it; None
+        # when it has none. Compared with the row's summary, never copied in.
+        "description": description or None,
     }
 
 
@@ -94,7 +114,7 @@ def from_rest(entry: dict, repo: str, data: dict) -> dict:
     return facts(
         entry, repo, stars=data["stargazers_count"], spdx=spdx,
         archived=bool(data.get("archived")), full_name=data.get("full_name"),
-        html_url=data.get("html_url"),
+        html_url=data.get("html_url"), description=data.get("description"),
     )
 
 
@@ -106,7 +126,7 @@ def from_graphql(entry: dict, repo: str, node: dict) -> dict:
     return facts(
         entry, repo, stars=node["stargazerCount"], spdx=spdx,
         archived=bool(node.get("isArchived")), full_name=node.get("nameWithOwner"),
-        html_url=node.get("url"),
+        html_url=node.get("url"), description=node.get("description"),
     )
 
 
@@ -198,7 +218,7 @@ def fetch_all(rows: list[dict], *, via: str = "graphql") -> list[dict | None]:
     return results
 
 
-COMPARED = ("state", "stars", "repo_license", "archived", "full_name", "html_url")
+COMPARED = ("state", "stars", "repo_license", "archived", "full_name", "html_url", "description")
 
 
 def compare(rows: list[dict]) -> list[str]:
@@ -214,6 +234,42 @@ def compare(rows: list[dict]) -> list[str]:
             if a.get(key) != b.get(key):
                 differences.append(f"{entry['slug']} ({a['repo']}): {key} rest={a.get(key)} graphql={b.get(key)}")
     return differences
+
+
+def same_text(text: str | None) -> str:
+    """The form in which a summary and a description are compared: letter case,
+    runs of whitespace and one final full stop do not make two texts different.
+    Nothing else is forgiven — a summary cut short, or with one word changed, is
+    not the description."""
+    text = " ".join((text or "").split())
+    if text.endswith((".", "\u3002")):
+        text = text[:-1].rstrip()
+    return text.casefold()
+
+
+def summary_source_for(entry: dict, description: str | None) -> str | None:
+    """The summary_source this row should now carry, or None to leave it alone.
+
+      identical to the description        -> upstream-description
+      was upstream-description, differs   -> upstream-description-stale
+      curated                             -> left alone, whatever GitHub says
+      anything else that differs          -> left alone (unlabelled stays so)
+
+    A repository without a description matches nothing. Nothing here can
+    produce `curated`: that is a person saying they wrote the text, which no
+    comparison can know. Stale is not undone by drifting further; only a
+    description that matches again (or a person) changes it.
+    """
+    summary = entry.get("summary")
+    current = entry.get("summary_source")
+    if not isinstance(summary, str) or current == CURATED:
+        return None
+    wanted = same_text(description)
+    if wanted and same_text(summary) == wanted:
+        return UPSTREAM if current != UPSTREAM else None
+    if current == UPSTREAM:
+        return UPSTREAM_STALE
+    return None
 
 
 def diff_for(entry: dict, fresh: dict) -> list[tuple[str, object, object]]:
@@ -252,7 +308,26 @@ def diff_for(entry: dict, fresh: dict) -> list[tuple[str, object, object]]:
     if not unlicensed and "no-license" in flags:
         changes.append(("flags", "no-license", "remove"))
 
+    source = summary_source_for(entry, fresh.get("description"))
+    if source:
+        changes.append(("summary_source", entry.get("summary_source"), source))
+
     return changes
+
+
+def put_after(entry: dict, key: str, value: object, after: str) -> None:
+    """Set entry[key], placing a new key right after `after` so a row reads
+    summary, summary_source, summary_zh. Mutates in place, as apply() does:
+    the row stays the same object inside the catalogue list."""
+    if key in entry or after not in entry:
+        entry[key] = value
+        return
+    items = list(entry.items())
+    entry.clear()
+    for name, current in items:
+        entry[name] = current
+        if name == after:
+            entry[key] = value
 
 
 def apply(entry: dict, fresh: dict, changes: list[tuple[str, object, object]]) -> None:
@@ -277,6 +352,8 @@ def apply(entry: dict, fresh: dict, changes: list[tuple[str, object, object]]) -
                 flags.remove(a)
             if not flags:
                 entry.pop("flags", None)
+        elif field == "summary_source":
+            put_after(entry, "summary_source", b, "summary")
 
 
 def main() -> int:
@@ -304,7 +381,22 @@ def main() -> int:
         action="store_true",
         help="read the rows both ways and list any fact they disagree on; writes nothing",
     )
+    parser.add_argument(
+        "--only-field",
+        action="append",
+        choices=CHANGE_FIELDS,
+        default=[],
+        metavar="FIELD",
+        help=(
+            "report and apply only this kind of change (repeatable): "
+            + ", ".join(CHANGE_FIELDS)
+            + ". Every other change is left out of the report and unwritten."
+        ),
+    )
     args = parser.parse_args()
+    only_fields = set(args.only_field)
+    if only_fields:
+        print(f"only these changes: {', '.join(sorted(only_fields))}; every other one is left as it is", file=sys.stderr)
 
     catalog = json.loads(CATALOG.read_text())
     rows = [
@@ -343,6 +435,8 @@ def main() -> int:
             gone.append(f"{entry['slug']} ({fresh['repo']})")
             continue
         changes = diff_for(entry, fresh)
+        if only_fields:
+            changes = [change for change in changes if change[0] in only_fields]
         if not changes:
             continue
         report.append(
@@ -445,13 +539,23 @@ def digest(
     """
     blocked = blocked or []
     stars_only = [r for r in report if {c["field"] for c in r["changes"]} == {"stars"}]
-    notable = [r for r in report if r not in stars_only]
+    # A summary found identical to its repository's description is labelled,
+    # counted and not listed: the first run labelled hundreds. A summary whose
+    # description has since changed is listed; a person may want to reread it.
+    labelled = [r for r in report if any(labels_upstream(c) for c in r["changes"])]
+    notable = [r for r in report if not all(c["field"] == "stars" or labels_upstream(c) for c in r["changes"])]
     read = f"{checked - skipped} of {checked}" if skipped else f"{checked}"
     lines = [
         f"Re-read {read} repositories: {len(report)} rows changed, "
         f"{len(stars_only)} of them stars only.",
         "",
     ]
+    if labelled:
+        lines += [
+            f"{len(labelled)} summaries are now labelled `{UPSTREAM}`: each is identical to its "
+            "repository's own GitHub description.",
+            "",
+        ]
     if notable or blocked:
         lines += ["**Worth a look before merging:**", ""]
         for item in notable:
@@ -460,7 +564,7 @@ def digest(
                 if c["field"] != "flags"
                 else f"flag `{c['from']}` {c['to']}"
                 for c in item["changes"]
-                if c["field"] != "stars"
+                if c["field"] != "stars" and not labels_upstream(c)
             ]
             lines.append(f"- `{item['slug']}` ({item['repo']}): " + "; ".join(parts))
         for item in blocked:
@@ -484,9 +588,14 @@ def digest(
             "summary says what was spent.",
             "",
         ]
-    if not notable and not gone and not blocked and not skipped:
+    if not notable and not gone and not blocked and not skipped and not labelled:
         lines += ["Nothing but star counts moved.", ""]
     return "\n".join(lines)
+
+
+def labels_upstream(change: dict) -> bool:
+    """A change that only records a summary matching its repository's description."""
+    return change["field"] == "summary_source" and change["to"] == UPSTREAM
 
 
 if __name__ == "__main__":

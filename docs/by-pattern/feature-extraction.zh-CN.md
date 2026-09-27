@@ -11,7 +11,7 @@ _把自由文本转成数值特征，喂给下游的传统模型。_
 - **[Cookbook: Autoresearch feature discovery](https://docs.typesafe.ai/cookbooks/autoresearch_feature_discovery)** ⭐ — 一个自动研究循环：自己提出问题、把自由文本转成数值特征、再用误差反过来改进下游的梯度提升回归模型。
   <sub>`官方文档` · `Py`</sub>
 
-- **[nimble](https://github.com/bespokelabsai/nimble)** — 本地类型化决策、对比式数据筛选与模型评测。 <sub>(机翻)</sub>
+- **[nimble](https://github.com/bespokelabsai/nimble)** — 本地类型化决策、对比式数据筛选与模型评测。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`开源项目` · ★1k+ · bespokelabsai · `Py` · ⚠ `无许可证`</sub>
 
 - **[jev-align](https://github.com/sutro-sh/jev-align)** — 从人类反馈出发，构建经过校准的决策函数。
@@ -23,13 +23,13 @@ _把自由文本转成数值特征，喂给下游的传统模型。_
 - **[Prism](https://github.com/irfndi/prism-liquidity-agent)** — 不直接让 Jev 下单。它判断 toxic flow、市场压力、均值回归之类的状态，再交给原来的策略。
   <sub>`开源项目` · ★10+ · `TS` · `choice` · `score`</sub>
 
-- **[jev-board-lab](https://github.com/WebGrga/jev-board-lab)** — 面向 Jev Board 数据集的交互式浏览与问题工作区。 <sub>(机翻)</sub>
+- **[jev-board-lab](https://github.com/WebGrga/jev-board-lab)** — 面向 Jev Board 数据集的交互式浏览与问题工作区。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`开源项目` · webgrga · `JS` · ⚠ `无许可证`</sub>
 
-- **[jev-calibrated-narrative-coding](https://github.com/pozapas/jev-calibrated-narrative-coding)** — 用 System One 模型把警方的交通事故叙述，校准地转换为带概率的事故变量。包含完整流程。 <sub>(机翻)</sub>
+- **[jev-calibrated-narrative-coding](https://github.com/pozapas/jev-calibrated-narrative-coding)** — 用 System One 模型把警方的交通事故叙述，校准地转换为带概率的事故变量。包含完整流程。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`开源项目` · pozapas · `Py`</sub>
 
-- **[tiershift](https://github.com/iamvatsalpatel/tiershift)** — 把每次 LLM 调用下沉到能胜任的最便宜模型，路由由 Jev 在约 180 毫秒内决定，无需训练。 <sub>(机翻)</sub>
+- **[tiershift](https://github.com/iamvatsalpatel/tiershift)** — 把每次 LLM 调用下沉到能胜任的最便宜模型，路由由 Jev 在约 180 毫秒内决定，无需训练。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`开源项目` · iamvatsalpatel · `TS`</sub>
 
 ---

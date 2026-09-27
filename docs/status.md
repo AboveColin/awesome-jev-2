@@ -24,6 +24,9 @@ is the point of dating it.
 | Machine signal: evidence under an examples directory, not yet judged ([review queue](review-queue.md#examples-dir)) | 22 |
 | Machine signal: evidence resting on one model name or the API host ([review queue](review-queue.md#single-model-name)) | 76 |
 | Patterns covered | 18 of 18 |
+| Summaries that are the project's own GitHub description (`summary_source` `upstream-description`) | 890 of 1207 |
+| Summaries taken from that description that no longer match it (`upstream-description-stale`) | 0 |
+| Summaries marked as written for this catalogue (`curated`) | 0 |
 | Chinese summaries hand-written | 196 of 1207 |
 | Retired links | 2 |
 <!-- shape:end -->

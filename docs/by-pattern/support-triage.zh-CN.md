@@ -29,7 +29,7 @@ _按意图和紧急度路由支持工单与会话。_
 - **[Jev on Cloudflare Workers AI](https://developers.cloudflare.com/ai/models/typesafe/jev/)** — Workers AI binding 与 REST 示例：一次调用同时问 noul、choice、score，并给出含逐答案置信度的完整响应。
   <sub>`平台集成` · `TS` · `sh` · `noul` · `choice` · `score`</sub>
 
-- **[jev-triage](https://github.com/boldbug1/jev-triage)** — 基于 TypeSafe AI Jev 决策模型的 Go 消息分诊 CLI：为消息归类、给紧急程度打分并决定去向。 <sub>(机翻)</sub>
+- **[jev-triage](https://github.com/boldbug1/jev-triage)** — 基于 TypeSafe AI Jev 决策模型的 Go 消息分诊 CLI：为消息归类、给紧急程度打分并决定去向。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`开源项目` · boldbug1 · `Go`</sub>
 
 ---

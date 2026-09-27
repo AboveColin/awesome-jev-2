@@ -1,5 +1,6 @@
 # Weekly refresh of every machine-checkable fact in catalog.json: link status
-# (`checked`, `link_status`), and stars, licences and archive status from the
+# (`checked`, `link_status`), and stars, licences, archive status and whether
+# each summary is its repository's own description (`summary_source`) from the
 # GitHub API. Everything generated from those facts is rebuilt in the same run
 # and committed on the runner, and lint's checks (scripts/check.py) have to
 # pass on that commit before anything is pushed.
@@ -11,7 +12,8 @@
 #
 # The bot only ever touches facts a machine can check. Summaries, notes,
 # patterns and question_types are human judgements, and retiring a dead row
-# needs a human-written reason, so neither happens here.
+# needs a human-written reason, so neither happens here. `summary_source`
+# records a text comparison, never who wrote a summary: `curated` is a person's.
 #
 # Delivery: commits straight to main, because every fact here is mechanical and
 # lint's checks have passed on the commit before it is pushed. It used to

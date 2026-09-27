@@ -36,6 +36,15 @@
       "minLength": 1,
       "maxLength": 300
     },
+    "summary_source": {
+      "description": "Where the words of summary come from; the same disclosure for the English text that zh_machine makes for the Chinese. `upstream-description`: the linked repository's own GitHub description, identical apart from letter case, runs of whitespace and one final full stop; scripts/refresh_metadata.py sets it whenever the two match. `upstream-description-stale`: labelled upstream-description once, and no longer identical to the description GitHub serves (the project changed it, or the summary kept only part of it); the words are still the project's. `curated`: a person wrote the summary for this catalogue; only a person sets it, and the refresh never changes it. Absent: not recorded. Anyone who rewrites a summary sets `curated`, or the refresh will call the new text stale.",
+      "type": "string",
+      "enum": [
+        "curated",
+        "upstream-description",
+        "upstream-description-stale"
+      ]
+    },
     "summary_zh": {
       "description": "One-line Chinese description. Hand-written unless zh_machine is true.",
       "type": "string",
@@ -364,7 +373,7 @@
       }
     },
     "license": {
-      "description": "Licence of this row's metadata, not of the linked work. CC-BY-4.0 when descriptive text was inherited from a CC BY 4.0 source (attribution is the sources[] array itself), otherwise CC0-1.0.",
+      "description": "Licence of this row's metadata, not of the linked work. CC-BY-4.0 when descriptive text was inherited from a CC BY 4.0 source (attribution is the sources[] array itself), otherwise CC0-1.0. It does not cover a summary labelled upstream-description or upstream-description-stale in summary_source: those words are the linked project's own.",
       "type": "string",
       "enum": [
         "CC0-1.0",

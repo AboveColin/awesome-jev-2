@@ -52,6 +52,10 @@ class CountsTest(unittest.TestCase):
             "review_examples_dir": 7009,
             "review_single_model_name": 7010,
             "has_code_unbacked": 7011,
+            "summary_upstream": 7012,
+            "summary_upstream_stale": 7013,
+            "summary_curated": 7014,
+            "summary_unlabelled": 7015,
         }
         with patch.object(_stats, "compute", return_value=fake):
             text = run_counts()
@@ -64,6 +68,7 @@ class CountsTest(unittest.TestCase):
             "evidence       7006 call-site, 7007 wire-shape, 7008 example-only",
             "review queue   7009 under examples/, 7010 on one model name or host",
             "code, no cite  7011 (neither evidence nor evidence_none)",
+            "summaries      7012 upstream-description, 7013 upstream-description-stale, 7014 curated, 7015 unlabelled",
             "next changes at 7,100 entries",
             "  7,000+ public resources for Jev",
         ):

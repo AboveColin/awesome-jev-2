@@ -43,6 +43,11 @@ EXAMPLES_DIR = re.compile(r"(^|/)examples?/")
 # citation can have. A second matched string from the call itself ends it.
 MODEL_NAMES_AND_HOST = ("jev-latest", "jev-1.13", "typesafe-ai/jev", "typesafe/jev", "api.typesafe.ai")
 
+# Where a summary's words come from, as summary_source records it
+# (schema/entry.schema.json). The two upstream values are the project's own
+# text, which is why docs/sources.md counts them apart from the rest.
+SUMMARY_SOURCES = ("curated", "upstream-description", "upstream-description-stale")
+
 
 def load() -> tuple[list[dict], list[dict], list[dict], dict, dict]:
     catalog = json.loads((ROOT / "catalog.json").read_text())
@@ -124,6 +129,22 @@ def compute() -> dict:
             1 for e in catalog if e.get("question_types") and e.get("evidence")
         ),
         "no_licence": sum(1 for e in catalog if e.get("repo_license") == "unknown"),
+        # summary_source: the project's own description word for word; taken
+        # from it and no longer matching; written for this catalogue; not
+        # recorded. The refresh writes the first two, only a person the third.
+        "summary_upstream": sum(1 for e in catalog if e.get("summary_source") == "upstream-description"),
+        "summary_upstream_stale": sum(
+            1 for e in catalog if e.get("summary_source") == "upstream-description-stale"
+        ),
+        "summary_curated": sum(1 for e in catalog if e.get("summary_source") == "curated"),
+        "summary_unlabelled": sum(1 for e in catalog if e.get("summary_source") not in SUMMARY_SOURCES),
+        # Of the project-worded summaries, how many Chinese counterparts are a
+        # machine translation of them.
+        "summary_upstream_zh_machine": sum(
+            1
+            for e in catalog
+            if e.get("summary_source") in SUMMARY_SOURCES[1:] and e.get("zh_machine")
+        ),
         "zh_hand": sum(1 for e in catalog if not e.get("zh_machine")),
         "patterns_total": len(patterns),
         "patterns_covered": sum(1 for p in patterns if by_pattern[p["key"]]),

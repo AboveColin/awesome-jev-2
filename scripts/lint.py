@@ -78,6 +78,25 @@ DRAFT_FIELD = "_draft"
 # and shown as a call site, which it is not.
 ALTERNATIVE_EVIDENCE_KIND = "wire-shape"
 
+# `summary_source: curated` says a person wrote the summary for this catalogue,
+# so CONTRIBUTING's "no marketing copy" is theirs to keep, and lint warns when a
+# word from this list or an emoji is in it. A summary labelled as the project's
+# own description quotes the project and is not warned about: rewording it would
+# put unreviewed text in the project's name, and a row without the label says
+# nothing about who wrote it. A warning, not an error: the list points at the
+# usual suspects, and a reviewer decides.
+CURATED = "curated"
+MARKETING_WORDS = re.compile(
+    r"\b(?:revolutionary|game[- ]chang\w*|ultimate|powerful|(?:blazing|lightning)[- ]fast"
+    r"|cutting[- ]edge|world[- ]class|best[- ]in[- ]class|next[- ]gen(?:eration)?"
+    r"|seamless(?:ly)?|supercharg\w*|effortless(?:ly)?|unleash\w*|100% free)\b",
+    re.IGNORECASE,
+)
+# Pictographs, the two symbol blocks emoji are drawn from, and the variation
+# selector that turns a symbol into one. Arrows (→) and keyboard symbols (⌘),
+# which summaries use for meaning, are outside these ranges.
+EMOJI = re.compile("[\U0001F000-\U0001FAFF\u2600-\u27BF\uFE0F]")
+
 
 class Findings(NamedTuple):
     """What a check found, in order. Errors fail the build; warnings are advice."""
@@ -302,6 +321,8 @@ def check_entry_invariants(
             f"project building on Jev; set evidence.kind to {ALTERNATIVE_EVIDENCE_KIND!r}",
         )
 
+    report.add(check_curated_summary(entry, path))
+
     # `official` is a factual claim about who published the thing, so it is
     # checked against the vendor's own hosts and GitHub org rather than trusted.
     if entry.get("official"):
@@ -387,6 +408,26 @@ def check_entry_invariants(
 def on_github(entry: dict) -> bool:
     """The row names a GitHub repository in `url` or `repo`, where a file can be read."""
     return any("github.com" in str(entry.get(field) or "") for field in ("url", "repo"))
+
+
+def check_curated_summary(entry: dict, path: str) -> Findings:
+    """A summary a person wrote for this catalogue reads like one: no marketing
+    words, no emoji. Only rows labelled `summary_source: curated`; see CURATED."""
+    report = Report()
+    summary = entry.get("summary")
+    if entry.get("summary_source") != CURATED or not isinstance(summary, str):
+        return report.findings()
+    slug = entry.get("slug", "?")
+    words = sorted({match.group(0).lower() for match in MARKETING_WORDS.finditer(summary)})
+    if words:
+        report.warn(
+            path,
+            f"{slug}: summary_source is curated but the summary uses marketing words "
+            f"({', '.join(words)}); say what decision the project makes instead",
+        )
+    if EMOJI.search(summary):
+        report.warn(path, f"{slug}: summary_source is curated but the summary contains emoji")
+    return report.findings()
 
 
 def check_self_submission(entry: dict, path: str, flags: list) -> Findings:
@@ -490,16 +531,18 @@ def check_languages(schema: dict, lang_ext: dict) -> Findings:
 
 
 def check_taxonomy(schema: dict, labels: dict) -> Findings:
-    """taxonomy.json labels exactly the kinds and flags the schema allows, every text filled in.
+    """taxonomy.json labels exactly the kinds, flags and summary sources the
+    schema allows, every text filled in.
 
-    taxonomy.json holds kind and flag labels for both the README and the site.
-    A key the schema allows but taxonomy.json lacks raises in build_readme but
-    renders as a raw slug on the site — loud in one place, silent in the other.
+    taxonomy.json holds those labels for both the README and the site. A key the
+    schema allows but taxonomy.json lacks raises in build_readme but renders as
+    a raw slug on the site — loud in one place, silent in the other.
     """
     report = Report()
     for group, enum in (
         ("kinds", schema["properties"]["kind"]["enum"]),
         ("flags", schema["properties"]["flags"]["items"]["enum"]),
+        ("summary_sources", schema["properties"]["summary_source"]["enum"]),
     ):
         have = [item["key"] for item in labels[group]]
         for key in sorted(set(enum) - set(have)):

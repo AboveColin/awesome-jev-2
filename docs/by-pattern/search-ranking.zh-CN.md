@@ -47,7 +47,7 @@ _对来自廉价检索步骤的候选做打分或重排。_
 - **[jev-search](https://github.com/superagents-lab/jev-search)** — Jev 驱动的网页搜索：先选时间窗口和最佳查询改写，再分批对结果逐条用 noul 重排。
   <sub>`开源项目` · ★100+ · `TS` · `choice` · `noul`</sub>
 
-- **[jev-semgrep](https://github.com/uehaj/jev-semgrep)** — 按含义 grep，跨语言：Jev 给每一行按含义打分，可用 AND/OR/NOT 组合多个含义。 <sub>(机翻)</sub>
+- **[jev-semgrep](https://github.com/uehaj/jev-semgrep)** — 按含义 grep，跨语言：Jev 给每一行按含义打分，可用 AND/OR/NOT 组合多个含义。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`开源项目` · ★100+ · uehaj · `JS`</sub>
 
 - **[jev-shell-history](https://github.com/mrnugget/jev-shell-history)** — Fish 风格的 zsh 历史自动建议，由 Jev 排序而不是按时间。
@@ -65,37 +65,37 @@ _对来自廉价检索步骤的候选做打分或重排。_
 - **[skillranker](https://github.com/Dicklesworthstone/skillranker)** — 用当前会话上下文给智能体的技能排序以决定下一步，带 Claude Code hook。
   <sub>`插件` · ★100+ · dicklesworthstone · `Rs`</sub>
 
-- **[vector-graph-rag](https://github.com/zilliztech/vector-graph-rag)** — 纯向量检索的 Graph RAG，在多跳推理场景上达到当前最好水平。 <sub>(机翻)</sub>
+- **[vector-graph-rag](https://github.com/zilliztech/vector-graph-rag)** — 纯向量检索的 Graph RAG，在多跳推理场景上达到当前最好水平。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`开源项目` · ★100+ · zilliztech · `Py`</sub>
 
 - **[Blink](https://github.com/ellipsis-dev/blink)** — 把 Jev 当代码库导航器。每走到一层目录，就判断哪些文件和当前问题最相关，再继续往下找。
   <sub>`开源项目` · ★10+ · `TS` · `choice` · ⚠ `无许可证`</sub>
 
-- **[Cheshi](https://github.com/CheshiAI/Cheshi)** — 由 Jev 驱动的对话记忆：找回过去的会话，并结合原始来源重新审视当时的决策。一个 macOS 工作区。 <sub>(机翻)</sub>
+- **[Cheshi](https://github.com/CheshiAI/Cheshi)** — 由 Jev 驱动的对话记忆：找回过去的会话，并结合原始来源重新审视当时的决策。一个 macOS 工作区。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`插件` · ★10+ · cheshiai · `C`</sub>
 
 - **[hermes-jev](https://github.com/keeltrace/hermes-nerve)** — 类型化的 System One 决策、排序、校验，以及可选启用的 Hermes 工具闸门。 <sub>(机翻)</sub>
   <sub>`开源项目` · ★10+ · keeltrace · `Py`</sub>
 
-- **[jegrep](https://github.com/can1357/jegrep)** — 语义 grep：用描述来找代码。 <sub>(机翻)</sub>
+- **[jegrep](https://github.com/can1357/jegrep)** — 语义 grep：用描述来找代码。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`开源项目` · ★10+ · can1357 · `Rs`</sub>
 
-- **[jev-rag-benchmark](https://github.com/erendikmenn/jev-rag-benchmark)** — 可复现的基准：衡量 Jev 在 RAG 里的重排质量、延迟与成本。 <sub>(机翻)</sub>
+- **[jev-rag-benchmark](https://github.com/erendikmenn/jev-rag-benchmark)** — 可复现的基准：衡量 Jev 在 RAG 里的重排质量、延迟与成本。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`基准测试` · ★10+ · erendikmenn · `Py`</sub>
 
-- **[jev-recall](https://github.com/samdotmak/jev-recall)** — 按相关性而非相似度召回：用 Jev 过滤 AI 助手的记忆。 <sub>(机翻)</sub>
+- **[jev-recall](https://github.com/samdotmak/jev-recall)** — 按相关性而非相似度召回：用 Jev 过滤 AI 助手的记忆。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`开源项目` · ★10+ · samdotmak · `TS`</sub>
 
-- **[jev-reranker](https://github.com/hotchpotch/jev-reranker)** — 用 Jev 为 Python 的 RAG 做相关性过滤与重排。 <sub>(机翻)</sub>
+- **[jev-reranker](https://github.com/hotchpotch/jev-reranker)** — 用 Jev 为 Python 的 RAG 做相关性过滤与重排。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`开源项目` · ★10+ · hotchpotch · `Py`</sub>
 
-- **[jevgrep](https://github.com/nassim-arifette/jevgrep)** — 为编码智能体提供由 Jev 驱动的语义代码搜索：通过 CLI 或 MCP 跨仓库查找某种行为，并给出精确的源码位置。 <sub>(机翻)</sub>
+- **[jevgrep](https://github.com/nassim-arifette/jevgrep)** — 为编码智能体提供由 Jev 驱动的语义代码搜索：通过 CLI 或 MCP 跨仓库查找某种行为，并给出精确的源码位置。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`插件` · ★10+ · nassim-arifette · `TS`</sub>
 
-- **[jevql](https://github.com/kylemclaren/jevql)** — 给 Postgres 用的语义 SQL，由 Jev 驱动。 <sub>(机翻)</sub>
+- **[jevql](https://github.com/kylemclaren/jevql)** — 给 Postgres 用的语义 SQL，由 Jev 驱动。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`开源项目` · ★10+ · kylemclaren · `Go`</sub>
 
-- **[jgrep](https://github.com/keltokhy/jgrep)** — grep，但模式是一段描述：用 Jev 按含义过滤行，约 200 毫秒处理上千行。 <sub>(机翻)</sub>
+- **[jgrep](https://github.com/keltokhy/jgrep)** — grep，但模式是一段描述：用 Jev 按含义过滤行，约 200 毫秒处理上千行。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`开源项目` · ★10+ · keltokhy · `Py`</sub>
 
 - **[jgrep (npm: jevgrep)](https://github.com/kyu1204/jgrep)** — 按代码的作用来 grep：对每个代码块、diff 块或 CSV 行问一个 Noul，输出带概率的 file:line 命中。--diff 用一条英文规则在 CI 里为 PR 把关（退出码 0 命中 / 1 干净 / 2 出错）；--tests 列出一次 diff 可能影响的测试文件。
@@ -104,70 +104,70 @@ _对来自廉价检索步骤的候选做打分或重排。_
 - **[laya-jev-GraphRAG](https://github.com/bodepudimuneendra-netizen/laya-jev-GraphRAG)** — 一个智能体式 GraphRAG 引擎，可切换 System One 决策模型（本地 Laya 或云端 Jev）。 <sub>(机翻)</sub>
   <sub>`开源项目` · ★10+ · bodepudimuneendra-netizen · `Py`</sub>
 
-- **[milvus-model](https://github.com/milvus-io/milvus-model)** — 把 OpenAI、SentenceTransformers 等嵌入与重排模型集成进来的库，用于 Milvus 等向量数据库中的语义检索；Jev 是其中一个可用的重排器。 <sub>(机翻)</sub>
+- **[milvus-model](https://github.com/milvus-io/milvus-model)** — 把 OpenAI、SentenceTransformers 等嵌入与重排模型集成进来的库，用于 Milvus 等向量数据库中的语义检索；Jev 是其中一个可用的重排器。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`平台集成` · ★10+ · milvus-io · `Py`</sub>
 
-- **[pi-jev](https://github.com/madeye/pi-jev)** — 用 Jev 辅助文件检索与请求缓存，让 Pi 工作流更快。 <sub>(机翻)</sub>
+- **[pi-jev](https://github.com/madeye/pi-jev)** — 用 Jev 辅助文件检索与请求缓存，让 Pi 工作流更快。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`插件` · ★10+ · madeye · `TS`</sub>
 
-- **[pi-jev-skill-picker](https://github.com/safzanpirani/pi-jev-skill-picker)** — 用 Jev 给当前任务的 Pi Agent 技能排序。 <sub>(机翻)</sub>
+- **[pi-jev-skill-picker](https://github.com/safzanpirani/pi-jev-skill-picker)** — 用 Jev 给当前任务的 Pi Agent 技能排序。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`插件` · ★10+ · safzanpirani · `TS`</sub>
 
 - **[transcript-lens](https://github.com/sensahin/transcript-lens)** — 按含义浏览 YouTube 字幕：土耳其语界面、由 Jev 分析、可导出字幕，并附 Vercel 部署说明。 <sub>(机翻)</sub>
   <sub>`开源项目` · ★10+ · sensahin · `TS`</sub>
 
-- **[warrenduffer](https://github.com/arimanyus/warrenduffer)** — 面向印度股票的 AI 日内交易机器人：Jev 每 15 秒给 Nifty 50 排序，代码决定每笔交易的仓位并下单。 <sub>(机翻)</sub>
+- **[warrenduffer](https://github.com/arimanyus/warrenduffer)** — 面向印度股票的 AI 日内交易机器人：Jev 每 15 秒给 Nifty 50 排序，代码决定每笔交易的仓位并下单。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`开源项目` · ★10+ · arimanyus · `TS`</sub>
 
-- **[agent-seek](https://github.com/Gitmaxd/agent-seek)** — Agent Seek——为智能体提供精准的网页召回：You.com 负责发现，TypeSafe Jev 负责排序。提供 MCP 与 REST。 <sub>(机翻)</sub>
+- **[agent-seek](https://github.com/Gitmaxd/agent-seek)** — Agent Seek——为智能体提供精准的网页召回：You.com 负责发现，TypeSafe Jev 负责排序。提供 MCP 与 REST。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`插件` · gitmaxd · `Py`</sub>
 
-- **[askgrep](https://github.com/fajarhide/askgrep)** — 为那些写不成正则的问题而生的 grep：逐个读取每个函数而不是抽样，由 TypeSafe Jev 驱动。 <sub>(机翻)</sub>
+- **[askgrep](https://github.com/fajarhide/askgrep)** — 为那些写不成正则的问题而生的 grep：逐个读取每个函数而不是抽样，由 TypeSafe Jev 驱动。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`开源项目` · fajarhide · `Rs`</sub>
 
-- **[clay-jev-people-ranker](https://github.com/promptgtm-shared/clay-jev-people-ranker)** — 面向 Clay 的智能体技能与 Python 工作流：用 TypeSafe Jev 做线索评分、B2B 潜在客户筛选与人物搜索排序。 <sub>(机翻)</sub>
+- **[clay-jev-people-ranker](https://github.com/promptgtm-shared/clay-jev-people-ranker)** — 面向 Clay 的智能体技能与 Python 工作流：用 TypeSafe Jev 做线索评分、B2B 潜在客户筛选与人物搜索排序。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`插件` · promptgtm-shared · `Py`</sub>
 
-- **[every](https://github.com/sufianetaouil/every)** — 对代码库里每一个函数问一个是非问题，几秒内得到排序结果 —— 模式本身是一个问题的 grep。 <sub>(机翻)</sub>
+- **[every](https://github.com/sufianetaouil/every)** — 对代码库里每一个函数问一个是非问题，几秒内得到排序结果 —— 模式本身是一个问题的 grep。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`开源项目` · sufianetaouil · `Py`</sub>
 
 - **[jev-assist](https://github.com/glud123/jev-assist)** — 别让昂贵的主模型干「grep 加猜」的粗活 —— 让 Jev 先把整个仓库排一遍序。 <sub>(机翻)</sub>
   <sub>`开源项目` · glud123 · `JS`</sub>
 
-- **[jev-bfs](https://github.com/komikat/jev-bfs)** — 用 Jev 直接排序来跑维基百科链接竞速，带实时终端显示。 <sub>(机翻)</sub>
+- **[jev-bfs](https://github.com/komikat/jev-bfs)** — 用 Jev 直接排序来跑维基百科链接竞速，带实时终端显示。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`开源项目` · komikat · `Py`</sub>
 
 - **[jev-engineering](https://github.com/eugeniughelbur/jev-engineering)** — 面向 AI 智能体的决策层：约 400 毫秒、两百分之一美分的类型化校准决策，用于拦截工具调用。 <sub>(机翻)</sub>
   <sub>`开源项目` · eugeniughelbur · `Py`</sub>
 
-- **[jev-nlgrep](https://github.com/YehuiTang0316/jev-nlgrep)** — 用自然语言 grep 按含义搜索代码与文本。 <sub>(机翻)</sub>
+- **[jev-nlgrep](https://github.com/YehuiTang0316/jev-nlgrep)** — 用自然语言 grep 按含义搜索代码与文本。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`开源项目` · yehuitang0316 · `TS`</sub>
 
-- **[jev-orderby-bench](https://github.com/yodablocks/jev-orderby-bench)** — 按 Jev 概率做 ORDER BY 能否给出站得住脚的排序？独立的排序、校准与不变量实测。 <sub>(机翻)</sub>
+- **[jev-orderby-bench](https://github.com/yodablocks/jev-orderby-bench)** — 按 Jev 概率做 ORDER BY 能否给出站得住脚的排序？独立的排序、校准与不变量实测。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`基准测试` · yodablocks · `Py`</sub>
 
 - **[jev-rerank-bench](https://github.com/anessbelbati/jev-rerank-bench)** — 与专用重排模型在 14 个数据集上的独立横评。
   <sub>`基准测试` · anessbelbati · `Py`</sub>
 
-- **[jev-reranker](https://github.com/shinpr/jev-reranker)** — 用 Jev 对 JSON 搜索结果做重排、过滤与压缩。 <sub>(机翻)</sub>
+- **[jev-reranker](https://github.com/shinpr/jev-reranker)** — 用 Jev 对 JSON 搜索结果做重排、过滤与压缩。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`开源项目` · shinpr · `Rs`</sub>
 
-- **[jev-retrieval](https://github.com/romeromarcelo/jev-retrieval)** — 语义化的代码与文档检索 CLI：BM25 负责召回，TypeSafe Jev 负责校准后的精确筛选。 <sub>(机翻)</sub>
+- **[jev-retrieval](https://github.com/romeromarcelo/jev-retrieval)** — 语义化的代码与文档检索 CLI：BM25 负责召回，TypeSafe Jev 负责校准后的精确筛选。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`开源项目` · romeromarcelo · `Rs`</sub>
 
-- **[jev-search-rerank-eval](https://github.com/zhuyansen/jev-search-rerank-eval)** — TypeSafe Jev 重排能否胜过向量检索？在 Agent Skills Hub 目录上做分级相关性评测（9,831 对、164 条中英文查询），并测量了“裁判循环”偏差。 <sub>(机翻)</sub>
+- **[jev-search-rerank-eval](https://github.com/zhuyansen/jev-search-rerank-eval)** — TypeSafe Jev 重排能否胜过向量检索？在 Agent Skills Hub 目录上做分级相关性评测（9,831 对、164 条中英文查询），并测量了“裁判循环”偏差。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`基准测试` · zhuyansen · `Py`</sub>
 
-- **[jev-skill-gate](https://github.com/ShivamPansuriya/jev-skill-gate)** — 用 Jev 把 Claude Code 的技能清单削减约 75%：给每个已安装技能打相关性分，其余隐藏。 <sub>(机翻)</sub>
+- **[jev-skill-gate](https://github.com/ShivamPansuriya/jev-skill-gate)** — 用 Jev 把 Claude Code 的技能清单削减约 75%：给每个已安装技能打相关性分，其余隐藏。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`插件` · shivampansuriya · `JS`</sub>
 
-- **[jev-starter](https://github.com/hamakyo/jev-starter)** — 基于 Jev 的类型化、策略驱动决策工作流：置信路由、回退与评测。 <sub>(机翻)</sub>
+- **[jev-starter](https://github.com/hamakyo/jev-starter)** — 基于 Jev 的类型化、策略驱动决策工作流：置信路由、回退与评测。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`插件` · hamakyo · `TS`</sub>
 
-- **[jev.nvim](https://github.com/valentynkit/jev.nvim)** — Neovim 插件：向当前缓冲区提问，得到 quickfix 列表。Treesitter 切分函数，Jev 给每个函数打分，概率以虚拟文本显示。 <sub>(机翻)</sub>
+- **[jev.nvim](https://github.com/valentynkit/jev.nvim)** — Neovim 插件：向当前缓冲区提问，得到 quickfix 列表。Treesitter 切分函数，Jev 给每个函数打分，概率以虚拟文本显示。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`插件` · valentynkit · `Lua`</sub>
 
-- **[Jevflix](https://github.com/ArielBubis/Jevflix)** — Jev 来挑，你来看。一个混合电影推荐器：快速的语义加关键词检索把 4,800 部电影缩小成短名单，再由 TypeSafe Jev 读懂你的请求并挑选。 <sub>(机翻)</sub>
+- **[Jevflix](https://github.com/ArielBubis/Jevflix)** — Jev 来挑，你来看。一个混合电影推荐器：快速的语义加关键词检索把 4,800 部电影缩小成短名单，再由 TypeSafe Jev 读懂你的请求并挑选。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`开源项目` · arielbubis · `Py`</sub>
 
 - **[jevgrep](https://github.com/allebee/jevgrep)** — 按含义 grep：管道传入任意文本，用大白话问一个是非问题，只留下匹配的行。 <sub>(机翻)</sub>
@@ -179,7 +179,7 @@ _对来自廉价检索步骤的候选做打分或重排。_
 - **[jevsearch](https://github.com/kylemclaren/jevsearch)** — shadcn/ui 的 ⌘K 站内搜索组件：先用本地关键词匹配立即出结果，再把前 20 条一次性发给 Jev（每个候选一个 Noul、一个选出最佳页面的 Choice、一个判断是否有页面能回答的 Noul），据此重排或剔除结果；TypeSafe 变慢或不可用时保留关键词排序。 <sub>(机翻)</sub>
   <sub>`开源项目` · kylemclaren · `TS` · `noul` · `choice` · ⚠ `宣称未核实` `作者自荐`</sub>
 
-- **[jfind](https://github.com/religa/jfind)** — 用自然语言描述来找文件：带语义 --like 条件的 find(1)，由 TypeSafe.ai 的 jev 回答。 <sub>(机翻)</sub>
+- **[jfind](https://github.com/religa/jfind)** — 用自然语言描述来找文件：带语义 --like 条件的 find(1)，由 TypeSafe.ai 的 jev 回答。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`开源项目` · religa · `Py`</sub>
 
 - **[llama-index-jev](https://github.com/WiktorB2004/llama-index-jev)** — 由 Jev 驱动的 LlamaIndex 重排器与路由器 —— 类型化的分数与选择，比 LLM-as-judge 便宜。 <sub>(机翻)</sub>
@@ -188,16 +188,16 @@ _对来自廉价检索步骤的候选做打分或重排。_
 - **[oko](https://github.com/bartlomein/oko)** — 通过 MCP 为 Codex、Claude Code 与 OpenCode 做代码检索：直接给出相关源码片段，让智能体少读无关代码。 <sub>(机翻)</sub>
   <sub>`插件` · bartlomein · `Rs` · ⚠ `宣称未核实`</sub>
 
-- **[pijev](https://github.com/tonyzdev/pijev)** — PiJev：Jev 参与循环的终端编码智能体——在第一次调用前由 Jev 给仓库文件排序，并挑选技能。 <sub>(机翻)</sub>
+- **[pijev](https://github.com/tonyzdev/pijev)** — PiJev：Jev 参与循环的终端编码智能体——在第一次调用前由 Jev 给仓库文件排序，并挑选技能。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`开源项目` · tonyzdev · `TS`</sub>
 
-- **[sift](https://github.com/tylergibbs1/sift)** — 用 TypeSafe Jev 重排 Google 搜索结果的 Chrome 扩展，并收起销售页面和 SEO 填充内容。 <sub>(机翻)</sub>
+- **[sift](https://github.com/tylergibbs1/sift)** — 用 TypeSafe Jev 重排 Google 搜索结果的 Chrome 扩展，并收起销售页面和 SEO 填充内容。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`插件` · tylergibbs1 · `TS`</sub>
 
-- **[typesafe-as-a-judge](https://github.com/E-FL/typesafe-as-a-judge)** — 给 Codex 与 Claude Code 的非官方社区 MCP 插件，用 Jev 做有界路由。 <sub>(机翻)</sub>
+- **[typesafe-as-a-judge](https://github.com/E-FL/typesafe-as-a-judge)** — 给 Codex 与 Claude Code 的非官方社区 MCP 插件，用 Jev 做有界路由。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`插件` · e-fl · `JS`</sub>
 
-- **[typesafe-mod](https://github.com/BeLazy167/typesafe-mod)** — Claude Code 模组：把决策路由给 Jev，逐会话给已安装技能排序。 <sub>(机翻)</sub>
+- **[typesafe-mod](https://github.com/BeLazy167/typesafe-mod)** — Claude Code 模组：把决策路由给 Jev，逐会话给已安装技能排序。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`插件` · belazy167 · `TS`</sub>
 
 ---

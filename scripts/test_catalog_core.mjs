@@ -2,8 +2,9 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   compareEntries, evidenceKind, evidenceUrl, matchesEntry, verification, isIndependentReport, EVIDENCE_KINDS,
-  queryFromState, shareUrl, stateFromQuery, TOGGLES, VIEWS,
+  queryFromState, shareUrl, stateFromQuery, TOGGLES, VIEWS, SUMMARY_SOURCES, MARKED_SOURCES, summaryMarks,
 } from "../site/catalog-core.mjs";
+import { readFileSync } from "node:fs";
 
 const row = (slug, extra = {}) => ({ slug, title: slug, patterns: ["context-compaction"], ...extra });
 
@@ -15,6 +16,23 @@ test("an HTTP success and dated call-site citation never imply an execution", ()
   assert.equal(result.performance, "not-reproduced");
   assert.equal(verification(row("undated", {link_status: 200})).linkOk, false);
   assert.equal(verification(row("failed", {checked: "2026-09-24", link_status: 404})).linkOk, false);
+});
+
+test("a summary in the project's own words is marked, and Chinese says when a model translated it", () => {
+  const schema = JSON.parse(readFileSync(new URL("../schema/entry.schema.json", import.meta.url)));
+  assert.deepEqual(SUMMARY_SOURCES, schema.properties.summary_source.enum);
+  const taxonomy = JSON.parse(readFileSync(new URL("../taxonomy.json", import.meta.url)));
+  assert.deepEqual(taxonomy.summary_sources.map(x => x.key), SUMMARY_SOURCES, "every mark has a label");
+  const upstream = row("up", {summary_source: "upstream-description", zh_machine: true});
+  assert.deepEqual(summaryMarks(upstream, "en"), ["upstream-description"]);
+  assert.deepEqual(summaryMarks(upstream, "zh"), ["upstream-description", "zh-machine"]);
+  assert.deepEqual(summaryMarks(row("stale", {summary_source: "upstream-description-stale"}), "en"), ["upstream-description-stale"]);
+  // A person's text, or no record, carries no source mark; zh_machine only describes the Chinese.
+  assert.deepEqual(summaryMarks(row("curated", {summary_source: "curated", zh_machine: true}), "en"), []);
+  assert.deepEqual(summaryMarks(row("curated", {summary_source: "curated", zh_machine: true}), "zh"), ["zh-machine"]);
+  assert.deepEqual(summaryMarks(row("bare"), "zh"), []);
+  assert.deepEqual(summaryMarks(row("odd", {summary_source: "toString", zh_machine: "yes"}), "zh"), []);
+  assert.deepEqual(MARKED_SOURCES, SUMMARY_SOURCES.slice(1));
 });
 
 test("an evidence record without a kind is a call site, and a row without one has none", () => {

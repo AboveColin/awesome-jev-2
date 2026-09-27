@@ -30,6 +30,7 @@ Run: python3 scripts/build_docs.py
 from __future__ import annotations
 
 import argparse
+import json
 import pathlib
 import re
 import sys
@@ -80,6 +81,9 @@ def shape_block(s: dict) -> str:
             ["Machine signal: evidence under an examples directory, not yet judged ([review queue](review-queue.md#examples-dir))", s["review_examples_dir"]],
             ["Machine signal: evidence resting on one model name or the API host ([review queue](review-queue.md#single-model-name))", s["review_single_model_name"]],
             ["Patterns covered", f"{s['patterns_covered']} of {s['patterns_total']}"],
+            ["Summaries that are the project's own GitHub description (`summary_source` `upstream-description`)", f"{s['summary_upstream']} of {s['entries']}"],
+            ["Summaries taken from that description that no longer match it (`upstream-description-stale`)", s["summary_upstream_stale"]],
+            ["Summaries marked as written for this catalogue (`curated`)", s["summary_curated"]],
             ["Chinese summaries hand-written", f"{s['zh_hand']} of {s['entries']}"],
             ["Retired links", s["retired"]],
         ],
@@ -177,18 +181,53 @@ def licences_block(catalog: list[dict]) -> str:
     return table(["Licence", "Repositories"], rows)
 
 
-def row_licences_block(catalog: list[dict]) -> str:
-    by = Counter(e["license"] for e in catalog)
-    if set(by) == {"CC0-1.0"}:
-        return (
-            "Every row in the current build is `CC0-1.0`, meaning no descriptive "
-            "text was inherited from a source that requires attribution."
+def row_licences_block(s: dict, catalog: list[dict]) -> str:
+    """Whose words the summaries are, and what the per-row licence covers.
+
+    Until 2026-09-27 this said every row being CC0 meant no descriptive text was
+    inherited — while most summaries were the linked project's own GitHub
+    description, copied. Now the split comes from summary_source, counted by
+    _stats. Facts only: who wrote the words and what this repository claims.
+    """
+    quoted = s["summary_upstream"] + s["summary_upstream_stale"]
+    labels = {
+        item["key"]: item["en"]
+        for item in json.loads((ROOT / "taxonomy.json").read_text())["summary_sources"]
+    }
+    parts = []
+    if quoted:
+        parts.append(
+            f"{s['summary_upstream']} of the {s['entries']} summaries in `catalog.json` are the linked "
+            "project's own GitHub description, word for word apart from letter case, spacing and a "
+            "final full stop (`summary_source: upstream-description`), and "
+            f"{s['summary_upstream_stale']} more were taken from such a description and no longer "
+            "match it (`upstream-description-stale`). The projects' authors wrote those words and the "
+            "copyright in them is theirs: this repository does not dedicate them under `CC0-1.0`. "
+            f"{s['summary_upstream_zh_machine']} of their Chinese counterparts are machine translations "
+            "of them (`zh_machine`). The READMEs, the pattern pages and the site mark each such summary "
+            f"*({labels['upstream-description']})* or *({labels['upstream-description-stale']})*."
         )
-    return (
-        f"{by.get('CC0-1.0', 0)} rows are `CC0-1.0`; {by.get('CC-BY-4.0', 0)} are "
-        "`CC-BY-4.0` because their descriptive text was inherited from a CC BY 4.0 "
-        "source, and the attribution is that row's `sources` array."
+    parts.append(
+        f"{s['summary_curated']} summaries are marked `curated`: written for this catalogue. The "
+        f"other {s['summary_unlabelled']} carry no `summary_source`, so where their words come from "
+        "is not recorded row by row."
     )
+    by = Counter(e["license"] for e in catalog)
+    scope = (
+        "covers the row's structured metadata (slug, kind, patterns, flags, dates, counts, evidence "
+        "records and the rest) and any text written for this catalogue, not a summary labelled as "
+        "the project's own description."
+    )
+    if set(by) == {"CC0-1.0"}:
+        parts.append(f"Every row's `license` field is `CC0-1.0`. It {scope}")
+    else:
+        parts.append(
+            f"{by.get('CC0-1.0', 0)} rows are `CC0-1.0`; {by.get('CC-BY-4.0', 0)} are "
+            "`CC-BY-4.0` because their descriptive text was inherited from a CC BY 4.0 "
+            "source, and the attribution is that row's `sources` array. Either way the "
+            f"field {scope}"
+        )
+    return "\n\n".join(parts)
 
 
 # ---- driver ----------------------------------------------------------------
@@ -228,7 +267,7 @@ def render() -> dict[pathlib.Path, str]:
         "docs/sources.md": {
             "sources": sources_block(catalog),
             "licences": licences_block(catalog),
-            "row-licences": row_licences_block(catalog),
+            "row-licences": row_licences_block(s, catalog),
         },
         "llms.txt": {},
     }

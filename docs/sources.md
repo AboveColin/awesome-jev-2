@@ -54,14 +54,18 @@ primary sources, written by the people who built the model.
 This repository separates code from data, following the convention the reference
 repository established.
 
-| What                                      | Licence                   |
-| ----------------------------------------- | ------------------------- |
-| `scripts/`, `site/`, `examples/`          | [MIT](../LICENSE-MIT)     |
-| `catalog.json`, `retired.json`, `schema/` | [CC0-1.0](../LICENSE-CC0) |
-| `docs/`, `README*.md`                     | CC0-1.0                   |
+| What                                      | Licence                                                   |
+| ----------------------------------------- | --------------------------------------------------------- |
+| `scripts/`, `site/`, `examples/`          | [MIT](../LICENSE-MIT)                                     |
+| `catalog.json`, `retired.json`, `schema/` | [CC0-1.0](../LICENSE-CC0), quoted summaries aside (below) |
+| `docs/`, `README*.md`                     | CC0-1.0, quoted summaries aside (below)                   |
 
 <!-- row-licences:start -->
-Every row in the current build is `CC0-1.0`, meaning no descriptive text was inherited from a source that requires attribution.
+890 of the 1207 summaries in `catalog.json` are the linked project's own GitHub description, word for word apart from letter case, spacing and a final full stop (`summary_source: upstream-description`), and 0 more were taken from such a description and no longer match it (`upstream-description-stale`). The projects' authors wrote those words and the copyright in them is theirs: this repository does not dedicate them under `CC0-1.0`. 890 of their Chinese counterparts are machine translations of them (`zh_machine`). The READMEs, the pattern pages and the site mark each such summary *(upstream description)* or *(earlier upstream description)*.
+
+0 summaries are marked `curated`: written for this catalogue. The other 317 carry no `summary_source`, so where their words come from is not recorded row by row.
+
+Every row's `license` field is `CC0-1.0`. It covers the row's structured metadata (slug, kind, patterns, flags, dates, counts, evidence records and the rest) and any text written for this catalogue, not a summary labelled as the project's own description.
 <!-- row-licences:end -->
 
 If a row does inherit text from a CC BY 4.0 catalog, it gets

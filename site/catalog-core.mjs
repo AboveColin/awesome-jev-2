@@ -21,6 +21,22 @@ export function evidenceKind(entry) {
   return EVIDENCE_KINDS.includes(entry.evidence.kind) ? entry.evidence.kind : "call-site";
 }
 
+// Whose words a summary is, as summary_source records it (schema/entry.schema.json).
+// The two upstream values are the project's own description; they are marked
+// wherever the summary is shown, as the READMEs mark them. `curated` is not.
+export const SUMMARY_SOURCES = ["curated", "upstream-description", "upstream-description-stale"];
+export const MARKED_SOURCES = ["upstream-description", "upstream-description-stale"];
+
+// The provenance marks a card's summary carries in a language, in reading
+// order: whose words it is, then, for the Chinese text only, that a model
+// translated it (zh_machine describes summary_zh, never the English).
+export function summaryMarks(entry, lang) {
+  const marks = [];
+  if (MARKED_SOURCES.includes(entry.summary_source)) marks.push(entry.summary_source);
+  if (lang === "zh" && entry.zh_machine === true) marks.push("zh-machine");
+  return marks;
+}
+
 export function evidenceUrl(entry) {
   if (!entry.evidence?.path) return null;
   for (const candidate of [entry.repo, entry.url]) {

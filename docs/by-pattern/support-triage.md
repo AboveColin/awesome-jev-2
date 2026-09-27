@@ -29,7 +29,7 @@ Every catalogued example of this decision — 8 of them. The same rows, with cav
 - **[Jev on Cloudflare Workers AI](https://developers.cloudflare.com/ai/models/typesafe/jev/)** — Workers AI binding and REST samples asking a noul, a choice and a score in one call, with the full response including per-answer confidence.
   <sub>`Integration` · `TS` · `sh` · `noul` · `choice` · `score`</sub>
 
-- **[jev-triage](https://github.com/boldbug1/jev-triage)** — Message triage CLI in Go, built on the Jev decision model from TypeSafe AI. Categorizes messages, scores urgency, and flags low-confidence ones for human review.
+- **[jev-triage](https://github.com/boldbug1/jev-triage)** — Message triage CLI in Go, built on the Jev decision model from TypeSafe AI. Categorizes messages, scores urgency, and flags low-confidence ones for human review. <sub>(upstream description)</sub>
   <sub>`Project` · boldbug1 · `Go`</sub>
 
 ---

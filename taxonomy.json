@@ -1,5 +1,5 @@
 {
-  "_comment": "Kind and flag labels, one copy. Read by scripts/build_readme.py and by the site at runtime; lint.py asserts the keys match schema/entry.schema.json. Decision patterns live in patterns.json.",
+  "_comment": "Kind, flag and summary-source labels, one copy. Read by scripts/build_readme.py and by the site at runtime; lint.py asserts the keys match schema/entry.schema.json. Decision patterns live in patterns.json.",
   "kinds": [
     {
       "key": "official-docs",
@@ -191,6 +191,32 @@
       "zh": "作者自荐",
       "blurb_en": "Proposed by the project's own author or maintainer. Discloses a relationship; it is not a judgement of quality.",
       "blurb_zh": "由项目作者或维护者本人提交。这是对关系的披露，不是质量评判。",
+      "zh_machine": true
+    }
+  ],
+  "summary_sources": [
+    {
+      "key": "curated",
+      "en": "written for this list",
+      "zh": "本目录撰写",
+      "blurb_en": "A person wrote this summary for the catalogue after reading the project.",
+      "blurb_zh": "由人阅读项目后为本目录撰写的摘要。",
+      "zh_machine": true
+    },
+    {
+      "key": "upstream-description",
+      "en": "upstream description",
+      "zh": "项目自述",
+      "blurb_en": "The project's own GitHub description, word for word when the weekly refresh last compared them. The words are the project author's.",
+      "blurb_zh": "项目自己在 GitHub 上的描述，每周刷新最近一次比对时逐字相同。文字出自项目作者。",
+      "zh_machine": true
+    },
+    {
+      "key": "upstream-description-stale",
+      "en": "earlier upstream description",
+      "zh": "项目旧自述",
+      "blurb_en": "Taken from the project's own GitHub description, which no longer reads the same (the project changed it, or the summary kept only part of it). The words are still the project author's.",
+      "blurb_zh": "取自项目自己在 GitHub 上的描述，但两者已不再相同（项目改了描述，或摘要只保留了其中一部分）。文字仍出自项目作者。",
       "zh_machine": true
     }
   ]

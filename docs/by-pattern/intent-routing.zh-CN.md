@@ -47,10 +47,10 @@ _判断用户意图，把请求分流到正确的分支。_
 - **[jev-voice-browser](https://github.com/moritzkremb/jev-voice-browser)** — 语音驱动的浏览器控制：目标选项每次请求都按当前实时元素列表重建，并且总是包含一个 none 选项。
   <sub>`开源项目` · ★100+ · `JS` · `choice` · `score` · `noul`</sub>
 
-- **[shapeshift](https://github.com/anishfn/shapeshift)** — 一个能变成你想要的样子的输入框：边输入边变形为合适的界面，由 TypeSafe Jev 驱动，可离线使用。 <sub>(机翻)</sub>
+- **[shapeshift](https://github.com/anishfn/shapeshift)** — 一个能变成你想要的样子的输入框：边输入边变形为合适的界面，由 TypeSafe Jev 驱动，可离线使用。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`开源项目` · ★100+ · anishfn · `TS`</sub>
 
-- **[taskuary](https://github.com/ldbumble/taskuary)** — 本地优先的 AI 任务中枢：把邮件、Teams、Slack 与报表汇成一条时间线。 <sub>(机翻)</sub>
+- **[taskuary](https://github.com/ldbumble/taskuary)** — 本地优先的 AI 任务中枢：把邮件、Teams、Slack 与报表汇成一条时间线。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`插件` · ★100+ · ldbumble · `Py`</sub>
 
 - **[ha-jev](https://github.com/AboveColin/HA-Jev)** — 一个 Home Assistant 集成：把类型化答案变成传感器，并提供可用于自动化的动作。
@@ -62,13 +62,13 @@ _判断用户意图，把请求分流到正确的分支。_
 - **[jev-chat: a tool-calling chatbot with no LLM](https://github.com/w3cj/jev-chat)** — 一个完全不含语言模型的 tool calling 聊天机器人：一次请求同时问清请求类型、该调哪个工具、以及每个工具的参数。
   <sub>`开源项目` · ★10+ · `TS` · `choice` · `noul`</sub>
 
-- **[jev-mail-classifier](https://github.com/parth-kp/jev-mail-classifier)** — 用 Jev 给收件箱分类：打标、移动、标记、通知，全部配置驱动。 <sub>(机翻)</sub>
+- **[jev-mail-classifier](https://github.com/parth-kp/jev-mail-classifier)** — 用 Jev 给收件箱分类：打标、移动、标记、通知，全部配置驱动。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`开源项目` · ★10+ · parth-kp · `Py`</sub>
 
 - **[jev-social](https://github.com/socai-io/jev-social)** — 只读的 Instagram、TikTok 与 LinkedIn 调研：Jev 先路由平台，再从最新浏览器证据中选择受限的 socai CLI 动作；代码校验目标并保留来源链接。 <sub>(机翻)</sub>
   <sub>`开源项目` · ★10+ · socai-io · `JS` · `choice` · ⚠ `需第三方密钥`</sub>
 
-- **[jevyoumean](https://github.com/syumai/jevyoumean)** — 给任意 CLI 的语义化「你是不是想输入」：用 Jev 匹配子命令。 <sub>(机翻)</sub>
+- **[jevyoumean](https://github.com/syumai/jevyoumean)** — 给任意 CLI 的语义化「你是不是想输入」：用 Jev 匹配子命令。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`开源项目` · ★10+ · syumai · `Go`</sub>
 
 - **[A deep dive into Jev, TypeSafe's System One model](https://flaviocopes.com/jev/)** — 技术密度最高的独立讲解：JS / Python / AI SDK 三种代码、三种应答结构、进阶模式，还诚实列出了模型的失效场景。
@@ -83,22 +83,22 @@ _判断用户意图，把请求分流到正确的分支。_
 - **[Jev on Netlify AI Gateway](https://www.netlify.com/changelog/typesafe-jev-ai-gateway/)** — 在 Netlify function 里零配置调用：直接用官方 SDK，不需要 API key、baseURL 或 provider 配置，按 Netlify credits 计费。
   <sub>`平台集成` · `TS` · `choice`</sub>
 
-- **[jev-ai-sdk-form-router](https://github.com/vercel-labs/jev-ai-sdk-form-router)** — 用 Jev 和 AI SDK 把表单提交路由给合适的负责人。 <sub>(机翻)</sub>
+- **[jev-ai-sdk-form-router](https://github.com/vercel-labs/jev-ai-sdk-form-router)** — 用 Jev 和 AI SDK 把表单提交路由给合适的负责人。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`开源项目` · vercel-labs · `TS`</sub>
 
 - **[jev-eval](https://github.com/Shogo-nfrealmusic/jev-eval)** — 第三方在相同条件下对比 Jev 与两款 LLM：为面向日本游客的摄影服务路由预订咨询，共六十条四种语言的合成消息。 <sub>(机翻)</sub>
   <sub>`基准测试` · shogo-nfrealmusic · `TS` · ⚠ `无许可证`</sub>
 
-- **[jev-inbox-queue](https://github.com/tusharck/jev-inbox-queue)** — 用 Jev（TypeSafe System One）把收件箱变成一个简短的行动队列。 <sub>(机翻)</sub>
+- **[jev-inbox-queue](https://github.com/tusharck/jev-inbox-queue)** — 用 Jev（TypeSafe System One）把收件箱变成一个简短的行动队列。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`开源项目` · tusharck · `Py`</sub>
 
-- **[jev-phishing-bench](https://github.com/anisselbd/jev-phishing-bench)** — 在 2000 封钓鱼邮件上对比 Jev 与一个轻量 LLM：准确率、校准度、延迟、成本。 <sub>(机翻)</sub>
+- **[jev-phishing-bench](https://github.com/anisselbd/jev-phishing-bench)** — 在 2000 封钓鱼邮件上对比 Jev 与一个轻量 LLM：准确率、校准度、延迟、成本。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`基准测试` · anisselbd · `Py` · ⚠ `无许可证`</sub>
 
 - **[jevcache](https://github.com/kushals256/jevcache)** — 当 TypeSafe Jev 判断意图相同时，跳过昂贵的 LLM 调用。一个兼容 OpenAI 的本地缓存代理。 <sub>(机翻)</sub>
   <sub>`开源项目` · kushals256 · `TS`</sub>
 
-- **[lanebreak](https://github.com/ndolinschi/lanebreak)** — LaneBreak：工单优先级与路由。 <sub>(机翻)</sub>
+- **[lanebreak](https://github.com/ndolinschi/lanebreak)** — LaneBreak：工单优先级与路由。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`开源项目` · ndolinschi · `TS` · ⚠ `无许可证`</sub>
 
 - **[langchain-typesafe](https://docs.langchain.com/oss/python/integrations/providers/typesafe)** — LangChain 集成：一个分类器，外加用于模型路由、以及在高风险工具调用执行前拦截它的实验性 middleware。

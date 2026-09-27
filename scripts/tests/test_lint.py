@@ -56,6 +56,7 @@ MINIMAL = {
 # evidence_none is the one field left out: it and evidence are exclusive.
 FULL = {
     **MINIMAL,
+    "summary_source": "curated",
     "zh_machine": True,
     "has_code": True,
     "languages": ["python"],
@@ -418,6 +419,43 @@ class EntryInvariantTest(FindingsAssertions):
                 self.assertEqual(len(errors), 2, errors)
                 self.assertIn(f"unknown field '{lint.DRAFT_FIELD}'", errors[0])
 
+    def test_a_curated_summary_with_marketing_words_is_warned_about(self):
+        # I21: only a summary a person wrote for this catalogue is theirs to word.
+        curated = row(FULL, summary="The ultimate, blazing-fast router. Powerful!")
+        self.assertOnly(
+            lint_row(curated),
+            "warning",
+            "demo-row: summary_source is curated but the summary uses marketing words "
+            "(blazing-fast, powerful, ultimate)",
+        )
+
+    def test_a_curated_summary_with_emoji_is_warned_about(self):
+        for summary in ("Routes tickets \u26a1 with a choice.", "Routes tickets \U0001f680 with a choice."):
+            with self.subTest(summary=summary):
+                self.assertOnly(
+                    lint_row(row(FULL, summary=summary)),
+                    "warning",
+                    "demo-row: summary_source is curated but the summary contains emoji",
+                )
+
+    def test_arrows_and_keyboard_symbols_are_not_emoji(self):
+        self.assertClean(lint_row(row(FULL, summary="Ranks hits \u2192 re-orders the \u2318K list.")))
+
+    def test_only_a_curated_summary_is_held_to_it(self):
+        # The project's own words are quoted, not reworded; an unlabelled row
+        # says nothing about who wrote it.
+        loud = "The ultimate \u26a1 router."
+        for source in ("upstream-description", "upstream-description-stale", DROP):
+            with self.subTest(source=source):
+                self.assertClean(lint_row(row(FULL, summary=loud, summary_source=source)))
+
+    def test_summary_source_is_one_of_three(self):
+        self.assertOnly(
+            lint_row(row(FULL, summary_source="upstream")),
+            "error",
+            ".summary_source: 'upstream' is not one of: curated, upstream-description, upstream-description-stale",
+        )
+
 
 class SchemaValidatorTest(FindingsAssertions):
     """validate() against the real schema: each keyword it enforces, on a field that uses it."""
@@ -641,7 +679,7 @@ class LabelAlignmentTest(FindingsAssertions):
         )
 
     def test_schema_kind_or_flag_without_a_label(self):
-        for group, path in (("kinds", ("kind",)), ("flags", ("flags", "items"))):
+        for group, path in (("kinds", ("kind",)), ("flags", ("flags", "items")), ("summary_sources", ("summary_source",))):
             with self.subTest(group=group):
                 schema = copy.deepcopy(SCHEMA)
                 node = schema["properties"]
@@ -655,7 +693,7 @@ class LabelAlignmentTest(FindingsAssertions):
                 )
 
     def test_label_the_schema_does_not_allow(self):
-        for group in ("kinds", "flags"):
+        for group in ("kinds", "flags", "summary_sources"):
             with self.subTest(group=group):
                 labels = {**TAXONOMY, group: [*TAXONOMY[group], {**TAXONOMY[group][0], "key": "ghost"}]}
                 self.assertOnly(
@@ -665,7 +703,7 @@ class LabelAlignmentTest(FindingsAssertions):
                 )
 
     def test_label_missing_a_field(self):
-        for group in ("kinds", "flags"):
+        for group in ("kinds", "flags", "summary_sources"):
             for field in ("en", "zh", "blurb_en", "blurb_zh"):
                 with self.subTest(group=group, field=field):
                     first = TAXONOMY[group][0]

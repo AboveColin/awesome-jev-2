@@ -134,6 +134,14 @@ EN = {
         "Reading a call site is separate from running it. Summaries include source descriptions "
         "and machine translations; see the [method and its limits](docs/method.md)."
     ),
+    "verified_summaries": (
+        "**Whose words the summaries are** — {upstream} summaries are the linked project's own GitHub "
+        "description, word for word, and are marked *({upstream_mark})*; {stale} are marked "
+        "*({stale_mark})*: taken from one that no longer reads the same. Those words are their "
+        "authors'. {curated} summaries are marked as written for this catalogue, and {unlabelled} "
+        "carry no record either way. The weekly refresh compares each summary with its repository's "
+        "description and labels a match; only a person marks a summary as written here."
+    ),
     "verified_no": (
         "**Runtime and performance not independently tested here** — treat every catalogue entry "
         "as untested by this repository, including entries without `code-untested`. Linked "
@@ -156,6 +164,10 @@ EN = {
         "Code in `scripts/`, `site/` and `examples/` is [MIT](LICENSE-MIT). Catalog metadata is "
         "[CC0-1.0](LICENSE-CC0), with a per-row `license` field. Linked works keep their own "
         "licences — `repo_license` records what each declares."
+    ),
+    "license_summaries": (
+        "Summaries marked *({upstream_mark})* or *({stale_mark})* are the linked projects' own words, "
+        "which that dedication does not cover ([sources and licences](docs/sources.md#licences))."
     ),
     # ---- table headers ----
     "th_example": "Example",
@@ -299,6 +311,13 @@ ZH = {
         "`evidence_none` 解释缺少文件证据的原因。阅读调用点与运行代码是两件事。"
         "摘要包含源项目描述与机翻，详见[方法与局限](docs/method.md)。"
     ),
+    "verified_summaries": (
+        "**摘要是谁的文字** —— {upstream} 条摘要的英文原文就是被链接项目自己在 GitHub 上的描述，"
+        "逐字相同，这些行标为 *({upstream_mark})*；{stale} 条标为 *({stale_mark})*：英文取自项目描述，"
+        "但两者已不再相同。这些文字出自项目作者，中文摘要是其译文。{curated} 条摘要标明为本目录撰写，"
+        "{unlabelled} 条未作记录。每周刷新会把每条英文摘要与其仓库描述比对并标出相同者；"
+        "只有人才能把摘要标为本目录撰写。"
+    ),
     "verified_no": (
         "**本仓库未独立验证运行与性能** —— 所有目录条目默认都未经本仓库实测，没有 "
         "`code-untested` 标签也不代表已测试。被收录的基准是原作者的测量，本目录没有独立复现。"
@@ -318,6 +337,10 @@ ZH = {
         "`scripts/`、`site/`、`examples/` 中的代码采用 [MIT](LICENSE-MIT)。"
         "目录元数据采用 [CC0-1.0](LICENSE-CC0)，并带逐行 `license` 字段。"
         "被链接的作品各自保留原许可 —— `repo_license` 记录了各自声明的内容。"
+    ),
+    "license_summaries": (
+        "标有 *({upstream_mark})* 或 *({stale_mark})* 的摘要是被链接项目自己的文字（中文为其译文），"
+        "不在上述 CC0 声明之内（见[来源与许可](docs/sources.md#licences)）。"
     ),
     "th_example": "例子",
     "th_shows": "展示了什么",
@@ -353,7 +376,7 @@ ZH = {
 # ZH keys whose Chinese a model wrote rather than a person: the same disclosure
 # `zh_machine` makes for a catalogue row, and rendered the same way, with
 # "(机翻)" after it. A person who rewrites one removes its key from here.
-ZH_MACHINE = frozenset({"stars_note", "verified_recheck"})
+ZH_MACHINE = frozenset({"stars_note", "verified_recheck", "verified_summaries", "license_summaries"})
 
 # The non-catalog parts of the repo, so navigation is a table rather than a
 # scattering of inline links the reader has to hunt for.

@@ -164,6 +164,16 @@ turns red.
 - **`summary`** — what the example _actually demonstrates_, not what its README
   claims. "Routes support tickets with a choice and a score" beats "revolutionary
   AI-powered triage".
+- **`summary_source`** — whose words `summary` is. Wrote it yourself? Set
+  `curated`; lint then warns about marketing words and emoji in it. Pasted the
+  repository's own GitHub description? Leave the field out: the weekly refresh
+  compares the two and sets `upstream-description` when they are identical, and
+  `upstream-description-stale` once a labelled one stops matching. Never write
+  `upstream-description` for a text that differs. Rewriting a summary labelled
+  with either upstream value? Set `curated`, or the refresh will call your
+  words the project's old ones. The READMEs, pattern pages and site mark the
+  project's own words, and [`docs/sources.md`](docs/sources.md#licences) says
+  why: the copyright in them is the project author's, not this catalogue's.
 - **`summary_zh`** — write it yourself if you can. If you machine-translated it,
   set `zh_machine: true`. The READMEs report the split. This field describes
   translation provenance, not code quality or runtime testing.

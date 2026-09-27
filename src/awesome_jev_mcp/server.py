@@ -117,6 +117,10 @@ def _compact(entry: dict) -> dict[str, Any]:
         "kind": entry["kind"],
         "patterns": entry["patterns"],
     }
+    # Whose words the summary is travels with it, like the caveats: an agent
+    # quoting an `upstream-description` summary is quoting the project itself.
+    if entry.get("summary_source"):
+        out["summary_source"] = entry["summary_source"]
     for key in ("question_types", "languages", "platforms", "stars", "repo_license"):
         if entry.get(key) is not None:
             out[key] = entry[key]
@@ -251,6 +255,12 @@ def get_example(slug: str) -> dict[str, Any]:
     whether it serves that shape or sends Jev the same request to compare, and
     adapters backed by other models); and `example-only` is an example the
     project ships, not its own integration.
+
+    `summary_source` says whose words `summary` is: `upstream-description` is
+    the project's own GitHub description, word for word when the weekly
+    refresh last compared them; `upstream-description-stale` was taken from it
+    and no longer matches; `curated` was written for this catalogue. Absent
+    means it is not recorded. search_examples() carries it too.
 
     Args:
         slug: the row's stable id, as returned by search_examples

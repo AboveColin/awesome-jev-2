@@ -84,5 +84,29 @@ class EvidenceKindTest(unittest.TestCase):
             self.assertIn(f"`{kind}`", doc)
 
 
+class SummarySourceTest(unittest.TestCase):
+    """summary_source travels with the summary to an agent (I21)."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.server = load_server()
+
+    def test_search_and_get_carry_it(self):
+        entry = next(e for e in self.server.CATALOG if e.get("summary_source") == "upstream-description")
+        result = self.server.search_examples(query=entry["slug"], include_non_jev=True, limit=50)
+        by_slug = {row["slug"]: row for row in result["results"]}
+        self.assertEqual(by_slug[entry["slug"]]["summary_source"], "upstream-description")
+        self.assertEqual(self.server.get_example(entry["slug"])["summary_source"], "upstream-description")
+
+    def test_a_row_without_it_gets_no_key(self):
+        entry = next(e for e in self.server.CATALOG if "summary_source" not in e)
+        self.assertNotIn("summary_source", self.server._compact(entry))
+
+    def test_the_tool_description_explains_the_field(self):
+        doc = self.server.get_example.__doc__
+        for value in ("upstream-description", "upstream-description-stale", "curated"):
+            self.assertIn(f"`{value}`", doc)
+
+
 if __name__ == "__main__":
     unittest.main()
