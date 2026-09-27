@@ -133,7 +133,8 @@ with the ones already catalogued or declined ticked or struck through.
    `patterns` and `languages`; if the kind is `alternative`, set
    `evidence.kind` to `wire-shape`, since the project is not built on Jev; set
    `zh_machine: true` if a model wrote the Chinese; name the source in
-   `sources`.
+   `sources`. Leave `patterns_reviewed` out: it records a person reading the
+   row against `docs/patterns.md`, which the person you work for adds.
 4. Delete `_draft`, add the row to `catalog.json`, run
    `python3 scripts/check.py --fix`, and open a pull request naming the
    candidate you claimed. If it does not belong, add `owner/name  # reason` to

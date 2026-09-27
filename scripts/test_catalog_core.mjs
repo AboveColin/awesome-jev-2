@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import {
   compareEntries, evidenceKind, evidenceUrl, matchesEntry, verification, isIndependentReport, EVIDENCE_KINDS,
   queryFromState, shareUrl, stateFromQuery, TOGGLES, VIEWS, SUMMARY_SOURCES, MARKED_SOURCES, summaryMarks,
+  UNINDEXED_KINDS, notIndexedByPattern,
 } from "../site/catalog-core.mjs";
 import { readFileSync } from "node:fs";
 
@@ -33,6 +34,21 @@ test("a summary in the project's own words is marked, and Chinese says when a mo
   assert.deepEqual(summaryMarks(row("bare"), "zh"), []);
   assert.deepEqual(summaryMarks(row("odd", {summary_source: "toString", zh_machine: "yes"}), "zh"), []);
   assert.deepEqual(MARKED_SOURCES, SUMMARY_SOURCES.slice(1));
+});
+
+test("an overview project or plugin with code is not yet indexed by pattern until someone reads it", () => {
+  assert.deepEqual(UNINDEXED_KINDS, ["project", "plugin"]);
+  const unplaced = (extra = {}) => row("p", {patterns: ["overview"], has_code: true, kind: "project", ...extra});
+  assert.equal(notIndexedByPattern(unplaced()), true);
+  assert.equal(notIndexedByPattern(unplaced({kind: "plugin"})), true);
+  // A person's recorded reading ends it; so does any real pattern.
+  assert.equal(notIndexedByPattern(unplaced({patterns_reviewed: "2026-09-27"})), false);
+  assert.equal(notIndexedByPattern(unplaced({patterns: ["tool-selection"]})), false);
+  // Docs, SDKs and rows without code are what overview is for, or cannot be placed by reading code.
+  assert.equal(notIndexedByPattern(unplaced({kind: "sdk"})), false);
+  assert.equal(notIndexedByPattern(unplaced({kind: "official-docs"})), false);
+  assert.equal(notIndexedByPattern(unplaced({has_code: false})), false);
+  assert.equal(notIndexedByPattern(row("no-patterns", {has_code: true, kind: "project", patterns: undefined})), false);
 });
 
 test("an evidence record without a kind is a call site, and a row without one has none", () => {

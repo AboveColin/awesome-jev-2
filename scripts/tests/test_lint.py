@@ -57,6 +57,7 @@ MINIMAL = {
 FULL = {
     **MINIMAL,
     "summary_source": "curated",
+    "patterns_reviewed": "2026-09-20",
     "zh_machine": True,
     "has_code": True,
     "languages": ["python"],
@@ -319,14 +320,14 @@ class EntryInvariantTest(FindingsAssertions):
 
     def test_dates_must_exist_on_the_calendar(self):
         # The schema pattern only checks the shape, so 30 February gets past it.
-        for field in ("published", "first_seen", "checked"):
+        for field in ("published", "first_seen", "checked", "patterns_reviewed"):
             with self.subTest(field=field):
                 self.assertOnly(
                     lint_row(row(MINIMAL, **{field: "2026-02-30"})), "error", f"{field} is not a valid date"
                 )
 
     def test_dates_must_not_be_in_the_future(self):
-        for field in ("published", "first_seen", "checked"):
+        for field in ("published", "first_seen", "checked", "patterns_reviewed"):
             with self.subTest(field=field):
                 self.assertOnly(
                     lint_row(row(MINIMAL, **{field: "2026-09-28"})),

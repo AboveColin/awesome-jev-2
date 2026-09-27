@@ -32,8 +32,10 @@ from .rows import (
     page_name,
     site_link,
     source_marks,
+    split_unindexed,
     stars_note,
     summary_of,
+    unindexed_note,
 )
 from .strings import DATA_FILES, REPO_FILES, ZH_MACHINE
 
@@ -363,21 +365,25 @@ def by_decision_pattern(page: Page) -> list[str]:
         name = label(PATTERN_LABELS, key, lang)
         blurb = label(PATTERN_LABELS, key, lang, field=2)
         rows = by_pattern[key]
+        indexed, later = split_unindexed(rows)
+        shown = min(len(indexed), INLINE_PER_PATTERN)
+        page_link = f"docs/by-pattern/{page_name(key, lang)}"
         add(f"### {name}")
         add("")
         add(f"_{blurb}_")
         add("")
-        out.extend(entry_list(rows[:INLINE_PER_PATTERN], strings, readme_layout=True))
-        more = "pattern_more" if len(rows) > INLINE_PER_PATTERN else "pattern_all"
-        add(
-            strings[more].format(
-                shown=min(len(rows), INLINE_PER_PATTERN),
-                n=len(rows),
-                page=f"docs/by-pattern/{page_name(key, lang)}",
-                site=site_link(key, lang),
-            )
-        )
+        out.extend(entry_list(indexed[:INLINE_PER_PATTERN], strings, readme_layout=True))
+        more = "pattern_more" if len(rows) > shown else "pattern_all"
+        add(strings[more].format(shown=shown, n=len(rows), page=page_link, site=site_link(key, lang)))
         add("")
+        if later:
+            add(f"#### {strings['unindexed_h']}")
+            add("")
+            add(unindexed_note(
+                strings, "unindexed_readme", n=len(later), page=f"{page_link}#unindexed",
+                site=site_link(key, lang), queue="docs/review-queue.md#unsorted-overview",
+            ))
+            add("")
         up = "↑ 场景索引" if lang == "zh" else "↑ Pattern index"
         add(f"<sub>[{up}](#pattern-index)</sub>")
         add("")

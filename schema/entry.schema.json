@@ -110,6 +110,11 @@
         ]
       }
     },
+    "patterns_reviewed": {
+      "description": "Date a person last read this row against the decision patterns (docs/patterns.md) and set or confirmed `patterns`. Only that person writes it; nothing infers it. Patterns that match what the keyword rules suggest for the summary (scripts/classify.py) say nothing about a review either way, which is why this field exists. A project or plugin with code whose only pattern is `overview` is listed as not yet indexed by pattern until it is set or the pattern changes.",
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
     "question_types": {
       "description": "Which Jev question primitives the example actually calls. The yes/no primitive is named `noul`, not `binary`. Omit when the entry contains no code.",
       "type": "array",

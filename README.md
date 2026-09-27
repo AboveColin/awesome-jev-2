@@ -1264,10 +1264,6 @@ _Surveys the model or the space rather than one pattern._
   Installs a TypeSafe skill into Claude Code so an agent can write correct Jev calls without you pasting the API shape each time.<br>
   <sub>`Official docs` · ★1k+ · `sh`</sub>
 
-- **[typesafe-ai/skills](https://github.com/typesafe-ai/skills)** ⭐<br>
-  The official agent-skills repository behind the Claude Code plugin, holding the SKILL.md that teaches an agent the System One API.<br>
-  <sub>`Plugin` · ★1k+ · `sh`</sub>
-
 - **[@typesafe-ai/sdk (TypeScript / JavaScript)](https://github.com/typesafe-ai/typesafe-sdk-js)** ⭐<br>
   The official TypeScript client. Ships ESM, CJS and type declarations, with lowercase choice()/score()/noul() helper factories.<br>
   <sub>`SDK` · ★100+ · `TS` · `JS` · `choice` · `score` · `noul`</sub>
@@ -1302,7 +1298,15 @@ _Surveys the model or the space rather than one pattern._
   The vendor's own list of where the model fails: literal reading, arithmetic and counting, date comparison, indirection, large noisy states, adversarial content.<br>
   <sub>`Official docs`</sub>
 
+- **[Use case map](https://docs.typesafe.ai/concepts/use-case-map)** ⭐<br>
+  The vendor's own taxonomy: five headline categories, nineteen industry groups, and ten decision shapes from classification through to structured data extraction.<br>
+  <sub>`Official docs`</sub>
+
 **10 of 451** shown · [all 451 on one page →](docs/by-pattern/overview.md) · [filter on the site](https://kydlikebtc.github.io/awesome-jev/?p=overview&lang=en)
+
+#### Not yet indexed by pattern
+
+**252** of these rows are projects or plugins with code. `overview` is also where the keyword rules put a description they could not place, and nobody has recorded reading these rows against the patterns (`patterns_reviewed`), so they are listed apart: [at the end of the Overview page](docs/by-pattern/overview.md#unindexed), [on the site](https://kydlikebtc.github.io/awesome-jev/?p=overview&lang=en), and in the [review queue](docs/review-queue.md#unsorted-overview) with the rules' suggestion.
 
 <sub>[↑ Pattern index](#pattern-index)</sub>
 
@@ -1332,7 +1336,7 @@ The parts that are not the catalog.
 <details>
 <summary><b>Preview the searchable catalogue</b></summary>
 
-<a href="https://kydlikebtc.github.io/awesome-jev/?lang=en"><img src="https://kydlikebtc.github.io/awesome-jev/img/site-en.png?v=1576ff639f91871b" alt="Searchable Jev catalogue with curated paths, filters, dated source evidence and entry cards" width="760"></a>
+<a href="https://kydlikebtc.github.io/awesome-jev/?lang=en"><img src="https://kydlikebtc.github.io/awesome-jev/img/site-en.png?v=ca5756156803fcab" alt="Searchable Jev catalogue with curated paths, filters, dated source evidence and entry cards" width="760"></a>
 
 <sub>Filter by clicking a bar. Two more views: <a href="https://kydlikebtc.github.io/awesome-jev/?view=prims">primitives</a> · <a href="https://kydlikebtc.github.io/awesome-jev/?view=compat">compatibility</a>. Every filter and entry is a shareable URL.</sub>
 

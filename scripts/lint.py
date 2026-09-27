@@ -352,8 +352,9 @@ def check_entry_invariants(
     if "overview" in patterns and len(patterns) > 1:
         report.err(path, f"{slug}: 'overview' cannot be combined with specific patterns")
 
-    # Dates must be real and not from the future.
-    for field in ("published", "first_seen", "checked"):
+    # Dates must be real and not from the future. patterns_reviewed is a
+    # person's reading, and a reading cannot happen tomorrow either.
+    for field in ("published", "first_seen", "checked", "patterns_reviewed"):
         if field in entry:
             parsed = parse_date(entry[field])
             if parsed is None:

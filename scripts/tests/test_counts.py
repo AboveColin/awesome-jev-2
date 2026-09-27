@@ -52,6 +52,9 @@ class CountsTest(unittest.TestCase):
             "review_examples_dir": 7009,
             "review_single_model_name": 7010,
             "review_tool_selection_broad": 7016,
+            "patterns_rule_identical": 7017,
+            "patterns_reviewed": 7018,
+            "overview_unindexed": 7019,
             "has_code_unbacked": 7011,
             "summary_upstream": 7012,
             "summary_upstream_stale": 7013,
@@ -70,6 +73,8 @@ class CountsTest(unittest.TestCase):
             "review queue   7009 under examples/, 7010 on one model name or host, "
             "7016 tool-selection on dropped keywords (docs/review-queue.md)",
             "code, no cite  7011 (neither evidence nor evidence_none)",
+            "patterns       7017 equal the keyword rules' suggestion (no review recorded), 7018 patterns_reviewed, "
+            "7019 overview rows with code not yet indexed by pattern",
             "summaries      7012 upstream-description, 7013 upstream-description-stale, 7014 curated, 7015 unlabelled",
             "next changes at 7,100 entries",
             "  7,000+ public resources for Jev",

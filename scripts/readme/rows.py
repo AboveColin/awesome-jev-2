@@ -9,6 +9,7 @@ from __future__ import annotations
 import json
 import pathlib
 
+import _stats
 from _github import SELF as REPO
 
 from .strings import ZH_MACHINE
@@ -237,6 +238,28 @@ def entry_list(entries: list[dict], strings: dict, *, notes: bool = False, readm
                     lines.append(f"  <sub>{esc(note)}</sub>")
         lines.append("")
     return lines
+
+
+def split_unindexed(rows: list[dict]) -> tuple[list[dict], list[dict]]:
+    """A pattern's rows, and apart from them the ones not yet indexed by pattern.
+
+    Only an overview listing has any (_stats.not_indexed_by_pattern): projects
+    and plugins with code filed under overview with no reading recorded. They
+    stay under overview in catalog.json; a list shows them last, under their
+    own heading, so that a reader browsing by pattern does not take "the rules
+    placed nothing here" for "this surveys the space". Both keep their order.
+    """
+    later = [entry for entry in rows if _stats.not_indexed_by_pattern(entry)]
+    return [entry for entry in rows if not _stats.not_indexed_by_pattern(entry)], later
+
+
+def unindexed_note(strings: dict, key: str, **values: object) -> str:
+    """The paragraph under a "not yet indexed by pattern" heading (`key` is
+    unindexed_readme or unindexed_page), marked where a model wrote the Chinese."""
+    note = strings[key].format(**values)
+    if strings["lang_code"] == "zh" and key in ZH_MACHINE:
+        note += " <sub>(机翻)</sub>"
+    return note
 
 
 def group_by_pattern(catalog: list[dict]) -> dict[str, list[dict]]:

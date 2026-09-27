@@ -34,7 +34,7 @@ ROOT = SCRIPTS.parent
 GENERATORS = (
     ("build_readme.py", "README.md, README.zh-CN.md, docs/by-pattern/ and the README covers"),
     ("build_assets.py", "the coverage and primitive figures in docs/assets/"),
-    ("build_docs.py", "the generated values in docs/status.md, docs/sources.md and llms.txt"),
+    ("build_docs.py", "the generated values in docs/status.md, docs/sources.md, docs/patterns.md and llms.txt"),
     ("build_compat.py", "the generated tables in docs/compatibility.md"),
     ("build_review_queue.py", "docs/review-queue.md, the rows a script marks for a person to read"),
 )
@@ -50,6 +50,7 @@ OUTPUTS = (
     "docs/assets",
     "docs/status.md",
     "docs/sources.md",
+    "docs/patterns.md",
     "docs/compatibility.md",
     "docs/review-queue.md",
     "llms.txt",

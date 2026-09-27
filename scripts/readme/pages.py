@@ -16,7 +16,9 @@ from .rows import (
     label,
     page_name,
     site_link,
+    split_unindexed,
     stars_note,
+    unindexed_note,
 )
 from .strings import EN, ZH
 
@@ -47,7 +49,18 @@ def render_page(key: str, rows: list[dict], strings: dict) -> str:
         stars_note(strings, catalog="../../catalog.json"),
         "",
     ]
-    out.extend(entry_list(rows, strings))
+    indexed, later = split_unindexed(rows)
+    out.extend(entry_list(indexed, strings))
+    if later:
+        out += ['<a name="unindexed"></a>', "", f"## {strings['unindexed_h']}", ""]
+        out += [
+            unindexed_note(
+                strings, "unindexed_page", n=len(later),
+                patterns="../patterns.md#overview", queue="../review-queue.md#unsorted-overview",
+            ),
+            "",
+        ]
+        out.extend(entry_list(later, strings))
     out += ["---", "", strings["page_footer"], ""]
     return "\n".join(out)
 

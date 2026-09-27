@@ -325,6 +325,17 @@ of demonstrating one decision — launch coverage, explainers, "what is Jev" pos
 Kept separate so the pattern indexes stay honest: an overview is not an example
 of doing anything.
 
+It has also been where the keyword rules that suggest patterns
+(`scripts/classify.py`) put a description they could not place, and the bulk
+passes took their suggestion. So a project or plugin with code whose only
+pattern is `overview`, and whose row records no `patterns_reviewed`, counts as
+not yet indexed by pattern rather than as an overview. There are
+currently <!--n:overview_unindexed-->252<!--/n--> such rows. The READMEs, the
+Overview page and the site list them apart under that heading, and the
+[review queue](review-queue.md#unsorted-overview) lists them with the rules'
+suggestion. Read one against the patterns above, give it the ones it shows or
+keep `overview`, and set `patterns_reviewed` to the date you read it.
+
 ---
 
 ## Adding a pattern

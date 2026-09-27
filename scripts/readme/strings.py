@@ -183,6 +183,20 @@ EN = {
     "th_why": "Why",
     "pattern_more": "**{shown} of {n}** shown · [all {n} on one page →]({page}) · [filter on the site]({site})",
     "pattern_all": "All {n} shown · [on its own page]({page}) · [filter on the site]({site})",
+    "unindexed_h": "Not yet indexed by pattern",
+    "unindexed_readme": (
+        "**{n}** of these rows are projects or plugins with code. `overview` is also where the keyword "
+        "rules put a description they could not place, and nobody has recorded reading these rows against "
+        "the patterns (`patterns_reviewed`), so they are listed apart: [at the end of the Overview "
+        "page]({page}), [on the site]({site}), and in the [review queue]({queue}) with the rules' suggestion."
+    ),
+    "unindexed_page": (
+        "Projects and plugins with code, {n} of them, whose only pattern is `overview` and whose rows record "
+        "no `patterns_reviewed`. `overview` is also where the keyword rules put a description they could not "
+        "place, so these rows may never have been placed at all. A row leaves this list when a person gives "
+        "it a pattern, or reads it against [the patterns]({patterns}) and records the date in "
+        "`patterns_reviewed`. The [review queue]({queue}) lists them with the rules' suggestion."
+    ),
     "page_intro": (
         "Every catalogued example of this decision — {n} of them. The same rows, with caveats, "
         "are in [the index]({readme}); [the site]({site}) can filter them further by language, "
@@ -355,6 +369,18 @@ ZH = {
     "th_why": "原因",
     "pattern_more": "已显示 **{shown} / {n}** 条 · [在单独页面查看全部 {n} 条 →]({page}) · [在站点上筛选]({site})",
     "pattern_all": "已显示全部 {n} 条 · [单独页面]({page}) · [在站点上筛选]({site})",
+    "unindexed_h": "尚未按模式索引",
+    "unindexed_readme": (
+        "其中 **{n}** 行是带代码的项目或插件。`overview` 也是关键词规则无法归类时给出的默认值，"
+        "而这些行没有任何人对照决策模式阅读过的记录（`patterns_reviewed`），因此单独列出："
+        "见 [Overview 页面末尾]({page})、[站点]({site})，以及附有规则建议的[复核队列]({queue})。"
+    ),
+    "unindexed_page": (
+        "带代码的项目或插件，共 {n} 行：唯一的模式是 `overview`，且没有记录 `patterns_reviewed`。"
+        "`overview` 也是关键词规则无法归类时给出的默认值，所以这些行可能从未被归类。"
+        "有人为某行指定模式，或对照[决策模式]({patterns})读过它并把日期记入 `patterns_reviewed` 后，"
+        "该行就会离开此列表。[复核队列]({queue})列出了它们以及规则给出的建议。"
+    ),
     "page_intro": (
         "这个决策的全部已收录例子 —— 共 {n} 条。"
         "同样这些行及其警示也在[索引]({readme})里；[站点]({site})还能按语言、原语和形态进一步筛选。"
@@ -376,7 +402,9 @@ ZH = {
 # ZH keys whose Chinese a model wrote rather than a person: the same disclosure
 # `zh_machine` makes for a catalogue row, and rendered the same way, with
 # "(机翻)" after it. A person who rewrites one removes its key from here.
-ZH_MACHINE = frozenset({"stars_note", "verified_recheck", "verified_summaries", "license_summaries"})
+ZH_MACHINE = frozenset(
+    {"stars_note", "verified_recheck", "verified_summaries", "license_summaries", "unindexed_readme", "unindexed_page"}
+)
 
 # The non-catalog parts of the repo, so navigation is a table rather than a
 # scattering of inline links the reader has to hunt for.

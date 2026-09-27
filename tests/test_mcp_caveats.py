@@ -108,5 +108,25 @@ class SummarySourceTest(unittest.TestCase):
             self.assertIn(f"`{value}`", doc)
 
 
+class PatternsReviewedTest(unittest.TestCase):
+    """A recorded pattern reading travels with the patterns to an agent (I13)."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.server = load_server()
+
+    def test_compact_rows_carry_it_only_when_recorded(self):
+        entry = dict(next(e for e in self.server.CATALOG if e["patterns"] == ["overview"]))
+        entry.pop("patterns_reviewed", None)
+        self.assertNotIn("patterns_reviewed", self.server._compact(entry))
+        entry["patterns_reviewed"] = "2026-09-27"
+        self.assertEqual(self.server._compact(entry)["patterns_reviewed"], "2026-09-27")
+
+    def test_the_tool_description_says_what_its_absence_means(self):
+        doc = self.server.get_example.__doc__
+        self.assertIn("`patterns_reviewed`", doc)
+        self.assertIn("not yet indexed by pattern", doc)
+
+
 if __name__ == "__main__":
     unittest.main()

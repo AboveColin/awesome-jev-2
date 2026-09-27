@@ -121,6 +121,11 @@ def _compact(entry: dict) -> dict[str, Any]:
     # quoting an `upstream-description` summary is quoting the project itself.
     if entry.get("summary_source"):
         out["summary_source"] = entry["summary_source"]
+    # How far to trust `patterns`: the date a person read the row against them.
+    # Absent means no reading is recorded, and an `overview` project or plugin
+    # with code then means "not yet indexed by pattern", not "surveys the space".
+    if entry.get("patterns_reviewed"):
+        out["patterns_reviewed"] = entry["patterns_reviewed"]
     for key in ("question_types", "languages", "platforms", "stars", "repo_license"):
         if entry.get(key) is not None:
             out[key] = entry[key]
@@ -261,6 +266,13 @@ def get_example(slug: str) -> dict[str, Any]:
     refresh last compared them; `upstream-description-stale` was taken from it
     and no longer matches; `curated` was written for this catalogue. Absent
     means it is not recorded. search_examples() carries it too.
+
+    `patterns_reviewed` is the date a person read the row against the decision
+    patterns; search_examples() carries it too. Absent means no such reading
+    is recorded: many rows' patterns are what keyword rules suggested from the
+    project's description, and `overview` is what those rules give when nothing
+    matches, so a project or plugin with code filed only under `overview` and
+    no `patterns_reviewed` is not yet indexed by pattern rather than a survey.
 
     Args:
         slug: the row's stable id, as returned by search_examples

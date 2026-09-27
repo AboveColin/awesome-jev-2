@@ -11,6 +11,7 @@
 - [ ] I opened every link I added and wrote the summaries from what was there
 - [ ] `question_types` reflects the actual call site, not the README
 - [ ] A row with code cites the file I read in `evidence`, or says in `evidence_none` why it cannot (lint requires one when the repository is on GitHub)
+- [ ] `patterns_reviewed` is set only on rows whose `patterns` I read against `docs/patterns.md`, to the day I read them
 - [ ] `evidence.kind` says what the cited file shows when it is not a call site: `wire-shape` for an `alternative` (lint requires it), `example-only` for an example
 - [ ] `stars` / `repo_license` came from the GitHub API, not a badge
 - [ ] Caveats are flagged, and any flag needing an explanation has a `notes` line

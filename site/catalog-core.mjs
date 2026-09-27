@@ -37,6 +37,19 @@ export function summaryMarks(entry, lang) {
   return marks;
 }
 
+// A project or plugin with code whose only pattern is `overview`, and no record
+// of a person reading it against the patterns (`patterns_reviewed`), is not yet
+// indexed by pattern: `overview` is also what the keyword rules suggest when
+// nothing matches. The overview listing shows these rows last, under their own
+// heading, as the READMEs do. scripts/_stats.py not_indexed_by_pattern() is the
+// same rule for the generated pages.
+export const UNINDEXED_KINDS = ["project", "plugin"];
+
+export function notIndexedByPattern(entry) {
+  return Array.isArray(entry.patterns) && entry.patterns.length === 1 && entry.patterns[0] === "overview"
+    && Boolean(entry.has_code) && UNINDEXED_KINDS.includes(entry.kind) && !entry.patterns_reviewed;
+}
+
 export function evidenceUrl(entry) {
   if (!entry.evidence?.path) return null;
   for (const candidate of [entry.repo, entry.url]) {

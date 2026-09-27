@@ -68,6 +68,11 @@ def main() -> int:
         f"{stats['review_tool_selection_broad']} tool-selection on dropped keywords (docs/review-queue.md)"
     )
     print(
+        f"patterns       {stats['patterns_rule_identical']} equal the keyword rules' suggestion (no review recorded), "
+        f"{stats['patterns_reviewed']} patterns_reviewed, {stats['overview_unindexed']} overview rows with code "
+        "not yet indexed by pattern"
+    )
+    print(
         f"summaries      {stats['summary_upstream']} upstream-description, "
         f"{stats['summary_upstream_stale']} upstream-description-stale, {stats['summary_curated']} curated, "
         f"{stats['summary_unlabelled']} unlabelled (summary_source)"

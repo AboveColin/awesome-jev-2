@@ -52,6 +52,16 @@ MODEL_NAMES_AND_HOST = ("jev-latest", "jev-1.13", "typesafe-ai/jev", "typesafe/j
 # patterns, so such a row may never have been read against the pattern.
 TOOL_SELECTION = "tool-selection"
 
+# `overview` is for a row that surveys the model or the space (docs/patterns.md).
+# It is also what the keyword rules suggest when nothing matches, and the bulk
+# passes took their suggestion, so it filled with projects nobody placed. A
+# project or plugin with code whose only pattern is overview is therefore
+# listed apart, as not yet indexed by pattern, until a person records reading
+# it against the patterns (`patterns_reviewed`) or gives it one. site/
+# catalog-core.mjs holds the same rule for the site.
+OVERVIEW = "overview"
+UNINDEXED_KINDS = ("project", "plugin")
+
 # Where a summary's words come from, as summary_source records it
 # (schema/entry.schema.json). The two upstream values are the project's own
 # text, which is why docs/sources.md counts them apart from the rest.
@@ -93,12 +103,31 @@ def single_model_name(entry: dict) -> bool:
     return len(matched) == 1 and matched[0] in MODEL_NAMES_AND_HOST
 
 
+def not_indexed_by_pattern(entry: dict) -> bool:
+    """A project or plugin with code filed only under overview, and no record
+    of anyone reading it against the patterns. Derived, never stored."""
+    return (
+        entry.get("patterns") == [OVERVIEW]
+        and bool(entry.get("has_code"))
+        and entry.get("kind") in UNINDEXED_KINDS
+        and not entry.get("patterns_reviewed")
+    )
+
+
+def patterns_match_rules(entry: dict) -> bool:
+    """Machine signal, not a verdict: the row's patterns are exactly what the
+    keyword rules suggest for its summary and title, and no reading is
+    recorded. A person may have reviewed and agreed; that was not recorded."""
+    return not entry.get("patterns_reviewed") and entry.get("patterns") == suggest(entry)[1]
+
+
 def tool_selection_broad_only(entry: dict) -> bool:
     """Machine signal: the row carries tool-selection, the keyword rules as
     they stood until 2026-09-27 suggest it for the row's summary and title,
-    and the current rules do not."""
+    the current rules do not, and no reading is recorded."""
     return (
-        TOOL_SELECTION in entry.get("patterns", [])
+        not entry.get("patterns_reviewed")
+        and TOOL_SELECTION in entry.get("patterns", [])
         and TOOL_SELECTION in suggest(entry, classify_broad)[1]
         and TOOL_SELECTION not in suggest(entry)[1]
     )
@@ -143,6 +172,12 @@ def compute() -> dict:
         "review_examples_dir": sum(1 for e in catalog if examples_unjudged(e)),
         "review_single_model_name": sum(1 for e in catalog if single_model_name(e)),
         "review_tool_selection_broad": sum(1 for e in catalog if tool_selection_broad_only(e)),
+        # How patterns were chosen is recorded only by patterns_reviewed. A row
+        # whose patterns equal the keyword rules' suggestion shows agreement
+        # with the rules and nothing more: the review, if any, was not recorded.
+        "patterns_reviewed": sum(1 for e in catalog if e.get("patterns_reviewed")),
+        "patterns_rule_identical": sum(1 for e in catalog if patterns_match_rules(e)),
+        "overview_unindexed": sum(1 for e in catalog if not_indexed_by_pattern(e)),
         # A row with question_types additionally asserts *which* primitives.
         # Different claims; publishing one number for both would overstate it.
         "primitive_rows": sum(1 for e in catalog if e.get("question_types")),

@@ -82,6 +82,9 @@ def shape_block(s: dict) -> str:
             ["Machine signal: evidence resting on one model name or the API host ([review queue](review-queue.md#single-model-name))", s["review_single_model_name"]],
             ["Machine signal: `tool-selection` suggested only by keyword-rule words dropped on 2026-09-27 ([review queue](review-queue.md#tool-selection-broad-words))", s["review_tool_selection_broad"]],
             ["Patterns covered", f"{s['patterns_covered']} of {s['patterns_total']}"],
+            ["Rows whose `patterns` are exactly what the keyword rules suggest for their summary (agreement with the rules, not a review: any review of these rows was not recorded)", f"{s['patterns_rule_identical']} of {s['entries']}"],
+            ["Rows whose patterns a person recorded reading (`patterns_reviewed`)", s["patterns_reviewed"]],
+            ["Overview rows that are projects or plugins with code, listed apart as not yet indexed by pattern ([review queue](review-queue.md#unsorted-overview))", s["overview_unindexed"]],
             ["Summaries that are the project's own GitHub description (`summary_source` `upstream-description`)", f"{s['summary_upstream']} of {s['entries']}"],
             ["Summaries taken from that description that no longer match it (`upstream-description-stale`)", s["summary_upstream_stale"]],
             ["Summaries marked as written for this catalogue (`curated`)", s["summary_curated"]],
@@ -254,6 +257,9 @@ def inline_values(s: dict) -> dict[str, object]:
         "platforms": s["platforms"],
         "sibling_lists": s["sibling_lists"],
         "patterns_total": s["patterns_total"],
+        "patterns_rule_identical": s["patterns_rule_identical"],
+        "patterns_reviewed": s["patterns_reviewed"],
+        "overview_unindexed": s["overview_unindexed"],
         "kinds": ", ".join(s["kinds"]),
         "pattern_keys": ", ".join(s["pattern_keys"]),
         "fields": ", ".join(s["fields"]),
@@ -273,6 +279,7 @@ def render() -> dict[pathlib.Path, str]:
             "row-licences": row_licences_block(s, catalog),
         },
         "llms.txt": {},
+        "docs/patterns.md": {},
     }
 
     out = {}
@@ -314,7 +321,7 @@ def main() -> int:
                 file=sys.stderr,
             )
             return 1
-        print("generated values in docs/status.md, docs/sources.md and llms.txt are up to date")
+        print("generated values in docs/status.md, docs/sources.md, docs/patterns.md and llms.txt are up to date")
         return 0
 
     print(("rewrote " + ", ".join(rel)) if stale else "nothing to update")

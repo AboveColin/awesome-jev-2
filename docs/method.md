@@ -291,6 +291,27 @@ first, in the [review queue](review-queue.md#tool-selection-broad-words) for a
 person to read. The rules suggested exactly a row's `patterns` for 818 rows
 before the change and for 758 after it.
 
+Since 2026-09-27, the catalogue shows which rows were never placed. `overview`
+is for a row that surveys the model or the space, but it is also what the
+keyword rules suggest when nothing matches, and the bulk passes took their
+suggestion. That day 451 rows carried it, 351 of them exactly as the rules'
+default, and 252 were projects or plugins with code — 251 of those with a
+cited call site, langchain's row ("The agent engineering platform.") among
+them.
+Nothing was inferred into `catalog.json`: whether anyone reviewed the patterns
+of a row that matches the rules is not recorded, and a guess filed as a source
+would be a claim nobody made. A new optional field, `patterns_reviewed`, records
+the date a person read a row against the patterns; nobody has set it yet. Until
+it is set, or the row gets a pattern, a project or plugin with code filed only
+under `overview` is listed apart as *not yet indexed by pattern*: after the
+other Overview rows in the READMEs, on the Overview page and on the site, and in
+the [review queue](review-queue.md#unsorted-overview) with the rules'
+suggestion, most-starred band first. The status page counts the rows whose
+patterns equal the rules' suggestion for their summary as agreement with the
+rules and nothing more, since any review of them was not recorded. Lint does
+not warn per row: a warning repeated on hundreds of rows is a log nobody reads,
+so the count is published instead.
+
 `retry-control` went from zero to one genuine example, a semantic circuit
 breaker that asks whether an HTTP 200 is a silent failure. The other apparent
 matches were false positives and were removed. `recommendation` is still empty

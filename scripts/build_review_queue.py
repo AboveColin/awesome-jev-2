@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 """Write docs/review-queue.md: the rows a script singles out for a person to read.
 
-Every entry on the page is a machine signal: a path or a string matched a rule.
-None is a finding about the row, and nothing here is written back into
-catalog.json. Whoever reads a row records the decision in that row, as each
-section says, and the row leaves the page at the next regeneration.
+Every entry on the page is a machine signal: a path, a string or a combination
+of fields matched a rule. None is a finding about the row, and nothing here is
+written back into catalog.json. Whoever reads a row records the decision in that
+row, as each section says, and the row leaves the page at the next regeneration.
 
-Lint could warn once per row instead, but a few dozen warnings on every run is
-a log nobody reads. The same rules count their rows in _stats.compute(), so
-docs/status.md publishes the numbers and this page names the rows.
+Lint could warn once per row instead, but dozens or hundreds of warnings on
+every run is a log nobody reads. The same rules count their rows in
+_stats.compute(), so docs/status.md publishes the numbers and this page names
+the rows.
 
 One section per signal. A section is a function in SECTIONS that takes the
 catalogue and returns a Section; add a function there to add a signal. The
@@ -184,15 +185,15 @@ def tool_selection_broad_words(catalog: list[dict]) -> Section:
         leave_en=(
             "To take a row off, read the project against [`tool-selection`](patterns.md#tool-selection). "
             "If nothing in it decides which tool or action comes next, replace `tool-selection` in "
-            "`patterns` with the pattern it does show, or with `overview`. If it does decide that, the "
-            "row stays listed for now: the catalogue has no field yet that records a reading which "
-            "confirms a pattern."
+            "`patterns` with the pattern it does show, or with `overview`. Either way, set "
+            "`patterns_reviewed` to the date you read it; that alone takes off a row whose "
+            "`tool-selection` was right."
         ),
         leave_zh=(
             "移出方法：对照 [`tool-selection`](patterns.md#tool-selection) 阅读该项目。"
             "如果其中没有任何东西在决定下一步调用哪个工具或采取哪个动作，就把 `patterns` 里的 `tool-selection` "
-            "换成它实际体现的模式，或换成 `overview`。如果确实在做这个决定，该行暂时仍会列在这里："
-            "目录里还没有记录“有人读过并确认模式”的字段。"
+            "换成它实际体现的模式，或换成 `overview`。无论哪种情况，都把阅读日期写入 `patterns_reviewed`；"
+            "`tool-selection` 本来就对的行，只写这个日期也会移出。"
         ),
         columns=(
             ("Row", "行"),
@@ -214,7 +215,55 @@ def tool_selection_broad_words(catalog: list[dict]) -> Section:
     )
 
 
-SECTIONS = (examples_dir, single_model_name, tool_selection_broad_words)
+def unsorted_overview(catalog: list[dict]) -> Section:
+    marked = by_band(e for e in catalog if _stats.not_indexed_by_pattern(e))
+
+    def suggestion(entry: dict) -> str:
+        found = suggest(entry)[1]
+        return "—" if found == [_stats.OVERVIEW] else patterns_cell(found)
+
+    return Section(
+        key="unsorted-overview",
+        title_en="Overview rows with code, not yet indexed by pattern",
+        title_zh="带代码、尚未按模式索引的 overview 行",
+        about_en=(
+            "The row is a project or a plugin with code, its only pattern is `overview`, and it records no "
+            "`patterns_reviewed`. `overview` is for a row that surveys the model or the space "
+            "([patterns.md](patterns.md#overview)); it is also what the keyword rules suggest when nothing "
+            "matches, and the bulk passes took the rules' patterns. The READMEs, the Overview page and the "
+            "site list these rows apart, as not yet indexed by pattern. The last column is only a "
+            "suggestion: what the keyword rules (`scripts/classify.py`) make of the row's summary and "
+            "title, and a dash when none of them matches."
+        ),
+        about_zh=(
+            "该行是带代码的项目或插件，唯一的模式是 `overview`，且没有记录 `patterns_reviewed`。"
+            "`overview` 本是给介绍模型或整个领域的行用的（[patterns.md](patterns.md#overview)）；"
+            "它也是关键词规则什么都没匹配到时给出的建议，而批量收录时直接采用了规则给出的模式。"
+            "README、Overview 页面和站点把这些行单独列为“尚未按模式索引”。最后一列只是建议："
+            "关键词规则（`scripts/classify.py`）根据该行摘要和标题给出的结果，没有任何规则匹配时显示为破折号。"
+        ),
+        leave_en=(
+            "To take a row off, read the project against [the patterns](patterns.md). Put the patterns it "
+            "shows in `patterns`, or keep `overview` if it surveys the space, and set `patterns_reviewed` "
+            "to the date you read it."
+        ),
+        leave_zh=(
+            "移出方法：对照[决策模式](patterns.md)阅读该项目。把它体现的模式写进 `patterns`；"
+            "如果它确实是在介绍整个领域，就保留 `overview`。然后把阅读日期写入 `patterns_reviewed`。"
+        ),
+        columns=(
+            ("Row", "行"),
+            ("Kind", "类型"),
+            ("Stars", "星标"),
+            ("Keyword rules suggest (a suggestion)", "关键词规则的建议（仅供参考）"),
+        ),
+        rows=tuple(
+            (row_link(e), cell(e["kind"]), star_label(e.get("stars")), suggestion(e)) for e in marked
+        ),
+    )
+
+
+SECTIONS = (examples_dir, single_model_name, tool_selection_broad_words, unsorted_overview)
 
 HEADER = "<!-- Written by scripts/build_review_queue.py from catalog.json. Edit those, not this file. -->"
 PROVENANCE = (
@@ -222,14 +271,14 @@ PROVENANCE = (
     "本页中文由模型撰写（机翻），未经人工审校。</sub>"
 )
 INTRO_EN = (
-    "Rows a script has singled out for a person to read. Each entry is a machine signal (a path "
-    "or a string matched a rule), not a finding about the row, and nothing on this page is written "
+    "Rows a script has singled out for a person to read. Each entry is a machine signal (a path, "
+    "a string or a combination of fields matched a rule), not a finding about the row, and nothing on this page is written "
     "into `catalog.json`. Whoever reads a row records the decision in it, as each section says, and "
     "the row leaves this page when it is next regenerated. [status.md](status.md) publishes the "
     "counts."
 )
 INTRO_ZH = (
-    "脚本挑出、需要人来读的行。每一项都是机器信号（某个路径或字符串命中了规则），"
+    "脚本挑出、需要人来读的行。每一项都是机器信号（某个路径、字符串或字段组合命中了规则），"
     "不是对该行的结论，本页内容也不会写回 `catalog.json`。读过某一行的人按各节所说把判断记进该行，"
     "下次重新生成时它就会离开本页。数量见 [status.md](status.md)。"
 )

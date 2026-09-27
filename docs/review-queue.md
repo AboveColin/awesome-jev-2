@@ -4,15 +4,16 @@
 
 <sub>The Chinese on this page is model-written and has not been reviewed by a person. · 本页中文由模型撰写（机翻），未经人工审校。</sub>
 
-Rows a script has singled out for a person to read. Each entry is a machine signal (a path or a string matched a rule), not a finding about the row, and nothing on this page is written into `catalog.json`. Whoever reads a row records the decision in it, as each section says, and the row leaves this page when it is next regenerated. [status.md](status.md) publishes the counts.
+Rows a script has singled out for a person to read. Each entry is a machine signal (a path, a string or a combination of fields matched a rule), not a finding about the row, and nothing on this page is written into `catalog.json`. Whoever reads a row records the decision in it, as each section says, and the row leaves this page when it is next regenerated. [status.md](status.md) publishes the counts.
 
-脚本挑出、需要人来读的行。每一项都是机器信号（某个路径或字符串命中了规则），不是对该行的结论，本页内容也不会写回 `catalog.json`。读过某一行的人按各节所说把判断记进该行，下次重新生成时它就会离开本页。数量见 [status.md](status.md)。
+脚本挑出、需要人来读的行。每一项都是机器信号（某个路径、字符串或字段组合命中了规则），不是对该行的结论，本页内容也不会写回 `catalog.json`。读过某一行的人按各节所说把判断记进该行，下次重新生成时它就会离开本页。数量见 [status.md](status.md)。
 
 | Signal · 信号 | Rows · 行数 |
 | --- | --- |
 | [Evidence read from an examples directory · 证据取自 examples 目录](#examples-dir) | 22 |
 | [Evidence resting on one model name or the API host · 证据只靠一个模型名或 API 主机](#single-model-name) | 76 |
 | [Tool selection resting on words the keyword rules no longer count · 工具选择只靠关键词规则已不再计入的词](#tool-selection-broad-words) | 65 |
+| [Overview rows with code, not yet indexed by pattern · 带代码、尚未按模式索引的 overview 行](#unsorted-overview) | 252 |
 
 <a id="examples-dir"></a>
 
@@ -150,9 +151,9 @@ The row carries `tool-selection`, and the keyword rules suggest it for the row's
 
 该行带有 `tool-selection`，而关键词规则只有按 2026-09-27 之前的写法才会从它的摘要和标题建议这个模式。当时的规则单凭 "control"、"harness"、"screen" 就算数，"robot"、"autonomous"、"drive" 旁边没有表示决定或动作的词也算数；`scripts/classify.py` 里现在的规则不再这样。批量收录时直接采用了规则给出的模式，所以这里的行可能从未有人对照 tool-selection 读过，也可能有人读过并同意，只是没有记录。规则在发现阶段读的是项目的 GitHub 描述；这里以摘要代替。
 
-To take a row off, read the project against [`tool-selection`](patterns.md#tool-selection). If nothing in it decides which tool or action comes next, replace `tool-selection` in `patterns` with the pattern it does show, or with `overview`. If it does decide that, the row stays listed for now: the catalogue has no field yet that records a reading which confirms a pattern.
+To take a row off, read the project against [`tool-selection`](patterns.md#tool-selection). If nothing in it decides which tool or action comes next, replace `tool-selection` in `patterns` with the pattern it does show, or with `overview`. Either way, set `patterns_reviewed` to the date you read it; that alone takes off a row whose `tool-selection` was right.
 
-移出方法：对照 [`tool-selection`](patterns.md#tool-selection) 阅读该项目。如果其中没有任何东西在决定下一步调用哪个工具或采取哪个动作，就把 `patterns` 里的 `tool-selection` 换成它实际体现的模式，或换成 `overview`。如果确实在做这个决定，该行暂时仍会列在这里：目录里还没有记录“有人读过并确认模式”的字段。
+移出方法：对照 [`tool-selection`](patterns.md#tool-selection) 阅读该项目。如果其中没有任何东西在决定下一步调用哪个工具或采取哪个动作，就把 `patterns` 里的 `tool-selection` 换成它实际体现的模式，或换成 `overview`。无论哪种情况，都把阅读日期写入 `patterns_reviewed`；`tool-selection` 本来就对的行，只写这个日期也会移出。
 
 | Row · 行 | Stars · 星标 | Patterns in the row · 该行的模式 | Suggested until 2026-09-27 · 2026-09-27 之前的建议 | Suggested now · 现在的建议 |
 | --- | --- | --- | --- | --- |
@@ -221,3 +222,270 @@ To take a row off, read the project against [`tool-selection`](patterns.md#tool-
 | [terrarium](https://kydlikebtc.github.io/awesome-jev/?lang=en#terrarium) |  | `tool-selection` | `tool-selection` | `overview` |
 | [typesafe-minecraft-demo](https://kydlikebtc.github.io/awesome-jev/?lang=en#typesafe-minecraft-demo) |  | `tool-selection` | `tool-selection` | `overview` |
 | [zerosweep](https://kydlikebtc.github.io/awesome-jev/?lang=en#zerosweep) |  | `classification` `tool-selection` `safety-gating` | `classification` `tool-selection` `safety-gating` | `classification` `safety-gating` |
+
+<a id="unsorted-overview"></a>
+
+## Overview rows with code, not yet indexed by pattern · 带代码、尚未按模式索引的 overview 行
+
+The row is a project or a plugin with code, its only pattern is `overview`, and it records no `patterns_reviewed`. `overview` is for a row that surveys the model or the space ([patterns.md](patterns.md#overview)); it is also what the keyword rules suggest when nothing matches, and the bulk passes took the rules' patterns. The READMEs, the Overview page and the site list these rows apart, as not yet indexed by pattern. The last column is only a suggestion: what the keyword rules (`scripts/classify.py`) make of the row's summary and title, and a dash when none of them matches.
+
+该行是带代码的项目或插件，唯一的模式是 `overview`，且没有记录 `patterns_reviewed`。`overview` 本是给介绍模型或整个领域的行用的（[patterns.md](patterns.md#overview)）；它也是关键词规则什么都没匹配到时给出的建议，而批量收录时直接采用了规则给出的模式。README、Overview 页面和站点把这些行单独列为“尚未按模式索引”。最后一列只是建议：关键词规则（`scripts/classify.py`）根据该行摘要和标题给出的结果，没有任何规则匹配时显示为破折号。
+
+To take a row off, read the project against [the patterns](patterns.md). Put the patterns it shows in `patterns`, or keep `overview` if it surveys the space, and set `patterns_reviewed` to the date you read it.
+
+移出方法：对照[决策模式](patterns.md)阅读该项目。把它体现的模式写进 `patterns`；如果它确实是在介绍整个领域，就保留 `overview`。然后把阅读日期写入 `patterns_reviewed`。
+
+| Row · 行 | Kind · 类型 | Stars · 星标 | Keyword rules suggest (a suggestion) · 关键词规则的建议（仅供参考） |
+| --- | --- | --- | --- |
+| [langchain](https://kydlikebtc.github.io/awesome-jev/?lang=en#langchain) | `project` | ★100k+ | — |
+| [eliza](https://kydlikebtc.github.io/awesome-jev/?lang=en#eliza) | `project` | ★10k+ | — |
+| [oh-my-pi](https://kydlikebtc.github.io/awesome-jev/?lang=en#oh-my-pi) | `project` | ★10k+ | — |
+| [opik-typesafe-tracker](https://kydlikebtc.github.io/awesome-jev/?lang=en#opik-typesafe-tracker) | `project` | ★10k+ | — |
+| [pydantic-ai](https://kydlikebtc.github.io/awesome-jev/?lang=en#pydantic-ai) | `project` | ★10k+ | — |
+| [ax](https://kydlikebtc.github.io/awesome-jev/?lang=en#ax) | `project` | ★1k+ | — |
+| [bifrost-typesafe-gateway](https://kydlikebtc.github.io/awesome-jev/?lang=en#bifrost-typesafe-gateway) | `project` | ★1k+ | `safety-gating` |
+| [laya-mlx](https://kydlikebtc.github.io/awesome-jev/?lang=en#laya-mlx) | `project` | ★1k+ | — |
+| [memsearch](https://kydlikebtc.github.io/awesome-jev/?lang=en#memsearch) | `plugin` | ★1k+ | — |
+| [typesafe-skills-repo](https://kydlikebtc.github.io/awesome-jev/?lang=en#typesafe-skills-repo) | `plugin` | ★1k+ | — |
+| [vellum-assistant](https://kydlikebtc.github.io/awesome-jev/?lang=en#vellum-assistant) | `project` | ★1k+ | — |
+| [aiavatarkit](https://kydlikebtc.github.io/awesome-jev/?lang=en#aiavatarkit) | `project` | ★100+ | — |
+| [awesome-jev-fatwang2](https://kydlikebtc.github.io/awesome-jev/?lang=en#awesome-jev-fatwang2) | `project` | ★100+ | `output-validation` |
+| [celesto](https://kydlikebtc.github.io/awesome-jev/?lang=en#celesto) | `project` | ★100+ | — |
+| [crush-monitor](https://kydlikebtc.github.io/awesome-jev/?lang=en#crush-monitor) | `project` | ★100+ | — |
+| [dasheng](https://kydlikebtc.github.io/awesome-jev/?lang=en#dasheng) | `project` | ★100+ | — |
+| [distill](https://kydlikebtc.github.io/awesome-jev/?lang=en#distill) | `project` | ★100+ | — |
+| [djev-spark](https://kydlikebtc.github.io/awesome-jev/?lang=en#djev-spark) | `project` | ★100+ | — |
+| [jev-chat-jarvis-mac](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-chat-jarvis-mac) | `project` | ★100+ | — |
+| [jev-chat-windows](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-chat-windows) | `project` | ★100+ | — |
+| [jev-experiments](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-experiments) | `project` | ★100+ | `search-ranking` `safety-gating` `output-validation` |
+| [jev-skill-wuyoscar](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-skill-wuyoscar) | `plugin` | ★100+ | `output-validation` |
+| [jevmind](https://kydlikebtc.github.io/awesome-jev/?lang=en#jevmind) | `project` | ★100+ | `safety-gating` `content-scoring` `human-escalation` |
+| [kody](https://kydlikebtc.github.io/awesome-jev/?lang=en#kody) | `plugin` | ★100+ | — |
+| [laya](https://kydlikebtc.github.io/awesome-jev/?lang=en#laya) | `project` | ★100+ | — |
+| [laya-ultrafast](https://kydlikebtc.github.io/awesome-jev/?lang=en#laya-ultrafast) | `project` | ★100+ | — |
+| [openwhisper](https://kydlikebtc.github.io/awesome-jev/?lang=en#openwhisper) | `project` | ★100+ | — |
+| [orchestkit](https://kydlikebtc.github.io/awesome-jev/?lang=en#orchestkit) | `plugin` | ★100+ | — |
+| [pi-fabric](https://kydlikebtc.github.io/awesome-jev/?lang=en#pi-fabric) | `project` | ★100+ | — |
+| [req-llm](https://kydlikebtc.github.io/awesome-jev/?lang=en#req-llm) | `project` | ★100+ | — |
+| [runline](https://kydlikebtc.github.io/awesome-jev/?lang=en#runline) | `project` | ★100+ | — |
+| [smithers](https://kydlikebtc.github.io/awesome-jev/?lang=en#smithers) | `project` | ★100+ | — |
+| [stanley-code](https://kydlikebtc.github.io/awesome-jev/?lang=en#stanley-code) | `project` | ★100+ | — |
+| [third-hand](https://kydlikebtc.github.io/awesome-jev/?lang=en#third-hand) | `project` | ★100+ | — |
+| [typesafe-mcp](https://kydlikebtc.github.io/awesome-jev/?lang=en#typesafe-mcp) | `plugin` | ★100+ | — |
+| [webctl](https://kydlikebtc.github.io/awesome-jev/?lang=en#webctl) | `project` | ★100+ | — |
+| [agent-router](https://kydlikebtc.github.io/awesome-jev/?lang=en#agent-router) | `plugin` | ★10+ | — |
+| [ask-jev-skill](https://kydlikebtc.github.io/awesome-jev/?lang=en#ask-jev-skill) | `plugin` | ★10+ | — |
+| [call-coach-ai](https://kydlikebtc.github.io/awesome-jev/?lang=en#call-coach-ai) | `project` | ★10+ | — |
+| [captaincore](https://kydlikebtc.github.io/awesome-jev/?lang=en#captaincore) | `project` | ★10+ | — |
+| [clash-jev](https://kydlikebtc.github.io/awesome-jev/?lang=en#clash-jev) | `project` | ★10+ | — |
+| [cultivar](https://kydlikebtc.github.io/awesome-jev/?lang=en#cultivar) | `project` | ★10+ | — |
+| [dspy-typesafeify](https://kydlikebtc.github.io/awesome-jev/?lang=en#dspy-typesafeify) | `project` | ★10+ | — |
+| [duckdb-jev-colliber](https://kydlikebtc.github.io/awesome-jev/?lang=en#duckdb-jev-colliber) | `plugin` | ★10+ | — |
+| [is-jeven](https://kydlikebtc.github.io/awesome-jev/?lang=en#is-jeven) | `project` | ★10+ | — |
+| [james-library](https://kydlikebtc.github.io/awesome-jev/?lang=en#james-library) | `project` | ★10+ | `content-scoring` |
+| [jev](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev) | `plugin` | ★10+ | — |
+| [jev-mayank953](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-mayank953) | `project` | ★10+ | — |
+| [jev-okooo5km](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-okooo5km) | `plugin` | ★10+ | `search-ranking` `content-scoring` `human-escalation` |
+| [jev-chat-for-twitch](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-chat-for-twitch) | `plugin` | ★10+ | — |
+| [jev-cli-shaharia-lab](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-cli-shaharia-lab) | `project` | ★10+ | `content-scoring` `human-escalation` |
+| [jev-foundation-models](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-foundation-models) | `project` | ★10+ | — |
+| [jev-judge-mcp](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-judge-mcp) | `plugin` | ★10+ | `search-ranking` `classification` `tool-selection` |
+| [jev-leftpad](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-leftpad) | `project` | ★10+ | — |
+| [jev-mcp-burnigtm](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-mcp-burnigtm) | `plugin` | ★10+ | — |
+| [jev-paint](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-paint) | `project` | ★10+ | — |
+| [jev-playground-mizchi](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-playground-mizchi) | `project` | ★10+ | `content-scoring` |
+| [jev-recipes](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-recipes) | `project` | ★10+ | `search-ranking` `output-validation` |
+| [jev-register-tool](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-register-tool) | `project` | ★10+ | — |
+| [jev-rules](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-rules) | `project` | ★10+ | — |
+| [jev-seo](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-seo) | `plugin` | ★10+ | — |
+| [jev-skill-suggester](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-skill-suggester) | `plugin` | ★10+ | — |
+| [jev-spring-boot-starter](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-spring-boot-starter) | `plugin` | ★10+ | — |
+| [jev-studio](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-studio) | `project` | ★10+ | — |
+| [jev-tetris](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-tetris) | `project` | ★10+ | — |
+| [jev-to-answer](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-to-answer) | `project` | ★10+ | — |
+| [jev-trades](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-trades) | `project` | ★10+ | — |
+| [jev-tree-chuf-h](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-tree-chuf-h) | `project` | ★10+ | `output-validation` |
+| [jev-voice](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-voice) | `project` | ★10+ | — |
+| [jev-vs-ml](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-vs-ml) | `project` | ★10+ | — |
+| [jev-stock](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-stock) | `project` | ★10+ | — |
+| [jevchat](https://kydlikebtc.github.io/awesome-jev/?lang=en#jevchat) | `project` | ★10+ | — |
+| [jevernetes](https://kydlikebtc.github.io/awesome-jev/?lang=en#jevernetes) | `project` | ★10+ | — |
+| [jevgraph](https://kydlikebtc.github.io/awesome-jev/?lang=en#jevgraph) | `project` | ★10+ | — |
+| [jeview](https://kydlikebtc.github.io/awesome-jev/?lang=en#jeview) | `project` | ★10+ | — |
+| [jevify](https://kydlikebtc.github.io/awesome-jev/?lang=en#jevify) | `plugin` | ★10+ | — |
+| [jevloop](https://kydlikebtc.github.io/awesome-jev/?lang=en#jevloop) | `project` | ★10+ | — |
+| [jevocks](https://kydlikebtc.github.io/awesome-jev/?lang=en#jevocks) | `project` | ★10+ | — |
+| [jevthoven](https://kydlikebtc.github.io/awesome-jev/?lang=en#jevthoven) | `project` | ★10+ | — |
+| [jevvy](https://kydlikebtc.github.io/awesome-jev/?lang=en#jevvy) | `plugin` | ★10+ | — |
+| [jot](https://kydlikebtc.github.io/awesome-jev/?lang=en#jot) | `project` | ★10+ | — |
+| [laya-vs-jev](https://kydlikebtc.github.io/awesome-jev/?lang=en#laya-vs-jev) | `project` | ★10+ | — |
+| [laya-vs-jev-arena](https://kydlikebtc.github.io/awesome-jev/?lang=en#laya-vs-jev-arena) | `project` | ★10+ | — |
+| [llm-typesafe](https://kydlikebtc.github.io/awesome-jev/?lang=en#llm-typesafe) | `plugin` | ★10+ | — |
+| [loki](https://kydlikebtc.github.io/awesome-jev/?lang=en#loki) | `project` | ★10+ | — |
+| [open-spark-jev](https://kydlikebtc.github.io/awesome-jev/?lang=en#open-spark-jev) | `project` | ★10+ | — |
+| [openthai-systemone](https://kydlikebtc.github.io/awesome-jev/?lang=en#openthai-systemone) | `project` | ★10+ | — |
+| [pi-quiet-ask](https://kydlikebtc.github.io/awesome-jev/?lang=en#pi-quiet-ask) | `project` | ★10+ | — |
+| [st-jeved](https://kydlikebtc.github.io/awesome-jev/?lang=en#st-jeved) | `plugin` | ★10+ | — |
+| [typesafe-playground](https://kydlikebtc.github.io/awesome-jev/?lang=en#typesafe-playground) | `project` | ★10+ | — |
+| [typesafe-playground-typesafeai](https://kydlikebtc.github.io/awesome-jev/?lang=en#typesafe-playground-typesafeai) | `project` | ★10+ | — |
+| [typesafe-skill-router](https://kydlikebtc.github.io/awesome-jev/?lang=en#typesafe-skill-router) | `plugin` | ★10+ | — |
+| [xtags](https://kydlikebtc.github.io/awesome-jev/?lang=en#xtags) | `project` | ★10+ | — |
+| [aegis-typesafe-provider](https://kydlikebtc.github.io/awesome-jev/?lang=en#aegis-typesafe-provider) | `project` |  | `safety-gating` `data-extraction` |
+| [agent-jev-tetris](https://kydlikebtc.github.io/awesome-jev/?lang=en#agent-jev-tetris) | `project` |  | — |
+| [ai-elo-ranker](https://kydlikebtc.github.io/awesome-jev/?lang=en#ai-elo-ranker) | `project` |  | — |
+| [ailerix](https://kydlikebtc.github.io/awesome-jev/?lang=en#ailerix) | `project` |  | — |
+| [alphaoptimizer](https://kydlikebtc.github.io/awesome-jev/?lang=en#alphaoptimizer) | `plugin` |  | — |
+| [askjev](https://kydlikebtc.github.io/awesome-jev/?lang=en#askjev) | `plugin` |  | — |
+| [askjev-mcp](https://kydlikebtc.github.io/awesome-jev/?lang=en#askjev-mcp) | `plugin` |  | `content-scoring` `human-escalation` |
+| [auto-mode-for-paseo](https://kydlikebtc.github.io/awesome-jev/?lang=en#auto-mode-for-paseo) | `plugin` |  | — |
+| [awesome-jev](https://kydlikebtc.github.io/awesome-jev/?lang=en#awesome-jev) | `project` |  | — |
+| [awesome-jev-use-cases](https://kydlikebtc.github.io/awesome-jev/?lang=en#awesome-jev-use-cases) | `project` |  | `search-ranking` `model-routing` `safety-gating` |
+| [barrunto](https://kydlikebtc.github.io/awesome-jev/?lang=en#barrunto) | `plugin` |  | — |
+| [beatjev](https://kydlikebtc.github.io/awesome-jev/?lang=en#beatjev) | `project` |  | — |
+| [bes-kelime-jev](https://kydlikebtc.github.io/awesome-jev/?lang=en#bes-kelime-jev) | `project` |  | — |
+| [btc-jev-signal](https://kydlikebtc.github.io/awesome-jev/?lang=en#btc-jev-signal) | `project` |  | — |
+| [cairn-jev-lab](https://kydlikebtc.github.io/awesome-jev/?lang=en#cairn-jev-lab) | `project` |  | — |
+| [cartshield](https://kydlikebtc.github.io/awesome-jev/?lang=en#cartshield) | `project` |  | — |
+| [codex-jev-preflight](https://kydlikebtc.github.io/awesome-jev/?lang=en#codex-jev-preflight) | `plugin` |  | — |
+| [commentcop](https://kydlikebtc.github.io/awesome-jev/?lang=en#commentcop) | `project` |  | — |
+| [cyber-breach-jev](https://kydlikebtc.github.io/awesome-jev/?lang=en#cyber-breach-jev) | `project` |  | — |
+| [dbt-jev](https://kydlikebtc.github.io/awesome-jev/?lang=en#dbt-jev) | `plugin` |  | — |
+| [decisions-judge-mcp](https://kydlikebtc.github.io/awesome-jev/?lang=en#decisions-judge-mcp) | `plugin` |  | `content-scoring` |
+| [dgp](https://kydlikebtc.github.io/awesome-jev/?lang=en#dgp) | `project` |  | `safety-gating` `fan-out` |
+| [edgejev](https://kydlikebtc.github.io/awesome-jev/?lang=en#edgejev) | `project` |  | — |
+| [emoji-jev](https://kydlikebtc.github.io/awesome-jev/?lang=en#emoji-jev) | `project` |  | — |
+| [everything-about-jev](https://kydlikebtc.github.io/awesome-jev/?lang=en#everything-about-jev) | `project` |  | — |
+| [extremely-specific-council](https://kydlikebtc.github.io/awesome-jev/?lang=en#extremely-specific-council) | `project` |  | — |
+| [financialpredictionjev](https://kydlikebtc.github.io/awesome-jev/?lang=en#financialpredictionjev) | `project` |  | — |
+| [frost](https://kydlikebtc.github.io/awesome-jev/?lang=en#frost) | `project` |  | — |
+| [functions](https://kydlikebtc.github.io/awesome-jev/?lang=en#functions) | `project` |  | — |
+| [git-jev-stage](https://kydlikebtc.github.io/awesome-jev/?lang=en#git-jev-stage) | `project` |  | — |
+| [got-jev](https://kydlikebtc.github.io/awesome-jev/?lang=en#got-jev) | `project` |  | — |
+| [ha-conversation-jev](https://kydlikebtc.github.io/awesome-jev/?lang=en#ha-conversation-jev) | `project` |  | — |
+| [harden-jev-decides](https://kydlikebtc.github.io/awesome-jev/?lang=en#harden-jev-decides) | `project` |  | — |
+| [hermes-jev-curator](https://kydlikebtc.github.io/awesome-jev/?lang=en#hermes-jev-curator) | `project` |  | — |
+| [hiresignal](https://kydlikebtc.github.io/awesome-jev/?lang=en#hiresignal) | `project` |  | — |
+| [jcm-router](https://kydlikebtc.github.io/awesome-jev/?lang=en#jcm-router) | `project` |  | — |
+| [jeff-cli](https://kydlikebtc.github.io/awesome-jev/?lang=en#jeff-cli) | `project` |  | `search-ranking` `content-scoring` `human-escalation` |
+| [jeq](https://kydlikebtc.github.io/awesome-jev/?lang=en#jeq) | `project` |  | — |
+| [jev-cobusgreyling](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-cobusgreyling) | `project` |  | — |
+| [jev-2048](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-2048) | `project` |  | — |
+| [jev-acp](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-acp) | `project` |  | — |
+| [jev-anotacao-sentencas](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-anotacao-sentencas) | `project` |  | — |
+| [jev-arena-nanojev](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-arena-nanojev) | `project` |  | — |
+| [jev-blindspot](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-blindspot) | `plugin` |  | — |
+| [jev-bot](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-bot) | `project` |  | — |
+| [jev-broadcast-lab](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-broadcast-lab) | `project` |  | — |
+| [jev-calculator](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-calculator) | `project` |  | — |
+| [jev-canvas](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-canvas) | `project` |  | — |
+| [jev-chat](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-chat) | `project` |  | — |
+| [jev-chat-windows-deepseek-jev](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-chat-windows-deepseek-jev) | `project` |  | — |
+| [jev-ci-selector](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-ci-selector) | `project` |  | — |
+| [jev-cli-jtsang4](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-cli-jtsang4) | `project` |  | — |
+| [jev-cloud-quiz](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-cloud-quiz) | `project` |  | `content-scoring` |
+| [jev-codex-router-skill](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-codex-router-skill) | `plugin` |  | — |
+| [jev-connector](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-connector) | `plugin` |  | `content-scoring` `human-escalation` |
+| [jev-cvss](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-cvss) | `project` |  | — |
+| [jev-demo](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-demo) | `project` |  | — |
+| [jev-demo-penglonghuang](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-demo-penglonghuang) | `project` |  | `tool-selection` `content-scoring` `human-escalation` |
+| [jev-docs-zh](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-docs-zh) | `project` |  | — |
+| [jev-evaluation](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-evaluation) | `project` |  | — |
+| [jev-eyes](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-eyes) | `plugin` |  | — |
+| [jev-freeform](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-freeform) | `project` |  | — |
+| [jev-games](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-games) | `project` |  | — |
+| [jev-gomoku](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-gomoku) | `project` |  | — |
+| [jev-grand-prix](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-grand-prix) | `project` |  | — |
+| [jev-grug](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-grug) | `project` |  | — |
+| [jev-mcp-arunav25](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-mcp-arunav25) | `plugin` |  | `content-scoring` `feature-extraction` |
+| [jev-mcp-byk](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-mcp-byk) | `plugin` |  | `content-scoring` |
+| [jev-mcp-freepik-company](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-mcp-freepik-company) | `plugin` |  | — |
+| [jev-mcp-rajasekharponakala](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-mcp-rajasekharponakala) | `plugin` |  | `content-scoring` |
+| [jev-mcp-rashedint32](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-mcp-rashedint32) | `plugin` |  | `classification` `output-validation` `content-scoring` |
+| [jev-mcp-spring](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-mcp-spring) | `plugin` |  | — |
+| [jev-measured](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-measured) | `project` |  | — |
+| [jev-minesweeper](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-minesweeper) | `project` |  | — |
+| [jev-pick-and-place-study](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-pick-and-place-study) | `project` |  | — |
+| [jev-pii-checker](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-pii-checker) | `project` |  | — |
+| [jev-playground](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-playground) | `project` |  | — |
+| [jev-playground-little-planet-labs](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-playground-little-planet-labs) | `project` |  | — |
+| [jev-plays-pokemon](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-plays-pokemon) | `project` |  | — |
+| [jev-practice-speed](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-practice-speed) | `project` |  | — |
+| [jev-realtime-trading](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-realtime-trading) | `project` |  | — |
+| [jev-resume-disqualifier](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-resume-disqualifier) | `project` |  | — |
+| [jev-search](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-search) | `project` |  | — |
+| [jev-skill-router](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-skill-router) | `plugin` |  | — |
+| [jev-skills-laguagu](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-skills-laguagu) | `plugin` |  | `search-ranking` `output-validation` |
+| [jev-skills-wanlanglin](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-skills-wanlanglin) | `plugin` |  | `content-scoring` `human-escalation` |
+| [jev-snake](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-snake) | `project` |  | — |
+| [jev-system-one](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-system-one) | `project` |  | — |
+| [jev-t-rex-runner](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-t-rex-runner) | `project` |  | — |
+| [jev-torneo-animales](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-torneo-animales) | `project` |  | — |
+| [jev-trip](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-trip) | `project` |  | — |
+| [jev-wingman](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-wingman) | `project` |  | — |
+| [jev-x-kit](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-x-kit) | `project` |  | `safety-gating` `content-scoring` `human-escalation` |
+| [jev-yt-time-saver](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-yt-time-saver) | `plugin` |  | — |
+| [jev2048](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev2048) | `project` |  | — |
+| [jev-jsonschema](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-jsonschema) | `project` |  | — |
+| [jev-ontology](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-ontology) | `project` |  | — |
+| [jev-project-context](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-project-context) | `plugin` |  | — |
+| [jevals-dayhaysoos](https://kydlikebtc.github.io/awesome-jev/?lang=en#jevals-dayhaysoos) | `project` |  | — |
+| [jevcode](https://kydlikebtc.github.io/awesome-jev/?lang=en#jevcode) | `project` |  | — |
+| [jevmem](https://kydlikebtc.github.io/awesome-jev/?lang=en#jevmem) | `plugin` |  | — |
+| [jevometry](https://kydlikebtc.github.io/awesome-jev/?lang=en#jevometry) | `project` |  | — |
+| [jevopt](https://kydlikebtc.github.io/awesome-jev/?lang=en#jevopt) | `project` |  | — |
+| [jevplayspokemon](https://kydlikebtc.github.io/awesome-jev/?lang=en#jevplayspokemon) | `project` |  | — |
+| [jevscope](https://kydlikebtc.github.io/awesome-jev/?lang=en#jevscope) | `project` |  | — |
+| [jevseek-blingdivinity](https://kydlikebtc.github.io/awesome-jev/?lang=en#jevseek-blingdivinity) | `project` |  | — |
+| [jevslop](https://kydlikebtc.github.io/awesome-jev/?lang=en#jevslop) | `project` |  | — |
+| [jevtape](https://kydlikebtc.github.io/awesome-jev/?lang=en#jevtape) | `project` |  | — |
+| [jevtest](https://kydlikebtc.github.io/awesome-jev/?lang=en#jevtest) | `project` |  | — |
+| [jevtok](https://kydlikebtc.github.io/awesome-jev/?lang=en#jevtok) | `project` |  | — |
+| [jevtown](https://kydlikebtc.github.io/awesome-jev/?lang=en#jevtown) | `project` |  | — |
+| [jpp](https://kydlikebtc.github.io/awesome-jev/?lang=en#jpp) | `project` |  | — |
+| [labs](https://kydlikebtc.github.io/awesome-jev/?lang=en#labs) | `project` |  | — |
+| [laya-jev-lab](https://kydlikebtc.github.io/awesome-jev/?lang=en#laya-jev-lab) | `project` |  | — |
+| [magic-jev-ball](https://kydlikebtc.github.io/awesome-jev/?lang=en#magic-jev-ball) | `project` |  | `safety-gating` |
+| [mcpmatch](https://kydlikebtc.github.io/awesome-jev/?lang=en#mcpmatch) | `plugin` |  | — |
+| [mcts-agent](https://kydlikebtc.github.io/awesome-jev/?lang=en#mcts-agent) | `project` |  | — |
+| [mimicry](https://kydlikebtc.github.io/awesome-jev/?lang=en#mimicry) | `project` |  | — |
+| [n8n-nodes-jev](https://kydlikebtc.github.io/awesome-jev/?lang=en#n8n-nodes-jev) | `plugin` |  | `classification` `output-validation` `content-scoring` |
+| [n8n-nodes-typesafe](https://kydlikebtc.github.io/awesome-jev/?lang=en#n8n-nodes-typesafe) | `plugin` |  | — |
+| [n8n-nodes-typesafe-jev](https://kydlikebtc.github.io/awesome-jev/?lang=en#n8n-nodes-typesafe-jev) | `project` |  | — |
+| [new-api-plugin-typesafe](https://kydlikebtc.github.io/awesome-jev/?lang=en#new-api-plugin-typesafe) | `plugin` |  | — |
+| [open-jev-bridge](https://kydlikebtc.github.io/awesome-jev/?lang=en#open-jev-bridge) | `plugin` |  | `output-validation` `content-scoring` `context-compaction` |
+| [openpoke-meets-jev](https://kydlikebtc.github.io/awesome-jev/?lang=en#openpoke-meets-jev) | `project` |  | — |
+| [pi-agent-foreman](https://kydlikebtc.github.io/awesome-jev/?lang=en#pi-agent-foreman) | `project` |  | — |
+| [pi-typesafe-twilwa](https://kydlikebtc.github.io/awesome-jev/?lang=en#pi-typesafe-twilwa) | `plugin` |  | — |
+| [pong-jev](https://kydlikebtc.github.io/awesome-jev/?lang=en#pong-jev) | `project` |  | — |
+| [pydantic-jev-examples](https://kydlikebtc.github.io/awesome-jev/?lang=en#pydantic-jev-examples) | `project` |  | — |
+| [r2r-jev](https://kydlikebtc.github.io/awesome-jev/?lang=en#r2r-jev) | `project` |  | `content-scoring` |
+| [research-desk](https://kydlikebtc.github.io/awesome-jev/?lang=en#research-desk) | `project` |  | — |
+| [risc-jev](https://kydlikebtc.github.io/awesome-jev/?lang=en#risc-jev) | `project` |  | — |
+| [river-run-typesafe](https://kydlikebtc.github.io/awesome-jev/?lang=en#river-run-typesafe) | `project` |  | — |
+| [rubikjev](https://kydlikebtc.github.io/awesome-jev/?lang=en#rubikjev) | `project` |  | — |
+| [rust-sysone](https://kydlikebtc.github.io/awesome-jev/?lang=en#rust-sysone) | `project` |  | — |
+| [scam-shield](https://kydlikebtc.github.io/awesome-jev/?lang=en#scam-shield) | `project` |  | — |
+| [search-function-test](https://kydlikebtc.github.io/awesome-jev/?lang=en#search-function-test) | `project` |  | — |
+| [second-thought](https://kydlikebtc.github.io/awesome-jev/?lang=en#second-thought) | `project` |  | — |
+| [secondlayer](https://kydlikebtc.github.io/awesome-jev/?lang=en#secondlayer) | `project` |  | — |
+| [should-ai-kill-us-all](https://kydlikebtc.github.io/awesome-jev/?lang=en#should-ai-kill-us-all) | `project` |  | — |
+| [skill-router](https://kydlikebtc.github.io/awesome-jev/?lang=en#skill-router) | `plugin` |  | — |
+| [soupbase](https://kydlikebtc.github.io/awesome-jev/?lang=en#soupbase) | `project` |  | — |
+| [sqlite3-jev](https://kydlikebtc.github.io/awesome-jev/?lang=en#sqlite3-jev) | `plugin` |  | — |
+| [switchboard](https://kydlikebtc.github.io/awesome-jev/?lang=en#switchboard) | `plugin` |  | — |
+| [system-one-chess](https://kydlikebtc.github.io/awesome-jev/?lang=en#system-one-chess) | `project` |  | — |
+| [systemone-lite](https://kydlikebtc.github.io/awesome-jev/?lang=en#systemone-lite) | `project` |  | — |
+| [tempo-jev-demo](https://kydlikebtc.github.io/awesome-jev/?lang=en#tempo-jev-demo) | `project` |  | — |
+| [trade-jev](https://kydlikebtc.github.io/awesome-jev/?lang=en#trade-jev) | `project` |  | — |
+| [typesafe-ai-playground](https://kydlikebtc.github.io/awesome-jev/?lang=en#typesafe-ai-playground) | `project` |  | — |
+| [typesafe-assist](https://kydlikebtc.github.io/awesome-jev/?lang=en#typesafe-assist) | `project` |  | — |
+| [typesafe-chess](https://kydlikebtc.github.io/awesome-jev/?lang=en#typesafe-chess) | `project` |  | — |
+| [typesafe-comment](https://kydlikebtc.github.io/awesome-jev/?lang=en#typesafe-comment) | `project` |  | — |
+| [typesafe-jev-examples](https://kydlikebtc.github.io/awesome-jev/?lang=en#typesafe-jev-examples) | `project` |  | — |
+| [typesafe-jev-mcp](https://kydlikebtc.github.io/awesome-jev/?lang=en#typesafe-jev-mcp) | `plugin` |  | — |
+| [typesafe-jev-tools](https://kydlikebtc.github.io/awesome-jev/?lang=en#typesafe-jev-tools) | `plugin` |  | — |
+| [typesafe-ui](https://kydlikebtc.github.io/awesome-jev/?lang=en#typesafe-ui) | `project` |  | `safety-gating` |
+| [typesafe-chess-eval](https://kydlikebtc.github.io/awesome-jev/?lang=en#typesafe-chess-eval) | `project` |  | — |
+| [typesafeai-cli](https://kydlikebtc.github.io/awesome-jev/?lang=en#typesafeai-cli) | `project` |  | — |
+| [wellposed](https://kydlikebtc.github.io/awesome-jev/?lang=en#wellposed) | `project` |  | `output-validation` |
+| [your-signal](https://kydlikebtc.github.io/awesome-jev/?lang=en#your-signal) | `plugin` |  | — |

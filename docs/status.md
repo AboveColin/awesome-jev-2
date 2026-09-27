@@ -25,6 +25,9 @@ is the point of dating it.
 | Machine signal: evidence resting on one model name or the API host ([review queue](review-queue.md#single-model-name)) | 76 |
 | Machine signal: `tool-selection` suggested only by keyword-rule words dropped on 2026-09-27 ([review queue](review-queue.md#tool-selection-broad-words)) | 65 |
 | Patterns covered | 18 of 18 |
+| Rows whose `patterns` are exactly what the keyword rules suggest for their summary (agreement with the rules, not a review: any review of these rows was not recorded) | 758 of 1207 |
+| Rows whose patterns a person recorded reading (`patterns_reviewed`) | 0 |
+| Overview rows that are projects or plugins with code, listed apart as not yet indexed by pattern ([review queue](review-queue.md#unsorted-overview)) | 252 |
 | Summaries that are the project's own GitHub description (`summary_source` `upstream-description`) | 890 of 1207 |
 | Summaries taken from that description that no longer match it (`upstream-description-stale`) | 0 |
 | Summaries marked as written for this catalogue (`curated`) | 0 |

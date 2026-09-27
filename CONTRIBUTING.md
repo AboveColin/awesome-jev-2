@@ -28,8 +28,9 @@ python3 scripts/check.py --fix
 
 ### Generated files are optional
 
-The READMEs, the pages under `docs/by-pattern/`, the figures in `docs/assets/`
-and the generated numbers in `docs/status.md`, `docs/sources.md`,
+The READMEs, the pages under `docs/by-pattern/`, the figures in `docs/assets/`,
+[`docs/review-queue.md`](docs/review-queue.md) and the generated numbers in
+`docs/status.md`, `docs/sources.md`, `docs/patterns.md`,
 `docs/compatibility.md` and `llms.txt` are all derived from the JSON files at
 the root. You do not need to regenerate them. CI regenerates everything on
 every run, and after your pull request is merged, `github-actions[bot]`
@@ -181,7 +182,16 @@ turns red.
   not call Jev, however Jev-shaped it is.
 - **`patterns`** — which decisions it demonstrates. Read
   [`docs/patterns.md`](docs/patterns.md) first. `overview` cannot be combined
-  with a specific pattern; the linter enforces that.
+  with a specific pattern; the linter enforces that. `overview` is for a row
+  that surveys the model or the space, not for a project nobody has placed: a
+  project or plugin with code filed only under `overview` is listed as *not
+  yet indexed by pattern* until someone reads it.
+- **`patterns_reviewed`** — the date you read the row against
+  [`docs/patterns.md`](docs/patterns.md) and set or confirmed its `patterns`.
+  Only a person writes it: never because the keyword rules agree, and never
+  for a row you did not read. It takes the row off the *not yet indexed by
+  pattern* list and off the pattern sections of
+  [`docs/review-queue.md`](docs/review-queue.md).
 - **`question_types`** — only the primitives the code _actually_ calls. Read the
   call site; do not infer from the README. Several projects describe "scoring"
   while using only `noul`. The primitive is `noul`, never `binary`.

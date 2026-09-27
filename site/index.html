@@ -482,13 +482,17 @@
         gap: 11px;
         flex-wrap: wrap;
       }
-      .gh h2 {
+      .gh h2,
+      .gh h3 {
         font-family: var(--mono);
         font-size: 17px;
         font-weight: 600;
         letter-spacing: -0.02em;
         margin: 0;
         color: var(--fg);
+      }
+      .gh h3 {
+        font-size: 15px;
       }
       .gh .n {
         font: 11.5px var(--mono);
@@ -994,7 +998,7 @@
     </footer>
 
     <script type="module">
-      import { SORTS, verification, evidenceKind, evidenceUrl, isIndependentReport, compareEntries, matchesEntry, queryFromState, shareUrl, stateFromQuery, summaryMarks } from "./catalog-core.mjs";
+      import { SORTS, verification, evidenceKind, evidenceUrl, isIndependentReport, compareEntries, matchesEntry, queryFromState, shareUrl, stateFromQuery, summaryMarks, notIndexedByPattern } from "./catalog-core.mjs";
       const STR = {
         en: {
           eyebrow: "Jev Decision Atlas · community index",
@@ -1009,6 +1013,9 @@
           code_read: "Call-site citation", code_missing: "No call-site citation", runtime: "Code not run by this catalogue", performance: "Performance not reproduced",
           cite_wire_shape: "Wire-shape citation, not a Jev integration", cite_example_only: "Example-only citation", evidence_file: "View cited file ↗",
           mark_zh_machine: "machine-translated", mark_zh_machine_about: "A model translated this Chinese summary; no person wrote it.",
+          unindexed_h: "Not yet indexed by pattern",
+          unindexed_about: "Projects and plugins with code whose only pattern is overview, and whose rows record no reading against the patterns (patterns_reviewed). Overview is also what the keyword rules suggest when nothing matches, so these may never have been placed. A person gives each a pattern, or records the date they read it.",
+          unindexed_last: "Projects and plugins with code that nobody has recorded reading against the patterns come last, under “Not yet indexed by pattern” ({n}).",
           third_party: "Third-party report", review_scope: "A dated citation is not a current CI result or a runtime test.",
           signals: "Recorded matching text", added: "Added", stars: "Repository stars", author: "Author", read_context: "Source context",
           reason: "Why this pick", caution: "Before you use it", notes: "Editor’s note", empty_help: "Try a broader phrase or reset the filters.",
@@ -1080,6 +1087,10 @@
           cite_wire_shape: "接口形态记录，并非 Jev 集成", cite_example_only: "仅示例记录", evidence_file: "查看引用文件 ↗",
           // mark_zh_machine is the READMEs' own mark; its tooltip below is model-written, like the summary-source labels in taxonomy.json.
           mark_zh_machine: "机翻", mark_zh_machine_about: "这条中文摘要由模型翻译，不是人写的。",
+          // The Chinese of the three "not yet indexed by pattern" strings below is model-written; a person who revises it drops this note.
+          unindexed_h: "尚未按模式索引",
+          unindexed_about: "带代码的项目或插件：唯一的模式是 overview，且没有任何对照决策模式阅读过的记录（patterns_reviewed）。overview 也是关键词规则什么都没匹配到时给出的建议，所以这些行可能从未被归类。由人为每一行指定模式，或记下阅读日期。",
+          unindexed_last: "没有任何人对照决策模式阅读过记录的带代码项目和插件排在最后，列在“尚未按模式索引”之下（{n} 行）。",
           third_party: "第三方评测", review_scope: "带日期的引用不代表最新 CI 已通过，也不代表代码已运行。",
           signals: "记录的匹配文本", added: "收录日期", stars: "仓库星标", author: "作者", read_context: "来源说明",
           reason: "精选理由", caution: "使用前留意", notes: "编辑备注", empty_help: "试试更宽泛的关键词，或重置筛选条件。",
@@ -1470,7 +1481,11 @@
         const selected = collection();
         const out = document.getElementById("out");
         document.getElementById("hits").innerHTML = `<b>${hits.length}</b> / ${DATA.length} ${S().shown}`;
-        document.getElementById("results-heading").innerHTML = `<h2>${esc(st.entry ? S().entry_view : selected ? local(selected, "title") : st.pattern ? lbl(PAT, st.pattern) : S().browse)}</h2>${selected || st.pattern ? `<p>${esc(selected ? local(selected, "description") : pdesc(st.pattern))}</p>` : ""}`;
+        // The overview listing ends with rows not yet indexed by pattern, as the READMEs' does; say so up front,
+        // since they can sit several "show more" pages down.
+        const unindexed = st.pattern === "overview" && !st.entry ? hits.filter(notIndexedByPattern).length : 0;
+        const headingNote = selected ? local(selected, "description") : st.pattern ? pdesc(st.pattern) + (unindexed ? (L === "zh" ? "" : " ") + S().unindexed_last.replace("{n}", unindexed) : "") : "";
+        document.getElementById("results-heading").innerHTML = `<h2>${esc(st.entry ? S().entry_view : selected ? local(selected, "title") : st.pattern ? lbl(PAT, st.pattern) : S().browse)}</h2>${selected || st.pattern ? `<p>${esc(headingNote)}</p>` : ""}`;
         const active = Boolean(st.entry || st.q || st.pattern || st.kind || st.lang || st.collection || st.code || st.off || st.noflag || st.indep);
         document.getElementById("reset").hidden = !active;
         if (!hits.length) {
@@ -1479,9 +1494,13 @@
           return;
         }
         const cmp = compareEntries(st.sort, ranks());
+        const unindexedHead = n => `<div class="gh"><h3>${esc(S().unindexed_h)}</h3><span class="n">${n}</span></div><p class="gd">${esc(S().unindexed_about)}</p>`;
         if (st.sort !== "pattern" || st.pattern) {
-          const rows = hits.sort(cmp);
-          out.innerHTML = rows.slice(0, limit).map(card).join("") + (rows.length > limit ? `<button class="more" id="load-more">${S().more.replace("{n}", Math.min(24, rows.length - limit))}</button>` : "");
+          const sorted = hits.sort(cmp);
+          const later = unindexed ? sorted.filter(notIndexedByPattern) : [];
+          const rows = later.length ? [...sorted.filter(e => !notIndexedByPattern(e)), ...later] : sorted;
+          const firstLater = rows.length - later.length;
+          out.innerHTML = rows.slice(0, limit).map((e, i) => (later.length && i === firstLater ? unindexedHead(later.length) : "") + card(e)).join("") + (rows.length > limit ? `<button class="more" id="load-more">${S().more.replace("{n}", Math.min(24, rows.length - limit))}</button>` : "");
           const more = document.getElementById("load-more");
           if (more) more.onclick = () => {
             const next = rows[limit]?.slug;
@@ -1491,11 +1510,17 @@
           };
           return;
         }
+        const capped = (key, rows) => {
+          const open = expanded.has(key) || rows.length <= GROUP_CAP;
+          return `${(open ? rows : rows.slice(0, GROUP_CAP)).map(card).join("")}${open ? "" : `<button class="more" data-more="${key}">${S().more.replace("{n}", rows.length - GROUP_CAP)}</button>`}`;
+        };
         out.innerHTML = P_ORDER.map(p => {
           const rows = hits.filter(e => e.patterns.includes(p)).sort(cmp);
           if (!rows.length) return "";
-          const open = expanded.has(p) || rows.length <= GROUP_CAP;
-          return `<div class="gh"><h2>${esc(lbl(PAT, p))}</h2><span class="n">${rows.length}</span></div><p class="gd">${esc(pdesc(p))}</p>${(open ? rows : rows.slice(0, GROUP_CAP)).map(card).join("")}${open ? "" : `<button class="more" data-more="${p}">${S().more.replace("{n}", rows.length - GROUP_CAP)}</button>`}`;
+          // Only the overview group has rows not yet indexed by pattern; they get their own heading and cap.
+          const later = rows.filter(notIndexedByPattern);
+          const first = later.length ? rows.filter(e => !notIndexedByPattern(e)) : rows;
+          return `<div class="gh"><h2>${esc(lbl(PAT, p))}</h2><span class="n">${rows.length}</span></div><p class="gd">${esc(pdesc(p))}</p>${capped(p, first)}${later.length ? unindexedHead(later.length) + capped(`${p}:unindexed`, later) : ""}`;
         }).join("");
         document.querySelectorAll(".more[data-more]").forEach(b => b.onclick = () => { expanded.add(b.dataset.more); render(); });
       }

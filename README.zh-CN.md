@@ -1264,10 +1264,6 @@ _介绍模型或整个领域，而非单一模式。_
   把 TypeSafe 官方技能装进 Claude Code，让智能体自己写出正确的 Jev 调用，不必每次手动贴 API 结构。<br>
   <sub>`官方文档` · ★1k+ · `sh`</sub>
 
-- **[typesafe-ai/skills](https://github.com/typesafe-ai/skills)** ⭐<br>
-  Claude Code 插件背后的官方技能仓库，里面的 SKILL.md 教会智能体如何使用 System One API。<br>
-  <sub>`插件` · ★1k+ · `sh`</sub>
-
 - **[@typesafe-ai/sdk (TypeScript / JavaScript)](https://github.com/typesafe-ai/typesafe-sdk-js)** ⭐<br>
   官方 TypeScript 客户端。同时提供 ESM、CJS 和类型声明，辅助函数是小写的 choice()/score()/noul()。<br>
   <sub>`SDK` · ★100+ · `TS` · `JS` · `choice` · `score` · `noul`</sub>
@@ -1302,7 +1298,15 @@ _介绍模型或整个领域，而非单一模式。_
   厂商自己列出的失效场景：字面化理解、算术与计数、日期比较、间接指代、夹杂大量无关细节的长 state、对抗性内容。<br>
   <sub>`官方文档`</sub>
 
+- **[Use case map](https://docs.typesafe.ai/concepts/use-case-map)** ⭐<br>
+  厂商自己的分类体系：五大类、十九个行业方向、十种决策形态（从分类一直到结构化数据抽取）。<br>
+  <sub>`官方文档`</sub>
+
 已显示 **10 / 451** 条 · [在单独页面查看全部 451 条 →](docs/by-pattern/overview.zh-CN.md) · [在站点上筛选](https://kydlikebtc.github.io/awesome-jev/?p=overview&lang=zh)
+
+#### 尚未按模式索引
+
+其中 **252** 行是带代码的项目或插件。`overview` 也是关键词规则无法归类时给出的默认值，而这些行没有任何人对照决策模式阅读过的记录（`patterns_reviewed`），因此单独列出：见 [Overview 页面末尾](docs/by-pattern/overview.zh-CN.md#unindexed)、[站点](https://kydlikebtc.github.io/awesome-jev/?p=overview&lang=zh)，以及附有规则建议的[复核队列](docs/review-queue.md#unsorted-overview)。 <sub>(机翻)</sub>
 
 <sub>[↑ 场景索引](#pattern-index)</sub>
 
@@ -1332,7 +1336,7 @@ _介绍模型或整个领域，而非单一模式。_
 <details>
 <summary><b>查看可搜索站点预览</b></summary>
 
-<a href="https://kydlikebtc.github.io/awesome-jev/?lang=zh"><img src="https://kydlikebtc.github.io/awesome-jev/img/site-zh.png?v=1576ff639f91871b" alt="可搜索的 Jev 目录：精选路径、筛选排序、带日期的来源证据与条目卡片" width="760"></a>
+<a href="https://kydlikebtc.github.io/awesome-jev/?lang=zh"><img src="https://kydlikebtc.github.io/awesome-jev/img/site-zh.png?v=ca5756156803fcab" alt="可搜索的 Jev 目录：精选路径、筛选排序、带日期的来源证据与条目卡片" width="760"></a>
 
 <sub>点击条形即可筛选。另有两个视图：<a href="https://kydlikebtc.github.io/awesome-jev/?view=prims&lang=zh">三个原语</a> · <a href="https://kydlikebtc.github.io/awesome-jev/?view=compat&lang=zh">兼容性矩阵</a>。每个筛选条件和每个条目都是可分享的 URL。</sub>
 
