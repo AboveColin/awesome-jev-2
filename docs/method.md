@@ -273,6 +273,7 @@ When sources disagree:
 git clone https://github.com/kydlikebtc/awesome-jev
 cd awesome-jev
 
+python3 scripts/sort_catalog.py  # keep catalog.json and retired.json in slug order
 python3 scripts/lint.py          # schema plus cross-entry invariants
 python3 scripts/build_readme.py  # regenerate both READMEs and docs/by-pattern/
 python3 scripts/counts.py        # coverage, with gaps marked
@@ -289,6 +290,15 @@ person, never written automatically.
 
 `check_links.py --write` stamps `checked` and `link_status` on rows that
 answered. It never retires a row: that needs a human-written reason.
+
+Since 2026-09-27, `catalog.json` and `retired.json` are kept in slug order and
+`lint.py` fails when either is not. The order carries no meaning: the figures
+and docs only count rows, while the READMEs, pattern pages, site and MCP server
+each sort for themselves, with slug now the last tie-break in every one of those
+orders, so rows that tie on everything else (forks sharing a title and star
+count) no longer fall back to their position in the file. The fixed order exists
+only so that pull requests adding different rows insert at different places
+instead of all appending at the end and conflicting.
 
 ## Kept current
 

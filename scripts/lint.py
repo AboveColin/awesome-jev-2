@@ -7,7 +7,8 @@ Two layers of checking:
    Python dependencies on purpose so CI is just `setup-python` with no install
    step, and a contributor can run this on a bare interpreter.
 2. Cross-entry invariants a per-entry schema cannot express: slug and URL
-   uniqueness across both files, status codes matching the file an entry lives
+   uniqueness across both files, both files in slug order (fix with
+   scripts/sort_catalog.py), status codes matching the file an entry lives
    in, date sanity, and the honesty rules that keep flags meaningful.
 
 Exit code is 0 when clean, 1 when any error was found. Warnings never fail the
@@ -268,6 +269,21 @@ def check_entry_invariants(entry: dict, path: str, *, retired: bool) -> None:
             )
 
 
+def check_slug_order(label: str, data: list) -> None:
+    """Both data files stay in slug order.
+
+    The order is meaningless to readers (every generator sorts for itself), but
+    when each new row was appended at the end, every two pull requests adding
+    rows edited the same lines and conflicted. In slug order they insert at
+    different places. One error per file, with the fix, not one per row.
+    """
+    from sort_catalog import COMMAND, order_problem
+
+    problem = order_problem(data)
+    if problem:
+        err(label, f"{problem}; run `{COMMAND}` and commit the result")
+
+
 def main() -> int:
     for required_file in (CATALOG, RETIRED, SCHEMA):
         if not required_file.exists():
@@ -380,6 +396,8 @@ def main() -> int:
                     err(path, f"duplicate url {url!r}, already used in {urls[key]}")
                 else:
                     urls[key] = path
+
+        check_slug_order(label, data)
 
     print_report()
     print(

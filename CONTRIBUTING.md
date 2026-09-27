@@ -9,12 +9,19 @@ So the bar is: **could a reader act on this row without opening the link?**
 
 ## Adding an entry
 
-1. Add an object to `catalog.json`. Required fields: `slug`, `title`, `summary`,
-   `summary_zh`, `url`, `kind`, `patterns`, `sources`, `license`.
+1. Add an object to `catalog.json` at its place in `slug` order. The file is
+   sorted by slug and `lint.py` fails if it is not, so the easiest route is to
+   add the row anywhere and run `python3 scripts/sort_catalog.py`, which moves
+   rows into place and changes nothing else. A sorted file is what lets two
+   pull requests adding different rows merge without conflicting; when every
+   row was appended at the end, they all edited the same lines. Required
+   fields: `slug`, `title`, `summary`, `summary_zh`, `url`, `kind`,
+   `patterns`, `sources`, `license`.
 2. Run the checks:
 
 ```bash
-python3 scripts/lint.py \
+python3 scripts/sort_catalog.py \
+  && python3 scripts/lint.py \
   && python3 scripts/build_readme.py \
   && python3 scripts/build_assets.py \
   && python3 scripts/build_docs.py \
