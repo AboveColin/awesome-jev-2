@@ -286,8 +286,9 @@ def get_example(slug: str) -> dict[str, Any]:
     when it was created and last pushed to (UTC) and how many commits its
     default branch has; search_examples() carries them too. They are not a
     judgement: an old push does not mean abandoned, and nothing here says
-    whether a project is maintained. The `single-commit` caveat is set exactly
-    when `repo_commits` is 1. Absent on rows without a GitHub repository.
+    whether a project is maintained. Wherever `repo_commits` is recorded, the
+    `single-commit` caveat is set exactly when it is 1. Absent on rows without
+    a GitHub repository.
 
     `question_types` lists the primitives a person read the code calling.
     `primitives_seen` is something else: a weekly script's text signal that the

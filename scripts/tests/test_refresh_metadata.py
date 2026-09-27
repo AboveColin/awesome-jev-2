@@ -181,6 +181,20 @@ class RepositoryFactsTest(Quiet):
         empty = {**GRAPHQL["a/mit"], "defaultBranchRef": None}
         self.assertIsNone(rm.from_graphql(row("x", "a/mit"), "a/mit", empty)["commits"])
 
+    def test_a_count_below_one_is_no_count(self):
+        # The schema's minimum is 1: a zero (or a non-number) from either path
+        # must leave the row's count and flag alone, not write a row lint fails.
+        for bad in (0, -3, "12", None):
+            with self.subTest(count=bad):
+                node = {**GRAPHQL["a/none"], "defaultBranchRef": {"target": {"history": {"totalCount": bad}}}}
+                fresh = rm.from_graphql(row("x", "a/none"), "a/none", node)
+                self.assertIsNone(fresh["commits"])
+                self.assertIsNone(rm.from_rest(row("x", "a/none"), "a/none", REST["a/none"], bad)["commits"])
+                entry = {"slug": "x", "stars": 0, "repo_license": "unknown", "flags": ["no-license"],
+                         "repo_created_at": "2026-09-17T07:03:00Z", "repo_pushed_at": "2026-09-17T07:06:04Z",
+                         "repo_commits": 4}
+                self.assertEqual(rm.diff_for(entry, fresh), [])
+
     def test_a_date_not_in_githubs_form_is_not_recorded(self):
         for value in (None, "", "2026-09-16", "2026-09-16T08:00:00+00:00", 20260916):
             with self.subTest(value=value):

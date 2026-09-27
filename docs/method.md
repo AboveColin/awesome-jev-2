@@ -669,10 +669,12 @@ is left to its job summary.
   A 403 or 451 without those signals is a repository GitHub will not serve: one
   row, listed for a person, not the end of the run.
 - `refresh_metadata.py` reads a hundred repositories per GraphQL query — about
-  a dozen requests for the whole catalogue — and reads over REST any row the
-  query did not answer. `--compare` reads rows both ways; on 203 rows (every
-  `NOASSERTION` licence, every archived row, 40 unlicensed and 110 random) and
-  two renamed repositories the two gave identical facts.
+  a dozen requests for the whole catalogue; fifty, about two dozen, once the
+  query also counted each default branch's commits (see *Why a status code is
+  not a verdict*) — and reads over REST any row the query did not answer.
+  `--compare` reads rows both ways; on 203 rows (every `NOASSERTION` licence,
+  every archived row, 40 unlicensed and 110 random) and two renamed
+  repositories the two gave identical facts.
 - `verify_claims.py` reads each cited file at `HEAD` on the raw-file host,
   which resolves to the default branch without an API request. That is
   observed behaviour, not documented, so only a pass is taken from it: a file
