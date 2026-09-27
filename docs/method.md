@@ -281,9 +281,10 @@ and have their first tests. Replayed over the whole catalogue that day, with
 each row's summary and title standing in for the GitHub description and
 repository name the rules read at discovery (the catalogue keeps neither), the
 old rules suggested `tool-selection` for 220 rows and the new ones for 133. The
-suggestion changed for 87 rows, every one of them only by losing
-`tool-selection`; no kind and no other pattern moved. 65 of those rows carry
-`tool-selection` in `catalog.json`, and none was re-classified: whether a
+suggestion changed for 87 rows, each by losing `tool-selection`. No kind
+changed and no other suggested pattern was lost, though for 12 of them a
+pattern the three-pattern cap had cut now shows in its place. 65 of those rows
+carry `tool-selection` in `catalog.json`, and none was re-classified: whether a
 project decides which action comes next is a reading, not a word count, and
 some of them do — a Mario player that turns Jev's answers into controller
 buttons says neither "decide" nor "action". They are listed, most-starred band
@@ -295,9 +296,9 @@ Since 2026-09-27, the catalogue shows which rows were never placed. `overview`
 is for a row that surveys the model or the space, but it is also what the
 keyword rules suggest when nothing matches, and the bulk passes took their
 suggestion. That day 451 rows carried it, 351 of them exactly as the rules'
-default, and 252 were projects or plugins with code — 251 of those with a
-cited call site, langchain's row ("The agent engineering platform.") among
-them.
+default before the change above (353 after it), and 252 were projects or
+plugins with code — 251 of those with a cited call site, langchain's row ("The
+agent engineering platform.") among them.
 Nothing was inferred into `catalog.json`: whether anyone reviewed the patterns
 of a row that matches the rules is not recorded, and a guess filed as a source
 would be a claim nobody made. A new optional field, `patterns_reviewed`, records

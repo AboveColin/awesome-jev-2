@@ -178,6 +178,11 @@ class RulesTest(unittest.TestCase):
                     changed += 1
                     self.assertIn(TS, old[1])
                     self.assertNotIn(TS, new[1])
+                    # Every other pattern stays, in order; what follows them is
+                    # one the three-pattern cap had cut, or overview.
+                    kept = [p for p in old[1] if p != TS]
+                    self.assertEqual(new[1][: len(kept)], kept)
+                    self.assertEqual(new[1] == ["overview"], not kept)
         self.assertGreater(changed, 0)
 
     def test_suggest_reads_summary_and_title(self):
