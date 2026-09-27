@@ -111,3 +111,31 @@ rather than human ground truth. The catalogue flags those `vendor-reported`.
 The handful of independent measurements are mostly _negative_ results — one
 large agent framework ported the compaction approach, measured it, and published
 the conclusion not to adopt it. Read those first.
+
+## Claiming a candidate from the discovery queue
+
+When someone wants to add a project to the catalogue, start from the open issue
+labelled `discovery` in kydlikebtc/awesome-jev. Its description is the queue:
+repositories a script found calling Jev that nobody has read yet (unticked),
+with the ones already catalogued or declined ticked or struck through.
+
+1. Pick an unticked box and comment `claim owner/name` on the issue; the first
+   claim wins.
+2. In a clone of the repository, run
+   `python3 scripts/discover_candidates.py --only owner/name --drafts drafts`.
+   It re-reads the repository and writes `drafts/<slug>.json`, a draft row with
+   what the script found filled in and a `_draft` field listing what is left.
+3. Open the call site the draft names and read it. Write `summary` and
+   `summary_zh` from what the code does, not from its README; add
+   `question_types` only for the primitives it actually calls; set
+   `evidence.read_on` to the day you read the file; check the guessed `kind`,
+   `patterns` and `languages`; set `zh_machine: true` if a model wrote the
+   Chinese; name the source in `sources`.
+4. Delete `_draft`, add the row to `catalog.json`, run
+   `python3 scripts/check.py --fix`, and open a pull request naming the
+   candidate you claimed. If it does not belong, add `owner/name  # reason` to
+   `docs/declined.txt` instead.
+
+`lint.py` refuses a row while `_draft` is in it. Deleting that field without
+reading the code is the fabrication this catalogue exists to prevent: if you
+could not open the file, say so and stop.
