@@ -95,15 +95,6 @@ def summary_of(entry: dict, lang: str) -> str:
     return esc(text)
 
 
-def flags_of(entry: dict, lang: str) -> str:
-    tags = [
-        f"`{label(FLAG_LABELS, flag, lang)}`"
-        for flag in FLAG_ORDER
-        if flag in entry.get("flags", [])
-    ]
-    return " ".join(tags) if tags else "—"
-
-
 # Stars print as a band, never as the count, and rows sort by the band. The
 # weekly refresh re-reads every count; printed and sorted exactly, one refresh
 # rewrote over a thousand generated lines (b8bae37: 220 rows, every one of them a
