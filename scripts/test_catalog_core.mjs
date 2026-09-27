@@ -1,6 +1,9 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { compareEntries, evidenceUrl, matchesEntry, verification, isIndependentReport } from "../site/catalog-core.mjs";
+import {
+  compareEntries, evidenceUrl, matchesEntry, verification, isIndependentReport,
+  queryFromState, shareUrl, stateFromQuery, TOGGLES, VIEWS,
+} from "../site/catalog-core.mjs";
 
 const row = (slug, extra = {}) => ({ slug, title: slug, patterns: ["context-compaction"], ...extra });
 
@@ -52,4 +55,61 @@ test("short entry permalinks resolve exactly without changing ordinary text sear
     assert.deepEqual(entries.filter(e => matchesEntry(e, {entry: slug})).map(e => e.slug), [slug]);
   }
   assert.ok(entries.filter(e => matchesEntry(e, {q: "jev"})).length > 1);
+});
+
+// ─── URL state: every view and filter is a shareable link ─────────────────
+const DEFAULTS = {entry: "", collection: "", sort: "curated", pattern: "", kind: "", lang: "", q: "", code: false, off: false, indep: false, noflag: false};
+const OPTIONS = {languages: ["en", "zh"], collections: ["first-call", "build", "measured"]};
+const read = (search, hash = "") => stateFromQuery(search, hash, OPTIONS);
+
+test("a default catalogue writes only the language", () => {
+  assert.equal(queryFromState(DEFAULTS, "catalog", "en").toString(), "lang=en");
+  assert.deepEqual(read("?lang=en"), {lang: "en", view: "catalog", state: DEFAULTS});
+});
+
+test("parameter names and order stay what already-shared links use", () => {
+  const state = {...DEFAULTS, collection: "build", sort: "stars", pattern: "tool-selection", kind: "project", lang: "python", q: "retry budget", code: true, off: true, indep: true, noflag: true};
+  assert.equal(
+    queryFromState(state, "prims", "zh").toString(),
+    "view=prims&collection=build&sort=stars&p=tool-selection&k=project&lang_f=python&q=retry+budget&code=1&off=1&indep=1&noflag=1&lang=zh",
+  );
+});
+
+test("every view, sort, toggle and filter survives a round trip", () => {
+  for (const view of VIEWS) {
+    for (const sort of ["curated", "newest", "checked", "stars", "pattern"]) {
+      for (const toggle of TOGGLES) {
+        const state = {...DEFAULTS, sort, collection: "measured", pattern: "safety-gating", kind: "benchmark", lang: "go", q: "上下文 压缩", [toggle]: true};
+        const back = read("?" + queryFromState(state, view, "zh").toString());
+        assert.deepEqual(back, {lang: "zh", view, state});
+      }
+    }
+  }
+});
+
+test("values the page cannot show fall back instead of reaching the state", () => {
+  const back = read("?sort=random&collection=nope&lang=fr&view=graph&code=true&off=0");
+  assert.equal(back.lang, null);
+  assert.equal(back.view, "catalog");
+  assert.deepEqual(back.state, DEFAULTS);
+  // Inherited object keys are not languages (a lookup in the strings table would say they were).
+  assert.equal(read("?lang=constructor").lang, null);
+});
+
+test("the hash names a view only when the query does not", () => {
+  assert.equal(read("", "#compat").view, "compat");
+  assert.equal(read("?view=prims", "#compat").view, "prims");
+  // A bare #slug is an entry permalink: the catalogue, nothing filtered.
+  assert.deepEqual(read("", "#jev-router"), {lang: null, view: "catalog", state: DEFAULTS});
+});
+
+test("reading the URL always clears the entry being revealed", () => {
+  assert.equal(read("?entry=jev-router&q=x").state.entry, "");
+});
+
+test("a shared URL keeps the hash only while following its permalink", () => {
+  const query = queryFromState({...DEFAULTS, q: "gate"}, "catalog", "en");
+  assert.equal(shareUrl(query, {pathname: "/awesome-jev/", hash: "#jev-router"}), "?q=gate&lang=en");
+  assert.equal(shareUrl(query, {pathname: "/awesome-jev/", hash: "#jev-router", keepHash: true}), "?q=gate&lang=en#jev-router");
+  assert.equal(shareUrl(new URLSearchParams(), {pathname: "/awesome-jev/", hash: "#x", keepHash: true}), "/awesome-jev/#x");
 });

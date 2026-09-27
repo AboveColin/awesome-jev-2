@@ -72,3 +72,54 @@ export function matchesEntry(entry, state, collectionSlugs = null, labels = "") 
     .filter(Boolean).join(" ").toLowerCase();
   return (state.q || "").trim().toLowerCase().split(/\s+/).every(word => hay.includes(word));
 }
+
+// ─── URL state ────────────────────────────────────────────────
+// Every view and filter round-trips through the query string, so any state
+// is a shareable link. Pure: the page passes `location` in and applies what
+// comes back. The parameter names are public — links in READMEs, pattern
+// pages and elsewhere already use them — so rename none of them.
+export const VIEWS = ["catalog", "prims", "compat"];
+export const TOGGLES = ["code", "off", "indep", "noflag"];
+
+export function queryFromState(state, view, lang) {
+  const q = new URLSearchParams();
+  if (view !== "catalog") q.set("view", view);
+  if (state.collection) q.set("collection", state.collection);
+  if (state.sort !== "curated") q.set("sort", state.sort);
+  if (state.pattern) q.set("p", state.pattern);
+  if (state.kind) q.set("k", state.kind);
+  if (state.lang) q.set("lang_f", state.lang);
+  if (state.q) q.set("q", state.q);
+  for (const t of TOGGLES) if (state[t]) q.set(t, "1");
+  q.set("lang", lang);
+  return q;
+}
+
+// Only retain a hash while following its permalink. A later filter or view
+// selection is new intent and must not restore the old entry.
+export function shareUrl(query, { pathname, hash, keepHash = false }) {
+  return (query.toString() ? "?" + query.toString() : pathname) + (keepHash ? hash : "");
+}
+
+// `lang` is null when the URL names no language the page has; the caller then
+// keeps the one it chose. A bare #slug (no query) is an entry permalink: it
+// yields the catalogue with every filter at its default, and the page reveals
+// the entry itself.
+export function stateFromQuery(search, hash, { languages, collections }) {
+  const q = new URLSearchParams(search);
+  const view = q.get("view") || (hash || "").replace("#", "");
+  return {
+    lang: languages.includes(q.get("lang")) ? q.get("lang") : null,
+    view: VIEWS.includes(view) ? view : "catalog",
+    state: {
+      entry: "",
+      collection: collections.includes(q.get("collection")) ? q.get("collection") : "",
+      sort: SORTS.includes(q.get("sort")) ? q.get("sort") : "curated",
+      pattern: q.get("p") || "",
+      kind: q.get("k") || "",
+      lang: q.get("lang_f") || "",
+      q: q.get("q") || "",
+      ...Object.fromEntries(TOGGLES.map(t => [t, q.get(t) === "1"])),
+    },
+  };
+}

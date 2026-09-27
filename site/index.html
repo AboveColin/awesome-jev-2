@@ -994,7 +994,7 @@
     </footer>
 
     <script type="module">
-      import { SORTS, verification, evidenceUrl, isIndependentReport, compareEntries, matchesEntry } from "./catalog-core.mjs";
+      import { SORTS, verification, evidenceUrl, isIndependentReport, compareEntries, matchesEntry, queryFromState, shareUrl, stateFromQuery } from "./catalog-core.mjs";
       const STR = {
         en: {
           eyebrow: "Jev Decision Atlas · community index",
@@ -1725,46 +1725,22 @@
       }
 
       // ─── URL state, so any view and filter is shareable ───────
+      // The mapping lives in catalog-core.mjs (queryFromState, stateFromQuery,
+      // shareUrl), where scripts/test_catalog_core.mjs tests it; these two
+      // apply it to the page.
       function syncUrl({ keepHash = false } = {}) {
-        const q = new URLSearchParams();
-        if (VIEW !== "catalog") q.set("view", VIEW);
-        if (st.collection) q.set("collection", st.collection);
-        if (st.sort !== "curated") q.set("sort", st.sort);
-        if (st.pattern) q.set("p", st.pattern);
-        if (st.kind) q.set("k", st.kind);
-        if (st.lang) q.set("lang_f", st.lang);
-        if (st.q) q.set("q", st.q);
-        for (const t of ["code", "off", "indep", "noflag"])
-          if (st[t]) q.set(t, "1");
-        q.set("lang", L);
-        // Only retain a hash while following its permalink. A later filter or
-        // view selection is new intent and must not restore the old entry.
-        const url =
-          (q.toString() ? "?" + q.toString() : location.pathname) +
-          (keepHash ? location.hash : "");
-        history.replaceState(null, "", url);
+        const query = queryFromState(st, VIEW, L);
+        history.replaceState(null, "", shareUrl(query, { pathname: location.pathname, hash: location.hash, keepHash }));
       }
 
       function readUrl() {
-        st.entry = "";
-        const q = new URLSearchParams(location.search);
-        if (STR[q.get("lang")]) L = q.get("lang");
-        st.collection = COLLECTIONS.some(c => c.id === q.get("collection")) ? q.get("collection") : "";
-        st.sort = SORTS.includes(q.get("sort")) ? q.get("sort") : "curated";
-        st.pattern = q.get("p") || "";
-        st.kind = q.get("k") || "";
-        st.lang = q.get("lang_f") || "";
-        st.q = q.get("q") || "";
-        for (const t of ["code", "off", "indep", "noflag"])
-          st[t] = q.get(t) === "1";
-        const v = q.get("view") || (location.hash || "").replace("#", "");
-        VIEW = ["prims", "compat"].includes(v) ? v : "catalog";
-        // A bare #slug is an entry permalink. Drop any filter that could hide
-        // the target, otherwise the link silently lands on nothing.
-        if (v && VIEW === "catalog" && !q.toString()) {
-          st.pattern = st.kind = st.lang = st.q = "";
-          st.code = st.off = st.indep = st.noflag = false;
-        }
+        const read = stateFromQuery(location.search, location.hash, {
+          languages: Object.keys(STR),
+          collections: COLLECTIONS.map(c => c.id),
+        });
+        if (read.lang) L = read.lang;
+        Object.assign(st, read.state);
+        VIEW = read.view;
         const input = document.getElementById("q");
         if (st.q) input.value = st.q;
       }
