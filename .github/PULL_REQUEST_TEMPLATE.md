@@ -1,6 +1,6 @@
 ## What this changes
 
-<!-- One or two lines. -->
+<!-- One or two lines. A candidate from the `discovery` issue? Name the owner/name you claimed there. -->
 
 ## If you edited catalog.json
 
