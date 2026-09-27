@@ -298,8 +298,10 @@ python3 scripts/build_compat.py  # regenerate the compatibility tables
 python3 scripts/regenerate.py    # or: every generator above, in order
 ```
 
-`verify_claims.py` needs `GITHUB_TOKEN` set — unauthenticated GitHub is 60
-requests an hour, which will not cover a full sweep. `--discover` proposes
+`refresh_metadata.py` and `check_links.py` need `GITHUB_TOKEN` set, and
+`verify_claims.py` wants it — unauthenticated GitHub is 60 API requests an hour
+and no GraphQL at all, which will not cover a full sweep. Locally,
+`GITHUB_TOKEN=$(gh auth token)` does. `--discover` proposes
 evidence for a row that has none; the proposal is a starting point for a
 person, never written automatically.
 
@@ -348,6 +350,49 @@ The tests now fail when the schema uses a keyword, `format` or `type` outside
 that part, until `validate()` implements it. What lint accepts and rejects did
 not change.
 
+Since 2026-09-27, the three weekly jobs that read GitHub (`links`, `claims`,
+`metadata`) tell a rate limit from a refusal, keep what they read before one,
+and say what they spent. Before, every 403 from the API ended the run — so one
+repository GitHub blocks would have stopped the weekly refresh before it wrote
+anything — while a 429 from the raw-file host counted as a deleted file, the
+link sweep in `links` ran without a token, and `metadata` cut its sweep's
+report to five lines, so how many links were stamped or refused was never
+visible. GitHub documents the workflow token's budget as 1,000 REST requests an
+hour per repository; yet the scheduled run on 2026-09-23 made over a thousand
+authenticated requests in under two minutes, and the 734 repository reads at
+the end of it met no limit. Rather than plan around either figure, every run
+now records GitHub's `x-ratelimit-*` headers and writes what it spent and what
+is left to its job summary.
+
+- A rate limit (403 or 429 with `x-ratelimit-remaining: 0`, a `retry-after`, or
+  "rate limit" in the message) is waited out once — at most 90 seconds, as
+  GitHub asks — then that budget is closed for the run and the rows it would
+  have read are counted as skipped, never as gone or failed. A budget with
+  fewer than 50 requests left (a tenth, for a small one) is not spent further
+  until it resets, leaving room for the job's own issue and dispatch calls.
+  A 403 or 451 without those signals is a repository GitHub will not serve: one
+  row, listed for a person, not the end of the run.
+- `refresh_metadata.py` reads a hundred repositories per GraphQL query — about
+  a dozen requests for the whole catalogue — and reads over REST any row the
+  query did not answer. `--compare` reads rows both ways; on 203 rows (every
+  `NOASSERTION` licence, every archived row, 40 unlicensed and 110 random) and
+  two renamed repositories the two gave identical facts.
+- `verify_claims.py` reads each cited file at `HEAD` on the raw-file host,
+  which resolves to the default branch without an API request. That is
+  observed behaviour, not documented, so only a pass is taken from it: a file
+  missing or changed there is read again at the branch the API names, and that
+  read is the one reported.
+- `check_links.py` asks the API about bare repository URLs with a token in
+  `links` too, and counts refusals (401, 403, 429) for GitHub and for other
+  hosts apart. When more than a fifth of either group — of at least twenty
+  URLs — refused, it exits 3 and says the sweep was rate limited or blocked
+  rather than passing for a quiet week; dead links still exit 1. `metadata`
+  keeps stamping through both, fails only if the sweep never reported, and
+  keeps every row's verdict as a run artifact.
+- `status.md` and `llms.txt` now give how many rows share the newest
+  successful check date. The date alone read as if everything had been checked
+  then, while seventy rows carried an older date or none.
+
 ## Kept current
 
 Every figure this repository publishes changes for one of four reasons, and each
@@ -366,7 +411,7 @@ catalogue passed 800, and no build ever went red.
 | The repository description | When the count crosses a hundred, or the wording changes | Only an admin can edit it, so it states the count floored to the hundred: `_stats.pitch_public()`, the same sentence as the site's `description` and `og:description`. The `description` workflow compares the whole sentence on every push to `main`; on drift it warns and keeps one open issue, labelled `description`, holding the exact `gh repo edit` command, instead of failing a build nobody but an admin can fix. `lint` prints the would-be sentence on every run, pull requests included. Every other surface — the READMEs, `status.md`, `llms.txt`, the figures — carries the exact count. |
 | Labels for patterns, kinds and flags | When the taxonomy changes | One copy each, in `patterns.json` and `taxonomy.json`, read by the README generators and by the site at runtime. `lint` checks both against the schema; `lint_docs` checks `docs/patterns.md` has a section for each pattern. |
 | Model strings and limits | When the vendor or a gateway ships | One source, `compat.json`. `lint_docs` checks every copy — in docs, examples, and the generated README and figures — against it. `claims` re-reads each platform's documentation weekly and opens an issue if a recorded string disappears. |
-| Link status, stars, licences, archive status | Continuously, upstream | `metadata` weekly: stamps every link that answers, re-reads the GitHub API, rebuilds everything generated, commits it, runs `lint`'s checks on that commit (`check.py --ci --quick`: all but the preview images, which `pages` renders), pushes to `main`, and redeploys the site. It opens an issue only for a change that is more than a star count, and falls back to a branch if `main` moved underneath it. `links` weekly is the separate alarm for a dead link, which only a person may retire. The site shows the date of the sweep its figure comes from. |
+| Link status, stars, licences, archive status | Continuously, upstream | `metadata` weekly: stamps every link that answers, re-reads the GitHub API, rebuilds everything generated, commits it, runs `lint`'s checks on that commit (`check.py --ci --quick`: all but the preview images, which `pages` renders), pushes to `main`, and redeploys the site. It opens an issue only for a change that is more than a star count, and falls back to a branch if `main` moved underneath it. `links` weekly is the separate alarm for a dead link, which only a person may retire, and for a sweep so refused by GitHub or by other hosts that it checked little. Both jobs, and `claims`, write their counts and the GitHub budget they spent to the run's summary. The site shows the date of the sweep its figure comes from, and the status page how many rows share it. |
 | Whether cited text is still present | Continuously, upstream | `claims` is scheduled weekly to fetch each `evidence` file and report missing strings or files. Counts show citations recorded, not CI passes, and the job does not update the human `read_on` date. |
 | What the catalogue is missing | Continuously, upstream | `discover` weekly: harvests every sibling directory, reads the code of the most-cited uncatalogued repositories, searches for sibling directories not yet harvested, and files one issue. It never adds a row. |
 | The MCP package on PyPI | When `pyproject.toml`'s version changes | A release is a tag a maintainer pushes, so PyPI can lag `main`. `check_release.py` compares the two on every push to `main`, in `lint`'s `release` job: a version not yet on PyPI is a warning carrying the tag command; a version older than PyPI's newest, or `pyproject.toml` and `.claude-plugin/plugin.json` disagreeing, fails. The file comparison also runs on every pull request, as a unit test. After an upload, `publish` installs the release back from PyPI. |
