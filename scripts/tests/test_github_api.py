@@ -155,6 +155,18 @@ class ApiTest(Base):
         self.assertEqual(self.slept, [31])
         self.assertEqual(_github.USAGE.limited, 1)
 
+    def test_an_empty_budget_is_a_limit_whatever_the_message_says(self):
+        # The headers alone decide: a 403 with nothing left is not a blocked
+        # repository, even when its message does not say "rate limit".
+        net = self.net(
+            error(403, {"message": "Forbidden"}, **budget(0, reset=NOW + 30)),
+            Ok({"ok": 1}, **budget(4999, reset=NOW + 3600)),
+        )
+        self.assertEqual(_github.api_get("/repos/a/b"), {"ok": 1})
+        self.assertEqual(len(net.requests), 2)
+        self.assertEqual(self.slept, [31])
+        self.assertEqual(_github.USAGE.blocked, 0)
+
     def test_429_waits_as_long_as_retry_after_says(self):
         net = self.net(error(429, b"", Retry_After=7), Ok({"ok": 1}))
         self.assertEqual(_github.api_get("/repos/a/b"), {"ok": 1})
@@ -258,6 +270,14 @@ class GraphqlTest(Base):
         net = self.net(error(502), error(502))
         self.assertIsNone(_github.graphql_request("query { x }"))
         self.assertEqual(len(net.requests), 2)
+
+    def test_a_refusal_is_not_retried(self):
+        # A bad token or a refused query will not change on a second try; only
+        # a server error or no answer is worth one.
+        net = self.net(error(401, {"message": "Bad credentials"}))
+        self.assertIsNone(_github.graphql_request("query { x }"))
+        self.assertEqual(len(net.requests), 1)
+        self.assertEqual(self.slept, [])
 
     def test_a_200_whose_only_error_is_rate_limited_is_a_rate_limit(self):
         body = {"data": None, "errors": [{"type": "RATE_LIMITED", "message": "API rate limit exceeded"}]}
