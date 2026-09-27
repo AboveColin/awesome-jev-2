@@ -156,7 +156,7 @@ def discover(entry: dict) -> dict:
     Proposals are a starting point for a person, never written automatically —
     the whole point of this catalog is that a human read the call site. For an
     alternative the proposal says `wire-shape`, the only evidence.kind lint
-    accepts there: whatever file it cites, the project does not use Jev.
+    accepts there: whatever file it cites, the project is not built on Jev.
     """
     slug = entry["slug"]
     repo = repo_of(entry)
@@ -249,7 +249,7 @@ def main() -> int:
                         f"  {r['slug']}\n    path: {r['path']}\n    matched: {r['matched']}"
                     )
                     if r.get("kind"):
-                        print(f"    kind: {r['kind']} (the row is an alternative, so the file is not a call site)")
+                        print(f"    kind: {r['kind']} (the row is an alternative, so the file is not where it builds on Jev)")
                 else:
                     print(f"  {r['slug']}  [{r['status']}]")
         return 0

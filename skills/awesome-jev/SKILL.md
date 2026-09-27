@@ -130,7 +130,7 @@ with the ones already catalogued or declined ticked or struck through.
    `question_types` only for the primitives it actually calls; set
    `evidence.read_on` to the day you read the file; check the guessed `kind`,
    `patterns` and `languages`; if the kind is `alternative`, set
-   `evidence.kind` to `wire-shape`, since the file cannot be a call site; set
+   `evidence.kind` to `wire-shape`, since the project is not built on Jev; set
    `zh_machine: true` if a model wrote the Chinese; name the source in
    `sources`.
 4. Delete `_draft`, add the row to `catalog.json`, run

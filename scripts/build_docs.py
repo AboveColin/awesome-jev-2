@@ -74,7 +74,7 @@ def shape_block(s: dict) -> str:
             ["Most recent successful link-check date (dates vary by row)", s["last_sweep"]],
             ["Rows whose latest successful check is on that date", f"{s['sweep_coverage']} of {s['entries']}"],
             ["Rows citing a file where the project calls Jev (`evidence`; not a CI pass count)", s["call_site_rows"]],
-            ["Rows citing a file that speaks Jev's request shape without using Jev (`evidence.kind` `wire-shape`)", s["wire_shape_rows"]],
+            ["Rows citing a file that speaks Jev's request shape rather than building on Jev (`evidence.kind` `wire-shape`)", s["wire_shape_rows"]],
             ["Rows citing only an example the project ships (`evidence.kind` `example-only`)", s["example_only_rows"]],
             ["Rows with code citing no file and giving no reason (neither `evidence` nor `evidence_none`)", s["has_code_unbacked"]],
             ["Machine signal: evidence under an examples directory, not yet judged ([review queue](review-queue.md#examples-dir))", s["review_examples_dir"]],

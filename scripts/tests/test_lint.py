@@ -221,7 +221,7 @@ class EntryInvariantTest(FindingsAssertions):
         )
 
     def test_an_alternatives_evidence_is_marked_wire_shape(self):
-        # I18: an alternative does not call Jev, so a file it cites cannot be
+        # I18: an alternative is not built on Jev, so a file it cites cannot be
         # counted or shown as a call site.
         for kind in (DROP, "call-site", "example-only"):
             with self.subTest(kind=kind):

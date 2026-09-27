@@ -114,8 +114,9 @@ EN = {
     "verified_recheck": (
         "**Call-site text checks** — {call_site} rows record in `evidence` a file where the project "
         "calls Jev, and strings matched in it. Another {wire_shape} record a file that shows a project "
-        "speaking Jev's request shape without using Jev (every `alternative`, and adapters backed by "
-        "other models), and {example_only} only an example the project ships; `evidence.kind` says "
+        "speaking Jev's request shape rather than building on Jev (every `alternative`, whether it "
+        "serves that shape or sends Jev the same request to compare, and adapters backed by other "
+        "models), and {example_only} only an example the project ships; `evidence.kind` says "
         "which. The weekly [claims job](https://github.com/kydlikebtc/awesome-jev/actions/workflows/claims.yml) "
         "checks that those strings remain on the default branch and reports missing text or files. "
         "These counts measure recorded evidence, **not latest CI passes**. A text match does not "
@@ -279,8 +280,9 @@ ZH = {
     "stat_rechecked": "已记录证据",
     "verified_recheck": (
         "**调用点文本复查** —— 有 {call_site} 行通过 `evidence` 记录了项目调用 Jev 的文件及其中匹配的字符串。"
-        "另有 {wire_shape} 行记录的文件只表明项目采用了 Jev 的请求结构、并未使用 Jev"
-        "（所有 `alternative`，以及由其他模型支撑的适配器），{example_only} 行记录的只是项目附带的示例；"
+        "另有 {wire_shape} 行记录的文件只表明项目采用了 Jev 的请求结构、并非基于 Jev 构建"
+        "（所有 `alternative`——无论是自己提供这种结构，还是向 Jev 发送同样的请求作对比——"
+        "以及由其他模型支撑的适配器），{example_only} 行记录的只是项目附带的示例；"
         "`evidence.kind` 标明属于哪一种。"
         "每周 [claims 任务](https://github.com/kydlikebtc/awesome-jev/actions/workflows/claims.yml) "
         "检查这些字符串是否仍在默认分支，发现文本或文件缺失时报告。"

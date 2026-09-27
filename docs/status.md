@@ -18,7 +18,7 @@ is the point of dating it.
 | Most recent successful link-check date (dates vary by row) | 2026-09-24 |
 | Rows whose latest successful check is on that date | 1137 of 1207 |
 | Rows citing a file where the project calls Jev (`evidence`; not a CI pass count) | 1074 |
-| Rows citing a file that speaks Jev's request shape without using Jev (`evidence.kind` `wire-shape`) | 55 |
+| Rows citing a file that speaks Jev's request shape rather than building on Jev (`evidence.kind` `wire-shape`) | 55 |
 | Rows citing only an example the project ships (`evidence.kind` `example-only`) | 0 |
 | Rows with code citing no file and giving no reason (neither `evidence` nor `evidence_none`) | 0 |
 | Machine signal: evidence under an examples directory, not yet judged ([review queue](review-queue.md#examples-dir)) | 22 |

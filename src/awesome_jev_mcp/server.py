@@ -243,12 +243,14 @@ def search_examples(
 def get_example(slug: str) -> dict[str, Any]:
     """Return one catalogue row in full, including its sources and evidence.
 
-    `evidence` names the file a primitive claim was read in; a scheduled job
+    `evidence` names the file the row's code was read in; a scheduled job
     re-reads it weekly, so the claim is checkable rather than asserted.
     `evidence.kind` says what that file shows: `call-site` (the default when
     absent) is where the project calls Jev; `wire-shape` is a file that speaks
-    Jev's request shape without using Jev (every `alternative` row); and
-    `example-only` is an example the project ships, not its own integration.
+    Jev's request shape rather than building on Jev (every `alternative` row,
+    whether it serves that shape or sends Jev the same request to compare, and
+    adapters backed by other models); and `example-only` is an example the
+    project ships, not its own integration.
 
     Args:
         slug: the row's stable id, as returned by search_examples

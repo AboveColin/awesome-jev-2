@@ -2,7 +2,7 @@
 
 `evidence` used to be one kind of record and one published number: 1,121
 "call-site" citations, 52 of which were files of `kind: alternative` projects
-that by definition never call Jev. `evidence.kind` now says what a cited file
+that by definition are not built on Jev. `evidence.kind` now says what a cited file
 shows (call-site, wire-shape, example-only), lint requires `wire-shape` on
 every alternative, and _stats publishes one count per kind.
 
@@ -138,6 +138,32 @@ class RealCatalogueTest(unittest.TestCase):
             if e["kind"] == "alternative" and e.get("evidence") and e["evidence"].get("kind") != "wire-shape"
         ]
         self.assertEqual(wrong, [])
+
+    def test_wire_shape_is_never_described_as_a_file_without_a_jev_call(self):
+        # An alternative's cited file is often a baseline script that sends the
+        # real Jev the same request (NanoJev's own notes say so), so a wire-shape
+        # citation is "not a Jev integration", never "not a Jev call".
+        calls_jev = [
+            e["slug"]
+            for e in self.catalog
+            if (e.get("evidence") or {}).get("kind") == "wire-shape"
+            and {"api.typesafe.ai", "typesafe-ai/jev"} & set(e["evidence"]["matched"])
+        ]
+        self.assertTrue(calls_jev)
+        site = (ROOT / "site" / "index.html").read_text()
+        wire_label = [line for line in site.splitlines() if "cite_wire_shape:" in line]
+        self.assertEqual(len(wire_label), 2)
+        surfaces = {
+            "README": build_readme.EN["verified_recheck"] + build_readme.ZH["verified_recheck"],
+            "site": "\n".join(wire_label),
+            "status": (ROOT / "docs" / "status.md").read_text(),
+            "llms": (ROOT / "llms.txt").read_text(),
+            "schema": (ROOT / "schema" / "entry.schema.json").read_text(),
+        }
+        for name, text in surfaces.items():
+            for phrase in ("not a Jev call", "without using Jev", "rather than using Jev", "并非调用 Jev", "并未使用 Jev"):
+                with self.subTest(surface=name, phrase=phrase):
+                    self.assertNotIn(phrase, text)
 
     def test_published_counts_add_up_to_the_cited_rows(self):
         cited = sum(1 for e in self.catalog if e.get("evidence"))

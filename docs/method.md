@@ -113,10 +113,10 @@ way to satisfy it.
 Since 2026-09-27, a citation records what the cited file shows, and the counts
 keep the kinds apart. Until then every `evidence` record was published as a
 call-site citation, one number of 1,121, although 52 of those rows were
-`kind: alternative`: projects that by definition do not call Jev, whose files
-matched strings such as `/v1/systemone` because they serve or send Jev's request
-shape. `evidence.kind` is now `call-site` (the default when absent), `wire-shape`
-(the file shows a project speaking Jev's request shape rather than using Jev: a
+`kind: alternative`: projects that by definition are not built on Jev, whose
+files matched strings such as `/v1/systemone` because they serve Jev's request
+shape or send it to Jev to compare against. `evidence.kind` is now `call-site` (the default when absent), `wire-shape`
+(the file shows a project speaking Jev's request shape rather than building on Jev: a
 reimplementation, a compatible server, an adapter backed by other models, or a
 comparison script) or `example-only` (an example the project ships, not its own
 integration). The 52 alternative rows were marked `wire-shape` mechanically,

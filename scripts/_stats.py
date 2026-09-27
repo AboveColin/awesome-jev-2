@@ -25,7 +25,7 @@ THIN_SHARE = 0.025
 
 # What the file an `evidence` record cites shows, as `evidence.kind` records it:
 # a place the project calls Jev; a file showing a project speaking Jev's request
-# shape rather than using Jev (every `kind: alternative` row, and adapters); or
+# shape rather than building on Jev (every `kind: alternative` row, and adapters); or
 # an example the project ships rather than its own integration. A record without the field is
 # a call site: that is what every citation meant before the field existed.
 EVIDENCE_KINDS = ("call-site", "wire-shape", "example-only")
