@@ -16,6 +16,8 @@ import pathlib
 import re
 from collections import Counter
 
+from classify import classify_broad, suggest
+
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 
 # A pattern holding less than this share of the catalogue is reported as thin.
@@ -42,6 +44,13 @@ EXAMPLES_DIR = re.compile(r"(^|/)examples?/")
 # whether or not it calls the API, so on its own it is the thinnest witness a
 # citation can have. A second matched string from the call itself ends it.
 MODEL_NAMES_AND_HOST = ("jev-latest", "jev-1.13", "typesafe-ai/jev", "typesafe/jev", "api.typesafe.ai")
+
+# A row filed under tool-selection that only the keyword rules' broad words
+# suggest: "control", "harness" or "screen" on their own, or a robot, an
+# autonomous system or "drive" with no word for deciding or acting. Those words
+# counted until 2026-09-27 (classify.py), and the bulk passes took the rules'
+# patterns, so such a row may never have been read against the pattern.
+TOOL_SELECTION = "tool-selection"
 
 # Where a summary's words come from, as summary_source records it
 # (schema/entry.schema.json). The two upstream values are the project's own
@@ -84,6 +93,17 @@ def single_model_name(entry: dict) -> bool:
     return len(matched) == 1 and matched[0] in MODEL_NAMES_AND_HOST
 
 
+def tool_selection_broad_only(entry: dict) -> bool:
+    """Machine signal: the row carries tool-selection, the keyword rules as
+    they stood until 2026-09-27 suggest it for the row's summary and title,
+    and the current rules do not."""
+    return (
+        TOOL_SELECTION in entry.get("patterns", [])
+        and TOOL_SELECTION in suggest(entry, classify_broad)[1]
+        and TOOL_SELECTION not in suggest(entry)[1]
+    )
+
+
 def compute() -> dict:
     catalog, retired, patterns, compat, schema = load()
     by_pattern = Counter(p for e in catalog for p in e["patterns"])
@@ -122,6 +142,7 @@ def compute() -> dict:
         # Machine signals listed in docs/review-queue.md, for a person to read.
         "review_examples_dir": sum(1 for e in catalog if examples_unjudged(e)),
         "review_single_model_name": sum(1 for e in catalog if single_model_name(e)),
+        "review_tool_selection_broad": sum(1 for e in catalog if tool_selection_broad_only(e)),
         # A row with question_types additionally asserts *which* primitives.
         # Different claims; publishing one number for both would overstate it.
         "primitive_rows": sum(1 for e in catalog if e.get("question_types")),

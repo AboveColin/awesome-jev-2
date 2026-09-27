@@ -23,6 +23,7 @@ is the point of dating it.
 | Rows with code citing no file and giving no reason (neither `evidence` nor `evidence_none`) | 0 |
 | Machine signal: evidence under an examples directory, not yet judged ([review queue](review-queue.md#examples-dir)) | 22 |
 | Machine signal: evidence resting on one model name or the API host ([review queue](review-queue.md#single-model-name)) | 76 |
+| Machine signal: `tool-selection` suggested only by keyword-rule words dropped on 2026-09-27 ([review queue](review-queue.md#tool-selection-broad-words)) | 65 |
 | Patterns covered | 18 of 18 |
 | Summaries that are the project's own GitHub description (`summary_source` `upstream-description`) | 890 of 1207 |
 | Summaries taken from that description that no longer match it (`upstream-description-stale`) | 0 |

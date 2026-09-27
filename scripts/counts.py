@@ -64,7 +64,8 @@ def main() -> int:
     print(f"code, no cite  {stats['has_code_unbacked']} (neither evidence nor evidence_none)")
     print(
         f"review queue   {stats['review_examples_dir']} under examples/, "
-        f"{stats['review_single_model_name']} on one model name or host (docs/review-queue.md)"
+        f"{stats['review_single_model_name']} on one model name or host, "
+        f"{stats['review_tool_selection_broad']} tool-selection on dropped keywords (docs/review-queue.md)"
     )
     print(
         f"summaries      {stats['summary_upstream']} upstream-description, "

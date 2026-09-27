@@ -99,7 +99,7 @@ its checks reads, it:
 - checks that `ai-generated`, `unverified-claims` and `code-untested` come with
   a `notes` line;
 - and, as a hint only, says which kind and patterns the keyword rules that
-  `discover` uses would have guessed from your summary.
+  `discover` uses (`scripts/classify.py`) would have guessed from your summary.
 
 ✗ is for you to fix before merging, ⚠ for a person to look at, ℹ is a hint,
 and *not checked* is not a pass. The card is advisory while it is new: it never
@@ -211,7 +211,8 @@ turns red.
   speaks Jev's request shape — lint requires this on every `alternative` — and
   `example-only` when the call is in an example the project ships rather than in
   its own code. Rows a script marks for a person to re-read (a file under
-  `examples/`, a citation resting on one model name) are listed in
+  `examples/`, a citation resting on one model name, a `tool-selection` that
+  only words the keyword rules no longer count suggested) are listed in
   [`docs/review-queue.md`](docs/review-queue.md); each section there says what
   to record to take a row off.
   `lint.py` fails a row with `question_types`, and a row with `has_code: true`

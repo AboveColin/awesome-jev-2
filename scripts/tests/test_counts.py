@@ -51,6 +51,7 @@ class CountsTest(unittest.TestCase):
             "example_only_rows": 7008,
             "review_examples_dir": 7009,
             "review_single_model_name": 7010,
+            "review_tool_selection_broad": 7016,
             "has_code_unbacked": 7011,
             "summary_upstream": 7012,
             "summary_upstream_stale": 7013,
@@ -66,7 +67,8 @@ class CountsTest(unittest.TestCase):
             "official       7002",
             "zh hand-written 7003/7004",
             "evidence       7006 call-site, 7007 wire-shape, 7008 example-only",
-            "review queue   7009 under examples/, 7010 on one model name or host",
+            "review queue   7009 under examples/, 7010 on one model name or host, "
+            "7016 tool-selection on dropped keywords (docs/review-queue.md)",
             "code, no cite  7011 (neither evidence nor evidence_none)",
             "summaries      7012 upstream-description, 7013 upstream-description-stale, 7014 curated, 7015 unlabelled",
             "next changes at 7,100 entries",

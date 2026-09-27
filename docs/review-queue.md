@@ -12,6 +12,7 @@ Rows a script has singled out for a person to read. Each entry is a machine sign
 | --- | --- |
 | [Evidence read from an examples directory · 证据取自 examples 目录](#examples-dir) | 22 |
 | [Evidence resting on one model name or the API host · 证据只靠一个模型名或 API 主机](#single-model-name) | 76 |
+| [Tool selection resting on words the keyword rules no longer count · 工具选择只靠关键词规则已不再计入的词](#tool-selection-broad-words) | 65 |
 
 <a id="examples-dir"></a>
 
@@ -140,3 +141,83 @@ To take a row off, add a second string from the call itself (an import, the meth
 | [typesafe-ui](https://kydlikebtc.github.io/awesome-jev/?lang=en#typesafe-ui) | `project` | [`apps/web/components/demos.tsx`](https://github.com/TypeSafeAI/typesafe-ui/blob/HEAD/apps/web/components/demos.tsx) | `jev-latest` |
 | [wakegate](https://kydlikebtc.github.io/awesome-jev/?lang=en#wakegate) | `project` | [`src/index.ts`](https://github.com/shitianfang/wakegate/blob/HEAD/src/index.ts) | `typesafe-ai/jev` |
 | [yoshi](https://kydlikebtc.github.io/awesome-jev/?lang=en#yoshi) | `plugin` | [`benchmarks/jev-calibrate.ts`](https://github.com/compozy/yoshi/blob/HEAD/benchmarks/jev-calibrate.ts) | `typesafe-ai/jev` |
+
+<a id="tool-selection-broad-words"></a>
+
+## Tool selection resting on words the keyword rules no longer count · 工具选择只靠关键词规则已不再计入的词
+
+The row carries `tool-selection`, and the keyword rules suggest it for the row's summary and title only as they stood until 2026-09-27. They then counted "control", "harness" and "screen" on their own, and "robot", "autonomous" and "drive" with no word for deciding or acting beside them; the rules in `scripts/classify.py` no longer do. The bulk passes took the rules' patterns, so a row here may never have been read against tool-selection, or a person may have agreed with it without recording so. The rules read a project's GitHub description at discovery; the summary stands in for it here.
+
+该行带有 `tool-selection`，而关键词规则只有按 2026-09-27 之前的写法才会从它的摘要和标题建议这个模式。当时的规则单凭 "control"、"harness"、"screen" 就算数，"robot"、"autonomous"、"drive" 旁边没有表示决定或动作的词也算数；`scripts/classify.py` 里现在的规则不再这样。批量收录时直接采用了规则给出的模式，所以这里的行可能从未有人对照 tool-selection 读过，也可能有人读过并同意，只是没有记录。规则在发现阶段读的是项目的 GitHub 描述；这里以摘要代替。
+
+To take a row off, read the project against [`tool-selection`](patterns.md#tool-selection). If nothing in it decides which tool or action comes next, replace `tool-selection` in `patterns` with the pattern it does show, or with `overview`. If it does decide that, the row stays listed for now: the catalogue has no field yet that records a reading which confirms a pattern.
+
+移出方法：对照 [`tool-selection`](patterns.md#tool-selection) 阅读该项目。如果其中没有任何东西在决定下一步调用哪个工具或采取哪个动作，就把 `patterns` 里的 `tool-selection` 换成它实际体现的模式，或换成 `overview`。如果确实在做这个决定，该行暂时仍会列在这里：目录里还没有记录“有人读过并确认模式”的字段。
+
+| Row · 行 | Stars · 星标 | Patterns in the row · 该行的模式 | Suggested until 2026-09-27 · 2026-09-27 之前的建议 | Suggested now · 现在的建议 |
+| --- | --- | --- | --- | --- |
+| [agent](https://kydlikebtc.github.io/awesome-jev/?lang=en#agent) | ★100+ | `tool-selection` | `tool-selection` | `overview` |
+| [interlinked-cli](https://kydlikebtc.github.io/awesome-jev/?lang=en#interlinked-cli) | ★100+ | `tool-selection` | `tool-selection` | `overview` |
+| [jev-dsh-decision](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-dsh-decision) | ★100+ | `tool-selection` | `tool-selection` | `overview` |
+| [jevharness](https://kydlikebtc.github.io/awesome-jev/?lang=en#jevharness) | ★100+ | `tool-selection` | `tool-selection` | `overview` |
+| [omg-dev](https://kydlikebtc.github.io/awesome-jev/?lang=en#omg-dev) | ★100+ | `tool-selection` | `tool-selection` | `overview` |
+| [systemoneharness](https://kydlikebtc.github.io/awesome-jev/?lang=en#systemoneharness) | ★100+ | `tool-selection` | `tool-selection` | `overview` |
+| [azdaja](https://kydlikebtc.github.io/awesome-jev/?lang=en#azdaja) | ★10+ | `tool-selection` | `tool-selection` | `overview` |
+| [discern](https://kydlikebtc.github.io/awesome-jev/?lang=en#discern) | ★10+ | `tool-selection` `human-escalation` | `tool-selection` `human-escalation` | `human-escalation` |
+| [dsh-jev-buberlo](https://kydlikebtc.github.io/awesome-jev/?lang=en#dsh-jev-buberlo) | ★10+ | `tool-selection` | `tool-selection` | `overview` |
+| [eutrya](https://kydlikebtc.github.io/awesome-jev/?lang=en#eutrya) | ★10+ | `tool-selection` | `tool-selection` | `overview` |
+| [jcr](https://kydlikebtc.github.io/awesome-jev/?lang=en#jcr) | ★10+ | `tool-selection` | `tool-selection` | `overview` |
+| [jev-agent-design-with-topk-logits-choices](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-agent-design-with-topk-logits-choices) | ★10+ | `tool-selection` | `tool-selection` `content-scoring` | `content-scoring` |
+| [jev-autopilot](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-autopilot) | ★10+ | `tool-selection` | `tool-selection` | `overview` |
+| [jev-cua](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-cua) | ★10+ | `tool-selection` `output-validation` | `tool-selection` `output-validation` | `output-validation` |
+| [jev-harness](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-harness) | ★10+ | `tool-selection` `safety-gating` `human-escalation` | `tool-selection` `safety-gating` `human-escalation` | `safety-gating` `human-escalation` |
+| [jev-libero](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-libero) | ★10+ | `tool-selection` `output-validation` | `tool-selection` `output-validation` | `output-validation` |
+| [jev-mem](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-mem) | ★10+ | `tool-selection` | `tool-selection` | `overview` |
+| [jev-use-savka777](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-use-savka777) | ★10+ | `tool-selection` | `tool-selection` | `overview` |
+| [jevalyn](https://kydlikebtc.github.io/awesome-jev/?lang=en#jevalyn) | ★10+ | `tool-selection` `content-scoring` `human-escalation` | `tool-selection` `content-scoring` `human-escalation` | `content-scoring` `human-escalation` |
+| [jevgpt](https://kydlikebtc.github.io/awesome-jev/?lang=en#jevgpt) | ★10+ | `tool-selection` `content-scoring` | `tool-selection` `content-scoring` | `content-scoring` |
+| [live-jev-okinaaudio](https://kydlikebtc.github.io/awesome-jev/?lang=en#live-jev-okinaaudio) | ★10+ | `tool-selection` | `tool-selection` | `overview` |
+| [mario-jev](https://kydlikebtc.github.io/awesome-jev/?lang=en#mario-jev) | ★10+ | `tool-selection` | `tool-selection` | `overview` |
+| [robojev](https://kydlikebtc.github.io/awesome-jev/?lang=en#robojev) | ★10+ | `tool-selection` | `tool-selection` | `overview` |
+| [smartmoney-cub](https://kydlikebtc.github.io/awesome-jev/?lang=en#smartmoney-cub) | ★10+ | `tool-selection` `output-validation` `content-scoring` | `tool-selection` `output-validation` `content-scoring` | `output-validation` `content-scoring` |
+| [super-jev](https://kydlikebtc.github.io/awesome-jev/?lang=en#super-jev) | ★10+ | `tool-selection` | `tool-selection` | `overview` |
+| [agi-jev-containment](https://kydlikebtc.github.io/awesome-jev/?lang=en#agi-jev-containment) |  | `classification` `tool-selection` `safety-gating` | `classification` `tool-selection` `safety-gating` | `classification` `safety-gating` `human-escalation` |
+| [casse-brique-typesafe](https://kydlikebtc.github.io/awesome-jev/?lang=en#casse-brique-typesafe) |  | `tool-selection` | `tool-selection` | `overview` |
+| [datajev](https://kydlikebtc.github.io/awesome-jev/?lang=en#datajev) |  | `tool-selection` `output-validation` | `tool-selection` `output-validation` | `output-validation` |
+| [deepseek-harness-jev-pre-compaction](https://kydlikebtc.github.io/awesome-jev/?lang=en#deepseek-harness-jev-pre-compaction) |  | `tool-selection` `context-compaction` | `tool-selection` `context-compaction` | `context-compaction` |
+| [dsh-jev-zhangxaochen](https://kydlikebtc.github.io/awesome-jev/?lang=en#dsh-jev-zhangxaochen) |  | `tool-selection` | `tool-selection` | `overview` |
+| [dsh-jev-prune](https://kydlikebtc.github.io/awesome-jev/?lang=en#dsh-jev-prune) |  | `tool-selection` `content-scoring` `context-compaction` | `tool-selection` `content-scoring` `context-compaction` | `content-scoring` `context-compaction` `document-triage` |
+| [dsh-jev-verify](https://kydlikebtc.github.io/awesome-jev/?lang=en#dsh-jev-verify) |  | `tool-selection` `output-validation` `content-scoring` | `tool-selection` `output-validation` `content-scoring` | `output-validation` `content-scoring` |
+| [fast-compaction-dsh](https://kydlikebtc.github.io/awesome-jev/?lang=en#fast-compaction-dsh) |  | `tool-selection` `context-compaction` | `tool-selection` `context-compaction` | `context-compaction` |
+| [gg-friggin-ez](https://kydlikebtc.github.io/awesome-jev/?lang=en#gg-friggin-ez) |  | `tool-selection` | `tool-selection` | `overview` |
+| [hearth-jev-rental-search](https://kydlikebtc.github.io/awesome-jev/?lang=en#hearth-jev-rental-search) |  | `tool-selection` | `tool-selection` | `overview` |
+| [jev-agent-skill](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-agent-skill) |  | `classification` `tool-selection` `output-validation` | `classification` `tool-selection` `output-validation` | `classification` `output-validation` `content-scoring` |
+| [jev-behavior-study](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-behavior-study) |  | `tool-selection` `output-validation` | `tool-selection` `output-validation` | `output-validation` |
+| [jev-certify](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-certify) |  | `tool-selection` `safety-gating` `content-scoring` | `tool-selection` `safety-gating` `content-scoring` | `safety-gating` `content-scoring` `human-escalation` |
+| [jev-codex-pilot](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-codex-pilot) |  | `model-routing` `tool-selection` | `model-routing` `tool-selection` | `model-routing` |
+| [jev-for-engineers](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-for-engineers) |  | `classification` `tool-selection` `output-validation` | `classification` `tool-selection` `output-validation` | `classification` `output-validation` `data-extraction` |
+| [jev-harness-typesafeai](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-harness-typesafeai) |  | `tool-selection` | `tool-selection` `document-triage` | `document-triage` |
+| [jev-harness-router](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-harness-router) |  | `model-routing` `tool-selection` | `model-routing` `tool-selection` | `model-routing` |
+| [jev-layer](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-layer) |  | `tool-selection` `document-triage` | `tool-selection` `document-triage` | `document-triage` |
+| [jev-llm-router-benchmark](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-llm-router-benchmark) |  | `tool-selection` `content-scoring` | `tool-selection` `content-scoring` | `content-scoring` |
+| [jev-mobile](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-mobile) |  | `tool-selection` | `tool-selection` | `overview` |
+| [jev-model-tokengate](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-model-tokengate) |  | `tool-selection` `safety-gating` | `tool-selection` `safety-gating` | `safety-gating` |
+| [jev-physical-ai](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-physical-ai) |  | `tool-selection` | `tool-selection` | `overview` |
+| [jev-plays](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-plays) |  | `tool-selection` | `tool-selection` | `overview` |
+| [jev-robotics-demo](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-robotics-demo) |  | `tool-selection` | `tool-selection` | `overview` |
+| [jev-routing](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-routing) |  | `tool-selection` | `tool-selection` | `overview` |
+| [jev-usecases](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-usecases) |  | `tool-selection` `safety-gating` `human-escalation` | `tool-selection` `safety-gating` `human-escalation` | `safety-gating` `human-escalation` |
+| [jev-voice-control](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-voice-control) |  | `tool-selection` | `tool-selection` | `overview` |
+| [jev-windows-voice](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-windows-voice) |  | `tool-selection` | `tool-selection` | `overview` |
+| [jevdroid](https://kydlikebtc.github.io/awesome-jev/?lang=en#jevdroid) |  | `tool-selection` | `tool-selection` | `overview` |
+| [jevloop-parkavenue9639](https://kydlikebtc.github.io/awesome-jev/?lang=en#jevloop-parkavenue9639) |  | `tool-selection` | `tool-selection` | `overview` |
+| [jevonly](https://kydlikebtc.github.io/awesome-jev/?lang=en#jevonly) |  | `tool-selection` | `tool-selection` | `overview` |
+| [jevscape](https://kydlikebtc.github.io/awesome-jev/?lang=en#jevscape) |  | `tool-selection` | `tool-selection` | `overview` |
+| [pi-typesafe-jev](https://kydlikebtc.github.io/awesome-jev/?lang=en#pi-typesafe-jev) |  | `tool-selection` `content-scoring` `human-escalation` | `tool-selection` `content-scoring` `human-escalation` | `content-scoring` `human-escalation` |
+| [ps2-ai-agent](https://kydlikebtc.github.io/awesome-jev/?lang=en#ps2-ai-agent) |  | `tool-selection` | `tool-selection` | `overview` |
+| [robo-harness](https://kydlikebtc.github.io/awesome-jev/?lang=en#robo-harness) |  | `tool-selection` | `tool-selection` | `overview` |
+| [slidepilot](https://kydlikebtc.github.io/awesome-jev/?lang=en#slidepilot) |  | `tool-selection` | `tool-selection` | `overview` |
+| [snake-jev](https://kydlikebtc.github.io/awesome-jev/?lang=en#snake-jev) |  | `tool-selection` `fan-out` | `tool-selection` `fan-out` | `fan-out` |
+| [terrarium](https://kydlikebtc.github.io/awesome-jev/?lang=en#terrarium) |  | `tool-selection` | `tool-selection` | `overview` |
+| [typesafe-minecraft-demo](https://kydlikebtc.github.io/awesome-jev/?lang=en#typesafe-minecraft-demo) |  | `tool-selection` | `tool-selection` | `overview` |
+| [zerosweep](https://kydlikebtc.github.io/awesome-jev/?lang=en#zerosweep) |  | `classification` `tool-selection` `safety-gating` | `classification` `tool-selection` `safety-gating` | `classification` `safety-gating` |

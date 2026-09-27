@@ -80,6 +80,7 @@ def shape_block(s: dict) -> str:
             ["Rows with code citing no file and giving no reason (neither `evidence` nor `evidence_none`)", s["has_code_unbacked"]],
             ["Machine signal: evidence under an examples directory, not yet judged ([review queue](review-queue.md#examples-dir))", s["review_examples_dir"]],
             ["Machine signal: evidence resting on one model name or the API host ([review queue](review-queue.md#single-model-name))", s["review_single_model_name"]],
+            ["Machine signal: `tool-selection` suggested only by keyword-rule words dropped on 2026-09-27 ([review queue](review-queue.md#tool-selection-broad-words))", s["review_tool_selection_broad"]],
             ["Patterns covered", f"{s['patterns_covered']} of {s['patterns_total']}"],
             ["Summaries that are the project's own GitHub description (`summary_source` `upstream-description`)", f"{s['summary_upstream']} of {s['entries']}"],
             ["Summaries taken from that description that no longer match it (`upstream-description-stale`)", s["summary_upstream_stale"]],

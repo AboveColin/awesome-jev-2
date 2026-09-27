@@ -33,6 +33,8 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 
 import _stats  # noqa: E402
 from _github import repo_of  # noqa: E402
+from classify import classify_broad, suggest  # noqa: E402
+from readme.rows import star_band, star_label  # noqa: E402
 
 ROOT = _stats.ROOT
 OUT = ROOT / "docs" / "review-queue.md"
@@ -146,7 +148,73 @@ def single_model_name(catalog: list[dict]) -> Section:
     )
 
 
-SECTIONS = (examples_dir, single_model_name)
+def by_band(entries) -> list[dict]:
+    """Most-starred band first, then by title: the order a person with an hour
+    would read them in. The band, not the count (readme/rows.py STAR_BANDS),
+    so the weekly star refresh moves a row only when it crosses a floor."""
+    return sorted(entries, key=lambda e: (-star_band(e.get("stars")), e["title"].lower(), e["slug"]))
+
+
+def patterns_cell(patterns) -> str:
+    return " ".join(cell(p) for p in patterns)
+
+
+def tool_selection_broad_words(catalog: list[dict]) -> Section:
+    marked = by_band(e for e in catalog if _stats.tool_selection_broad_only(e))
+    return Section(
+        key="tool-selection-broad-words",
+        title_en="Tool selection resting on words the keyword rules no longer count",
+        title_zh="工具选择只靠关键词规则已不再计入的词",
+        about_en=(
+            "The row carries `tool-selection`, and the keyword rules suggest it for the row's summary "
+            "and title only as they stood until 2026-09-27. They then counted \"control\", \"harness\" "
+            "and \"screen\" on their own, and \"robot\", \"autonomous\" and \"drive\" with no word for "
+            "deciding or acting beside them; the rules in `scripts/classify.py` no longer do. The bulk "
+            "passes took the rules' patterns, so a row here may never have been read against "
+            "tool-selection, or a person may have agreed with it without recording so. The rules read "
+            "a project's GitHub description at discovery; the summary stands in for it here."
+        ),
+        about_zh=(
+            "该行带有 `tool-selection`，而关键词规则只有按 2026-09-27 之前的写法才会从它的摘要和标题建议这个模式。"
+            "当时的规则单凭 \"control\"、\"harness\"、\"screen\" 就算数，\"robot\"、\"autonomous\"、"
+            "\"drive\" 旁边没有表示决定或动作的词也算数；`scripts/classify.py` 里现在的规则不再这样。"
+            "批量收录时直接采用了规则给出的模式，所以这里的行可能从未有人对照 tool-selection 读过，"
+            "也可能有人读过并同意，只是没有记录。规则在发现阶段读的是项目的 GitHub 描述；这里以摘要代替。"
+        ),
+        leave_en=(
+            "To take a row off, read the project against [`tool-selection`](patterns.md#tool-selection). "
+            "If nothing in it decides which tool or action comes next, replace `tool-selection` in "
+            "`patterns` with the pattern it does show, or with `overview`. If it does decide that, the "
+            "row stays listed for now: the catalogue has no field yet that records a reading which "
+            "confirms a pattern."
+        ),
+        leave_zh=(
+            "移出方法：对照 [`tool-selection`](patterns.md#tool-selection) 阅读该项目。"
+            "如果其中没有任何东西在决定下一步调用哪个工具或采取哪个动作，就把 `patterns` 里的 `tool-selection` "
+            "换成它实际体现的模式，或换成 `overview`。如果确实在做这个决定，该行暂时仍会列在这里："
+            "目录里还没有记录“有人读过并确认模式”的字段。"
+        ),
+        columns=(
+            ("Row", "行"),
+            ("Stars", "星标"),
+            ("Patterns in the row", "该行的模式"),
+            ("Suggested until 2026-09-27", "2026-09-27 之前的建议"),
+            ("Suggested now", "现在的建议"),
+        ),
+        rows=tuple(
+            (
+                row_link(e),
+                star_label(e.get("stars")),
+                patterns_cell(e["patterns"]),
+                patterns_cell(suggest(e, classify_broad)[1]),
+                patterns_cell(suggest(e)[1]),
+            )
+            for e in marked
+        ),
+    )
+
+
+SECTIONS = (examples_dir, single_model_name, tool_selection_broad_words)
 
 HEADER = "<!-- Written by scripts/build_review_queue.py from catalog.json. Edit those, not this file. -->"
 PROVENANCE = (

@@ -270,6 +270,27 @@ an SDK picking up a behavioural pattern from words describing its own API.
 regex bug — `form\b` with no leading boundary matched "platform" and filed a
 .NET SDK under document triage.
 
+Since 2026-09-27, the rules' `tool-selection` test no longer counts "control",
+"harness" or "screen" on their own, and counts "robot", "autonomous", "drive"
+and "screen" only beside a word for deciding or acting ("decide", "decision",
+"action", "step", "command", "move", "which", "next"). Every word in it now
+starts at a word boundary: the old test had one on its first few words only,
+the same kind of bug as `form\b`, so "control" matched "remote control" and a
+content screener matched "screen". The rules moved to `scripts/classify.py`
+and have their first tests. Replayed over the whole catalogue that day, with
+each row's summary and title standing in for the GitHub description and
+repository name the rules read at discovery (the catalogue keeps neither), the
+old rules suggested `tool-selection` for 220 rows and the new ones for 133. The
+suggestion changed for 87 rows, every one of them only by losing
+`tool-selection`; no kind and no other pattern moved. 65 of those rows carry
+`tool-selection` in `catalog.json`, and none was re-classified: whether a
+project decides which action comes next is a reading, not a word count, and
+some of them do — a Mario player that turns Jev's answers into controller
+buttons says neither "decide" nor "action". They are listed, most-starred band
+first, in the [review queue](review-queue.md#tool-selection-broad-words) for a
+person to read. The rules suggested exactly a row's `patterns` for 818 rows
+before the change and for 758 after it.
+
 `retry-control` went from zero to one genuine example, a semantic circuit
 breaker that asks whether an HTTP 200 is a silent failure. The other apparent
 matches were false positives and were removed. `recommendation` is still empty
