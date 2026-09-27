@@ -20,8 +20,9 @@
 # Judgement calls still go to people: a dead link is links.yml's alarm, a moved
 # call site is claims.yml's issue, and anything here that is not a number moving
 # — a licence changing, a project archived, a repository gone or blocked, rows
-# the API budget left unread — opens an issue after it lands. If main moved underneath the run and the refresh no longer
-# rebases cleanly, it falls back to a branch and an issue rather than forcing.
+# the API budget left unread — opens an issue after it lands. If main moved
+# underneath the run and the refresh no longer rebases cleanly, it falls back
+# to a branch and an issue rather than forcing.
 #
 # A push made with GITHUB_TOKEN does not trigger other workflows, so the run
 # dispatches pages (and lint, for a visible check) itself; workflow_dispatch is
