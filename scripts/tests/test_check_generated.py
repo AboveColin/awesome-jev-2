@@ -24,10 +24,13 @@ from unittest.mock import patch
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "scripts"))
 
+import check  # noqa: E402
 import check_generated  # noqa: E402
 import regenerate  # noqa: E402
 
 LINT = ROOT / ".github" / "workflows" / "lint.yml"
+# The catalog job runs `check.py --ci`; this is its generated-files step alone.
+VERDICT = "python3 scripts/check.py --ci --only generated"
 # No global or system git config: a signing key or hook on the machine running
 # the tests must not change what a commit does.
 GIT_ENV = {"GIT_CONFIG_GLOBAL": os.devnull, "GIT_CONFIG_NOSYSTEM": "1"}
@@ -390,23 +393,31 @@ class LintWorkflowTest(unittest.TestCase):
     def test_regenerate_builds_from_the_tip_and_lints_before_committing(self):
         job = self.job("regenerate")
         self.assertIn("        with:\n          ref: main\n", job)
-        lint_at = job.index("python3 scripts/lint.py")
-        self.assertLess(job.index("python3 scripts/regenerate.py\n"), lint_at)
-        self.assertLess(lint_at, job.index("git commit"))
+        self.assertLess(job.index("run: python3 scripts/check.py --ci --quick\n"), job.index("git commit"))
+        # That one command regenerates, then runs lint and every other check.
+        opts = check.Options(ci=True, quick=True)
+        runs = [s.name for s in check.STEPS if check.excluded(s, opts) is None and check.skipped(s, opts) is None]
+        self.assertLess(runs.index("regenerate"), runs.index("lint-docs"))
+        self.assertTrue({"lint", "compat", "docs", "lint-docs", "covers", "generated"} <= set(runs), runs)
         self.assertIn('git config user.name "github-actions[bot]"', job)
         self.assertIn('git commit -q -m "chore: regenerate from catalog.json"', job)
         self.assertNotIn("push -q origin HEAD:main --force", job)
 
     def test_the_catalog_job_regenerates_before_judging(self):
+        # Since I08 the event split lives in check.py, which the job runs; the
+        # step keeps the id its `drift` output is read from.
         self.assertIn("          fetch-depth: 0\n", self.text)
-        self.assertLess(
-            self.code.index("run: python3 scripts/regenerate.py"),
-            self.code.index("scripts/check_generated.py"),
+        self.assertTrue(
+            self.job("catalog").endswith("        id: generated\n        run: python3 scripts/check.py --ci"),
+            self.job("catalog")[-300:],
         )
-        step = workflow_step("Generated files are current, or left for the bot")
-        self.assertIn("pull_request) python3 scripts/check_generated.py pr --base HEAD^1 --head HEAD^2 ;;", step)
-        self.assertIn("push)         python3 scripts/check_generated.py push ;;", step)
-        self.assertIn("*)            python3 scripts/check_generated.py strict ;;", step)
+        names = [step.name for step in check.STEPS]
+        self.assertLess(names.index("regenerate"), names.index("generated"))
+        ci = check.Options(ci=True)
+        self.assertEqual(check.generated_args(ci, "pull_request")[0], ["pr", "--base", "HEAD^1", "--head", "HEAD^2"])
+        self.assertEqual(check.generated_args(ci, "push")[0], ["push"])
+        self.assertEqual(check.generated_args(ci, "workflow_dispatch")[0], ["strict"])
+        self.assertEqual(check.generated_args(ci, "")[0], ["strict"])
 
     def test_no_expression_reaches_a_shell(self):
         lines = self.text.splitlines()
@@ -437,7 +448,7 @@ class WorkflowStepsTest(GitCase):
     def with_scripts(self, files: dict[str, str]) -> dict[str, str]:
         scripts = {
             f"scripts/{name}": (ROOT / "scripts" / name).read_text()
-            for name in ("regenerate.py", "check_generated.py")
+            for name in ("regenerate.py", "check_generated.py", "check.py")
         }
         return {**files, **scripts}
 
@@ -454,7 +465,7 @@ class WorkflowStepsTest(GitCase):
         return repo
 
     def test_each_event_gets_its_own_verdict(self):
-        step = workflow_step("Generated files are current, or left for the bot")
+        step = VERDICT
         repo = self.merged_with_hand_edit()
         done = self.bash(step, repo, GITHUB_EVENT_NAME="pull_request")
         self.assertEqual(done.returncode, 1, done.stdout + done.stderr)

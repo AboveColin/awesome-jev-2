@@ -4,8 +4,8 @@
 
 ## If you edited catalog.json
 
-- [ ] `sort_catalog.py` and `lint.py` pass
-- [ ] Generated files (READMEs, `docs/by-pattern/`, `docs/assets/`, generated numbers in docs) are either left out — a bot regenerates them on `main` after the merge — or exactly what `python3 scripts/regenerate.py` writes, never edited by hand
+- [ ] `python3 scripts/check.py --fix` passes: it sorts `catalog.json`, then runs every check CI runs
+- [ ] Generated files (READMEs, `docs/by-pattern/`, `docs/assets/`, generated numbers in docs) are either left out — a bot regenerates them on `main` after the merge — or exactly what `python3 scripts/check.py --fix` wrote, never edited by hand
 - [ ] I opened every link I added and wrote the summaries from what was there
 - [ ] `question_types` reflects the actual call site, not the README
 - [ ] `stars` / `repo_license` came from the GitHub API, not a badge

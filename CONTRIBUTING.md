@@ -11,16 +11,19 @@ So the bar is: **could a reader act on this row without opening the link?**
 
 1. Add an object to `catalog.json`. Required fields: `slug`, `title`,
    `summary`, `summary_zh`, `url`, `kind`, `patterns`, `sources`, `license`.
-   The file is kept in `slug` order, so add the row anywhere and let
-   `sort_catalog.py` move it into place; it changes nothing else. A sorted
-   file is what lets two pull requests adding different rows merge without
-   conflicting.
+   The file is kept in `slug` order, so add the row anywhere and let the
+   next step move it into place (`sort_catalog.py`, which changes nothing
+   else). A sorted file is what lets two pull requests adding different rows
+   merge without conflicting.
 2. Run the checks:
 
 ```bash
-python3 scripts/sort_catalog.py && python3 scripts/lint.py
+python3 scripts/check.py --fix
 ```
 
+   That one command sorts `catalog.json`, then runs every check CI runs, in
+   CI's order, and ends with one line per check. A check that needs Node.js or
+   Chrome is reported as skipped where that is not installed; CI runs it.
 3. Open a pull request. `catalog.json` alone is enough.
 
 ### Generated files are optional
@@ -40,17 +43,24 @@ verdict for every one in the run's summary. A hand edit fails, because the bot
 would silently overwrite it on `main`. To change what a generated file says,
 change `catalog.json` or the generator in `scripts/`.
 
-To see the result locally, or to run the whole chain CI runs:
+`check.py --fix` regenerates them in your working tree, as CI does, and then
+judges them as CI judges a pull request against `origin/main`: a generated
+file your branch changed must be exactly what the generators write, and one it
+left alone may be stale. Commit what it rewrote, or leave it out. If your
+remote for this repository has another name, say so with
+`--base upstream/main`.
+
+The same list of checks, run other ways:
 
 ```bash
-python3 scripts/regenerate.py      # every generator, in order
-python3 scripts/lint_docs.py       # no stale numbers; vendor facts agree with compat.json
-python3 scripts/check_generated.py pr --base origin/main   # CI's verdict on your branch
+python3 scripts/check.py --list    # every check in order, and what each needs
+python3 scripts/check.py --quick   # without the preview images (Chrome) and the PyPI check
+python3 scripts/check.py --only lint,lint-docs   # just these checks
+python3 scripts/check.py           # strict: every generated file committed and current
 ```
 
-Use whichever remote points at this repository in place of `origin`.
-
-No Python dependencies are needed. The schema validator is self-contained.
+No Python dependencies are needed, only Python 3.11 or newer (CI uses 3.12).
+The schema validator is self-contained.
 
 To preview the site locally:
 
@@ -228,8 +238,9 @@ That is a useful contribution on its own.
 Open an issue with the slug. Do not delete the row — retiring an entry means
 moving it to `retired.json` with a `notes` line explaining why, so the dead
 reference stays searchable. `retired.json` is kept in slug order too, so run
-`python3 scripts/sort_catalog.py` after moving it. `scripts/check_links.py`
-finds them but deliberately never moves them; that judgement is a person's.
+`python3 scripts/check.py --fix` after moving it; it sorts both files.
+`scripts/check_links.py` finds them but deliberately never moves them; that
+judgement is a person's.
 
 ## Adding a pattern
 

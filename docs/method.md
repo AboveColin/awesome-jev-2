@@ -284,6 +284,9 @@ When sources disagree:
 git clone https://github.com/kydlikebtc/awesome-jev
 cd awesome-jev
 
+python3 scripts/check.py         # every check lint runs, in lint's order; --list names them
+
+# or one at a time:
 python3 scripts/sort_catalog.py  # keep catalog.json and retired.json in slug order
 python3 scripts/lint.py          # schema plus cross-entry invariants
 python3 scripts/build_readme.py  # regenerate both READMEs and docs/by-pattern/
@@ -312,6 +315,25 @@ count) no longer fall back to their position in the file. The fixed order exists
 only so that pull requests adding different rows insert at different places
 instead of all appending at the end and conflicting.
 
+Since 2026-09-27, `scripts/check.py` holds the one list of the checks `lint`
+runs, in its order. The list used to be written out four times — in
+`lint.yml`, in `CONTRIBUTING.md`, in the pull-request template and in the
+weekly `metadata` refresh — and the copies had drifted: the contributor
+instructions named a handful of the checks, so a pull request could pass them
+and still fail `lint` on the unit tests, the site data or the curated
+collections, and `metadata` pushed to `main` after only the generators and
+four checks. Now `lint` runs `check.py --ci`; its `regenerate` job and
+`metadata` run `check.py --ci --quick` — every check but the preview images,
+which `pages` renders at deploy — on what they are about to commit; the
+contributor instructions and the template name `check.py --fix`, which first
+sorts the catalogue. A unit test fails if `lint.yml` runs a script the list
+does not cover. Each check still runs even after an earlier one fails, so one
+run shows every problem. Locally, a check whose tool is missing — Node.js for
+the site's filter tests, Chrome for the preview images — is reported as
+skipped, never as passed; in CI a missing tool fails the run. `metadata` now
+commits on the runner first and runs the checks strictly against that commit
+before pushing, so a regenerated file its `git add` left out would fail too.
+
 ## Kept current
 
 Every figure this repository publishes changes for one of four reasons, and each
@@ -324,13 +346,13 @@ catalogue passed 800, and no build ever went red.
 | What changes | When | Kept current by |
 | --- | --- | --- |
 | Counts and tables about the catalogue | Whenever a row is added or edited | Generated from `catalog.json` — the READMEs by `build_readme.py`, the figures by `build_assets.py`, and every number inside the hand-written docs and `llms.txt` by `build_docs.py`. The site's link-preview tags are written into the Pages artifact at deploy by `assemble_site.py --deploy` and never committed. All numbers share one definition in `scripts/_stats.py`. `lint` regenerates all of them on every run (next row), and `lint_docs.py` rejects a catalogue count typed anywhere else. |
-| Generated files after a merge | Whenever a pull request lands | A pull request need only change the sources. `lint` runs `regenerate.py` on every event, then `check_generated.py` decides: on a pull request each generated file must be untouched since the merge base or byte-identical to the regenerated output, with every verdict in the run's summary; on `main`, drift is handed to the `regenerate` job, which rebuilds from the tip, runs the lint chain and commits `chore: regenerate from catalog.json` as `github-actions[bot]` — rebasing if `main` moved, leaving a `regenerate/<sha>` branch if that no longer applies, never force-pushing. A dispatched or manual `lint` run is strict: any drift fails. |
+| Generated files after a merge | Whenever a pull request lands | A pull request need only change the sources. `lint` runs `regenerate.py` on every event, then `check_generated.py` decides: on a pull request each generated file must be untouched since the merge base or byte-identical to the regenerated output, with every verdict in the run's summary; on `main`, drift is handed to the `regenerate` job, which rebuilds from the tip, runs `lint`'s checks again and commits `chore: regenerate from catalog.json` as `github-actions[bot]` — rebasing if `main` moved, leaving a `regenerate/<sha>` branch if that no longer applies, never force-pushing. A dispatched or manual `lint` run is strict: any drift fails. |
 | Images that show data | Same | Rendered from the data on every Pages deploy by `render_images.py` and never committed: the site's `og:image`, and the README and compatibility screenshots. The deploy refuses to publish a page that did not finish loading its data. |
 | The GitHub social preview | Never | It can only be uploaded by hand, so it is the durable card: its one figure is a floor ("800+") that growth can only make an understatement, never wrong. `description` reports whether one is uploaded. |
 | The repository description | When the count crosses a hundred, or the wording changes | Only an admin can edit it, so it states the count floored to the hundred: `_stats.pitch_public()`, the same sentence as the site's `description` and `og:description`. The `description` workflow compares the whole sentence on every push to `main`; on drift it warns and keeps one open issue, labelled `description`, holding the exact `gh repo edit` command, instead of failing a build nobody but an admin can fix. `lint` prints the would-be sentence on every run, pull requests included. Every other surface — the READMEs, `status.md`, `llms.txt`, the figures — carries the exact count. |
 | Labels for patterns, kinds and flags | When the taxonomy changes | One copy each, in `patterns.json` and `taxonomy.json`, read by the README generators and by the site at runtime. `lint` checks both against the schema; `lint_docs` checks `docs/patterns.md` has a section for each pattern. |
 | Model strings and limits | When the vendor or a gateway ships | One source, `compat.json`. `lint_docs` checks every copy — in docs, examples, and the generated README and figures — against it. `claims` re-reads each platform's documentation weekly and opens an issue if a recorded string disappears. |
-| Link status, stars, licences, archive status | Continuously, upstream | `metadata` weekly: stamps every link that answers, re-reads the GitHub API, rebuilds everything generated, runs the whole lint chain, commits to `main`, and redeploys the site. It opens an issue only for a change that is more than a star count, and falls back to a branch if `main` moved underneath it. `links` weekly is the separate alarm for a dead link, which only a person may retire. The site shows the date of the sweep its figure comes from. |
+| Link status, stars, licences, archive status | Continuously, upstream | `metadata` weekly: stamps every link that answers, re-reads the GitHub API, rebuilds everything generated, commits it, runs `lint`'s checks on that commit (`check.py --quick`: all but the preview images, which `pages` renders), pushes to `main`, and redeploys the site. It opens an issue only for a change that is more than a star count, and falls back to a branch if `main` moved underneath it. `links` weekly is the separate alarm for a dead link, which only a person may retire. The site shows the date of the sweep its figure comes from. |
 | Whether cited text is still present | Continuously, upstream | `claims` is scheduled weekly to fetch each `evidence` file and report missing strings or files. Counts show citations recorded, not CI passes, and the job does not update the human `read_on` date. |
 | What the catalogue is missing | Continuously, upstream | `discover` weekly: harvests every sibling directory, reads the code of the most-cited uncatalogued repositories, searches for sibling directories not yet harvested, and files one issue. It never adds a row. |
 | The MCP package on PyPI | When `pyproject.toml`'s version changes | A release is a tag a maintainer pushes, so PyPI can lag `main`. `check_release.py` compares the two on every push to `main`, in `lint`'s `release` job: a version not yet on PyPI is a warning carrying the tag command; a version older than PyPI's newest, or `pyproject.toml` and `.claude-plugin/plugin.json` disagreeing, fails. The file comparison also runs on every pull request, as a unit test. After an upload, `publish` installs the release back from PyPI. |
@@ -338,7 +360,8 @@ catalogue passed 800, and no build ever went red.
 
 - `lint` runs on every pull request, every push to `main`, and by hand; after
   a push to `main` it also commits the regenerated files and asks PyPI whether
-  the MCP package's version is released.
+  the MCP package's version is released. Its checks, and their order, are
+  `scripts/check.py`'s list; `python3 scripts/check.py` runs them locally.
 - `description` runs on every push to `main`, and by hand.
 - `pages` rebuilds the site and its images whenever the data, the site or the
   rendering scripts change.

@@ -14,6 +14,10 @@
 #                      after it lands.
 # One path per event, so a merge never turns main red and then green again.
 #
+# The checks, and their order, live in one place: STEPS in scripts/check.py.
+# This file sets up the tools and runs it; `python3 scripts/check.py` runs the
+# same checks locally, and `--list` prints them.
+#
 # Permissions: read-only, except the regenerate job, which holds
 # `contents: write` for itself alone and runs only for a push to main, never
 # for a pull request, so code from a fork never runs with a write token. It
@@ -62,79 +66,26 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: JSON is parseable
-        run: |
-          python3 -c "
-          import json
-          for path in ('catalog.json', 'retired.json', 'compat.json', 'patterns.json', 'taxonomy.json', 'collections.json', 'schema/entry.schema.json'):
-              json.load(open(path))
-              print(f'  ok {path}')
-          "
-
-      - name: Validate entries against the schema
-        run: python3 scripts/lint.py
-
-      - name: Validate curated entry points and their regression checks
-        run: |
-          python3 scripts/check_collections.py
-          python3 -m unittest discover -s scripts/tests
-          python3 -m unittest discover -s tests
-
       - uses: actions/setup-node@v7
         with:
           node-version: "22"
 
-      - name: Catalog filtering and sorting regression checks
-        run: node --test scripts/test_catalog_core.mjs
-
-      - name: Assembled site data is complete and current
-        run: |
-          python3 scripts/assemble_site.py
-          python3 scripts/check_site_data.py
-
-      - name: Preview images render with the current catalogue
-        run: python3 scripts/render_images.py
-
-      # Every event validates the regenerated tree, not whatever generated
-      # files happen to be committed; check_generated below judges those.
-      - name: Regenerate every generated file from the sources
-        run: python3 scripts/regenerate.py
-
-      # Run after regenerating, these also prove each generator idempotent. A
-      # generator that wrote something different on every run would have the
-      # regenerate job commit on every push.
-      - name: compatibility.md is in sync with compat.json
-        run: python3 scripts/build_compat.py --check
-
-      # status.md, sources.md, llms.txt and the site's meta tags all froze at
-      # the first build's 148 entries because nothing regenerated them. (The
-      # meta tags are now written at deploy; check_site_data guards them.)
-      - name: Generated numbers in the docs are current
-        run: python3 scripts/build_docs.py --check
-
-      # And no new hand-written count can creep back in beside them; and every
-      # model string or limit stated anywhere agrees with compat.json.
-      - name: Docs carry no stale numbers and agree with compat.json
-        run: python3 scripts/lint_docs.py
-
-      - name: README covers fit and are current
-        run: python3 scripts/build_readme_cover.py --check
-
-      - name: Generated files are current, or left for the bot
+      # Every check lint runs, one collapsed log group each, in check.py's
+      # order: it regenerates every generated file before validating, so each
+      # event validates the regenerated tree, and its check_generated step
+      # judges generated files by $GITHUB_EVENT_NAME as described above and
+      # writes `drift` to this step's outputs. A failure is an annotation
+      # naming the check, and the run's summary has a table of them all. With
+      # --ci, a missing node or Chrome fails instead of being skipped.
+      #
+      # The published repository description is checked by description.yml,
+      # not here: no workflow token can edit it, so its drift is an issue for a
+      # person rather than a red build. check.py's counts step prints what it
+      # should say once the tree is on main, so a pull request shows the change
+      # before merge.
+      - name: Every check, in the order scripts/check.py lists them
         id: generated
-        run: |
-          case "$GITHUB_EVENT_NAME" in
-            pull_request) python3 scripts/check_generated.py pr --base HEAD^1 --head HEAD^2 ;;
-            push)         python3 scripts/check_generated.py push ;;
-            *)            python3 scripts/check_generated.py strict ;;
-          esac
-
-      # The published repository description is checked by description.yml, not
-      # here: no workflow token can edit it, so its drift is an issue for a
-      # person rather than a red build. This step prints what it should say once
-      # the tree is on main, so a pull request shows the change before merge.
-      - name: Catalog stats
-        run: python3 scripts/counts.py
+        run: python3 scripts/check.py --ci
 
   # Commits what the catalog job found out of date on main. Rebuilds from the
   # tip of main rather than the pushed commit: when several merges land close
@@ -165,14 +116,16 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Regenerate on the tip of main, then lint it all
-        run: |
-          python3 scripts/regenerate.py
-          python3 scripts/lint.py
-          python3 scripts/build_compat.py --check
-          python3 scripts/build_docs.py --check
-          python3 scripts/lint_docs.py
-          python3 scripts/build_readme_cover.py --check
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+
+      # The catalog job's checks again, on the tip of main, whose regenerated
+      # files are what gets committed. --quick leaves out only the preview
+      # images, which pages renders at deploy. The event is a push, so the
+      # drift is reported rather than failed; the next step commits it.
+      - name: Regenerate on the tip of main, then run the checks again
+        run: python3 scripts/check.py --ci --quick
 
       - name: Commit to main, or fall back to a branch if main moved
         id: land

@@ -1,7 +1,8 @@
 # Weekly refresh of every machine-checkable fact in catalog.json: link status
 # (`checked`, `link_status`), and stars, licences and archive status from the
-# GitHub API. Everything generated from those facts is rebuilt in the same run,
-# and the full lint chain has to pass before anything is pushed.
+# GitHub API. Everything generated from those facts is rebuilt in the same run
+# and committed on the runner, and lint's checks (scripts/check.py) have to
+# pass on that commit before anything is pushed.
 #
 # Link stamping used to be nobody's job. links.yml reports dead links but never
 # writes, so `checked` froze at the first sweep while the site went on saying
@@ -13,9 +14,9 @@
 # needs a human-written reason, so neither happens here.
 #
 # Delivery: commits straight to main, because every fact here is mechanical and
-# the whole lint chain has passed before the commit is made. It used to push a
-# branch and wait for a person to merge it each week; the week that did not
-# happen, one row went on claiming both an MIT licence and no licence at all.
+# lint's checks have passed on the commit before it is pushed. It used to
+# push a branch and wait for a person to merge it each week; the week that did
+# not happen, one row went on claiming both an MIT licence and no licence at all.
 # Judgement calls still go to people: a dead link is links.yml's alarm, a moved
 # call site is claims.yml's issue, and anything here that is not a number moving
 # — a licence changing, a project archived, a repository gone — opens an issue
@@ -63,6 +64,10 @@ jobs:
         with:
           python-version: "3.12"
 
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+
       - name: Stamp every link that still answers
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -82,32 +87,43 @@ jobs:
           python3 scripts/refresh_metadata.py --write --digest /tmp/digest.md > /tmp/refresh.log
           tail -3 /tmp/refresh.log
 
-      - name: Rebuild everything generated from those facts, then lint it all
+      - name: Rebuild everything generated from those facts, and commit it here
+        id: commit
         run: |
           # The same generators, in the same order, as lint.yml runs, so one
           # added to regenerate.py is never missed here.
           python3 scripts/regenerate.py
-          python3 scripts/lint.py
-          python3 scripts/build_compat.py --check
-          python3 scripts/build_docs.py --check
-          python3 scripts/lint_docs.py
+          git add -A catalog.json README.md README.zh-CN.md docs llms.txt
+          if git diff --cached --quiet; then
+            echo "nothing changed"
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -q -m "chore: weekly refresh of link status and repository facts" \
+                        -m "$(head -1 /tmp/digest.md)"
+          echo "changed=true" >> "$GITHUB_OUTPUT"
 
-      - name: Commit to main, or fall back to a branch if main moved
+      # Lint's checks, on the commit about to be pushed: check.py's one list, so
+      # this cannot fall behind lint. --quick leaves out only the preview
+      # images, which pages renders at deploy. The event is a schedule or a
+      # dispatch, so generated files are judged strictly, and a file a
+      # generator wrote that the commit left out fails too.
+      - name: Run lint's checks on that commit before pushing it
+        if: steps.commit.outputs.changed == 'true'
+        run: python3 scripts/check.py --ci --quick
+
+      - name: Push to main, or fall back to a branch if main moved
         id: land
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CHANGED: ${{ steps.commit.outputs.changed }}
         run: |
-          if git diff --quiet; then
-            echo "nothing changed"
+          if [ "$CHANGED" != "true" ]; then
             echo "landed=none" >> "$GITHUB_OUTPUT"
             exit 0
           fi
-
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A catalog.json README.md README.zh-CN.md docs llms.txt
-          git commit -q -m "chore: weekly refresh of link status and repository facts" \
-                        -m "$(head -1 /tmp/digest.md)"
 
           # Someone may have pushed while this ran. Rebase onto them; if the
           # facts no longer apply cleanly, never force — hand it to a person.
