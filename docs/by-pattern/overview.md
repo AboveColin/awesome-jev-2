@@ -537,11 +537,11 @@ Every catalogued example of this decision — 451 of them, official first, then 
 - **[jev-grand-prix](https://github.com/enoyola/jev-grand-prix)** — An F1 racing game where TypeSafe's Jev picks the racing line and the pedals, and learns each corner's limit between laps
   <sub>`Project` · ★7 · enoyola · `JS`</sub>
 
-- **[jev-mcp](https://github.com/rashedInt32/jev-mcp)** — MCP server exposing TypeSafe Jev as typed, calibrated judgment tools: classify, score, check, batched ask. Ships as a Claude Code plugin.
-  <sub>`Plugin` · ★7 · rashedint32 · `TS`</sub>
-
 - **[jev-mcp](https://github.com/arunav25/jev-mcp)** — Connect JEV to MCP clients and compare its judgments against general-purpose LLMs using shared datasets and measurable accuracy.
   <sub>`Plugin` · ★7 · arunav25 · `JS`</sub>
+
+- **[jev-mcp](https://github.com/rashedInt32/jev-mcp)** — MCP server exposing TypeSafe Jev as typed, calibrated judgment tools: classify, score, check, batched ask. Ships as a Claude Code plugin.
+  <sub>`Plugin` · ★7 · rashedint32 · `TS`</sub>
 
 - **[jev_jsonschema](https://github.com/Kiln-AI/jev_jsonschema)** — Run a JSON Schema through TypeSafe's Jev API, and get JSON back.
   <sub>`Project` · ★7 · kiln-ai · `Py`</sub>
@@ -1020,11 +1020,11 @@ Every catalogued example of this decision — 451 of them, official first, then 
 - **[jev-go-sdk](https://github.com/ajayk/jev-go-sdk)** — Dependency-free Go client for TypeSafe AI's System One API and the Jev model
   <sub>`SDK` · ★1 · ajayk · `Go`</sub>
 
-- **[jev-lab](https://github.com/llt22/jev-lab)** — Hands-on research lab for TypeSafe's Jev (System One model): reproducible benchmarks of Noul/Choice/Score primitives, confidence gating, fan-out latency, agent control — plus a living audit of the Jev ecosystem.
-  <sub>`Benchmark` · ★1 · llt22 · `Py` · ⚠ `no licence`</sub>
-
 - **[jev-lab](https://github.com/danielhirt/jev-lab)** — Experiments on TypeSafe Jev (System One decision model) via OpenRouter: repeatability, perturbation, and LLM baseline comparison
   <sub>`Benchmark` · ★1 · danielhirt · `TS` · ⚠ `no licence`</sub>
+
+- **[jev-lab](https://github.com/llt22/jev-lab)** — Hands-on research lab for TypeSafe's Jev (System One model): reproducible benchmarks of Noul/Choice/Score primitives, confidence gating, fan-out latency, agent control — plus a living audit of the Jev ecosystem.
+  <sub>`Benchmark` · ★1 · llt22 · `Py` · ⚠ `no licence`</sub>
 
 - **[jev-playground](https://github.com/wustep/jev-playground)** — Can a System One model steer music? Jev picks the plan (enums only); code renders sheet, audio and MIDI.
   <sub>`Project` · ★1 · wustep · `TS` · ⚠ `no licence`</sub>
@@ -1044,11 +1044,11 @@ Every catalogued example of this decision — 451 of them, official first, then 
 - **[jev-skill-router](https://github.com/shimo4228/jev-skill-router)** — Claude Code plugin: asks TypeSafe Jev which installed skill fits each prompt and logs the answer (shadow-first). A working reference for the skill-suggestion cookbook on Claude Code — the README records why it is unlikely to help a strong model as a router.
   <sub>`Plugin` · ★1 · shimo4228 · `Py`</sub>
 
-- **[jev-skills](https://github.com/WanLanglin/jev-skills)** — Claude Code & Codex skills powered by Jev, TypeSafe's System One model. 256 calibrated judgements for $0.0005 in 0.72s — 360x cheaper than Claude Opus 5. Includes the first published Jev calibration curve, measured on 4,995 real agent decisions.
-  <sub>`Plugin` · ★1 · wanlanglin · `Py` · ⚠ `no licence`</sub>
-
 - **[jev-skills](https://github.com/laguagu/jev-skills)** — Practical agent skills and examples for building with Jev. API setup, routing, ranking, and evidence checks.
   <sub>`Plugin` · ★1 · laguagu · `JS`</sub>
+
+- **[jev-skills](https://github.com/WanLanglin/jev-skills)** — Claude Code & Codex skills powered by Jev, TypeSafe's System One model. 256 calibrated judgements for $0.0005 in 0.72s — 360x cheaper than Claude Opus 5. Includes the first published Jev calibration curve, measured on 4,995 real agent decisions.
+  <sub>`Plugin` · ★1 · wanlanglin · `Py` · ⚠ `no licence`</sub>
 
 - **[jev-snake](https://github.com/iammusham/jev-snake)** — An experimental Snake environment where the game engine owns deterministic rules and TypeSafe AI's Jev makes the movement decision from structured state on every tick.
   <sub>`Project` · ★1 · iammusham · `Py` · ⚠ `no licence`</sub>
@@ -1104,11 +1104,11 @@ Every catalogued example of this decision — 451 of them, official first, then 
 - **[typesafe-sdk](https://github.com/binnash/typesafe-sdk)** — PHP & Laravel SDK for TypeSafe AI's JEV Model series
   <sub>`SDK` · ★1 · binnash · `PHP` · ⚠ `no licence`</sub>
 
-- **[typesafe-sdk-go](https://github.com/SergeAx/typesafe-sdk-go)** — TypeSafe.AI Go SDK
-  <sub>`SDK` · ★1 · sergeax · `Go`</sub>
-
 - **[typesafe-sdk-go](https://github.com/dwisiswant0/typesafe-sdk-go)** — Go SDK for TypeSafe AI.
   <sub>`SDK` · ★1 · dwisiswant0 · `Go`</sub>
+
+- **[typesafe-sdk-go](https://github.com/SergeAx/typesafe-sdk-go)** — TypeSafe.AI Go SDK
+  <sub>`SDK` · ★1 · sergeax · `Go`</sub>
 
 - **[typesafe-sdk-ruby](https://github.com/afurm/typesafe-sdk-ruby)** — Unofficial Ruby SDK for the TypeSafe AI API (Jev model) - typed questions, retries, and typed errors. Community port of typesafe-sdk-js.
   <sub>`SDK` · ★1 · afurm · `Rb`</sub>
@@ -1302,17 +1302,17 @@ Every catalogued example of this decision — 451 of them, official first, then 
 - **[typesafe-sdk-kotlin](https://github.com/ufec/typesafe-sdk-kotlin)** — A Kotlin SDK for TypeSafe AI, ported from the official JavaScript SDK with its deviations documented; ask typed questions about text and get typed answers back.
   <sub>`SDK` · ★0 · ufec · `Kt`</sub>
 
-- **[typesafe-sdk-php](https://github.com/valksor/typesafe-sdk-php)** — Unofficial PHP SDK for the TypeSafe AI System One API — 1:1 parity with the official JS and Python SDKs. Not affiliated with TypeSafe AI.
-  <sub>`SDK` · ★0 · valksor · `PHP`</sub>
-
 - **[typesafe-sdk-php](https://github.com/Fox-Islam/typesafe-sdk-php)** — Unofficial PHP library for the TypeSafe API
   <sub>`SDK` · ★0 · fox-islam · `PHP`</sub>
 
-- **[typesafe_ai](https://github.com/typesend/typesafe_ai)** — Typed Elixir client for TypeSafe AI and its Jev System One model, with offline test stubs, concurrent fan-out, and atom-keyed answers.
-  <sub>`SDK` · ★0 · typesend · `Ex`</sub>
+- **[typesafe-sdk-php](https://github.com/valksor/typesafe-sdk-php)** — Unofficial PHP SDK for the TypeSafe AI System One API — 1:1 parity with the official JS and Python SDKs. Not affiliated with TypeSafe AI.
+  <sub>`SDK` · ★0 · valksor · `PHP`</sub>
 
 - **[typesafe_ai](https://github.com/hfiguera/typesafe_ai)** — An Elixir client for TypeSafe AI with typed responses and bounded concurrency
   <sub>`SDK` · ★0 · hfiguera · `Ex`</sub>
+
+- **[typesafe_ai](https://github.com/typesend/typesafe_ai)** — Typed Elixir client for TypeSafe AI and its Jev System One model, with offline test stubs, concurrent fan-out, and atom-keyed answers.
+  <sub>`SDK` · ★0 · typesend · `Ex`</sub>
 
 - **[typesafe_chess_eval](https://github.com/AliceRoselia/Typesafe_chess_eval)** — An evaluation of typesafe AI chess. As it turns out, the AI isn't doing really well even though chess is not a particularly open-ended game. Still, it's only a prototype and this probably wasn't optimzied for games.
   <sub>`Project` · ★0 · aliceroselia · `Py`</sub>

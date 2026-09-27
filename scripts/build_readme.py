@@ -600,12 +600,18 @@ def flags_of(entry: dict, lang: str) -> str:
 
 
 def sort_key(entry: dict) -> tuple:
-    """Official first, then rows with code, then stars, then title."""
+    """Official first, then rows with code, then stars, then title.
+
+    Slug is the final tie-break. Forks often share a title and a star count
+    (several rows are all "jev-mcp" with ★2), and without it their order was
+    their position in catalog.json, so re-sorting the file reshuffled the README.
+    """
     return (
         not entry.get("official", False),
         not entry.get("has_code", False),
         -(entry.get("stars") or 0),
         entry["title"].lower(),
+        entry["slug"],
     )
 
 
@@ -1037,7 +1043,7 @@ def render(catalog: list[dict], retired: list[dict], strings: dict, today: str) 
         add("")
         add(f"| {strings['th_example']} | {strings['th_why']} |")
         add("| --- | --- |")
-        for entry in sorted(retired, key=lambda item: item["title"].lower()):
+        for entry in sorted(retired, key=lambda item: (item["title"].lower(), item["slug"])):
             why = entry.get("notes_zh" if lang == "zh" else "notes") or "—"
             status = entry.get("link_status")
             add(

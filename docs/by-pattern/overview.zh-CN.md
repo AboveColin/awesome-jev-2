@@ -537,11 +537,11 @@ _介绍模型或整个领域，而非单一模式。_
 - **[jev-grand-prix](https://github.com/enoyola/jev-grand-prix)** — 一个 F1 赛车游戏：Jev 选择赛车线与踏板，并逐条赛道学习。 <sub>(机翻)</sub>
   <sub>`开源项目` · ★7 · enoyola · `JS`</sub>
 
-- **[jev-mcp](https://github.com/rashedInt32/jev-mcp)** — 把 TypeSafe Jev 暴露为带类型、经校准的判断工具的 MCP 服务器：classify、score、check 与批量提问，并以 Claude Code 插件形式发布。 <sub>(机翻)</sub>
-  <sub>`插件` · ★7 · rashedint32 · `TS`</sub>
-
 - **[jev-mcp](https://github.com/arunav25/jev-mcp)** — 把 JEV 接入 MCP 客户端，并用共享数据集和可衡量的指标，将它的判断与通用 LLM 进行对比。 <sub>(机翻)</sub>
   <sub>`插件` · ★7 · arunav25 · `JS`</sub>
+
+- **[jev-mcp](https://github.com/rashedInt32/jev-mcp)** — 把 TypeSafe Jev 暴露为带类型、经校准的判断工具的 MCP 服务器：classify、score、check 与批量提问，并以 Claude Code 插件形式发布。 <sub>(机翻)</sub>
+  <sub>`插件` · ★7 · rashedint32 · `TS`</sub>
 
 - **[jev_jsonschema](https://github.com/Kiln-AI/jev_jsonschema)** — 把一份 JSON Schema 丢给 Jev API，拿回 JSON。 <sub>(机翻)</sub>
   <sub>`开源项目` · ★7 · kiln-ai · `Py`</sub>
@@ -1020,11 +1020,11 @@ _介绍模型或整个领域，而非单一模式。_
 - **[jev-go-sdk](https://github.com/ajayk/jev-go-sdk)** — 无依赖的 Go 客户端，面向 TypeSafe AI 的 System One API 与 Jev 模型。 <sub>(机翻)</sub>
   <sub>`SDK` · ★1 · ajayk · `Go`</sub>
 
-- **[jev-lab](https://github.com/llt22/jev-lab)** — TypeSafe Jev（System One 模型）的动手研究实验室：对 Noul/Choice/Score 原语的可复现基准。 <sub>(机翻)</sub>
-  <sub>`基准测试` · ★1 · llt22 · `Py` · ⚠ `无许可证`</sub>
-
 - **[jev-lab](https://github.com/danielhirt/jev-lab)** — 通过 OpenRouter 对 TypeSafe Jev（System One 决策模型）做的实验：可重复性、扰动敏感性与 LLM 基线对比。 <sub>(机翻)</sub>
   <sub>`基准测试` · ★1 · danielhirt · `TS` · ⚠ `无许可证`</sub>
+
+- **[jev-lab](https://github.com/llt22/jev-lab)** — TypeSafe Jev（System One 模型）的动手研究实验室：对 Noul/Choice/Score 原语的可复现基准。 <sub>(机翻)</sub>
+  <sub>`基准测试` · ★1 · llt22 · `Py` · ⚠ `无许可证`</sub>
 
 - **[jev-playground](https://github.com/wustep/jev-playground)** — System One 模型能否指挥音乐？Jev 只选方案（纯枚举），由代码渲染乐谱与音频。 <sub>(机翻)</sub>
   <sub>`开源项目` · ★1 · wustep · `TS` · ⚠ `无许可证`</sub>
@@ -1044,11 +1044,11 @@ _介绍模型或整个领域，而非单一模式。_
 - **[jev-skill-router](https://github.com/shimo4228/jev-skill-router)** — Claude Code 插件：询问 Jev 哪个已安装技能适配当前提示，并记录答案（先影子运行）。 <sub>(机翻)</sub>
   <sub>`插件` · ★1 · shimo4228 · `Py`</sub>
 
-- **[jev-skills](https://github.com/WanLanglin/jev-skills)** — 由 TypeSafe System One 模型 Jev 驱动的 Claude Code 与 Codex 技能。 <sub>(机翻)</sub>
-  <sub>`插件` · ★1 · wanlanglin · `Py` · ⚠ `无许可证`</sub>
-
 - **[jev-skills](https://github.com/laguagu/jev-skills)** — 用 Jev 构建应用的实用智能体技能与示例：API 配置、路由、排序与证据检查。 <sub>(机翻)</sub>
   <sub>`插件` · ★1 · laguagu · `JS`</sub>
+
+- **[jev-skills](https://github.com/WanLanglin/jev-skills)** — 由 TypeSafe System One 模型 Jev 驱动的 Claude Code 与 Codex 技能。 <sub>(机翻)</sub>
+  <sub>`插件` · ★1 · wanlanglin · `Py` · ⚠ `无许可证`</sub>
 
 - **[jev-snake](https://github.com/iammusham/jev-snake)** — 实验性贪吃蛇环境：游戏引擎掌管确定性规则，Jev 负责决策。 <sub>(机翻)</sub>
   <sub>`开源项目` · ★1 · iammusham · `Py` · ⚠ `无许可证`</sub>
@@ -1104,11 +1104,11 @@ _介绍模型或整个领域，而非单一模式。_
 - **[typesafe-sdk](https://github.com/binnash/typesafe-sdk)** — 面向 TypeSafe AI JEV 模型系列的 PHP 与 Laravel SDK。 <sub>(机翻)</sub>
   <sub>`SDK` · ★1 · binnash · `PHP` · ⚠ `无许可证`</sub>
 
-- **[typesafe-sdk-go](https://github.com/SergeAx/typesafe-sdk-go)** — TypeSafe.AI 的 Go SDK。 <sub>(机翻)</sub>
-  <sub>`SDK` · ★1 · sergeax · `Go`</sub>
-
 - **[typesafe-sdk-go](https://github.com/dwisiswant0/typesafe-sdk-go)** — TypeSafe AI 的 Go SDK。 <sub>(机翻)</sub>
   <sub>`SDK` · ★1 · dwisiswant0 · `Go`</sub>
+
+- **[typesafe-sdk-go](https://github.com/SergeAx/typesafe-sdk-go)** — TypeSafe.AI 的 Go SDK。 <sub>(机翻)</sub>
+  <sub>`SDK` · ★1 · sergeax · `Go`</sub>
 
 - **[typesafe-sdk-ruby](https://github.com/afurm/typesafe-sdk-ruby)** — TypeSafe AI API（Jev 模型）的非官方 Ruby SDK：带类型的问题、重试与类型化错误。社区移植版。 <sub>(机翻)</sub>
   <sub>`SDK` · ★1 · afurm · `Rb`</sub>
@@ -1302,17 +1302,17 @@ _介绍模型或整个领域，而非单一模式。_
 - **[typesafe-sdk-kotlin](https://github.com/ufec/typesafe-sdk-kotlin)** — TypeSafe AI 的 Kotlin SDK，移植自官方 JavaScript SDK，并记录了与原版的差异；针对一段文本提出带类型的问题，得到带类型的答案。 <sub>(机翻)</sub>
   <sub>`SDK` · ★0 · ufec · `Kt`</sub>
 
-- **[typesafe-sdk-php](https://github.com/valksor/typesafe-sdk-php)** — TypeSafe AI System One API 的非官方 PHP SDK，与官方 JS 和 Python SDK 一一对应，与 TypeSafe AI 无关。 <sub>(机翻)</sub>
-  <sub>`SDK` · ★0 · valksor · `PHP`</sub>
-
 - **[typesafe-sdk-php](https://github.com/Fox-Islam/typesafe-sdk-php)** — TypeSafe API 的非官方 PHP 库。 <sub>(机翻)</sub>
   <sub>`SDK` · ★0 · fox-islam · `PHP`</sub>
 
-- **[typesafe_ai](https://github.com/typesend/typesafe_ai)** — 面向 TypeSafe AI 及其 Jev System One 模型的带类型 Elixir 客户端，提供离线测试桩、并发扇出与原子化结果。 <sub>(机翻)</sub>
-  <sub>`SDK` · ★0 · typesend · `Ex`</sub>
+- **[typesafe-sdk-php](https://github.com/valksor/typesafe-sdk-php)** — TypeSafe AI System One API 的非官方 PHP SDK，与官方 JS 和 Python SDK 一一对应，与 TypeSafe AI 无关。 <sub>(机翻)</sub>
+  <sub>`SDK` · ★0 · valksor · `PHP`</sub>
 
 - **[typesafe_ai](https://github.com/hfiguera/typesafe_ai)** — TypeSafe AI 的 Elixir 客户端，提供带类型的响应和有界并发。 <sub>(机翻)</sub>
   <sub>`SDK` · ★0 · hfiguera · `Ex`</sub>
+
+- **[typesafe_ai](https://github.com/typesend/typesafe_ai)** — 面向 TypeSafe AI 及其 Jev System One 模型的带类型 Elixir 客户端，提供离线测试桩、并发扇出与原子化结果。 <sub>(机翻)</sub>
+  <sub>`SDK` · ★0 · typesend · `Ex`</sub>
 
 - **[typesafe_chess_eval](https://github.com/AliceRoselia/Typesafe_chess_eval)** — 对 Jev 下棋能力的评测 —— 结论是它下得并不好。 <sub>(机翻)</sub>
   <sub>`开源项目` · ★0 · aliceroselia · `Py`</sub>

@@ -336,15 +336,15 @@ Independent measurement reports in the catalogue, including **negative results**
 
   **Caveats:** `no licence`
 
-- **[jev-lab](https://github.com/llt22/jev-lab)**<br>
-  Hands-on research lab for TypeSafe's Jev (System One model): reproducible benchmarks of Noul/Choice/Score primitives, confidence gating, fan-out latency, agent control — plus a living audit of the Jev ecosystem.<br>
-  <sub>`Benchmark` · ★1 · llt22 · `Py`</sub>
-
-  **Caveats:** `no licence`
-
 - **[jev-lab](https://github.com/danielhirt/jev-lab)**<br>
   Experiments on TypeSafe Jev (System One decision model) via OpenRouter: repeatability, perturbation, and LLM baseline comparison<br>
   <sub>`Benchmark` · ★1 · danielhirt · `TS`</sub>
+
+  **Caveats:** `no licence`
+
+- **[jev-lab](https://github.com/llt22/jev-lab)**<br>
+  Hands-on research lab for TypeSafe's Jev (System One model): reproducible benchmarks of Noul/Choice/Score primitives, confidence gating, fan-out latency, agent control — plus a living audit of the Jev ecosystem.<br>
+  <sub>`Benchmark` · ★1 · llt22 · `Py`</sub>
 
   **Caveats:** `no licence`
 

@@ -336,15 +336,15 @@
 
   **注意:** `无许可证`
 
-- **[jev-lab](https://github.com/llt22/jev-lab)**<br>
-  TypeSafe Jev（System One 模型）的动手研究实验室：对 Noul/Choice/Score 原语的可复现基准。 <sub>(机翻)</sub><br>
-  <sub>`基准测试` · ★1 · llt22 · `Py`</sub>
-
-  **注意:** `无许可证`
-
 - **[jev-lab](https://github.com/danielhirt/jev-lab)**<br>
   通过 OpenRouter 对 TypeSafe Jev（System One 决策模型）做的实验：可重复性、扰动敏感性与 LLM 基线对比。 <sub>(机翻)</sub><br>
   <sub>`基准测试` · ★1 · danielhirt · `TS`</sub>
+
+  **注意:** `无许可证`
+
+- **[jev-lab](https://github.com/llt22/jev-lab)**<br>
+  TypeSafe Jev（System One 模型）的动手研究实验室：对 Noul/Choice/Score 原语的可复现基准。 <sub>(机翻)</sub><br>
+  <sub>`基准测试` · ★1 · llt22 · `Py`</sub>
 
   **注意:** `无许可证`
 
