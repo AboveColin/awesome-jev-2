@@ -329,26 +329,30 @@ def check_repository(row: dict, fields: frozenset[str], added: bool, net: Net | 
                 f"{STAR_SHARE:.0%} apart. Take the count from the API, not a badge.",
             ))
     if wants("flags"):
-        compared.append("commit count")
-        out += single_commit(key, repo, flags, net)
+        found, counted = single_commit(key, repo, flags, net)
+        if counted:
+            compared.append("commit count")
+        out += found
     if not any(f.level in ("error", "warning") for f in out):
         out.append(Finding(key, "ok", f"{where} agrees with GitHub on {', '.join(compared) or 'its name'}."))
     return out
 
 
-def single_commit(key: str, repo: str, flags: list, net: Net) -> list[Finding]:
+def single_commit(key: str, repo: str, flags: list, net: Net) -> tuple[list[Finding], bool]:
+    """The finding, if any, and whether the commits were counted at all: an
+    uncounted repository must not be said to agree on its commit count."""
     try:
         count = net.commits(repo)
     except RateLimited:
-        return [Finding(key, "skipped", "Commits not counted: GitHub rate limit.")]
+        return [Finding(key, "skipped", "Commits not counted: GitHub rate limit.")], False
     if count == 1 and "single-commit" not in flags:
         return [Finding(
             key, "warning",
             f"{code(repo)} has one commit on its default branch; the `single-commit` flag tells a reader.",
-        )]
+        )], True
     if count is not None and count > 1 and "single-commit" in flags:
-        return [Finding(key, "info", f"Flagged `single-commit`, but {code(repo)} now has more than one commit.")]
-    return []
+        return [Finding(key, "info", f"Flagged `single-commit`, but {code(repo)} now has more than one commit.")], True
+    return [], count is not None
 
 
 def check_link(row: dict, net: Net | None, reason: str) -> list[Finding]:
@@ -398,6 +402,13 @@ def check_self_submission(row: dict, added: bool, author: str | None) -> list[Fi
     if role and flagged:
         return [Finding(key, "ok", f"{who} opened this pull request and is {role}; the row discloses it.")]
     if role:
+        sources = row.get("sources") if isinstance(row.get("sources"), list) else []
+        if any(isinstance(s, dict) and s.get("catalog") == SELF_SUBMISSION_SOURCE for s in sources):
+            return [Finding(
+                key, "error",
+                f"{who} opened this pull request and is {role}; the row's sources say "
+                f"`{SELF_SUBMISSION_SOURCE}`, but `flags` lacks `{SELF_SUBMISSION_FLAG}`: add it.",
+            )]
         return [Finding(
             key, "error",
             f"{who} opened this pull request and is {role}, but the row does not say so: add the source "

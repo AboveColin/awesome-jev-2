@@ -11,6 +11,7 @@ import pathlib
 import re
 import sys
 import unittest
+from unittest import mock
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1]))
 
@@ -212,6 +213,8 @@ class RepositoryTest(unittest.TestCase):
         findings, _ = self.check(row(), full_name="alice/renamed")
         self.assertEqual(levels(findings), ["warning"])
         self.assertIn("`alice/renamed`", findings[0].text)
+        # GitHub's capitals are not a rename.
+        self.assertEqual(levels(self.check(row(), full_name="Alice/Demo")[0]), ["ok"])
 
     def test_gone_blocked_and_rate_limited(self):
         self.assertEqual(levels(self.check(row(), state="gone")[0]), ["error"])
@@ -228,15 +231,27 @@ class RepositoryTest(unittest.TestCase):
         self.assertIn("`single-commit`", findings[0].text)
         self.assertEqual(levels(self.check(row(flags=["single-commit"]), commits=1)[0]), ["ok"])
         self.assertEqual(levels(self.check(row(flags=["single-commit"]), commits=2)[0]), ["info", "ok"])
-        self.assertEqual(levels(self.check(row(), commits=None)[0]), ["ok"])
+        # Not counted (an empty repository, a rate limit): the rest can agree,
+        # but the commit count is not said to.
+        (finding,) = self.check(row(), commits=None)[0]
+        self.assertEqual(finding.level, "ok")
+        self.assertIn("on licence, archive status, stars.", finding.text)
         findings, _ = self.check(row(), commits=RateLimited("core", "spent"))
         self.assertEqual(levels(findings), ["skipped", "ok"])
+        self.assertNotIn("commit count", findings[1].text)
 
     def test_not_a_github_repository_or_this_one(self):
         for entry in (row(url="https://example.com/x"), row(url=f"https://github.com/{SELF}/tree/main/examples/x")):
             with self.subTest(url=entry["url"]):
                 findings, fake = self.check(entry)
                 self.assertEqual((findings, fake.asked), ([], []))
+
+    def test_a_changed_url_compares_everything_again(self):
+        # A row pointed at another repository: its old facts are not the new one's.
+        findings, fake = self.check(row(), fields=frozenset({"url"}), is_added=False, repo_license="GPL-3.0")
+        self.assertEqual(levels(findings), ["error"])
+        self.assertIn("GitHub says `GPL-3.0`", findings[0].text)
+        self.assertEqual(fake.asked, ["facts", "commits"])
 
     def test_a_changed_row_is_compared_only_on_what_changed(self):
         # The licence disagrees, but the pull request only moved the stars.
@@ -253,7 +268,8 @@ class LinkTest(unittest.TestCase):
 
     def test_answers(self):
         for answer, level in (((200, ""), "ok"), ((204, ""), "ok"), ((403, "Forbidden"), "warning"),
-                              ((429, ""), "warning"), ((301, ""), "warning"), ((404, "Not Found"), "error"),
+                              ((429, ""), "warning"), ((300, ""), "warning"), ((301, ""), "warning"),
+                              ((404, "Not Found"), "error"),
                               ((0, "timed out"), "error"), ((429, "not checked: GitHub core rate limit"), "skipped")):
             with self.subTest(answer=answer):
                 self.assertEqual(levels(self.check(row(), answer)[0]), [level])
@@ -282,6 +298,14 @@ class SelfSubmissionTest(unittest.TestCase):
 
     def test_the_owner_with_it(self):
         self.assertEqual(levels(rr.check_self_submission(row(**self.OWN), True, "alice")), ["ok"])
+
+    def test_the_owner_who_named_the_source_but_not_the_flag_is_told_only_the_flag(self):
+        # Open pull requests #21 and #23 are shaped like this (review of I03).
+        (finding,) = rr.check_self_submission(row(sources=self.OWN["sources"]), True, "alice")
+        self.assertEqual(finding.level, "error")
+        self.assertIn("the row's sources say `author submission`", finding.text)
+        self.assertIn("`flags` lacks `self-submitted`", finding.text)
+        self.assertNotIn("add the source", finding.text)
 
     def test_the_recorded_author_counts_too(self):
         org = "https://github.com/some-org/demo"
@@ -350,6 +374,17 @@ class ReviewRowTest(unittest.TestCase):
         review = rr.review_row(changed(row(), "url"), "bob", fake.net(), "")
         self.assertEqual({f.check for f in review.findings}, {"call-site", "repository", "link"})
 
+    def test_changed_flags_are_compared_with_github(self):
+        # Adding or dropping `archived` / `single-commit` is a claim about the
+        # repository, so a flags-only change still asks GitHub.
+        fake = FakeNet(commits=1)
+        review = rr.review_row(changed(row(flags=["archived"]), "flags"), "bob", fake.net(), "")
+        texts = [f.text for f in review.findings if f.check == "repository"]
+        self.assertEqual(review.worst("repository"), "error")
+        self.assertTrue(any("does not mark" in t for t in texts), texts)
+        self.assertTrue(any("one commit" in t for t in texts), texts)
+        self.assertEqual(fake.asked, ["facts", "commits"])
+
     def test_a_check_that_breaks_is_not_a_pass(self):
         fake = FakeNet()
         fake.claim = lambda entry: {}["boom"]
@@ -391,6 +426,26 @@ class ReviewRowsTest(unittest.TestCase):
         for check in rr.NETWORK:
             self.assertEqual(reviews[0].worst(check), "skipped")
         self.assertIn("--offline", reviews[0].findings[0].text)
+
+
+class NetTest(unittest.TestCase):
+    def test_the_real_net_is_the_weekly_jobs_functions(self):
+        import check_links
+        import refresh_metadata
+        import verify_claims
+
+        net = rr.default_net()
+        self.assertIs(net.claim, verify_claims.check)
+        self.assertIs(net.facts, refresh_metadata.fetch)
+        self.assertIs(net.commits, rr.commit_count)
+        self.assertIs(net.link, check_links.fetch_status)
+
+    def test_commits_are_counted_to_two(self):
+        asked = []
+        for answer, count in (([{}], 1), ([{}, {}], 2), ([], 0), (None, None), ({"message": "Git Repository is empty."}, None)):
+            with self.subTest(answer=answer), mock.patch.object(rr, "api_get", lambda path: asked.append(path) or answer):
+                self.assertEqual(rr.commit_count("alice/demo"), count)
+        self.assertEqual(set(asked), {"/repos/alice/demo/commits?per_page=2"})
 
 
 class InertTextTest(unittest.TestCase):
