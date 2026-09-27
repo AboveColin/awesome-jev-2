@@ -268,6 +268,35 @@ def main(argv: list[str] | None = None) -> int:
         CATALOG.write_text(json.dumps(catalog, indent=2, ensure_ascii=False) + "\n")
         print(f"\nstamped checked={today} on {alive_total} row(s)")
 
+    print_lists(blocked, moved, dead)
+
+    shares = {name: (tally["refused"], tally["checked"]) for name, tally in counts.items()}
+    warnings = alarms(shares)
+    for warning in warnings:
+        print(f"\n{warning}")
+    if not dead and not warnings:
+        print("\nall links resolved")
+
+    _github.step_summary(summary_markdown(counts, shares, warnings, args.write))
+    _github.log_usage()
+    # The last two lines are the counts, so a log's tail always carries them.
+    (gh, gh_total), (other, other_total) = shares[GROUPS[0]], shares[GROUPS[1]]
+    print(
+        f"\nrefused: {gh} of {gh_total} GitHub URLs ({pct(gh, gh_total)}), "
+        f"{other} of {other_total} on other hosts ({pct(other, other_total)})"
+    )
+    print(
+        f"links: {len(targets)} checked: {alive_total} answered 2xx"
+        + (" (stamped)" if args.write else "")
+        + f", {len(moved)} redirected, {len(blocked)} refused, {len(dead)} dead"
+    )
+    if dead:
+        return 1
+    return 3 if warnings else 0
+
+
+def print_lists(blocked: list, moved: list, dead: list) -> None:
+    """The rows a person has to look at, by what they have to do."""
     if blocked:
         print(
             f"\n{len(blocked)} link(s) refused this checker but are probably fine. "
@@ -287,30 +316,6 @@ def main(argv: list[str] | None = None) -> int:
         )
         for entry, status, note in dead:
             print(f"  {entry['slug']}  HTTP {status or '---'}  {entry['url']}  {note}")
-
-    shares = {name: (tally["refused"], tally["checked"]) for name, tally in counts.items()}
-    warnings = alarms(shares)
-    for warning in warnings:
-        print(f"\n{warning}")
-    if not dead and not warnings:
-        print("\nall links resolved")
-
-    _github.step_summary(summary_markdown(counts, shares, warnings, args.write))
-    _github.log_usage()
-    (gh, gh_total), (other, other_total) = shares[GROUPS[0]], shares[GROUPS[1]]
-    # The last two lines are the counts, so a log's tail always carries them.
-    print(
-        f"\nrefused: {gh} of {gh_total} GitHub URLs ({pct(gh, gh_total)}), "
-        f"{other} of {other_total} on other hosts ({pct(other, other_total)})"
-    )
-    print(
-        f"links: {len(targets)} checked: {alive_total} answered 2xx"
-        + (" (stamped)" if args.write else "")
-        + f", {len(moved)} redirected, {len(blocked)} refused, {len(dead)} dead"
-    )
-    if dead:
-        return 1
-    return 3 if warnings else 0
 
 
 if __name__ == "__main__":

@@ -74,12 +74,13 @@ class VerificationReportingTests(unittest.TestCase):
             row("c", "2026-09-23", 200),
             row("d", "2026-09-25", 403),  # a date without a 2xx is not a successful check
             row("e", None, None),
+            row("f", "2026-09-24", 404),  # nor on the newest date
         ]
         schema = {"properties": {"kind": {"enum": ["project"]}}}
         with patch.object(_stats, "load", return_value=(rows, [], [], {"platforms": []}, schema)):
             stats = _stats.compute()
         self.assertEqual((stats["last_sweep"], stats["sweep_coverage"]), ("2026-09-24", 2))
-        self.assertIn("| Rows whose latest successful check is on that date | 2 of 5 |", build_docs.shape_block(stats))
+        self.assertIn("| Rows whose latest successful check is on that date | 2 of 6 |", build_docs.shape_block(stats))
         self.assertEqual(build_docs.inline_values(stats)["sweep_coverage"], 2)
         with patch.object(_stats, "load", return_value=([row("e", None, None)], [], [], {"platforms": []}, schema)):
             never = _stats.compute()

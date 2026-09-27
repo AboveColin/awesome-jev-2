@@ -136,6 +136,15 @@ class GraphqlBatchTest(Quiet):
             results = rm.fetch_all(rows, via="graphql")
         self.assertEqual([r["state"] for r in results], ["ok", "gone", "blocked"])
 
+    def test_an_answer_without_the_facts_is_read_over_rest(self):
+        rows = [row("mit", "a/mit")]
+        fake, _ = self.answer({"a/mit": {"nameWithOwner": "a/mit"}})
+        with mock.patch.object(rm, "graphql_request", side_effect=fake), \
+             mock.patch.object(rm, "api_get", side_effect=lambda path: REST[path.removeprefix("/repos/")]) as rest:
+            results = rm.fetch_all(rows, via="graphql")
+        self.assertEqual(rest.call_count, 1)
+        self.assertEqual(results, [rm.from_rest(rows[0], "a/mit", REST["a/mit"])])
+
     def test_a_failed_or_rate_limited_query_falls_back_to_rest(self):
         rows = [row("mit", "a/mit"), row("other", "a/other")]
         for failure in (None, _github.RateLimited("graphql", "spent")):
