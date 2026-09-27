@@ -91,7 +91,7 @@ Every catalogued example of this decision — 64 of them, official first, then r
   <sub>`Plugin` · ★30 · safzanpirani · `TS`</sub>
 
 - **[jgrep (npm: jevgrep)](https://github.com/kyu1204/jgrep)** — grep for what code does: one Noul per code chunk, diff hunk or CSV row, printed as file:line hits with probabilities. --diff gates a PR in CI on a rule written in English (exit 0 match / 1 clean / 2 error); --tests lists the test files a diff can affect.
-  <sub>`Project` · ★24 · kyu1204 · `TS` · `noul` · `choice` · `score` · ⚠ `unverified claims`</sub>
+  <sub>`Project` · ★24 · kyu1204 · `TS` · `noul` · `choice` · `score` · ⚠ `unverified claims` `self-submitted`</sub>
 
 - **[laya-jev-GraphRAG](https://github.com/bodepudimuneendra-netizen/laya-jev-GraphRAG)** — Agentic GraphRAG engine using swappable System One decision models (local Laya / cloud Jev). Features a complete 4-phase pipeline (Ingestion, Pre-Retrieval, Traversal, Post-Retrieval) and evaluation across Neo4j, Memgraph, Apache AGE, and Kùzu driven by a custom A* traversal algorithm.
   <sub>`Project` · ★22 · bodepudimuneendra-netizen · `Py`</sub>
@@ -136,7 +136,7 @@ Every catalogued example of this decision — 64 of them, official first, then r
   <sub>`Plugin` · ★5 · valentynkit · `Lua`</sub>
 
 - **[jevsearch](https://github.com/kylemclaren/jevsearch)** — A shadcn/ui ⌘K site-search block: a local keyword pass shows hits at once, then the top 20 go to Jev in one request (a Noul per candidate, a Choice for the best page, a Noul for whether any page answers) and are re-ordered or dropped; keyword order stands if TypeSafe is slow or down.
-  <sub>`Project` · ★5 · kylemclaren · `TS` · `noul` · `choice` · ⚠ `unverified claims`</sub>
+  <sub>`Project` · ★5 · kylemclaren · `TS` · `noul` · `choice` · ⚠ `unverified claims` `self-submitted`</sub>
 
 - **[askgrep](https://github.com/fajarhide/askgrep)** — grep for the questions you cannot write as a pattern. Reads every function instead of sampling a few. Powered by Jev, TypeSafe AI's System One model.
   <sub>`Project` · ★4 · fajarhide · `Rs`</sub>
@@ -166,7 +166,7 @@ Every catalogued example of this decision — 64 of them, official first, then r
   <sub>`Plugin` · ★2 · hamakyo · `TS`</sub>
 
 - **[JevPDF](https://github.com/kylemclaren/jevpdf)** — Searches a PDF by meaning. pdf.js extracts each page's lines in the browser and Jev answers one Noul per line ("does this line answer the query?"), at most 16 lines per request with the page text as shared state. Lines at p ≥ 0.55 are highlighted in probability order; only text is sent to Jev.
-  <sub>`Project` · ★2 · kylemclaren · `TS` · `noul`</sub>
+  <sub>`Project` · ★2 · kylemclaren · `TS` · `noul` · ⚠ `self-submitted`</sub>
 
 - **[jfind](https://github.com/religa/jfind)** — Find files by describing them in plain English: find(1) with a semantic --like predicate, answered by TypeSafe.ai's jev model
   <sub>`Project` · ★2 · religa · `Py`</sub>

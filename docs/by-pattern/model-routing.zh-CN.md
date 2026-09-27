@@ -100,7 +100,7 @@ _选择由哪个下游模型或档位处理请求。_
   <sub>`开源项目` · ★2 · xinyao27 · `TS`</sub>
 
 - **[Codex Jev Router](https://github.com/suenot/codex-jev-router)** — 使用 Jev 的 Choice 和 Noul 判断简短任务摘要，为 Codex 子代理选择模型与推理档位；不确定时回退到 Sol。 <sub>(机翻)</sub>
-  <sub>`开源项目` · ★1 · suenot · `JS` · `choice` · `noul` · ⚠ `疑似 AI 生成`</sub>
+  <sub>`开源项目` · ★1 · suenot · `JS` · `choice` · `noul` · ⚠ `疑似 AI 生成` `作者自荐`</sub>
 
 - **[hermes-jev-router](https://github.com/ussyverse/hermes-jev-router)** — 实验性 Hermes 插件：带预算与能力约束的 Jev 辅助模型路由方案。 <sub>(机翻)</sub>
   <sub>`插件` · ★1 · ussyverse · `Py`</sub>

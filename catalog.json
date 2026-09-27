@@ -4182,7 +4182,8 @@
       "url": "https://github.com/suenot"
     },
     "flags": [
-      "ai-generated"
+      "ai-generated",
+      "self-submitted"
     ],
     "notes_zh": "作者主动披露：项目在 Codex 协助下开发，本次投稿由 Codex 代理准备；该标记记录的是这份披露，不是缺陷。"
   },
@@ -32623,6 +32624,9 @@
       "read_on": "2026-09-23"
     },
     "first_seen": "2026-09-23",
+    "flags": [
+      "self-submitted"
+    ],
     "sources": [
       {
         "catalog": "author submission",
@@ -33361,7 +33365,8 @@
     },
     "first_seen": "2026-09-23",
     "flags": [
-      "unverified-claims"
+      "unverified-claims",
+      "self-submitted"
     ],
     "notes": "The README's Hit@1 figures (83% vs 41% for its keyword pass alone, 41 labelled queries over the TypeSafe docs) come from the author's own benchmark in bench/results.json, not an independent run.",
     "notes_zh": "README 中的 Hit@1 数字（在 TypeSafe 文档上 41 条标注查询，83% 对比纯关键词的 41%）来自作者自己在 bench/results.json 里的评测，并非独立复现。",
@@ -34383,7 +34388,8 @@
       "read_on": "2026-09-23"
     },
     "flags": [
-      "unverified-claims"
+      "unverified-claims",
+      "self-submitted"
     ]
   },
   {

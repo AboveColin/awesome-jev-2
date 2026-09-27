@@ -91,7 +91,7 @@ Every catalogued example of this decision — 134 of them, official first, then 
   <sub>`Plugin` · ★25 · compozy · `TS`</sub>
 
 - **[jgrep (npm: jevgrep)](https://github.com/kyu1204/jgrep)** — grep for what code does: one Noul per code chunk, diff hunk or CSV row, printed as file:line hits with probabilities. --diff gates a PR in CI on a rule written in English (exit 0 match / 1 clean / 2 error); --tests lists the test files a diff can affect.
-  <sub>`Project` · ★24 · kyu1204 · `TS` · `noul` · `choice` · `score` · ⚠ `unverified claims`</sub>
+  <sub>`Project` · ★24 · kyu1204 · `TS` · `noul` · `choice` · `score` · ⚠ `unverified claims` `self-submitted`</sub>
 
 - **[jev-column-race](https://github.com/goodrahstar/jev-column-race)** — Jev vs Gemini 3.8 Flash: labelling 1,000 app reviews, 4.1× faster and 7× cheaper
   <sub>`Project` · ★23 · goodrahstar · `JS`</sub>

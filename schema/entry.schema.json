@@ -314,7 +314,8 @@
           "not-jev",
           "shadow-mode-only",
           "no-license",
-          "single-commit"
+          "single-commit",
+          "self-submitted"
         ]
       }
     },
@@ -341,7 +342,7 @@
         ],
         "properties": {
           "catalog": {
-            "description": "Human name of the upstream index, site or search that surfaced this entry.",
+            "description": "Human name of the upstream index, site or search that surfaced this entry. Two fixed strings name submissions to this repository: 'author submission' when the project's own author or maintainer proposed the row (the row then also carries the self-submitted flag; lint enforces both directions), and 'maintainer submission' when this list's maintainer added it on their own initiative.",
             "type": "string",
             "minLength": 1
           },

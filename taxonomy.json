@@ -184,6 +184,14 @@
       "zh": "已归档",
       "blurb_en": "Development has visibly stopped.",
       "blurb_zh": "开发明显已经停止。"
+    },
+    {
+      "key": "self-submitted",
+      "en": "self-submitted",
+      "zh": "作者自荐",
+      "blurb_en": "Proposed by the project's own author or maintainer. Discloses a relationship; it is not a judgement of quality.",
+      "blurb_zh": "由项目作者或维护者本人提交。这是对关系的披露，不是质量评判。",
+      "zh_machine": true
     }
   ]
 }

@@ -100,7 +100,7 @@ Every catalogued example of this decision — 43 of them, official first, then r
   <sub>`Project` · ★2 · xinyao27 · `TS`</sub>
 
 - **[Codex Jev Router](https://github.com/suenot/codex-jev-router)** — Uses Jev Choice and Noul judgments on short task summaries to select a Codex subagent model and reasoning effort with a Sol fallback.
-  <sub>`Project` · ★1 · suenot · `JS` · `choice` · `noul` · ⚠ `AI-written`</sub>
+  <sub>`Project` · ★1 · suenot · `JS` · `choice` · `noul` · ⚠ `AI-written` `self-submitted`</sub>
 
 - **[hermes-jev-router](https://github.com/ussyverse/hermes-jev-router)** — Experimental Hermes plugin: Jev-assisted model routing plans with budget and capability constraints. API access pending.
   <sub>`Plugin` · ★1 · ussyverse · `Py`</sub>

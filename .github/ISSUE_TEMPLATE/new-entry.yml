@@ -92,6 +92,7 @@ body:
         - label: "No LICENSE file (whatever the README badge says)"
         - label: "Needs early access, or a key for a third-party service"
         - label: "Paywalled, marketing content, or looks machine-written"
+        - label: "This is my own project — I wrote or maintain it (listed with the `self-submitted` flag)"
 
   - type: textarea
     id: notes

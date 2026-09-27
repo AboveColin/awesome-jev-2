@@ -45,6 +45,15 @@ OFFICIAL_HOSTS = (
 # when its code is a first-party integration published by that other vendor.
 OFFICIAL_URL_PREFIXES = ("https://github.com/typesafe-ai/",)
 
+# The one spelling of "the project's own author or maintainer proposed this row"
+# in sources[].catalog, and the flag that discloses it on every surface. Each
+# implies the other; see check_self_submission.
+SELF_SUBMISSION_SOURCE = "author submission"
+SELF_SUBMISSION_FLAG = "self-submitted"
+# Spellings close enough that the writer clearly meant the declaration above.
+# Rejected rather than accepted, so the rule cannot be evaded by a typo.
+SELF_SUBMISSION_NEAR_MISS = re.compile(r"\b(?:author|self)[\s_-]*submi", re.IGNORECASE)
+
 errors: list[str] = []
 warnings: list[str] = []
 
@@ -204,6 +213,7 @@ def check_entry_invariants(entry: dict, path: str, *, retired: bool) -> None:
 
     # A flag that needs explaining is worse than no flag at all.
     flags = entry.get("flags", [])
+    check_self_submission(entry, path, flags)
     for flag in ("ai-generated", "unverified-claims", "code-untested"):
         if flag in flags and not entry.get("notes"):
             warn(
@@ -267,6 +277,42 @@ def check_entry_invariants(entry: dict, path: str, *, retired: bool) -> None:
                 path,
                 f"{slug}: flagged no-license but repo_license is {entry['repo_license']!r}",
             )
+
+
+def check_self_submission(entry: dict, path: str, flags: list) -> None:
+    """`author submission` in sources and the `self-submitted` flag go together.
+
+    The source string is where a contributor declares the relationship; the
+    flag is what the READMEs, the pattern pages, the site and the MCP server
+    show a reader. Either one without the other means a surface is silent about
+    it. Purely declarative on purpose: nothing is inferred from a GitHub handle
+    (rarely filled, and an owner is often an org) or from the wording of a note.
+    """
+    slug = entry.get("slug", "?")
+    sources = [s for s in entry.get("sources", []) if isinstance(s, dict)]
+    names = [s.get("catalog") for s in sources if isinstance(s.get("catalog"), str)]
+    for name in names:
+        if name != SELF_SUBMISSION_SOURCE and SELF_SUBMISSION_NEAR_MISS.search(name):
+            err(
+                path,
+                f"{slug}: source catalog {name!r} looks like a self-submission; write "
+                f"exactly {SELF_SUBMISSION_SOURCE!r} so lint and every surface recognise it",
+            )
+    declared = SELF_SUBMISSION_SOURCE in names
+    flagged = SELF_SUBMISSION_FLAG in flags
+    if declared and not flagged:
+        err(
+            path,
+            f"{slug}: a source is {SELF_SUBMISSION_SOURCE!r} but flags lacks "
+            f"{SELF_SUBMISSION_FLAG!r}; add it so every surface discloses the relationship",
+        )
+    if flagged and not declared:
+        err(
+            path,
+            f"{slug}: flagged {SELF_SUBMISSION_FLAG} but no source has catalog "
+            f"{SELF_SUBMISSION_SOURCE!r}; add that source (url: the pull request or "
+            "issue that proposed the row) or drop the flag",
+        )
 
 
 def check_slug_order(label: str, data: list) -> None:

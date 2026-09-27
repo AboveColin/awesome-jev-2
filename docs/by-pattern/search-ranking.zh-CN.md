@@ -91,7 +91,7 @@ _对来自廉价检索步骤的候选做打分或重排。_
   <sub>`插件` · ★30 · safzanpirani · `TS`</sub>
 
 - **[jgrep (npm: jevgrep)](https://github.com/kyu1204/jgrep)** — 按代码的作用来 grep：对每个代码块、diff 块或 CSV 行问一个 Noul，输出带概率的 file:line 命中。--diff 用一条英文规则在 CI 里为 PR 把关（退出码 0 命中 / 1 干净 / 2 出错）；--tests 列出一次 diff 可能影响的测试文件。
-  <sub>`开源项目` · ★24 · kyu1204 · `TS` · `noul` · `choice` · `score` · ⚠ `宣称未核实`</sub>
+  <sub>`开源项目` · ★24 · kyu1204 · `TS` · `noul` · `choice` · `score` · ⚠ `宣称未核实` `作者自荐`</sub>
 
 - **[laya-jev-GraphRAG](https://github.com/bodepudimuneendra-netizen/laya-jev-GraphRAG)** — 一个智能体式 GraphRAG 引擎，可切换 System One 决策模型（本地 Laya 或云端 Jev）。 <sub>(机翻)</sub>
   <sub>`开源项目` · ★22 · bodepudimuneendra-netizen · `Py`</sub>
@@ -136,7 +136,7 @@ _对来自廉价检索步骤的候选做打分或重排。_
   <sub>`插件` · ★5 · valentynkit · `Lua`</sub>
 
 - **[jevsearch](https://github.com/kylemclaren/jevsearch)** — shadcn/ui 的 ⌘K 站内搜索组件：先用本地关键词匹配立即出结果，再把前 20 条一次性发给 Jev（每个候选一个 Noul、一个选出最佳页面的 Choice、一个判断是否有页面能回答的 Noul），据此重排或剔除结果；TypeSafe 变慢或不可用时保留关键词排序。 <sub>(机翻)</sub>
-  <sub>`开源项目` · ★5 · kylemclaren · `TS` · `noul` · `choice` · ⚠ `宣称未核实`</sub>
+  <sub>`开源项目` · ★5 · kylemclaren · `TS` · `noul` · `choice` · ⚠ `宣称未核实` `作者自荐`</sub>
 
 - **[askgrep](https://github.com/fajarhide/askgrep)** — 为那些写不成正则的问题而生的 grep：逐个读取每个函数而不是抽样，由 TypeSafe Jev 驱动。 <sub>(机翻)</sub>
   <sub>`开源项目` · ★4 · fajarhide · `Rs`</sub>
@@ -166,7 +166,7 @@ _对来自廉价检索步骤的候选做打分或重排。_
   <sub>`插件` · ★2 · hamakyo · `TS`</sub>
 
 - **[JevPDF](https://github.com/kylemclaren/jevpdf)** — 按语义搜索 PDF：pdf.js 在浏览器里逐页提取文本行，Jev 对每一行回答一个 Noul（“这一行是否回答了查询？”），每批最多 16 行、共享整页文本作为 state；概率不低于 0.55 的行被高亮并按概率排序。只发送文本，API key 由服务端代理持有。 <sub>(机翻)</sub>
-  <sub>`开源项目` · ★2 · kylemclaren · `TS` · `noul`</sub>
+  <sub>`开源项目` · ★2 · kylemclaren · `TS` · `noul` · ⚠ `作者自荐`</sub>
 
 - **[jfind](https://github.com/religa/jfind)** — 用自然语言描述来找文件：带语义 --like 条件的 find(1)，由 TypeSafe.ai 的 jev 回答。 <sub>(机翻)</sub>
   <sub>`开源项目` · ★2 · religa · `Py`</sub>

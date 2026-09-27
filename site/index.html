@@ -1147,6 +1147,7 @@
         FLAG = {},
         STATS = {},
         P_ORDER = [],
+        F_ORDER = [],
         COLLECTIONS = [];
       const labelsFrom = (list, withShort) =>
         Object.fromEntries(
@@ -1155,21 +1156,6 @@
             withShort ? [x.en, x.zh, x.short_en, x.short_zh] : [x.en, x.zh],
           ]),
         );
-      const F_ORDER = [
-        "not-jev",
-        "shadow-mode-only",
-        "early-access-required",
-        "code-untested",
-        "single-commit",
-        "no-license",
-        "third-party-api-key",
-        "vendor-reported",
-        "unverified-claims",
-        "ai-generated",
-        "marketing",
-        "paywalled",
-        "archived",
-      ];
       const QGLYPH = { choice: "◆", score: "▮", noul: "◐" };
 
       // The three primitives. Facts from the official API reference; the
@@ -1812,6 +1798,9 @@
           P_ORDER = patterns.patterns.map((x) => x.key);
           KIND = labelsFrom(taxonomy.kinds, false);
           FLAG = labelsFrom(taxonomy.flags, false);
+          // Caveat order is taxonomy.json's, like the README's; a flag added
+          // there sorts into place here with no second list to update.
+          F_ORDER = taxonomy.flags.map((x) => x.key);
           DATA = d;
           readUrl();
           i18n();

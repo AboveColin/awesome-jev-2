@@ -108,6 +108,17 @@ Sibling lists that ship no licence can be used as pointers but not as prose: a
 URL is a fact, a description is someone's writing. Rows discovered that way were
 re-read at the call site and summarised independently.
 
+Since 2026-09-27, who proposed a row is a caveat like any other. A row whose
+`sources` include the fixed string `author submission` — the project's own
+author or maintainer asked for it — carries the `self-submitted` flag, and
+`lint.py` fails if either appears without the other. The flag is declared by
+the submitter, never inferred: GitHub handles are rarely recorded and an owner
+is often an organisation, and matching the wording of a note is guesswork. The
+backfill therefore covered only rows already recorded as `author submission`.
+Rows recorded as `maintainer submission` (this list's maintainer adding a row on
+their own initiative) or `community submission` were not reclassified, so the
+flag's absence is not evidence that a row was not self-submitted.
+
 ### The bulk pass, and what it cost
 
 A second aggregation run verified the 320 most-cited repositories missing here

@@ -51,6 +51,10 @@ deliberately fails closed. Copy that shape, not the shape that trusts the score.
       declares. Several otherwise good projects ship none.
 - [ ] **What will it cost you?** `third-party-api-key` means a service other than
       TypeSafe. `early-access-required` means a waitlist.
+- [ ] **Who proposed the row?** `self-submitted` means the project's own author
+      or maintainer did, so the description started from their side. It is a
+      disclosure, not a mark against the project. Its absence proves nothing:
+      only rows whose source says `author submission` carry it.
 - [ ] **Does it send your data somewhere?** Some catalogued projects read screen
       contents, mailbox contents or source trees. That is inherent to what they
       do; decide whether you are comfortable before running one.

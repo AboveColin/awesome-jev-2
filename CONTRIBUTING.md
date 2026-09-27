@@ -106,7 +106,16 @@ turns red.
   row, not from a README badge. Several repos have a licence badge and no
   `LICENSE` file; that gets the `no-license` flag.
 - **`sources`** — at least one, so the row is attributable. Name where you found
-  it, not where it lives.
+  it, not where it lives. Two fixed strings name submissions made directly to
+  this repository, and they mean different things:
+  - `author submission` — the project's own author or maintainer proposed the
+    row. Use it for your own project, with the pull request or issue as `url`.
+    The row must then also carry the `self-submitted` flag; `lint.py` fails if
+    either appears without the other.
+  - `maintainer submission` — this list's maintainer added the row on their own
+    initiative. It says nothing about who wrote the project and is not a
+    self-submission, unless the maintainer is also that project's author, in
+    which case it is an `author submission` like any other.
 
 ## Flags are the point
 
@@ -125,9 +134,17 @@ Use them generously. A flagged row is more useful than an unflagged one.
 | `paywalled`, `marketing`, `ai-generated` | as they say                                     |
 | `early-access-required`                  | needs waitlist access to use                    |
 | `third-party-api-key`                    | needs a key for a service other than TypeSafe   |
+| `self-submitted`                         | its own author or maintainer proposed the row   |
 
 `ai-generated`, `unverified-claims` and `code-untested` require a `notes` line
 saying why — a flag a reader cannot interpret is worse than no flag.
+
+`self-submitted` is a disclosure, not a defect: every surface shows it so a
+reader knows the description came from the project's side. It is declared,
+never guessed — it goes with an `author submission` source and nothing else.
+Older rows recorded as `maintainer submission` or `community submission` have
+not been classified, so a row without the flag is not a statement that nobody
+self-submitted it.
 
 All catalogue code is **untested by this repository by default**, including rows
 without `code-untested`. That flag adds a caveat; its absence must never be used
@@ -150,7 +167,8 @@ result; neither `checked` nor `evidence.read_on` is a substitute.
   weights. File it as `alternative` with `not-jev`.
 - **Your own project, described the way you would describe it to an investor.**
   Self-submissions are welcome; marketing copy is not. Say what decision it makes
-  and which primitive it uses.
+  and which primitive it uses, record the source as `author submission`, add the
+  `self-submitted` flag, and tick the box in the pull request template.
 
 ## Finding things to add
 

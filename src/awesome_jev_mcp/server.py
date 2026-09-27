@@ -97,7 +97,9 @@ def tool(fn):
 
 # Flags that change whether a row is an example at all, as opposed to a caveat
 # about its quality. An agent looking for "how do I do X" should not be handed
-# a reimplementation that never calls the API.
+# a reimplementation that never calls the API. `self-submitted` is deliberately
+# not here: it discloses who proposed a row, says nothing about whether the row
+# is an example, and reaches the agent in `caveats` like every other flag.
 DISQUALIFYING = {"not-jev", "shadow-mode-only"}
 
 
