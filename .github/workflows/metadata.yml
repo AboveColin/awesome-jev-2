@@ -72,11 +72,20 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # A dead link exits non-zero; that is links.yml's alarm to raise, and
-          # must not stop the live rows from being stamped here. --write only
-          # ever stamps rows that answered, so a partial run is still correct.
-          python3 scripts/check_links.py --write > /tmp/links.log || true
-          tail -5 /tmp/links.log
+          # Exit 1 (dead links) and 3 (too many refusals to trust GitHub's or
+          # the other hosts' results) are links.yml's alarms to raise, and must
+          # not stop the live rows from being stamped here: --write only ever
+          # stamps rows that answered, so a partial run is still correct. The
+          # counts go to the job summary and end the log; the whole log is kept
+          # as an artifact. A run that never printed its counts crashed.
+          code=0
+          python3 scripts/check_links.py --write > /tmp/links.log || code=$?
+          tail -n 2 /tmp/links.log
+          if ! grep -q '^links: ' /tmp/links.log; then
+            echo "::error title=Link sweep stopped::check_links.py exited $code before its counts; see the metadata-logs artifact"
+            exit 1
+          fi
+          echo "check_links.py exit $code (0 all fine, 1 dead links, 3 too many refusals)"
 
       - name: Refresh stars, licences and archive status
         env:
@@ -89,6 +98,19 @@ jobs:
           # default shell has no pipefail, and a crash must still fail the step.
           python3 scripts/refresh_metadata.py --write --digest /tmp/digest.md > /tmp/refresh.log
           tail -3 /tmp/refresh.log
+
+      # Every row's verdict, for when the summary's counts need explaining.
+      - name: Keep the sweep and refresh logs
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: metadata-logs
+          path: |
+            /tmp/links.log
+            /tmp/refresh.log
+            /tmp/digest.md
+          if-no-files-found: ignore
+          retention-days: 30
 
       - name: Rebuild everything generated from those facts, and commit it here
         id: commit
