@@ -6,8 +6,8 @@ not in the catalogue and records one verdict per repository, so the weekly run
 does not read the same code again for RECHECK_DAYS and does not propose the same
 candidate twice. Those verdicts used to live only in the Actions cache, which
 GitHub evicts after seven days without access: exactly the weekly schedule, and
-scheduled runs start hours late. One late or failed run lost them all, and the
-next issue proposed every candidate again as new.
+scheduled runs start hours late. One late or skipped run would lose them all,
+and the next issue would propose every candidate again as new.
 
 They now live in git. discover.yml reads strangers' repositories and holds no
 write permission, so it leaves this file as an artifact; metadata.yml, which

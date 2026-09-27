@@ -17,7 +17,7 @@
 # Verdicts persist between runs: a repository found not to call Jev is not
 # re-read for 60 days, and a candidate already proposed is listed among the
 # earlier ones rather than as new. They live in git, in .discover/seen.json
-# (scripts/discover_seen.py), because the Actions cache alone lost them: GitHub
+# (scripts/discover_seen.py), as the Actions cache alone can lose them: GitHub
 # evicts a cache after seven days without access, which is this schedule, and
 # scheduled runs start hours late. This workflow reads strangers' repositories,
 # so it holds no write permission: it leaves the verdicts as an artifact, and

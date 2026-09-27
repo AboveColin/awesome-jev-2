@@ -107,10 +107,6 @@ class IssueStepTest(unittest.TestCase):
         self.assertEqual(self.creates(calls)[-1], f"issue create --title Discovery: candidates to read --body-file {self.body}")
 
 
-if __name__ == "__main__":
-    unittest.main()
-
-
 def workflow(name: str) -> str:
     return (WORKFLOWS / name).read_text()
 
@@ -259,3 +255,7 @@ class MetadataTakesInVerdictsTest(unittest.TestCase):
         self.assertEqual(order, sorted(order))
         add = next(line for line in text.splitlines() if "git add" in line)
         self.assertIn(".discover", add.split())
+
+
+if __name__ == "__main__":
+    unittest.main()

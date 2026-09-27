@@ -122,7 +122,7 @@ flag's absence is not evidence that a row was not self-submitted.
 Since 2026-09-27, the script's verdicts are kept in git, in
 `.discover/seen.json`, rather than only in the Actions cache. GitHub evicts a
 cache nobody has read for seven days; discovery runs weekly, and its scheduled
-start on 2026-09-24 came four and a half hours late, so one late or failed run
+start on 2026-09-24 came four and a half hours late, so one late or skipped run
 would have lost every verdict, and the next issue would have proposed every
 earlier candidate again as new. `discover` reads strangers' repositories and
 holds no write permission, so it leaves the file as an artifact, and the weekly
