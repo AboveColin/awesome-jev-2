@@ -7,6 +7,7 @@ rows in a different order, would then silently reshuffle the README.
 """
 
 import contextlib
+import copy
 import io
 import json
 import pathlib
@@ -123,6 +124,74 @@ class LintOrderTest(unittest.TestCase):
     def test_sorted_file_passes(self):
         lint.check_slug_order("retired.json", [{"slug": "a"}, {"slug": "b"}])
         self.assertEqual(lint.errors, [])
+
+
+class LintWiringTest(unittest.TestCase):
+    """lint.main() runs the order check on both real files, not just the helper."""
+
+    def setUp(self):
+        tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(tmp.cleanup)
+        self.dir = pathlib.Path(tmp.name)
+        for name in ("errors", "warnings"):
+            getattr(lint, name).clear()
+            self.addCleanup(getattr(lint, name).clear)
+        for name in ("CATALOG", "RETIRED"):
+            self.addCleanup(setattr, lint, name, getattr(lint, name))
+
+    def test_reversed_data_files_fail_lint_once_per_file(self):
+        for name in ("CATALOG", "RETIRED"):
+            rows = json.loads(getattr(lint, name).read_text(encoding="utf-8"))
+            self.assertGreater(len(rows), 1, f"{name} needs two rows to be out of order")
+            path = self.dir / getattr(lint, name).name
+            path.write_text(sort_catalog.render(rows[::-1]), encoding="utf-8")
+            setattr(lint, name, path)
+        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+            status = lint.main()
+        self.assertEqual(status, 1)
+        order_errors = [e for e in lint.errors if sort_catalog.COMMAND in e]
+        self.assertEqual(len(order_errors), 2, order_errors)
+        self.assertTrue(order_errors[0].startswith("catalog.json: "), order_errors[0])
+        self.assertTrue(order_errors[1].startswith("retired.json: "), order_errors[1])
+        # Reordering is the only thing wrong with these files.
+        self.assertEqual(lint.errors, order_errors)
+
+
+class RealCatalogDisplayOrderTest(unittest.TestCase):
+    """Reversing the real catalogue changes nothing a reader of the README sees.
+
+    The real data has groups of rows that tie on every display key but slug
+    (forks sharing a title and star count), so this fails if any README or
+    pattern-page ordering stops breaking ties by slug.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        cls.catalog = json.loads(build_readme.CATALOG.read_text(encoding="utf-8"))
+        cls.retired = json.loads(build_readme.RETIRED.read_text(encoding="utf-8"))
+
+    def test_readmes_ignore_file_order(self):
+        for strings in (build_readme.EN, build_readme.ZH):
+            with self.subTest(lang=strings["lang_code"]):
+                as_filed = build_readme.render(
+                    copy.deepcopy(self.catalog), copy.deepcopy(self.retired), strings, "2026-01-01"
+                )
+                reversed_ = build_readme.render(
+                    copy.deepcopy(self.catalog[::-1]), copy.deepcopy(self.retired[::-1]), strings, "2026-01-01"
+                )
+                self.assertEqual(as_filed, reversed_)
+
+    def test_pattern_pages_ignore_file_order(self):
+        as_filed = build_readme.group_by_pattern(copy.deepcopy(self.catalog))
+        reversed_ = build_readme.group_by_pattern(copy.deepcopy(self.catalog[::-1]))
+        self.assertEqual(sorted(as_filed), sorted(reversed_))
+        for key, rows in as_filed.items():
+            for strings in (build_readme.EN, build_readme.ZH):
+                with self.subTest(pattern=key, lang=strings["lang_code"]):
+                    self.assertEqual(
+                        build_readme.render_page(key, rows, strings),
+                        build_readme.render_page(key, reversed_[key], strings),
+                    )
 
 
 if __name__ == "__main__":
