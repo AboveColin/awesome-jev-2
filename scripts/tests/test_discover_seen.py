@@ -320,6 +320,41 @@ class DiscoverRunTest(unittest.TestCase):
         self.assertIn("- [ ] [old/proposal](https://github.com/old/proposal)", body)
         self.assertNotIn("old/gone-quiet", body, "a re-read that found no call site drops out")
 
+    def body_parts(self) -> tuple[str, str]:
+        """The issue body split into the new boxes and the earlier candidates."""
+        body = self.body.read_text(encoding="utf-8")
+        new, _, earlier = body.partition("<details>")
+        return new, earlier
+
+    def test_a_quiet_repository_that_now_calls_jev_is_a_new_candidate(self):
+        # Read once and found quiet, read again after RECHECK_DAYS and found
+        # calling Jev: the case the re-read exists for. It was never proposed,
+        # so it gets a box under the heading the workflow posts on (review of I05).
+        ds.write(self.committed, {"new/hit": v(self.stale, "no-signal"),
+                                  "waiting/one": v(self.recent, "calls-jev")})
+        code, err = self.run_discover()
+        self.assertEqual(code, 0, err)
+        self.assertIn("new/hit", self.inspected)
+        new, earlier = self.body_parts()
+        self.assertRegex(new, r"(?m)^### \d+ new candidates? with a call site$")
+        self.assertIn("- [ ] [new/hit]", new)
+        self.assertNotIn("new/hit", earlier)
+        self.assertIn("- [ ] [waiting/one]", earlier, "a candidate proposed before is still an earlier one")
+
+    def test_an_earlier_candidate_since_catalogued_or_declined_is_not_listed(self):
+        catalog = json.loads((ROOT / "catalog.json").read_text(encoding="utf-8"))
+        catalogued = next(repo.lower() for repo in map(dc.repo_of, catalog) if repo)
+        declined = next(iter(dc.read_declined()))
+        ds.write(self.committed, {slug: v(self.recent, "calls-jev")
+                                  for slug in (catalogued, declined, "waiting/one")})
+        code, err = self.run_discover()
+        self.assertEqual(code, 0, err)
+        _, earlier = self.body_parts()
+        self.assertIn("1 candidate from earlier weeks is still neither catalogued nor declined", earlier)
+        self.assertIn("- [ ] [waiting/one]", earlier)
+        self.assertNotIn(catalogued, earlier)
+        self.assertNotIn(declined, earlier)
+
     def test_a_first_run_starts_from_nothing(self):
         code, err = self.run_discover()
         self.assertEqual(code, 0, err)

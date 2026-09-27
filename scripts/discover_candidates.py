@@ -578,11 +578,16 @@ def inspect_only(text: str, *, as_json: bool) -> int:
         print(f"error: --only takes owner/name or its GitHub URL, not {text!r}", file=sys.stderr)
         return 2
     catalog = json.loads(CATALOG.read_text())
+    # With --json the notes go to stderr, so stdout stays one JSON document.
+    notes = sys.stderr if as_json else sys.stdout
     if slug in catalogued(catalog):
-        print(f"note: {slug} is already in catalog.json")
+        print(f"note: {slug} is already in catalog.json", file=notes)
     declined = read_declined()
     if slug in declined:
-        print(f"note: {slug} was declined in docs/declined.txt: {declined[slug] or '(no reason given)'}")
+        print(
+            f"note: {slug} was declined in docs/declined.txt: {declined[slug] or '(no reason given)'}",
+            file=notes,
+        )
     print(f"reading {slug}", file=sys.stderr)
     result = inspect(slug)
     if as_json:
@@ -711,8 +716,16 @@ def main(argv: list[str] | None = None) -> int:
         deduped.append(r)
     results = deduped
 
+    # New = calls Jev now and was not proposed before. A repository read before
+    # and found quiet, then read again after RECHECK_DAYS and found calling Jev,
+    # is new: it was never put to anyone, and it is the case the re-read exists
+    # for. Listing it among the earlier candidates would also leave the issue
+    # without a `### ` heading, so the workflow would not post it at all.
     new_hits = [
-        r for r in results if r["verdict"] == PROPOSED and r["slug"] not in seen
+        r
+        for r in results
+        if r["verdict"] == PROPOSED
+        and (seen.get(r["slug"]) or {}).get("verdict") != PROPOSED
     ]
     for r in results:
         seen[r["slug"]] = {"verdict": r["verdict"], "on": today.isoformat()}

@@ -177,6 +177,14 @@ class OnlyCommandTest(unittest.TestCase):
         self.assertEqual(code, 0)
         self.assertEqual(json.loads(out)[0]["slug"], "acme/x")
 
+    def test_json_stays_one_document_when_there_is_a_note(self):
+        catalog = json.loads((ROOT / "catalog.json").read_text(encoding="utf-8"))
+        repo = next(dc.repo_of(e) for e in catalog if dc.repo_of(e)).lower()
+        code, out, err, _ = self.run_main("--only", repo, "--json")
+        self.assertEqual(code, 0)
+        self.assertEqual(json.loads(out)[0]["slug"], repo)
+        self.assertIn("already in catalog.json", err)
+
     def test_rejects_what_is_not_a_repository(self):
         for bad in ("acme", "acme/x/y", "../etc/passwd", "a b/c"):
             with self.subTest(bad=bad):
