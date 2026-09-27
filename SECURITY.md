@@ -58,5 +58,9 @@ judgement — a summary, a pattern, a retirement — into the catalog. If you fi
 a path that breaks any of those, please report it.
 
 Actions are referenced by their major version tag (`actions/checkout@v7`), not
-pinned to a commit. `.github/dependabot.yml` proposes each new major as a weekly
-pull request, which a person reads and merges; nothing merges it automatically.
+pinned to a commit. The one exception is `pypa/gh-action-pypi-publish`, the
+step that uploads the MCP package: it is referenced by its moving `release/v1`
+branch, the form its README's examples use, so it follows that branch rather
+than waiting for a new major. `.github/dependabot.yml` proposes each new major
+as a weekly pull request, which a person reads and merges; nothing merges it
+automatically.

@@ -27,7 +27,7 @@ WORKFLOWS = ROOT / ".github" / "workflows"
 # First major whose action.yml runs on Node 24. upload-pages-artifact is a
 # composite; its v4 wraps upload-artifact v4.6.2 (node20), its v5 wraps v7.
 # pypa/gh-action-pypi-publish is a composite (its setup-python step is v6.2.0,
-# node24) published under the moving `release/v1` branch its docs recommend.
+# node24) published under the moving `release/v1` branch its README's examples use.
 NODE24_FLOOR = {
     "actions/checkout": 5,
     "actions/setup-python": 6,
