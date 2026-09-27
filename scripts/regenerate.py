@@ -36,6 +36,7 @@ GENERATORS = (
     ("build_assets.py", "the coverage and primitive figures in docs/assets/"),
     ("build_docs.py", "the generated values in docs/status.md, docs/sources.md and llms.txt"),
     ("build_compat.py", "the generated tables in docs/compatibility.md"),
+    ("build_review_queue.py", "docs/review-queue.md, the rows a script marks for a person to read"),
 )
 
 # Every path those generators write: files they own outright and hand-written
@@ -50,6 +51,7 @@ OUTPUTS = (
     "docs/status.md",
     "docs/sources.md",
     "docs/compatibility.md",
+    "docs/review-queue.md",
     "llms.txt",
 )
 

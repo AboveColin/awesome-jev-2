@@ -17,7 +17,7 @@ import build_readme
 import build_readme_cover as cover
 from readme import sections
 
-STATS = {"entries": 12_345, "link_ok": 12_001, "evidence_rows": 9_876}
+STATS = {"entries": 12_345, "link_ok": 12_001, "call_site_rows": 9_876}
 SVG_NS = "{http://www.w3.org/2000/svg}"
 
 

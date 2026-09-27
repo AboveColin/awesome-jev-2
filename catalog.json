@@ -2021,6 +2021,7 @@
         "jev-latest",
         "/v1/systemone"
       ],
+      "kind": "wire-shape",
       "read_on": "2026-09-24"
     },
     "zh_machine": true,
@@ -5142,6 +5143,7 @@
         "jev-latest",
         "jev-1.13"
       ],
+      "kind": "wire-shape",
       "read_on": "2026-09-24"
     },
     "zh_machine": true,
@@ -5617,6 +5619,7 @@
       "matched": [
         "/v1/systemone"
       ],
+      "kind": "wire-shape",
       "read_on": "2026-09-22"
     },
     "first_seen": "2026-09-22",
@@ -5890,6 +5893,7 @@
         "jev-1.13",
         "/v1/systemone"
       ],
+      "kind": "wire-shape",
       "read_on": "2026-09-22"
     },
     "first_seen": "2026-09-22",
@@ -6040,6 +6044,7 @@
         "jev-latest",
         "/v1/systemone"
       ],
+      "kind": "wire-shape",
       "read_on": "2026-09-24"
     },
     "zh_machine": true,
@@ -6229,6 +6234,7 @@
       "matched": [
         "/v1/systemone"
       ],
+      "kind": "wire-shape",
       "read_on": "2026-09-24"
     },
     "zh_machine": true,
@@ -6445,6 +6451,7 @@
       "matched": [
         "/v1/systemone"
       ],
+      "kind": "wire-shape",
       "read_on": "2026-09-22"
     },
     "first_seen": "2026-09-22",
@@ -6636,6 +6643,7 @@
       "matched": [
         "system_one"
       ],
+      "kind": "wire-shape",
       "read_on": "2026-09-24"
     },
     "zh_machine": true,
@@ -8229,6 +8237,7 @@
         "api.typesafe.ai",
         "/v1/systemone"
       ],
+      "kind": "wire-shape",
       "read_on": "2026-09-24"
     },
     "zh_machine": true,
@@ -10787,6 +10796,7 @@
         "typesafe-ai/jev",
         "noul"
       ],
+      "kind": "wire-shape",
       "read_on": "2026-09-22"
     }
   },
@@ -10995,6 +11005,7 @@
         "jev-latest",
         "jev-1.13"
       ],
+      "kind": "wire-shape",
       "read_on": "2026-09-22"
     },
     "first_seen": "2026-09-22",
@@ -13402,6 +13413,7 @@
         "typesafe-ai/jev",
         "jev-latest"
       ],
+      "kind": "wire-shape",
       "read_on": "2026-09-24"
     },
     "zh_machine": true,
@@ -17807,6 +17819,7 @@
         "typesafe/jev",
         "jev-latest"
       ],
+      "kind": "wire-shape",
       "read_on": "2026-09-22"
     },
     "first_seen": "2026-09-22",
@@ -20276,6 +20289,7 @@
         "/v1/systemone",
         "system_one"
       ],
+      "kind": "wire-shape",
       "read_on": "2026-09-22"
     },
     "first_seen": "2026-09-22",
@@ -20335,6 +20349,7 @@
         "/v1/systemone",
         "system_one"
       ],
+      "kind": "wire-shape",
       "read_on": "2026-09-24"
     },
     "zh_machine": true,
@@ -23357,6 +23372,7 @@
         "api.typesafe.ai",
         "jev-latest"
       ],
+      "kind": "wire-shape",
       "read_on": "2026-09-24"
     },
     "zh_machine": true,
@@ -29728,6 +29744,7 @@
       "matched": [
         "/v1/systemone"
       ],
+      "kind": "wire-shape",
       "read_on": "2026-09-24"
     },
     "zh_machine": true,
@@ -31538,6 +31555,7 @@
       "matched": [
         "/v1/systemone"
       ],
+      "kind": "wire-shape",
       "read_on": "2026-09-24"
     },
     "zh_machine": true,
@@ -31632,6 +31650,7 @@
       "matched": [
         "/v1/systemone"
       ],
+      "kind": "wire-shape",
       "read_on": "2026-09-24"
     },
     "zh_machine": true,
@@ -32673,6 +32692,7 @@
         "/v1/systemone",
         "system_one"
       ],
+      "kind": "wire-shape",
       "read_on": "2026-09-24"
     },
     "zh_machine": true,
@@ -35617,6 +35637,7 @@
         "jev-latest",
         "jev-1.13"
       ],
+      "kind": "wire-shape",
       "read_on": "2026-09-22"
     },
     "first_seen": "2026-09-22",
@@ -35807,6 +35828,7 @@
         "systemOne",
         "system_one"
       ],
+      "kind": "wire-shape",
       "read_on": "2026-09-24"
     },
     "zh_machine": true,
@@ -35856,6 +35878,7 @@
       "matched": [
         "/v1/systemone"
       ],
+      "kind": "wire-shape",
       "read_on": "2026-09-24"
     },
     "zh_machine": true,
@@ -36446,6 +36469,7 @@
       "matched": [
         "/v1/systemone"
       ],
+      "kind": "wire-shape",
       "read_on": "2026-09-22"
     },
     "first_seen": "2026-09-22",
@@ -36822,6 +36846,7 @@
         "/v1/systemone",
         "systemOne"
       ],
+      "kind": "wire-shape",
       "read_on": "2026-09-24"
     },
     "zh_machine": true,
@@ -38444,6 +38469,7 @@
       "matched": [
         "/v1/systemone"
       ],
+      "kind": "wire-shape",
       "read_on": "2026-09-24"
     },
     "zh_machine": true,
@@ -38810,6 +38836,7 @@
         "system_one",
         "TypeSafeClient"
       ],
+      "kind": "wire-shape",
       "read_on": "2026-09-22"
     },
     "first_seen": "2026-09-22",
@@ -38908,6 +38935,7 @@
         "/v1/systemone",
         "system_one"
       ],
+      "kind": "wire-shape",
       "read_on": "2026-09-22"
     },
     "first_seen": "2026-09-22",
@@ -38959,6 +38987,7 @@
         "jev-latest",
         "jev-1.13"
       ],
+      "kind": "wire-shape",
       "read_on": "2026-09-22"
     },
     "first_seen": "2026-09-22",
@@ -39060,6 +39089,7 @@
         "jev-1.13",
         "/v1/systemone"
       ],
+      "kind": "wire-shape",
       "read_on": "2026-09-24"
     },
     "zh_machine": true,
@@ -39334,6 +39364,7 @@
         "Noul",
         "Choice"
       ],
+      "kind": "wire-shape",
       "read_on": "2026-09-22"
     }
   },
@@ -39362,6 +39393,7 @@
       "matched": [
         "/v1/systemone"
       ],
+      "kind": "wire-shape",
       "read_on": "2026-09-22"
     },
     "first_seen": "2026-09-22",
@@ -39419,6 +39451,7 @@
         "jev-latest",
         "/v1/systemone"
       ],
+      "kind": "wire-shape",
       "read_on": "2026-09-24"
     },
     "zh_machine": true,
@@ -39459,6 +39492,7 @@
         "jev-latest",
         "/v1/systemone"
       ],
+      "kind": "wire-shape",
       "read_on": "2026-09-22"
     },
     "first_seen": "2026-09-22",
@@ -39516,6 +39550,7 @@
       "matched": [
         "/v1/systemone"
       ],
+      "kind": "wire-shape",
       "read_on": "2026-09-24"
     },
     "zh_machine": true,
@@ -39565,6 +39600,7 @@
       "matched": [
         "system_one"
       ],
+      "kind": "wire-shape",
       "read_on": "2026-09-24"
     },
     "zh_machine": true,
@@ -39617,6 +39653,7 @@
         "jev-latest",
         "/v1/systemone"
       ],
+      "kind": "wire-shape",
       "read_on": "2026-09-24"
     },
     "zh_machine": true,
@@ -39781,6 +39818,7 @@
       "matched": [
         "/v1/systemone"
       ],
+      "kind": "wire-shape",
       "read_on": "2026-09-24"
     },
     "zh_machine": true,
@@ -39951,6 +39989,7 @@
       "matched": [
         "typesafe-ai/jev"
       ],
+      "kind": "wire-shape",
       "read_on": "2026-09-22"
     },
     "first_seen": "2026-09-22",
@@ -42109,6 +42148,7 @@
         "jev-latest",
         "/v1/systemone"
       ],
+      "kind": "wire-shape",
       "read_on": "2026-09-22"
     },
     "first_seen": "2026-09-22",
@@ -42780,6 +42820,7 @@
       "matched": [
         "system_one"
       ],
+      "kind": "wire-shape",
       "read_on": "2026-09-22"
     },
     "first_seen": "2026-09-22",
@@ -42927,6 +42968,7 @@
         "jev-latest",
         "/v1/systemone"
       ],
+      "kind": "wire-shape",
       "read_on": "2026-09-22"
     },
     "first_seen": "2026-09-22",
@@ -43413,6 +43455,7 @@
         "jev-latest",
         "/v1/systemone"
       ],
+      "kind": "wire-shape",
       "read_on": "2026-09-22"
     },
     "first_seen": "2026-09-22",
@@ -43858,6 +43901,7 @@
         "api.typesafe.ai",
         "/v1/systemone"
       ],
+      "kind": "wire-shape",
       "read_on": "2026-09-24"
     },
     "zh_machine": true,
@@ -45422,6 +45466,7 @@
       "matched": [
         "/v1/systemone"
       ],
+      "kind": "wire-shape",
       "read_on": "2026-09-24"
     },
     "zh_machine": true,
@@ -45473,6 +45518,7 @@
         "/v1/systemone",
         "system_one"
       ],
+      "kind": "wire-shape",
       "read_on": "2026-09-24"
     },
     "zh_machine": true,
@@ -45569,6 +45615,7 @@
         "jev-latest",
         "/v1/systemone"
       ],
+      "kind": "wire-shape",
       "read_on": "2026-09-24"
     },
     "zh_machine": true,
@@ -46447,6 +46494,7 @@
       "matched": [
         "/v1/systemone"
       ],
+      "kind": "wire-shape",
       "read_on": "2026-09-24"
     },
     "zh_machine": true,
@@ -46696,6 +46744,7 @@
       "matched": [
         "system_one"
       ],
+      "kind": "wire-shape",
       "read_on": "2026-09-22"
     },
     "first_seen": "2026-09-22",
@@ -47589,6 +47638,7 @@
       "matched": [
         "/v1/systemone"
       ],
+      "kind": "wire-shape",
       "read_on": "2026-09-24"
     },
     "zh_machine": true,
@@ -53009,6 +53059,7 @@
         "systemOne",
         "TypeSafeClient"
       ],
+      "kind": "wire-shape",
       "read_on": "2026-09-24"
     },
     "zh_machine": true,
@@ -53379,6 +53430,7 @@
       "matched": [
         "/v1/systemone"
       ],
+      "kind": "wire-shape",
       "read_on": "2026-09-24"
     },
     "zh_machine": true,

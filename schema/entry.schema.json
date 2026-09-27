@@ -246,6 +246,15 @@
             "minLength": 2
           }
         },
+        "kind": {
+          "description": "What the cited file shows. `call-site`: the project calls Jev there. `wire-shape`: the file shows the project speaking Jev's request or response shape rather than using Jev — a reimplementation, a compatible server, an adapter backed by other models, or a script that sends Jev the same request for comparison; lint requires it on every `kind: alternative` row. `example-only`: the call is in an example or document the project ships, not in its own integration. Absent means `call-site`. A path under an examples/ directory only lists the row in docs/review-queue.md; recording this field is the decision of whoever reads the file.",
+          "type": "string",
+          "enum": [
+            "call-site",
+            "wire-shape",
+            "example-only"
+          ]
+        },
         "read_on": {
           "description": "Date the call site was last read by a person.",
           "type": "string",

@@ -112,11 +112,15 @@ EN = {
     "verified_h": "What is verified, and what is not",
     "stat_rechecked": "evidence recorded",
     "verified_recheck": (
-        "**Call-site text checks** — {n} rows record a file and matching strings in `evidence`. "
-        "The weekly [claims job](https://github.com/kydlikebtc/awesome-jev/actions/workflows/claims.yml) "
+        "**Call-site text checks** — {call_site} rows record in `evidence` a file where the project "
+        "calls Jev, and strings matched in it. Another {wire_shape} record a file that shows a project "
+        "speaking Jev's request shape without using Jev (every `alternative`, and adapters backed by "
+        "other models), and {example_only} only an example the project ships; `evidence.kind` says "
+        "which. The weekly [claims job](https://github.com/kydlikebtc/awesome-jev/actions/workflows/claims.yml) "
         "checks that those strings remain on the default branch and reports missing text or files. "
-        "This count measures recorded evidence, **not latest CI passes**. A text match does not "
-        "prove that a call executes, the API is compatible, or the result is correct."
+        "These counts measure recorded evidence, **not latest CI passes**. A text match does not "
+        "prove that a call executes, the API is compatible, or the result is correct. Citations a "
+        "script marks for a person to re-read are listed in the [review queue](docs/review-queue.md)."
     ),
     "verified_yes": (
         "**Link checks** — {link_ok} rows carry an HTTP 2xx response and a `checked` date; "
@@ -274,11 +278,14 @@ ZH = {
     "verified_h": "哪些经过核实，哪些没有",
     "stat_rechecked": "已记录证据",
     "verified_recheck": (
-        "**调用点文本复查** —— 有 {n} 行通过 `evidence` 记录了文件和匹配字符串。"
+        "**调用点文本复查** —— 有 {call_site} 行通过 `evidence` 记录了项目调用 Jev 的文件及其中匹配的字符串。"
+        "另有 {wire_shape} 行记录的文件只表明项目采用了 Jev 的请求结构、并未使用 Jev"
+        "（所有 `alternative`，以及由其他模型支撑的适配器），{example_only} 行记录的只是项目附带的示例；"
+        "`evidence.kind` 标明属于哪一种。"
         "每周 [claims 任务](https://github.com/kydlikebtc/awesome-jev/actions/workflows/claims.yml) "
         "检查这些字符串是否仍在默认分支，发现文本或文件缺失时报告。"
-        "这个数字是已记录的证据数量，**不是最新 CI 通过数**。文本匹配不能证明调用实际执行、"
-        "API 兼容或结果正确。"
+        "这些数字是已记录的证据数量，**不是最新 CI 通过数**。文本匹配不能证明调用实际执行、"
+        "API 兼容或结果正确。脚本标出、需要人重读的引用列在[复核队列](docs/review-queue.md)。"
     ),
     "verified_yes": (
         "**链接检查** —— 有 {link_ok} 行记录了 HTTP 2xx 响应和 `checked` 日期，"
@@ -344,7 +351,7 @@ ZH = {
 # ZH keys whose Chinese a model wrote rather than a person: the same disclosure
 # `zh_machine` makes for a catalogue row, and rendered the same way, with
 # "(机翻)" after it. A person who rewrites one removes its key from here.
-ZH_MACHINE = frozenset({"stars_note"})
+ZH_MACHINE = frozenset({"stars_note", "verified_recheck"})
 
 # The non-catalog parts of the repo, so navigation is a table rather than a
 # scattering of inline links the reader has to hunt for.

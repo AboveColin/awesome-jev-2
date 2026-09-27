@@ -72,6 +72,11 @@ FLAGS_NEEDING_NOTES = ("ai-generated", "unverified-claims", "code-untested")
 # message is the one that says why.
 DRAFT_FIELD = "_draft"
 
+# A `kind: alternative` row does not call Jev, so the file its evidence cites
+# can only show Jev's request shape. `evidence.kind` has to say so; without it
+# the citation is counted and shown as a call site, which it is not.
+ALTERNATIVE_EVIDENCE_KIND = "wire-shape"
+
 
 class Findings(NamedTuple):
     """What a check found, in order. Errors fail the build; warnings are advice."""
@@ -280,6 +285,17 @@ def check_entry_invariants(
             )
     if entry.get("evidence") and entry.get("evidence_none"):
         report.err(path, f"{slug}: has both evidence and evidence_none; they are exclusive")
+    evidence = entry.get("evidence")
+    if (
+        entry.get("kind") == "alternative"
+        and isinstance(evidence, dict)
+        and evidence.get("kind") != ALTERNATIVE_EVIDENCE_KIND
+    ):
+        report.err(
+            path,
+            f"{slug}: kind is 'alternative', so its evidence shows Jev's request shape, not a "
+            f"call to Jev; set evidence.kind to {ALTERNATIVE_EVIDENCE_KIND!r}",
+        )
 
     # `official` is a factual claim about who published the thing, so it is
     # checked against the vendor's own hosts and GitHub org rather than trusted.

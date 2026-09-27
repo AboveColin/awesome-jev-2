@@ -110,6 +110,31 @@ and neither `evidence` nor `evidence_none` an error instead of a warning; no
 row in either file broke the rule, and `not-yet-backfilled` remains an honest
 way to satisfy it.
 
+Since 2026-09-27, a citation records what the cited file shows, and the counts
+keep the kinds apart. Until then every `evidence` record was published as a
+call-site citation, one number of 1,121, although 52 of those rows were
+`kind: alternative`: projects that by definition do not call Jev, whose files
+matched strings such as `/v1/systemone` because they serve or send Jev's request
+shape. `evidence.kind` is now `call-site` (the default when absent), `wire-shape`
+(the file shows a project speaking Jev's request shape rather than using Jev: a
+reimplementation, a compatible server, an adapter backed by other models, or a
+comparison script) or `example-only` (an example the project ships, not its own
+integration). The 52 alternative rows were marked `wire-shape` mechanically,
+since the row's own kind already says it; nothing else was inferred, and
+`lint.py` now fails an alternative whose evidence says anything else. The
+README, `docs/status.md`, `llms.txt`, the README cover and the site's preview
+card now print the call-site count (1,069 that day) with the other two beside it
+where there is room, and the site labels a wire-shape or example-only citation
+as what it is. Two weaker signals are machine judgements rather than facts, so
+they are neither written into `catalog.json` nor raised as one lint warning per
+row: a cited file under an `examples/` directory with no `evidence.kind`
+recorded (22 rows; an SDK's examples are often its clearest call site, and only
+a reader can tell), and a citation whose only matched string is a model name or
+the API host (76 rows; any file configuring Jev contains one, whether or not it
+calls it). `_stats` counts both, `docs/status.md` publishes the counts, and the
+generated `docs/review-queue.md` lists the rows, one section per signal, with
+what a reader records to take a row off.
+
 ## Discovery is crowdsourced, verification is not
 
 There are dozens of Jev directories. Each is a different person's sweep of the

@@ -245,6 +245,10 @@ def get_example(slug: str) -> dict[str, Any]:
 
     `evidence` names the file a primitive claim was read in; a scheduled job
     re-reads it weekly, so the claim is checkable rather than asserted.
+    `evidence.kind` says what that file shows: `call-site` (the default when
+    absent) is where the project calls Jev; `wire-shape` is a file that speaks
+    Jev's request shape without using Jev (every `alternative` row); and
+    `example-only` is an example the project ships, not its own integration.
 
     Args:
         slug: the row's stable id, as returned by search_examples

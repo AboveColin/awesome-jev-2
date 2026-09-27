@@ -103,7 +103,10 @@ class VerificationReportingTests(unittest.TestCase):
         # There is deliberately no CI result or runtime record in this fixture.
         with patch.object(_stats, "load", return_value=([entry], [], patterns, {"platforms": []}, schema)):
             stats = _stats.compute()
-        self.assertEqual(stats["evidence_rows"], 1)
+        # One count per evidence.kind (I18); a record without kind is a call site.
+        self.assertEqual(stats["call_site_rows"], 1)
+        self.assertEqual(stats["wire_shape_rows"], 0)
+        self.assertEqual(stats["example_only_rows"], 0)
         self.assertEqual(stats["link_ok"], 0)
         self.assertEqual(stats["last_sweep"], "never")
 

@@ -46,6 +46,11 @@ class CountsTest(unittest.TestCase):
             "with_code": 7001,
             "official": 7002,
             "zh_hand": 7003,
+            "call_site_rows": 7006,
+            "wire_shape_rows": 7007,
+            "example_only_rows": 7008,
+            "review_examples_dir": 7009,
+            "review_single_model_name": 7010,
         }
         with patch.object(_stats, "compute", return_value=fake):
             text = run_counts()
@@ -55,6 +60,8 @@ class CountsTest(unittest.TestCase):
             "with code      7001",
             "official       7002",
             "zh hand-written 7003/7004",
+            "evidence       7006 call-site, 7007 wire-shape, 7008 example-only",
+            "review queue   7009 under examples/, 7010 on one model name or host",
             "next changes at 7,100 entries",
             "  7,000+ public resources for Jev",
         ):

@@ -10,6 +10,7 @@
 - [ ] Generated files (READMEs, `docs/by-pattern/`, `docs/assets/`, generated numbers in docs) are either left out — a bot regenerates them on `main` after the merge — or exactly what `python3 scripts/check.py --fix` wrote, never edited by hand
 - [ ] I opened every link I added and wrote the summaries from what was there
 - [ ] `question_types` reflects the actual call site, not the README
+- [ ] `evidence.kind` says what the cited file shows when it is not a call site: `wire-shape` for an `alternative` (lint requires it), `example-only` for an example
 - [ ] `stars` / `repo_license` came from the GitHub API, not a badge
 - [ ] Caveats are flagged, and any flag needing an explanation has a `notes` line
 - [ ] `summary_zh` is hand-written, or `zh_machine: true` is set

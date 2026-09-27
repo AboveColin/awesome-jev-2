@@ -67,5 +67,22 @@ class SelfSubmittedCaveatTest(unittest.TestCase):
         self.assertIn("self-submitted", row["flags"])
 
 
+class EvidenceKindTest(unittest.TestCase):
+    """evidence.kind reaches an agent untouched (I18): get_example returns the row."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.server = load_server()
+
+    def test_an_alternatives_citation_says_it_is_not_a_call_site(self):
+        slug = next(e["slug"] for e in self.server.CATALOG if e["kind"] == "alternative" and e.get("evidence"))
+        self.assertEqual(self.server.get_example(slug)["evidence"]["kind"], "wire-shape")
+
+    def test_the_tool_description_explains_the_field(self):
+        doc = self.server.get_example.__doc__
+        for kind in ("call-site", "wire-shape", "example-only"):
+            self.assertIn(f"`{kind}`", doc)
+
+
 if __name__ == "__main__":
     unittest.main()

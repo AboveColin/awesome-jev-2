@@ -66,7 +66,7 @@ FULL = {
     "stars": 3,
     "repo_license": "MIT",
     "package": {"registry": "pypi", "name": "demo-row", "url": "https://pypi.org/project/demo-row/"},
-    "evidence": {"path": "demo.py", "matched": ["from jev import"], "read_on": "2026-09-01"},
+    "evidence": {"path": "demo.py", "matched": ["from jev import"], "kind": "call-site", "read_on": "2026-09-01"},
     "official": False,
     "published": "2026-01-02",
     "first_seen": "2026-09-01",
@@ -187,6 +187,33 @@ class EntryInvariantTest(FindingsAssertions):
             lint_row(row(FULL, evidence_none="docs-page")),
             "error",
             "has both evidence and evidence_none; they are exclusive",
+        )
+
+    def test_an_alternatives_evidence_is_marked_wire_shape(self):
+        # I18: an alternative does not call Jev, so a file it cites cannot be
+        # counted or shown as a call site.
+        for kind in (DROP, "call-site", "example-only"):
+            with self.subTest(kind=kind):
+                cited = row(FULL["evidence"], kind=kind)
+                self.assertOnly(
+                    lint_row(row(FULL, kind="alternative", evidence=cited)),
+                    "error",
+                    "demo-row: kind is 'alternative'",
+                    "set evidence.kind to 'wire-shape'",
+                )
+        self.assertClean(lint_row(row(FULL, kind="alternative", evidence=row(FULL["evidence"], kind="wire-shape"))))
+        # Without evidence there is nothing to mark.
+        self.assertClean(lint_row(row(FULL, kind="alternative", evidence=DROP, evidence_none="docs-page")))
+        # Any other row may cite any kind of file: an adapter backed by other
+        # models mirrors Jev's shape too.
+        for kind in ("call-site", "wire-shape", "example-only"):
+            with self.subTest(other_row=kind):
+                self.assertClean(lint_row(row(FULL, evidence=row(FULL["evidence"], kind=kind))))
+        retired = row(RETIRED, kind="alternative", evidence={"path": "a.py", "matched": ["jev"]})
+        self.assertOnly(
+            lint.check_entry_invariants(retired, "retired.json[0]", retired=True, today=TODAY),
+            "error",
+            "gone-row: kind is 'alternative'",
         )
 
     def test_official_rejects_anything_the_vendor_did_not_publish(self):
@@ -409,6 +436,12 @@ class SchemaValidatorTest(FindingsAssertions):
             {"evidence": {"path": "a.py", "matched": ["jev"], "line": 3}},
             ".evidence",
             "unknown field 'line'",
+        ),
+        (
+            "enum: nested",
+            {"evidence": {"path": "a.py", "matched": ["jev"], "kind": "calls-jev"}},
+            ".evidence.kind",
+            "'calls-jev' is not one of: call-site, wire-shape, example-only",
         ),
     )
 

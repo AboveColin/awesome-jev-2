@@ -57,6 +57,14 @@ def main() -> int:
     print(f"retired.json   {stats['retired']} entries")
     print(f"with code      {stats['with_code']}")
     print(f"official       {stats['official']}")
+    print(
+        f"evidence       {stats['call_site_rows']} call-site, {stats['wire_shape_rows']} wire-shape, "
+        f"{stats['example_only_rows']} example-only"
+    )
+    print(
+        f"review queue   {stats['review_examples_dir']} under examples/, "
+        f"{stats['review_single_model_name']} on one model name or host (docs/review-queue.md)"
+    )
     if stats["entries"]:
         print(f"zh hand-written {stats['zh_hand']}/{stats['entries']}")
 

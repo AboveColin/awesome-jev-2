@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import json
 import pathlib
+import re
 from collections import Counter
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
@@ -21,6 +22,26 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 # A share rather than a count: ten rows was a signal at 148 entries and is
 # noise at 800.
 THIN_SHARE = 0.025
+
+# What the file an `evidence` record cites shows, as `evidence.kind` records it:
+# a place the project calls Jev; a file showing a project speaking Jev's request
+# shape rather than using Jev (every `kind: alternative` row, and adapters); or
+# an example the project ships rather than its own integration. A record without the field is
+# a call site: that is what every citation meant before the field existed.
+EVIDENCE_KINDS = ("call-site", "wire-shape", "example-only")
+
+# Machine signals for docs/review-queue.md. Each marks a citation a person
+# should re-read, never a verdict, and neither is written into catalog.json.
+#
+# A path under an examples directory: an SDK's examples are often its best call
+# site, and a project's are often all it has, so only a person can say which.
+# Recording `evidence.kind` either way is that decision, and ends the signal.
+EXAMPLES_DIR = re.compile(r"(^|/)examples?/")
+# One model name or the API host as the only matched string: any file that
+# configures Jev contains one (a settings file, a pricing table, a model list)
+# whether or not it calls the API, so on its own it is the thinnest witness a
+# citation can have. A second matched string from the call itself ends it.
+MODEL_NAMES_AND_HOST = ("jev-latest", "jev-1.13", "typesafe-ai/jev", "typesafe/jev", "api.typesafe.ai")
 
 
 def load() -> tuple[list[dict], list[dict], list[dict], dict, dict]:
@@ -35,6 +56,27 @@ def load() -> tuple[list[dict], list[dict], list[dict], dict, dict]:
 def link_ok(entry: dict) -> bool:
     """A dated successful HTTP response, not a current availability guarantee."""
     return bool(entry.get("checked")) and 200 <= (entry.get("link_status") or 0) < 300
+
+
+def evidence_kind(entry: dict) -> str | None:
+    """What the cited file shows (EVIDENCE_KINDS), or None for a row citing none."""
+    evidence = entry.get("evidence")
+    if not evidence:
+        return None
+    return evidence.get("kind") or "call-site"
+
+
+def examples_unjudged(entry: dict) -> bool:
+    """Machine signal: the cited file sits in an examples directory, and nobody
+    has recorded whether it is the project's call site or only an example."""
+    evidence = entry.get("evidence")
+    return bool(evidence) and "kind" not in evidence and bool(EXAMPLES_DIR.search(evidence.get("path", "")))
+
+
+def single_model_name(entry: dict) -> bool:
+    """Machine signal: the citation rests on one model name or the API host."""
+    matched = (entry.get("evidence") or {}).get("matched") or []
+    return len(matched) == 1 and matched[0] in MODEL_NAMES_AND_HOST
 
 
 def compute() -> dict:
@@ -59,8 +101,16 @@ def compute() -> dict:
         "sweep_coverage": swept.count(last_sweep),
         "retired": len(retired),
         # Evidence counts recorded citations, not successful CI checks or
-        # executed integrations. CI results do not live in catalog.json.
-        "evidence_rows": sum(1 for e in catalog if e.get("evidence")),
+        # executed integrations. CI results do not live in catalog.json. One
+        # count per evidence.kind: a file speaking Jev's request shape, or an
+        # example, is not where a project uses Jev, and one total calling all
+        # three "call sites" overstated the claim readers care about.
+        "call_site_rows": sum(1 for e in catalog if evidence_kind(e) == "call-site"),
+        "wire_shape_rows": sum(1 for e in catalog if evidence_kind(e) == "wire-shape"),
+        "example_only_rows": sum(1 for e in catalog if evidence_kind(e) == "example-only"),
+        # Machine signals listed in docs/review-queue.md, for a person to read.
+        "review_examples_dir": sum(1 for e in catalog if examples_unjudged(e)),
+        "review_single_model_name": sum(1 for e in catalog if single_model_name(e)),
         # A row with question_types additionally asserts *which* primitives.
         # Different claims; publishing one number for both would overstate it.
         "primitive_rows": sum(1 for e in catalog if e.get("question_types")),

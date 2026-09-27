@@ -994,7 +994,7 @@
     </footer>
 
     <script type="module">
-      import { SORTS, verification, evidenceUrl, isIndependentReport, compareEntries, matchesEntry, queryFromState, shareUrl, stateFromQuery } from "./catalog-core.mjs";
+      import { SORTS, verification, evidenceKind, evidenceUrl, isIndependentReport, compareEntries, matchesEntry, queryFromState, shareUrl, stateFromQuery } from "./catalog-core.mjs";
       const STR = {
         en: {
           eyebrow: "Jev Decision Atlas · community index",
@@ -1007,6 +1007,7 @@
           language: "All languages", resource: "All resource types", source: "Open resource ↗", evidence: "View call site ↗",
           details: "Evidence & technical details", link_ok: "Link checked", link_missing: "Link not checked", link_failed: "Link check unsuccessful",
           code_read: "Call-site citation", code_missing: "No call-site citation", runtime: "Code not run by this catalogue", performance: "Performance not reproduced",
+          cite_wire_shape: "Wire-shape citation, not a Jev call", cite_example_only: "Example-only citation", evidence_file: "View cited file ↗",
           third_party: "Third-party report", review_scope: "A dated citation is not a current CI result or a runtime test.",
           signals: "Recorded matching text", added: "Added", stars: "Repository stars", author: "Author", read_context: "Source context",
           reason: "Why this pick", caution: "Before you use it", notes: "Editor’s note", empty_help: "Try a broader phrase or reset the filters.",
@@ -1074,6 +1075,8 @@
           language: "全部语言", resource: "全部资源类型", source: "打开资源 ↗", evidence: "查看调用点 ↗",
           details: "证据与技术细节", link_ok: "链接检查成功", link_missing: "链接未检查", link_failed: "链接检查未成功",
           code_read: "调用点记录", code_missing: "无调用点记录", runtime: "本目录未运行验证", performance: "性能未复现",
+          // The Chinese of the three evidence.kind labels below is model-written; a person who revises it drops this note.
+          cite_wire_shape: "接口形态记录，并非调用 Jev", cite_example_only: "仅示例记录", evidence_file: "查看引用文件 ↗",
           third_party: "第三方评测", review_scope: "带日期的引用不代表最新 CI 已通过，也不代表代码已运行。",
           signals: "记录的匹配文本", added: "收录日期", stars: "仓库星标", author: "作者", read_context: "来源说明",
           reason: "精选理由", caution: "使用前留意", notes: "编辑备注", empty_help: "试试更宽泛的关键词，或重置筛选条件。",
@@ -1387,6 +1390,9 @@
         const flags = (e.flags || []).filter(f => f !== "code-untested").slice().sort((a, b) => F_ORDER.indexOf(a) - F_ORDER.indexOf(b));
         const v = verification(e);
         const evidence = evidenceUrl(e);
+        // A wire-shape or example-only file is cited, but it is not where anyone calls Jev.
+        const cite = evidenceKind(e);
+        const citeLabel = cite === "wire-shape" ? S().cite_wire_shape : cite === "example-only" ? S().cite_example_only : S().code_read;
         const first = !seenIds.has(e.slug);
         seenIds.add(e.slug);
         const linkLabel = v.linkOk ? S().link_ok : v.linkChecked ? S().link_failed : S().link_missing;
@@ -1407,11 +1413,11 @@
           ${flags.length ? `<div class="pills risks">${flags.map(f => `<span class="p f">${esc(lbl(FLAG, f))}</span>`).join("")}</div>` : ""}
           <div class="verification">
             <span class="${v.linkOk ? "link-ok" : ""}">${linkLabel}${v.linkChecked ? ` <time datetime="${esc(v.linkChecked)}">${esc(v.linkChecked)}</time>` : ""}</span>
-            ${v.codeRead ? `<span>${S().code_read} <time datetime="${esc(v.codeRead)}">${esc(v.codeRead)}</time></span>` : ""}
+            ${v.codeRead ? `<span>${citeLabel} <time datetime="${esc(v.codeRead)}">${esc(v.codeRead)}</time></span>` : ""}
             ${e.has_code ? `<span>${S().runtime}</span>` : ""}
           </div>
           <div class="card-bottom">
-            <div class="card-actions"><a href="${esc(e.url)}">${S().source}</a>${evidence ? `<a href="${esc(evidence)}">${S().evidence}</a>` : ""}</div>
+            <div class="card-actions"><a href="${esc(e.url)}">${S().source}</a>${evidence ? `<a href="${esc(evidence)}">${cite === "call-site" ? S().evidence : S().evidence_file}</a>` : ""}</div>
             <span class="resource-kind">${esc(lbl(KIND, e.kind))}</span>
           </div>
           <details class="evidence-details">
@@ -1423,7 +1429,7 @@
                 <dt>${S().added}</dt><dd>${esc(e.first_seen || "—")}</dd>
                 ${e.stars != null ? `<dt>${S().stars}</dt><dd>${Number(e.stars).toLocaleString()}</dd>` : ""}
                 ${e.author ? `<dt>${S().author}</dt><dd>${esc(e.author.name)}</dd>` : ""}
-                <dt>${S().code_read}</dt><dd>${v.codeRead ? `${esc(e.evidence.path)} · ${esc(v.codeRead)}` : S().code_missing}</dd>
+                <dt>${citeLabel}</dt><dd>${e.evidence ? `${esc(e.evidence.path)}${v.codeRead ? ` · ${esc(v.codeRead)}` : ""}` : S().code_missing}</dd>
                 ${e.evidence ? `<dt>${S().signals}</dt><dd>${e.evidence.matched.map(x => `<code>${esc(x)}</code>`).join(" ")}</dd>` : ""}
                 ${e.evidence_none ? `<dt>${S().read_context}</dt><dd>${esc(evidenceContext(e.evidence_none))}</dd>` : ""}
               </dl>

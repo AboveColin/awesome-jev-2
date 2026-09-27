@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
-  compareEntries, evidenceUrl, matchesEntry, verification, isIndependentReport,
+  compareEntries, evidenceKind, evidenceUrl, matchesEntry, verification, isIndependentReport, EVIDENCE_KINDS,
   queryFromState, shareUrl, stateFromQuery, TOGGLES, VIEWS,
 } from "../site/catalog-core.mjs";
 
@@ -15,6 +15,17 @@ test("an HTTP success and dated call-site citation never imply an execution", ()
   assert.equal(result.performance, "not-reproduced");
   assert.equal(verification(row("undated", {link_status: 200})).linkOk, false);
   assert.equal(verification(row("failed", {checked: "2026-09-24", link_status: 404})).linkOk, false);
+});
+
+test("an evidence record without a kind is a call site, and a row without one has none", () => {
+  assert.deepEqual(EVIDENCE_KINDS, ["call-site", "wire-shape", "example-only"]);
+  assert.equal(evidenceKind(row("none")), null);
+  assert.equal(evidenceKind(row("bare", {evidence: {path: "a.py", matched: ["jev"]}})), "call-site");
+  for (const kind of EVIDENCE_KINDS) {
+    assert.equal(evidenceKind(row(kind, {evidence: {path: "a.py", matched: ["jev"], kind}})), kind);
+  }
+  // A value the schema does not know reads as the default, like a missing one.
+  assert.equal(evidenceKind(row("odd", {evidence: {path: "a.py", matched: ["jev"], kind: "toString"}})), "call-site");
 });
 
 test("evidence links preserve repository overrides and encoded file paths", () => {

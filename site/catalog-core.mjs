@@ -12,6 +12,15 @@ export function verification(entry) {
   };
 }
 
+// What a cited file shows, as evidence.kind records it (schema/entry.schema.json).
+// A record without the field is a call site; a row without evidence has none.
+export const EVIDENCE_KINDS = ["call-site", "wire-shape", "example-only"];
+
+export function evidenceKind(entry) {
+  if (!entry.evidence) return null;
+  return EVIDENCE_KINDS.includes(entry.evidence.kind) ? entry.evidence.kind : "call-site";
+}
+
 export function evidenceUrl(entry) {
   if (!entry.evidence?.path) return null;
   for (const candidate of [entry.repo, entry.url]) {

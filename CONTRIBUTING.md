@@ -190,6 +190,14 @@ turns red.
   instead and say which. Set `read_on` to the date you actually read that file;
   do not advance it after an automated text check. An `evidence` record is a
   citation, not a stored CI pass or proof that the integration executes.
+  `evidence.kind` says what the file shows: leave it out (or write
+  `call-site`) when the project calls Jev there; write `wire-shape` when it only
+  speaks Jev's request shape — lint requires this on every `alternative` — and
+  `example-only` when the call is in an example the project ships rather than in
+  its own code. Rows a script marks for a person to re-read (a file under
+  `examples/`, a citation resting on one model name) are listed in
+  [`docs/review-queue.md`](docs/review-queue.md); each section there says what
+  to record to take a row off.
   `lint.py` fails a row with `question_types` and neither `evidence` nor
   `evidence_none`; `not-yet-backfilled` is an honest value while you look.
 - **`official`** — true only for `typesafe.ai` hosts and the `typesafe-ai`

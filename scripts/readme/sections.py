@@ -34,7 +34,7 @@ from .rows import (
     stars_note,
     summary_of,
 )
-from .strings import DATA_FILES, REPO_FILES
+from .strings import DATA_FILES, REPO_FILES, ZH_MACHINE
 
 # The handful of rows a newcomer should open, in reading order. Curated by hand
 # because "most starred" is not the same as "read this first" — the limitations
@@ -441,14 +441,21 @@ def what_is_verified(page: Page) -> list[str]:
     """What each kind of evidence record means, the caveat tags in use, and retired links."""
     strings, lang, stats = page.strings, page.lang, page.stats
     catalog, retired = page.catalog, page.retired
-    # Recorded citations are not the result of the latest scheduled check.
-    evidence_records = stats["evidence_rows"]
+    # Recorded citations are not the result of the latest scheduled check, and
+    # one count per evidence.kind: only the first is a place anyone calls Jev.
+    recheck = strings["verified_recheck"].format(
+        call_site=stats["call_site_rows"],
+        wire_shape=stats["wire_shape_rows"],
+        example_only=stats["example_only_rows"],
+    )
+    if lang == "zh" and "verified_recheck" in ZH_MACHINE:
+        recheck += " <sub>(机翻)</sub>"
     out: list[str] = []
     add = out.append
 
     add(f"## {strings['verified_h']}")
     add("")
-    for text in [strings['verified_yes'].format(**stats), strings['verified_read'], strings['verified_recheck'].replace('{n}', str(evidence_records)), strings['verified_no']]:
+    for text in [strings['verified_yes'].format(**stats), strings['verified_read'], recheck, strings['verified_no']]:
         add(f"- {text}")
         add("")
     add("")

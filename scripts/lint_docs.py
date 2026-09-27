@@ -23,9 +23,15 @@ import sys
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 
 # Fully generated: their numbers are checked by the generator that wrote them.
-# docs/by-pattern/ is build_readme.py's output too, one page per pattern.
-GENERATED = {"README.md", "README.zh-CN.md"}
+# docs/by-pattern/ is build_readme.py's output too, one page per pattern;
+# docs/review-queue.md is build_review_queue.py's.
+GENERATED = {"README.md", "README.zh-CN.md", "docs/review-queue.md"}
 GENERATED_DIRS = ("docs/by-pattern/",)
+# Generated pages that quote other people's files verbatim: the review queue
+# prints each row's `evidence.matched`, which is whatever text a project's code
+# contains (`jev-1.13` inside a `jev-1.13.0`, say). Those are quotations, not
+# this repository stating a model string, so vendor facts are not checked there.
+QUOTES_UPSTREAM = {"docs/review-queue.md"}
 
 
 def generated(rel: str) -> bool:
@@ -266,9 +272,12 @@ def main() -> int:
     # they emit is how those constants get checked.
     facts = vendor_facts()
     fact_files = sorted(
-        set(files)
-        | {f for f in tracked("*.md") if generated(f)}
-        | set(tracked("examples/*.py", "docs/assets/*.svg"))
+        (
+            set(files)
+            | {f for f in tracked("*.md") if generated(f)}
+            | set(tracked("examples/*.py", "docs/assets/*.svg"))
+        )
+        - QUOTES_UPSTREAM
     )
     for rel in fact_files:
         problems += check_vendor_facts(rel, (ROOT / rel).read_text(), facts)
