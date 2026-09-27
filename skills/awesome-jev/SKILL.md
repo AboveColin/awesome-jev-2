@@ -126,7 +126,8 @@ with the ones already catalogued or declined ticked or struck through.
    It re-reads the repository and writes `drafts/<slug>.json`, a draft row with
    what the script found filled in and a `_draft` field listing what is left.
 3. Open the call site the draft names and read it. Write `summary` and
-   `summary_zh` from what the code does, not from its README; add
+   `summary_zh` from what the code does, not from its README, and set
+   `summary_source: curated`, since you wrote it; add
    `question_types` only for the primitives it actually calls; set
    `evidence.read_on` to the day you read the file; check the guessed `kind`,
    `patterns` and `languages`; if the kind is `alternative`, set

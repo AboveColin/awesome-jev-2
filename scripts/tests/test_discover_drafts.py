@@ -70,6 +70,7 @@ def completed(draft: dict) -> dict:
     row = copy.deepcopy(draft)
     del row[dd.DRAFT_FIELD]
     row["summary"] = "Routes each request to a tool with a choice question."
+    row["summary_source"] = "curated"
     row["summary_zh"] = "用 choice 问题为每个请求选择工具。"
     row["zh_machine"] = True
     row["evidence"]["read_on"] = "2026-09-28"
@@ -140,8 +141,10 @@ class DraftRowTest(unittest.TestCase):
     def test_what_only_a_person_can_say_is_left_empty(self):
         row = self.draft()
         self.assertEqual((row["summary"], row["summary_zh"]), ("", ""))
-        for field in ("question_types", "platforms", "zh_machine", "notes", "checked", "link_status"):
+        for field in ("question_types", "platforms", "summary_source", "zh_machine", "notes", "checked", "link_status"):
             self.assertNotIn(field, row)
+        # The person who writes the summary says so (I21): the refresh never can.
+        self.assertIn("set summary_source to curated", " ".join(row[dd.DRAFT_FIELD]))
         self.assertNotIn("read_on", row["evidence"], "the day a person read it is theirs to write")
 
     def test_github_facts_bring_their_flags(self):

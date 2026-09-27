@@ -108,7 +108,8 @@ def instructions(result: dict, *, sourced: bool, today: dt.date) -> list[str]:
         )
     lines += [
         "Write summary and summary_zh from what the code does, not from its README (set "
-        "zh_machine to true if a tool wrote the Chinese). Add question_types for the "
+        "summary_source to curated, since you wrote it, and zh_machine to true if a tool wrote "
+        "the Chinese). Add question_types for the "
         "primitives the call site uses, platforms for how it reaches Jev, and evidence.read_on "
         "for the day you read the file.",
         guesses + " stars, repo_license and the archived and no-license flags are GitHub's "
