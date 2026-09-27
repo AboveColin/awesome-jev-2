@@ -95,7 +95,7 @@ EN = {
     ),
     "stars_note": (
         "★ gives a repository's GitHub stars as a band — {bands}; rows with no repository or "
-        "under {floor} stars show none. Rows run official first, then with code, then by band, "
+        "under {floor} stars show no band. Rows run official first, then with code, then by band, "
         "then by title. A band is a popularity signal, not a quality verdict; the exact count, "
         "as last read from GitHub, is in [`catalog.json`]({catalog}) and on [the site]({site})."
     ),
@@ -257,7 +257,7 @@ ZH = {
         "警示以短标记呈现 —— 每行的完整备注在 [`catalog.json`](catalog.json) 和[站点]({site})里。"
     ),
     "stars_note": (
-        "★ 以区间给出仓库的 GitHub star 数 —— {bands}；没有仓库或不足 {floor} 星的行不显示。"
+        "★ 以区间给出仓库的 GitHub star 数 —— {bands}；没有仓库或不足 {floor} 星的行不标区间。"
         "排序：官方优先，其次是含代码的，再按区间，最后按标题。区间只反映热度，不代表质量；"
         "最近一次从 GitHub 读到的精确数字在 [`catalog.json`]({catalog}) 和[站点]({site})上。"
     ),

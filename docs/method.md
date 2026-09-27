@@ -228,13 +228,14 @@ as "a popularity signal, not a quality verdict", and why `single-commit`,
 
 Since 2026-09-27, the READMEs and the pattern pages print `stars` as a band —
 ★10+, ★100+, ★1k+, ★10k+ or ★100k+, and nothing under 10 — and order rows by
-band, then title, where they used to print and sort by the exact count. Most
-counts move every week, so every weekly refresh rewrote over a thousand
-generated lines for a precision no reader of a list needs: the refresh of
-2026-09-23 (b8bae37) changed 220 rows, all of them stars only, and 32 generated
-files. Replaying that refresh through today's generator, exact counts change
-1,158 lines each way in 32 files; bands change 24 lines each way in 6 files,
-all of them the 3 rows that crossed the 10-star floor. `catalog.json`
+band, then title, where they used to print and sort by the exact count. Counts
+move every week, and every move rewrote generated lines for a precision no
+reader of a list needs: the refresh of 2026-09-23 (b8bae37) changed 220 rows,
+all of them stars only, and 1,134 lines each way in 32 generated files.
+Replaying that refresh's two versions of `catalog.json` through today's
+generators, exact counts change 1,152 lines each way in the same 32 files;
+bands change 26 lines each way in 6 files: 24 for the 3 rows that crossed the
+10-star floor, and the screenshot link in each README. `catalog.json`
 keeps the exact count and still changes every week; the site and the MCP server
 still show and sort by it, so inside a band their order can differ from the
 README's. The README's link to the site screenshot still changes with any edit

@@ -105,8 +105,8 @@ def flags_of(entry: dict, lang: str) -> str:
 
 
 # Stars print as a band, never as the count, and rows sort by the band. The
-# weekly refresh re-reads every count; printed and sorted exactly, they rewrote
-# over a thousand generated lines a week (b8bae37: 220 rows, every one of them a
+# weekly refresh re-reads every count; printed and sorted exactly, one refresh
+# rewrote over a thousand generated lines (b8bae37: 220 rows, every one of them a
 # star count only, 32 generated files) and reordered rows on the pattern pages,
 # for a precision no reader of a list needs. Now only a row that crosses a floor
 # changes a line.

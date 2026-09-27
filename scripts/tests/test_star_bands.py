@@ -1,7 +1,7 @@
 """The READMEs and pattern pages print stars as a band, not as the count (I22).
 
 The weekly refresh re-reads every repository's stars. Printed exactly and
-sorted by exactly, they rewrote over a thousand generated lines a week
+sorted by exactly, one refresh rewrote over a thousand generated lines
 (b8bae37: 220 rows changed, every one of them a star count only, 32 generated
 files), for a precision no reader of a list needs. Now a count that moves
 inside its band changes no line of either README or any pattern page, and no
@@ -122,12 +122,20 @@ class NoteTest(unittest.TestCase):
     """Readers are told what a band is, in both languages, where the rows are."""
 
     def test_note_lists_every_band_and_says_it_is_not_a_quality_verdict(self):
-        for pack, verdict in ((strings.EN, "not a quality verdict"), (strings.ZH, "不代表质量")):
+        # A row under the first floor is listed without a band, not left out;
+        # the note once told Chinese readers such rows were not shown (不显示).
+        cases = (
+            (strings.EN, "not a quality verdict", "show no band"),
+            (strings.ZH, "不代表质量", "不标区间"),
+        )
+        for pack, verdict, unbanded in cases:
             with self.subTest(lang=pack["lang_code"]):
                 note = rows.stars_note(pack, catalog="catalog.json")
                 for label in LABELS:
                     self.assertIn(label, note)
                 self.assertIn(verdict, note)
+                self.assertIn(unbanded, note)
+                self.assertNotIn("不显示", note)
                 self.assertNotIn("{", note)
 
     def test_model_written_chinese_is_marked(self):
