@@ -25,8 +25,9 @@ Three design choices worth knowing:
 
 Unlike the rest of this repository, this file has a dependency. Hand-rolling
 stdio JSON-RPC would keep the zero-dependency streak, but a subtly broken MCP
-server is worse than a dependency, and the catalogue's own CI never imports
-this module — the dependency-free build pipeline is untouched.
+server is worse than a dependency, and the catalogue's own CI imports this
+module only in tests that stub `mcp` out — the dependency-free build pipeline
+is untouched.
 
 Run:
     pip install awesome-jev-mcp
