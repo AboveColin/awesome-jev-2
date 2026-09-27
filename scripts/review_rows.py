@@ -6,7 +6,9 @@ for its licence or looked at its link until the weekly jobs ran after the
 merge. Each row a pull request adds or changes now gets six checks:
 
   call-site        verify_claims.check(): every evidence.matched string is in
-                   the cited file, the question the weekly `claims` job asks
+                   the cited file, the question the weekly `claims` job asks;
+                   a row claiming primitives, or with code in a GitHub
+                   repository, cites a file or says in evidence_none why not
   repository       refresh_metadata.fetch(): repo_license and the archived
                    flag agree with GitHub exactly; stars within
                    max(STAR_SLACK, STAR_SHARE of GitHub's count), since stars
@@ -70,7 +72,7 @@ NETWORK = frozenset({"call-site", "repository", "link"})
 # them changed; self-submission runs on every row and classification only on
 # added ones (see review_row).
 READS = {
-    "call-site": frozenset({"evidence", "evidence_none", "question_types", "url", "repo"}),
+    "call-site": frozenset({"evidence", "evidence_none", "question_types", "has_code", "url", "repo"}),
     "repository": frozenset({"url", "repo", "stars", "repo_license", "flags"}),
     "link": frozenset({"url"}),
     "flag-notes": frozenset({"flags", "notes"}),
@@ -239,6 +241,15 @@ def check_call_site(row: dict, net: Net | None, reason: str) -> list[Finding]:
                 "`question_types` claims primitives but the row cites no call site: add `evidence` "
                 f"(`python3 scripts/verify_claims.py --discover --only {code_span(row.get('slug', ''))}` "
                 "proposes one) or `evidence_none` saying why there is no file.",
+            )]
+        # lint.py fails this too (since 2026-09-27); the card says what to do.
+        if row.get("has_code") and repo_of(row):
+            return [Finding(
+                key, "error",
+                "`has_code` is true and the repository is on GitHub, but the row cites no file: add "
+                f"`evidence` (`python3 scripts/verify_claims.py --discover --only {code_span(row.get('slug', ''))}` "
+                "proposes one), `evidence_none` saying why no file can be cited, or `has_code: false` "
+                "if the link holds no code.",
             )]
         return []
     if net is None:

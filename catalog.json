@@ -302,7 +302,15 @@
     ],
     "license": "CC0-1.0",
     "checked": "2026-09-24",
-    "link_status": 200
+    "link_status": 200,
+    "evidence": {
+      "path": "src/providers.rs",
+      "matched": [
+        "Provider::TypeSafe",
+        "typesafe_systemone",
+        "jev-latest"
+      ]
+    }
   },
   {
     "slug": "agent",
@@ -816,13 +824,10 @@
       "classification",
       "human-escalation"
     ],
-    "languages": [
-      "python"
-    ],
     "platforms": [
       "typesafe-api"
     ],
-    "has_code": true,
+    "has_code": false,
     "stars": 190,
     "repo_license": "unknown",
     "flags": [
@@ -1190,7 +1195,8 @@
     ],
     "license": "CC0-1.0",
     "checked": "2026-09-23",
-    "link_status": 200
+    "link_status": 200,
+    "evidence_none": "not-a-repository"
   },
   {
     "slug": "ailerix",
@@ -2257,7 +2263,14 @@
     ],
     "license": "CC0-1.0",
     "checked": "2026-09-24",
-    "link_status": 200
+    "link_status": 200,
+    "evidence": {
+      "path": ".github/workflows/jev-review.yml",
+      "matched": [
+        "fatwang2/jev-review-action",
+        "typesafe-api-key"
+      ]
+    }
   },
   {
     "slug": "awesome-jev-heyjunpenn",
@@ -2269,9 +2282,6 @@
     "patterns": [
       "overview"
     ],
-    "languages": [
-      "typescript"
-    ],
     "platforms": [
       "github"
     ],
@@ -2279,7 +2289,7 @@
       "name": "heyjunpenn",
       "url": "https://github.com/heyjunpenn"
     },
-    "has_code": true,
+    "has_code": false,
     "stars": 782,
     "repo_license": "MIT",
     "notes": "Goes wide where this catalog goes deep, and its 'Other lists' section is where docs/sibling-lists.txt was seeded from. It ships no LICENSE file, so its descriptive text cannot be reused — the rows it surfaced here were re-verified at the call site and summarised independently.",
@@ -2305,9 +2315,6 @@
     "patterns": [
       "overview"
     ],
-    "languages": [
-      "javascript"
-    ],
     "platforms": [
       "github"
     ],
@@ -2315,7 +2322,7 @@
       "name": "logicrw",
       "url": "https://github.com/logicrw"
     },
-    "has_code": true,
+    "has_code": false,
     "stars": 461,
     "repo_license": "MIT",
     "notes": "Goes wide where this catalog goes deep. Worth checking for anything missing here; it accepts issues rather than pull requests.",
@@ -2730,7 +2737,14 @@
     ],
     "license": "CC0-1.0",
     "checked": "2026-09-24",
-    "link_status": 200
+    "link_status": 200,
+    "evidence": {
+      "path": "core/providers/typesafe/typesafe.go",
+      "matched": [
+        "typesafeSystemOnePath",
+        "func (provider *TypesafeProvider) Decision("
+      ]
+    }
   },
   {
     "slug": "blink-codebase-navigator",
@@ -4489,7 +4503,8 @@
     ],
     "license": "CC0-1.0",
     "checked": "2026-09-23",
-    "link_status": 200
+    "link_status": 200,
+    "evidence_none": "docs-page"
   },
   {
     "slug": "cookbook-autoresearch-feature-discovery",
@@ -4520,7 +4535,8 @@
     ],
     "license": "CC0-1.0",
     "checked": "2026-09-23",
-    "link_status": 200
+    "link_status": 200,
+    "evidence_none": "docs-page"
   },
   {
     "slug": "cookbook-citation-check",
@@ -4620,7 +4636,8 @@
     ],
     "license": "CC0-1.0",
     "checked": "2026-09-23",
-    "link_status": 200
+    "link_status": 200,
+    "evidence_none": "docs-page"
   },
   {
     "slug": "cookbook-consistency-choice",
@@ -4720,7 +4737,8 @@
     ],
     "license": "CC0-1.0",
     "checked": "2026-09-23",
-    "link_status": 200
+    "link_status": 200,
+    "evidence_none": "docs-page"
   },
   {
     "slug": "cookbook-entity-alignment",
@@ -4894,7 +4912,8 @@
     ],
     "license": "CC0-1.0",
     "checked": "2026-09-23",
-    "link_status": 200
+    "link_status": 200,
+    "evidence_none": "docs-page"
   },
   {
     "slug": "cookbook-pre-parsed-value-extraction",
@@ -4958,7 +4977,8 @@
     ],
     "license": "CC0-1.0",
     "checked": "2026-09-23",
-    "link_status": 200
+    "link_status": 200,
+    "evidence_none": "docs-page"
   },
   {
     "slug": "cookbook-sde-cascade",
@@ -4988,7 +5008,8 @@
     ],
     "license": "CC0-1.0",
     "checked": "2026-09-23",
-    "link_status": 200
+    "link_status": 200,
+    "evidence_none": "docs-page"
   },
   {
     "slug": "cookbook-semantic-find",
@@ -29462,10 +29483,7 @@
     "platforms": [
       "jevai-org"
     ],
-    "has_code": true,
-    "languages": [
-      "shell"
-    ],
+    "has_code": false,
     "flags": [
       "unverified-claims",
       "third-party-api-key"
@@ -31840,7 +31858,8 @@
       "python"
     ],
     "checked": "2026-09-24",
-    "link_status": 200
+    "link_status": 200,
+    "evidence_none": "no-jev-call-site"
   },
   {
     "slug": "jevlint",
@@ -35265,7 +35284,8 @@
     },
     "published": "2026-09-17",
     "checked": "2026-09-23",
-    "link_status": 200
+    "link_status": 200,
+    "evidence_none": "not-a-repository"
   },
   {
     "slug": "langchain-skill-router",
@@ -36441,7 +36461,8 @@
     ],
     "license": "CC0-1.0",
     "checked": "2026-09-23",
-    "link_status": 200
+    "link_status": 200,
+    "evidence_none": "docs-page"
   },
   {
     "slug": "litjev",
@@ -37352,7 +37373,8 @@
         "url": "https://medium.com/coding-nexus"
       }
     ],
-    "license": "CC0-1.0"
+    "license": "CC0-1.0",
+    "evidence_none": "paywalled"
   },
   {
     "slug": "medium-jev-use-cases",
@@ -38100,7 +38122,15 @@
     ],
     "license": "CC0-1.0",
     "checked": "2026-09-24",
-    "link_status": 200
+    "link_status": 200,
+    "evidence": {
+      "path": "scripts/jev_probe.mjs",
+      "matched": [
+        "experimental_evaluate as evaluate",
+        "evaluate({ model: 'typesafe-ai/jev'"
+      ],
+      "kind": "wire-shape"
+    }
   },
   {
     "slug": "nearhere-three-way-comparison",
@@ -39311,7 +39341,14 @@
     ],
     "license": "CC0-1.0",
     "checked": "2026-09-24",
-    "link_status": 200
+    "link_status": 200,
+    "evidence": {
+      "path": "packages/console/app/src/routes/zen/util/provider/systemone.ts",
+      "matched": [
+        "systemoneHelper",
+        "\"/systemone\""
+      ]
+    }
   },
   {
     "slug": "opendecision",
@@ -40043,7 +40080,14 @@
     ],
     "license": "CC0-1.0",
     "checked": "2026-09-24",
-    "link_status": 200
+    "link_status": 200,
+    "evidence": {
+      "path": "sdks/python/src/opik/integrations/typesafe/opik_tracker.py",
+      "matched": [
+        "from typesafe_sdk import AsyncTypeSafeClient, TypeSafeClient",
+        "typesafe_client.system_one"
+      ]
+    }
   },
   {
     "slug": "orchestkit",
@@ -42612,7 +42656,8 @@
     ],
     "license": "CC0-1.0",
     "checked": "2026-09-23",
-    "link_status": 200
+    "link_status": 200,
+    "evidence_none": "docs-page"
   },
   {
     "slug": "pydantic-jev-examples",
@@ -44495,7 +44540,8 @@
     ],
     "license": "CC0-1.0",
     "checked": "2026-09-24",
-    "link_status": 200
+    "link_status": 200,
+    "evidence_none": "no-jev-call-site"
   },
   {
     "slug": "shade-arena-jev-monitor",
@@ -44891,7 +44937,15 @@
     ],
     "license": "CC0-1.0",
     "checked": "2026-09-24",
-    "link_status": 200
+    "link_status": 200,
+    "evidence": {
+      "path": "hf-server/hf_server.py",
+      "matched": [
+        "@router.post(\"/v1/systemone\"",
+        "{\"type\": \"noul\", \"noul\": value}"
+      ],
+      "kind": "wire-shape"
+    }
   },
   {
     "slug": "skill-router",
@@ -46630,7 +46684,15 @@
     ],
     "license": "CC0-1.0",
     "checked": "2026-09-24",
-    "link_status": 200
+    "link_status": 200,
+    "evidence": {
+      "path": "src/system_one_adapter/_client.py",
+      "matched": [
+        "from typesafe_sdk import",
+        "def system_one("
+      ],
+      "kind": "wire-shape"
+    }
   },
   {
     "slug": "system-one-adapter-rust",
@@ -48492,7 +48554,8 @@
     "license": "CC0-1.0",
     "checked": "2026-09-23",
     "link_status": 200,
-    "stars": 2036
+    "stars": 2036,
+    "evidence_none": "docs-page"
   },
   {
     "slug": "typesafe-ai",
@@ -49114,7 +49177,8 @@
     ],
     "license": "CC0-1.0",
     "checked": "2026-09-23",
-    "link_status": 200
+    "link_status": 200,
+    "evidence_none": "docs-page"
   },
   {
     "slug": "typesafe-as-a-judge",
@@ -49622,7 +49686,8 @@
     ],
     "license": "CC0-1.0",
     "checked": "2026-09-23",
-    "link_status": 200
+    "link_status": 200,
+    "evidence_none": "docs-page"
   },
   {
     "slug": "typesafe-go",
@@ -50653,7 +50718,8 @@
     ],
     "license": "CC0-1.0",
     "checked": "2026-09-23",
-    "link_status": 200
+    "link_status": 200,
+    "evidence_none": "docs-page"
   },
   {
     "slug": "typesafe-oracles",
@@ -50763,7 +50829,8 @@
     ],
     "license": "CC0-1.0",
     "checked": "2026-09-23",
-    "link_status": 200
+    "link_status": 200,
+    "evidence_none": "docs-page"
   },
   {
     "slug": "typesafe-pattern-fan-out",
@@ -50792,7 +50859,8 @@
     ],
     "license": "CC0-1.0",
     "checked": "2026-09-23",
-    "link_status": 200
+    "link_status": 200,
+    "evidence_none": "docs-page"
   },
   {
     "slug": "typesafe-pattern-intent-routing",
@@ -52172,7 +52240,8 @@
     ],
     "license": "CC0-1.0",
     "checked": "2026-09-24",
-    "link_status": 200
+    "link_status": 200,
+    "evidence_none": "docs-page"
   },
   {
     "slug": "typesafe-triage-guard",
@@ -53482,7 +53551,8 @@
     "notes": "Research about the ecosystem rather than a caller of the API, so it carries no call-site evidence.",
     "notes_zh": "这是对生态的研究，而不是 API 的调用者，因此没有调用点证据。",
     "checked": "2026-09-24",
-    "link_status": 200
+    "link_status": 200,
+    "evidence_none": "no-jev-call-site"
   },
   {
     "slug": "wikipedia-jev-model",

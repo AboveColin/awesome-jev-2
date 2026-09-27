@@ -61,6 +61,7 @@ def main() -> int:
         f"evidence       {stats['call_site_rows']} call-site, {stats['wire_shape_rows']} wire-shape, "
         f"{stats['example_only_rows']} example-only"
     )
+    print(f"code, no cite  {stats['has_code_unbacked']} (neither evidence nor evidence_none)")
     print(
         f"review queue   {stats['review_examples_dir']} under examples/, "
         f"{stats['review_single_model_name']} on one model name or host (docs/review-queue.md)"

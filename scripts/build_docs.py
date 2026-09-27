@@ -76,6 +76,7 @@ def shape_block(s: dict) -> str:
             ["Rows citing a file where the project calls Jev (`evidence`; not a CI pass count)", s["call_site_rows"]],
             ["Rows citing a file that speaks Jev's request shape without using Jev (`evidence.kind` `wire-shape`)", s["wire_shape_rows"]],
             ["Rows citing only an example the project ships (`evidence.kind` `example-only`)", s["example_only_rows"]],
+            ["Rows with code citing no file and giving no reason (neither `evidence` nor `evidence_none`)", s["has_code_unbacked"]],
             ["Machine signal: evidence under an examples directory, not yet judged ([review queue](review-queue.md#examples-dir))", s["review_examples_dir"]],
             ["Machine signal: evidence resting on one model name or the API host ([review queue](review-queue.md#single-model-name))", s["review_single_model_name"]],
             ["Patterns covered", f"{s['patterns_covered']} of {s['patterns_total']}"],

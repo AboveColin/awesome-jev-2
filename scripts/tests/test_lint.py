@@ -164,14 +164,45 @@ class EntryInvariantTest(FindingsAssertions):
                 )
 
     def test_primitive_claim_without_evidence_fails_with_the_command(self):
-        # A warning until 2026-09-27 (I03).
-        self.assertOnly(
-            lint_row(row(FULL, evidence=DROP)),
-            "error",
-            "claims primitives but carries neither evidence nor evidence_none",
-            "python3 scripts/verify_claims.py --discover --only demo-row",
-        )
+        # A warning until 2026-09-27 (I03). Off GitHub too: a docs page claiming
+        # primitives still has to say it is one.
+        for url in ("https://github.com/someone/demo-row", "https://example.com/demo-row"):
+            with self.subTest(url=url):
+                self.assertOnly(
+                    lint_row(row(FULL, evidence=DROP, url=url, repo=DROP)),
+                    "error",
+                    "demo-row: claims primitives but carries neither evidence nor evidence_none",
+                    "python3 scripts/verify_claims.py --discover --only demo-row",
+                )
         self.assertClean(lint_row(row(FULL, evidence=DROP, evidence_none="docs-page")))
+
+    def test_code_in_a_github_repository_needs_evidence_or_a_reason(self):
+        # I17: keyed on question_types alone, 34 rows with code carried neither.
+        plain = row(FULL, question_types=DROP, evidence=DROP)
+        for where in ({}, {"url": "https://example.com/demo-row"}):
+            with self.subTest(**where):
+                message = self.assertOnly(
+                    lint_row(row(plain, **where)),
+                    "error",
+                    "demo-row: has code in a GitHub repository but carries neither evidence nor evidence_none",
+                    "python3 scripts/verify_claims.py --discover --only demo-row",
+                    "no-jev-call-site",
+                )
+                self.assertNotIn("claims primitives", message)
+        for reason in ("docs-page", "no-jev-call-site", "not-yet-backfilled"):
+            with self.subTest(evidence_none=reason):
+                self.assertClean(lint_row(row(plain, evidence_none=reason)))
+        # Nothing to read: no code, or no GitHub repository.
+        self.assertClean(lint_row(row(plain, has_code=False, languages=DROP)))
+        self.assertClean(lint_row(row(plain, url="https://example.com/demo-row", repo=DROP)))
+        # A retired row's repository is gone, so its code cannot be read either.
+        retired = row(RETIRED, has_code=True, languages=["python"])
+        self.assertClean(lint.check_entry_invariants(retired, "retired.json[0]", retired=True, today=TODAY))
+        self.assertOnly(
+            lint.check_entry_invariants(row(retired, link_status=200), PATH, retired=False, today=TODAY),
+            "error",
+            "gone-row: has code in a GitHub repository",
+        )
 
     def test_evidence_needs_a_github_repository(self):
         self.assertOnly(
@@ -708,7 +739,9 @@ class MainOutputTest(unittest.TestCase):
         return status, out.getvalue(), err.getvalue()
 
     def test_a_warning_and_an_error(self):
-        warned = row(MINIMAL, slug="a-row", url="https://github.com/someone/a-row", has_code=True)
+        warned = row(
+            MINIMAL, slug="a-row", url="https://github.com/someone/a-row", has_code=True, evidence_none="not-yet-backfilled"
+        )
         broken = row(MINIMAL, slug="b-row", url="https://github.com/someone/b-row", kind="blog")
         status, out, err = self.run_main([warned, broken], [RETIRED])
         kinds = ", ".join(SCHEMA["properties"]["kind"]["enum"])

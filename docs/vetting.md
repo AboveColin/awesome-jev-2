@@ -42,7 +42,10 @@ deliberately fails closed. Copy that shape, not the shape that trusts the score.
 - [ ] **What does the citation establish?** `evidence.read_on` is the reported
       date a person read the cited file. The scheduled claims job only checks
       that recorded strings remain in it. A stored citation is not a latest-CI
-      result, and a string match does not prove the call runs.
+      result, and a string match does not prove the call runs. `evidence.kind`
+      says what the file is: a call site (the default), a file that only
+      speaks Jev's request shape (`wire-shape`, every `alternative`), or an
+      example the project ships (`example-only`).
 - [ ] **Is it maintained?** `single-commit` and `archived` exist because this
       ecosystem is days old and a four-figure star count can sit on top of one
       commit. Check the last push date yourself. The READMEs and pattern pages

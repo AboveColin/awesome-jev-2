@@ -47,9 +47,6 @@ Every catalogued example of this decision — 67 of them. The same rows, with ca
 - **[neurolink](https://github.com/juspay/neurolink)** — The pipe layer of an AI nervous system: one interface connecting provider neurons to an application, across three inference types — generate, stream, and decide. Decide returns typed, calibrated judgments (boolean/choice/score) via TypeSafe Jev, not text.
   <sub>`Plugin` · ★100+ · juspay · `TS`</sub>
 
-- **[Probing Jev's behaviour with repeated API calls](https://github.com/ahastudio/til)** — Independent Korean-language notes reporting that reversing the order of options shifted a probability enough to flip a 0.9 threshold.
-  <sub>`Benchmark` · ★100+ · `Py` · ⚠ `no licence` `unverified claims`</sub>
-
 - **[discern](https://github.com/doeixd/discern)** — Craft Type-Safe Uncertainty-aware semantic pattern matching, control flow, and smart procedures for Effect DecisionModel and Jev
   <sub>`Project` · ★10+ · doeixd · `TS`</sub>
 
@@ -205,6 +202,9 @@ Every catalogued example of this decision — 67 of them. The same rows, with ca
 
 - **[watfile](https://github.com/jexp/watfile)** — Text/PDF - File categorization and sorting with Typesafe AI Jev or local calibrated decision model
   <sub>`Project` · jexp · `Py` · ⚠ `no licence`</sub>
+
+- **[Probing Jev's behaviour with repeated API calls](https://github.com/ahastudio/til)** — Independent Korean-language notes reporting that reversing the order of options shifted a probability enough to flip a 0.9 threshold.
+  <sub>`Benchmark` · ★100+ · ⚠ `no licence` `unverified claims`</sub>
 
 - **[An early-access test of TypeSafe's Jev: calibrated judgments for half a cent](https://lindfors.no/blog/a-first-look-at-typesafes-jev/)** — The best independent test found: 24 Norwegian documents on one pinned model version, opening with a case the model got wrong while correctly reporting low confidence.
   <sub>`Benchmark` · Lindfors</sub>

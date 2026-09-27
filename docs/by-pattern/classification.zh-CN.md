@@ -50,9 +50,6 @@ _把条目归入分类体系，包括用概率遍历的深层层级。_
 - **[pg-jev](https://github.com/realZachi/pg-jev)** — 一个真正的 PostgreSQL 扩展，把三个原语暴露成 SQL 函数 —— 语义判断可以直接写进任意行类型的 WHERE 子句。
   <sub>`开源项目` · ★100+ · `Py` · `sh` · `choice` · `score` · `noul`</sub>
 
-- **[Probing Jev's behaviour with repeated API calls](https://github.com/ahastudio/til)** — 独立的韩语实测笔记，报告仅仅把选项顺序倒过来，就能让概率移动到足以翻转 0.9 阈值的程度。
-  <sub>`基准测试` · ★100+ · `Py` · ⚠ `无许可证` `宣称未核实`</sub>
-
 - **[taskuary](https://github.com/ldbumble/taskuary)** — 本地优先的 AI 任务中枢：把邮件、Teams、Slack 与报表汇成一条时间线。 <sub>(机翻)</sub>
   <sub>`插件` · ★100+ · ldbumble · `Py`</sub>
 
@@ -352,6 +349,9 @@ _把条目归入分类体系，包括用概率遍历的深层层级。_
 
 - **[zerosweep](https://github.com/sysadarsh/zerosweep)** — 自主的 System-One 分拣引擎与基准，75 毫秒推理。 <sub>(机翻)</sub>
   <sub>`基准测试` · sysadarsh · `TS` · ⚠ `无许可证`</sub>
+
+- **[Probing Jev's behaviour with repeated API calls](https://github.com/ahastudio/til)** — 独立的韩语实测笔记，报告仅仅把选项顺序倒过来，就能让概率移动到足以翻转 0.9 阈值的程度。
+  <sub>`基准测试` · ★100+ · ⚠ `无许可证` `宣称未核实`</sub>
 
 - **[An early-access test of TypeSafe's Jev: calibrated judgments for half a cent](https://lindfors.no/blog/a-first-look-at-typesafes-jev/)** — 找到的最好的独立实测：固定单一模型版本、24 份挪威语文档，开篇就展示了一个模型答错、但同时正确报出低置信度的案例。
   <sub>`基准测试` · Lindfors</sub>

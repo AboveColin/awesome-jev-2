@@ -135,11 +135,28 @@ def read_claim(slug: str, repo: str, evidence: dict) -> dict:
     }
 
 
+def needs_discovery(entry: dict) -> bool:
+    """A row lint requires evidence or evidence_none of, that carries neither.
+
+    That is a row claiming primitives, and since 2026-09-27 every row with code
+    in a GitHub repository; --discover can only help where there is a
+    repository to read.
+    """
+    return (
+        bool(entry.get("question_types") or entry.get("has_code"))
+        and "evidence" not in entry
+        and "evidence_none" not in entry
+        and repo_of(entry) is not None
+    )
+
+
 def discover(entry: dict) -> dict:
     """Propose evidence for a row that has none, by reading the repository.
 
     Proposals are a starting point for a person, never written automatically —
-    the whole point of this catalog is that a human read the call site.
+    the whole point of this catalog is that a human read the call site. For an
+    alternative the proposal says `wire-shape`, the only evidence.kind lint
+    accepts there: whatever file it cites, the project does not use Jev.
     """
     slug = entry["slug"]
     repo = repo_of(entry)
@@ -189,13 +206,16 @@ def discover(entry: dict) -> dict:
             }
     if not best:
         return {"slug": slug, "status": "no-call-site", "repo": repo}
-    return {
+    proposal = {
         "slug": slug,
         "status": "proposed",
         "repo": repo,
         "path": best["path"],
         "matched": best["matched"],
     }
+    if entry.get("kind") == "alternative":
+        proposal["kind"] = "wire-shape"
+    return proposal
 
 
 def main() -> int:
@@ -210,16 +230,14 @@ def main() -> int:
     catalog = json.loads(CATALOG.read_text())
 
     if args.discover:
-        todo = [
-            e
-            for e in catalog
-            if e.get("question_types")
-            and "evidence" not in e
-            and "evidence_none" not in e
-            and repo_of(e)
-            and (not args.only or e["slug"] == args.only)
-        ]
+        todo = [e for e in catalog if needs_discovery(e) and (not args.only or e["slug"] == args.only)]
         print(f"discovering evidence for {len(todo)} row(s)\n", file=sys.stderr)
+        if args.only and not todo:
+            print(
+                f"{args.only}: not a row that needs one: it already carries evidence or "
+                "evidence_none, has no code, has no GitHub repository, or is not in catalog.json",
+                file=sys.stderr,
+            )
         with ThreadPoolExecutor(max_workers=WORKERS) as pool:
             results = list(pool.map(discover, todo))
         if args.json:
@@ -230,6 +248,8 @@ def main() -> int:
                     print(
                         f"  {r['slug']}\n    path: {r['path']}\n    matched: {r['matched']}"
                     )
+                    if r.get("kind"):
+                        print(f"    kind: {r['kind']} (the row is an alternative, so the file is not a call site)")
                 else:
                     print(f"  {r['slug']}  [{r['status']}]")
         return 0

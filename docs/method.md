@@ -123,9 +123,9 @@ integration). The 52 alternative rows were marked `wire-shape` mechanically,
 since the row's own kind already says it; nothing else was inferred, and
 `lint.py` now fails an alternative whose evidence says anything else. The
 README, `docs/status.md`, `llms.txt`, the README cover and the site's preview
-card now print the call-site count (1,069 that day) with the other two beside it
-where there is room, and the site labels a wire-shape or example-only citation
-as what it is. Two weaker signals are machine judgements rather than facts, so
+card now print the call-site count (1,069 once the 52 were set apart), with the
+other two beside it where there is room, and the site labels a wire-shape or
+example-only citation as what it is. Two weaker signals are machine judgements rather than facts, so
 they are neither written into `catalog.json` nor raised as one lint warning per
 row: a cited file under an `examples/` directory with no `evidence.kind`
 recorded (22 rows; an SDK's examples are often its clearest call site, and only
@@ -134,6 +134,33 @@ the API host (76 rows; any file configuring Jev contains one, whether or not it
 calls it). `_stats` counts both, `docs/status.md` publishes the counts, and the
 generated `docs/review-queue.md` lists the rows, one section per signal, with
 what a reader records to take a row off.
+
+Since 2026-09-27, a row with code in a GitHub repository needs `evidence` or
+`evidence_none`, as a row claiming primitives already did. Keyed on
+`question_types`, which 100 rows set, the rule had missed 34 rows with code
+that carried neither. Each was read the same day and given one or the other:
+16 documentation pages (the vendor's cookbooks and reference pages, LiteLLM's
+and Pydantic AI's pages, the official agent skill's page and the repository
+behind it, whose skill file is prose pointing at the docs) got `docs-page`; two
+blog posts `not-a-repository`; one paywalled article `paywalled`. Eight got a
+cited file whose strings `verify_claims.py` then found on the default branch:
+five call sites (aegis, Bifrost, Opik, the gateway behind OpenCode Zen, and one
+sibling list whose submissions a Jev review workflow judges) and three
+`wire-shape` (NanoJev's probe of the real model, simple-jev's server, and
+TypeSafe's own adapter backed by other models). Three got a new value,
+`no-jev-call-site`, for code that neither calls Jev nor speaks its request
+shape: two independent reimplementations with their own interface and one
+research repository. Four had `has_code` turned off, and their `languages`
+with it, because the link holds no code to adapt: two sibling lists, the
+community site whose notes already say not to copy its code, and a notes
+repository whose note on probing Jev contains no code. The new `evidence`
+records carry no `read_on`, since an agent session read those files, not a
+person. `verify_claims.py --discover` now proposes a file for these rows as
+well, labelled `wire-shape` for an alternative, and the review card marks the
+same case. A retired row is exempt: its repository is gone. The schema's
+descriptions of `evidence` and `evidence_none` no longer tie them to
+`question_types`, and `_stats` counts rows with code citing nothing and giving
+no reason on any host (none that day), which `docs/status.md` publishes.
 
 ## Discovery is crowdsourced, verification is not
 

@@ -119,12 +119,6 @@ _介绍模型或整个领域，而非单一模式。_
 - **[awesome-jev (fatwang2)](https://github.com/fatwang2/awesome-jev)** — 一个同类目录，提交由 Jev 自己审核，其多语言社区客户端清单相当完整。
   <sub>`开源项目` · ★100+ · fatwang2 · `JS`</sub>
 
-- **[awesome-jev (heyjunpenn)](https://github.com/heyjunpenn/awesome-jev)** — 覆盖最广的同类目录：数百个项目、六种语言，且它的 README 本身就是被解析的数据源。
-  <sub>`开源项目` · ★100+ · heyjunpenn · `TS`</sub>
-
-- **[awesome-jev-projects](https://github.com/logicrw/awesome-jev-projects)** — 一个同类目录，主打生态广度：来源锚定到具体 commit、四语 README、以及一个生成式站点。
-  <sub>`开源项目` · ★100+ · logicrw · `JS`</sub>
-
 - **[celesto](https://github.com/CelestoAI/celesto)** — 给 AI 智能体的安全持久化计算环境。 <sub>(机翻)</sub>
   <sub>`开源项目` · ★100+ · celestoai · `Py`</sub>
 
@@ -944,9 +938,6 @@ _介绍模型或整个领域，而非单一模式。_
 - **[jev_project_context](https://github.com/poiuyjie/jev_project_context)** — 面向 AI 编程智能体的证据优先长期实验记忆技能，可选接入 Jev 决策。 <sub>(机翻)</sub>
   <sub>`插件` · poiuyjie · `Py`</sub>
 
-- **[jevai.org community site](https://www.jevai.org/)** — 一个与官方无关的社区站：有 playground、预设决策 API、MCP 服务、可下载技能，以及一个社区应用展示廊。
-  <sub>`开源项目` · `sh` · ⚠ `需第三方密钥` `宣称未核实`</sub>
-
 - **[jevals](https://github.com/dayhaysoos/jevals)** — TypeSafe Jev 的本地评估工作台。 <sub>(机翻)</sub>
   <sub>`开源项目` · dayhaysoos · `TS`</sub>
 
@@ -1322,6 +1313,12 @@ _介绍模型或整个领域，而非单一模式。_
 - **[awesome-jev (yibie)](https://github.com/yibie/awesome-jev)** — 目前这个领域里 star 数最高的同类目录。
   <sub>`开源项目` · ★1k+ · ⚠ `无许可证`</sub>
 
+- **[awesome-jev (heyjunpenn)](https://github.com/heyjunpenn/awesome-jev)** — 覆盖最广的同类目录：数百个项目、六种语言，且它的 README 本身就是被解析的数据源。
+  <sub>`开源项目` · ★100+ · heyjunpenn</sub>
+
+- **[awesome-jev-projects](https://github.com/logicrw/awesome-jev-projects)** — 一个同类目录，主打生态广度：来源锚定到具体 commit、四语 README、以及一个生成式站点。
+  <sub>`开源项目` · ★100+ · logicrw</sub>
+
 - **[A new kind of AI model from a ChatGPT inventor is thrilling developers](https://techcrunch.com/2026/09/18/a-new-kind-of-ai-model-from-a-chatgpt-inventor-is-thrilling-developers/)** — 唯一一篇引用了开发者一手说法（而非厂商数字）的发布报道，其中还提醒：解释阈值的责任现在落在你自己头上。
   <sub>`文章` · Tim Fernholz</sub>
 
@@ -1351,6 +1348,9 @@ _介绍模型或整个领域，而非单一模式。_
 
 - **[jevai.org community app gallery](https://www.jevai.org/apps)** — 从社交帖子里策展的 36 个社区作品：浏览器智能体、表格工具、按意图搜邮箱、会判断的广告拦截、游戏与机器人。
   <sub>`开源项目` · ⚠ `宣称未核实`</sub>
+
+- **[jevai.org community site](https://www.jevai.org/)** — 一个与官方无关的社区站：有 playground、预设决策 API、MCP 服务、可下载技能，以及一个社区应用展示廊。
+  <sub>`开源项目` · ⚠ `需第三方密钥` `宣称未核实`</sub>
 
 - **[RLCD explained: Reinforcement Learning for Calibrated Decisions](https://systemonemodels.org/guides/rlcd-explained/)** — 一份独立整理，其最有价值的结论是否定性的：RLCD 没有论文、没有奖励函数、没有数据集说明、也没有可复现的评测。
   <sub>`文章`</sub>

@@ -222,7 +222,7 @@
       }
     },
     "evidence": {
-      "description": "Where the primitive claim in question_types was actually read, so a machine can re-check it. scripts/verify_claims.py fetches path from the repo's default branch and asserts every string in matched still appears. Deliberately not pinned to a commit: the point is to notice when a claim stops being true upstream.",
+      "description": "The file this row's code was read in, so a machine can re-check it: the call site, or what evidence.kind says the file shows instead. Required, or evidence_none in its place, when question_types is set, and when has_code is true and url or repo is a GitHub repository (scripts/lint.py enforces both; a retired row's repository is gone and is exempt from the second). scripts/verify_claims.py fetches path from the repo's default branch and asserts every string in matched still appears. Deliberately not pinned to a commit: the point is to notice when a claim stops being true upstream.",
       "type": "object",
       "additionalProperties": false,
       "required": [
@@ -263,7 +263,7 @@
       }
     },
     "evidence_none": {
-      "description": "Why this row carries no machine-checkable evidence — a documentation page, a video, a paywalled article. Required instead of evidence when question_types is set and the source is not a readable repository file. `removed-upstream` means the project removed its Jev integration on purpose; the row stays because why it was removed is the useful part, and notes cite the change.",
+      "description": "Why this row carries no machine-checkable evidence — a documentation page, a video, a paywalled article, or code that does not touch Jev. Required instead of evidence when no file can be cited and question_types is set, or has_code is true and url or repo is a GitHub repository. `removed-upstream` means the project removed its Jev integration on purpose; the row stays because why it was removed is the useful part, and notes cite the change. `no-jev-call-site` means the repository's code neither calls Jev nor speaks its request shape — an independent reimplementation with its own interface, or tooling about Jev — so there is no file whose strings would show a relationship to Jev.",
       "type": "string",
       "enum": [
         "not-a-repository",
@@ -271,7 +271,8 @@
         "video",
         "docs-page",
         "not-yet-backfilled",
-        "removed-upstream"
+        "removed-upstream",
+        "no-jev-call-site"
       ]
     },
     "official": {

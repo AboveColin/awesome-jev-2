@@ -167,7 +167,22 @@ class CallSiteTest(unittest.TestCase):
         self.assertIn("`docs-page`", finding.text)
 
     def test_a_row_without_claims_has_nothing_to_check(self):
-        self.assertEqual(self.check(row(evidence=DROP, question_types=DROP))[0], [])
+        # Since I17 a row with code on GitHub is a claim too (next test).
+        self.assertEqual(self.check(row(evidence=DROP, question_types=DROP, has_code=False))[0], [])
+        self.assertEqual(
+            self.check(row(evidence=DROP, question_types=DROP, url="https://example.com/demo"))[0], []
+        )
+
+    def test_code_on_github_without_a_citation_is_an_error_naming_the_way_out(self):
+        (finding,), fake = self.check(row(evidence=DROP, question_types=DROP))
+        self.assertEqual((finding.level, fake.asked), ("error", []))
+        for words in ("python3 scripts/verify_claims.py --discover --only demo-row", "`evidence_none`", "`has_code: false`"):
+            self.assertIn(words, finding.text)
+        (finding,), _ = self.check(row(evidence=DROP, question_types=DROP, evidence_none="no-jev-call-site"))
+        self.assertEqual(finding.level, "info")
+
+    def test_a_changed_has_code_triggers_the_call_site_check(self):
+        self.assertIn("has_code", rr.READS["call-site"])
 
 
 class RepositoryTest(unittest.TestCase):

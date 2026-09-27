@@ -50,9 +50,6 @@ Every catalogued example of this decision — 119 of them. The same rows, with c
 - **[pg-jev](https://github.com/realZachi/pg-jev)** — A real PostgreSQL extension exposing the primitives as SQL functions, so a semantic decision can appear in a WHERE clause over any row type.
   <sub>`Project` · ★100+ · `Py` · `sh` · `choice` · `score` · `noul`</sub>
 
-- **[Probing Jev's behaviour with repeated API calls](https://github.com/ahastudio/til)** — Independent Korean-language notes reporting that reversing the order of options shifted a probability enough to flip a 0.9 threshold.
-  <sub>`Benchmark` · ★100+ · `Py` · ⚠ `no licence` `unverified claims`</sub>
-
 - **[taskuary](https://github.com/ldbumble/taskuary)** — Automate your job: local-first AI task hub. Email, Teams, Slack & reports -> one timeline -> AI triage -> your coding agents (Claude Code, Codex, Gemini) do the work, you approve.
   <sub>`Plugin` · ★100+ · ldbumble · `Py`</sub>
 
@@ -352,6 +349,9 @@ Every catalogued example of this decision — 119 of them. The same rows, with c
 
 - **[zerosweep](https://github.com/sysadarsh/zerosweep)** — Autonomous System-One Triage Engine & Benchmark powered by TypeSafe AI (Jev). 75ms inference, $0 output tokens, and RLCD epistemic safety gates.
   <sub>`Benchmark` · sysadarsh · `TS` · ⚠ `no licence`</sub>
+
+- **[Probing Jev's behaviour with repeated API calls](https://github.com/ahastudio/til)** — Independent Korean-language notes reporting that reversing the order of options shifted a probability enough to flip a 0.9 threshold.
+  <sub>`Benchmark` · ★100+ · ⚠ `no licence` `unverified claims`</sub>
 
 - **[An early-access test of TypeSafe's Jev: calibrated judgments for half a cent](https://lindfors.no/blog/a-first-look-at-typesafes-jev/)** — The best independent test found: 24 Norwegian documents on one pinned model version, opening with a case the model got wrong while correctly reporting low confidence.
   <sub>`Benchmark` · Lindfors</sub>

@@ -129,8 +129,10 @@ with the ones already catalogued or declined ticked or struck through.
    `summary_zh` from what the code does, not from its README; add
    `question_types` only for the primitives it actually calls; set
    `evidence.read_on` to the day you read the file; check the guessed `kind`,
-   `patterns` and `languages`; set `zh_machine: true` if a model wrote the
-   Chinese; name the source in `sources`.
+   `patterns` and `languages`; if the kind is `alternative`, set
+   `evidence.kind` to `wire-shape`, since the file cannot be a call site; set
+   `zh_machine: true` if a model wrote the Chinese; name the source in
+   `sources`.
 4. Delete `_draft`, add the row to `catalog.json`, run
    `python3 scripts/check.py --fix`, and open a pull request naming the
    candidate you claimed. If it does not belong, add `owner/name  # reason` to

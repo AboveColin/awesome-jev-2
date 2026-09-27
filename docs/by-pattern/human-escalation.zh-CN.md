@@ -47,9 +47,6 @@ _用校准置信度决定哪些情况必须由人来看。_
 - **[neurolink](https://github.com/juspay/neurolink)** — 用一套 TypeScript 接口对接 40 家 AI 供应商，覆盖生成、流式与决策三种推理形态。 <sub>(机翻)</sub>
   <sub>`插件` · ★100+ · juspay · `TS`</sub>
 
-- **[Probing Jev's behaviour with repeated API calls](https://github.com/ahastudio/til)** — 独立的韩语实测笔记，报告仅仅把选项顺序倒过来，就能让概率移动到足以翻转 0.9 阈值的程度。
-  <sub>`基准测试` · ★100+ · `Py` · ⚠ `无许可证` `宣称未核实`</sub>
-
 - **[discern](https://github.com/doeixd/discern)** — 类型安全、感知不确定性的语义模式匹配与控制流。 <sub>(机翻)</sub>
   <sub>`开源项目` · ★10+ · doeixd · `TS`</sub>
 
@@ -205,6 +202,9 @@ _用校准置信度决定哪些情况必须由人来看。_
 
 - **[watfile](https://github.com/jexp/watfile)** — 用 Jev 或本地校准决策模型给文本与 PDF 分类归档。 <sub>(机翻)</sub>
   <sub>`开源项目` · jexp · `Py` · ⚠ `无许可证`</sub>
+
+- **[Probing Jev's behaviour with repeated API calls](https://github.com/ahastudio/til)** — 独立的韩语实测笔记，报告仅仅把选项顺序倒过来，就能让概率移动到足以翻转 0.9 阈值的程度。
+  <sub>`基准测试` · ★100+ · ⚠ `无许可证` `宣称未核实`</sub>
 
 - **[An early-access test of TypeSafe's Jev: calibrated judgments for half a cent](https://lindfors.no/blog/a-first-look-at-typesafes-jev/)** — 找到的最好的独立实测：固定单一模型版本、24 份挪威语文档，开篇就展示了一个模型答错、但同时正确报出低置信度的案例。
   <sub>`基准测试` · Lindfors</sub>

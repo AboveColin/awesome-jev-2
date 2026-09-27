@@ -84,8 +84,9 @@ to the run's summary (open the `lint` run from the pull request's checks, then
 its checks reads, it:
 
 - reads the cited file and checks every `evidence.matched` string is in it, as
-  the weekly `claims` job will, and that a row with `question_types` cites a
-  call site or says in `evidence_none` why it cannot;
+  the weekly `claims` job will, and that a row with `question_types`, or with
+  code in a GitHub repository, cites a file or says in `evidence_none` why it
+  cannot;
 - asks GitHub about the repository: `repo_license` and the `archived` flag must
   match exactly, `stars` only has to be close (within 5, or a tenth of GitHub's
   count) because it moves every day, and a repository with one commit should
@@ -174,7 +175,8 @@ turns red.
 - **`question_types`** — only the primitives the code _actually_ calls. Read the
   call site; do not infer from the README. Several projects describe "scoring"
   while using only `noul`. The primitive is `noul`, never `binary`.
-- **`evidence`** — the file you read that claim in, and strings from it that
+- **`evidence`** — the file you read the row's code in (for a row with
+  `question_types`, the file you read that claim in), and strings from it that
   substantiate it. This is what makes the claim re-checkable rather than
   asserted, so a weekly job can notice when it stops being true. Let the
   discoverer propose one and then check it yourself:
@@ -187,7 +189,10 @@ turns red.
   Prefer the implementation over a test file: tests get deleted while features
   stay, and a mocked string is weaker proof than a real call site. When the
   source is a docs page, a video or a paywalled post, set `evidence_none`
-  instead and say which. Set `read_on` to the date you actually read that file;
+  instead and say which; when the repository's code neither calls Jev nor
+  speaks its request shape (a reimplementation with its own interface, tooling
+  about Jev), `no-jev-call-site`. A link holding no code at all, such as a list
+  of links or a community site, gets `has_code: false` rather than either. Set `read_on` to the date you actually read that file;
   do not advance it after an automated text check. An `evidence` record is a
   citation, not a stored CI pass or proof that the integration executes.
   `evidence.kind` says what the file shows: leave it out (or write
@@ -198,8 +203,9 @@ turns red.
   `examples/`, a citation resting on one model name) are listed in
   [`docs/review-queue.md`](docs/review-queue.md); each section there says what
   to record to take a row off.
-  `lint.py` fails a row with `question_types` and neither `evidence` nor
-  `evidence_none`; `not-yet-backfilled` is an honest value while you look.
+  `lint.py` fails a row with `question_types`, and a row with `has_code: true`
+  whose `url` or `repo` is a GitHub repository, when it has neither `evidence`
+  nor `evidence_none`; `not-yet-backfilled` is an honest value while you look.
 - **`official`** — true only for `typesafe.ai` hosts and the `typesafe-ai`
   GitHub org. A first-party integration published by another vendor is not
   official. The linter checks this.

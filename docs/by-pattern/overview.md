@@ -119,12 +119,6 @@ Every catalogued example of this decision — 451 of them. The same rows, with c
 - **[awesome-jev (fatwang2)](https://github.com/fatwang2/awesome-jev)** — A sibling directory whose submissions are reviewed by Jev itself, with a notably thorough list of multi-language community clients.
   <sub>`Project` · ★100+ · fatwang2 · `JS`</sub>
 
-- **[awesome-jev (heyjunpenn)](https://github.com/heyjunpenn/awesome-jev)** — The broadest sibling directory: hundreds of projects in six languages, with a README that is itself the parsed data source.
-  <sub>`Project` · ★100+ · heyjunpenn · `TS`</sub>
-
-- **[awesome-jev-projects](https://github.com/logicrw/awesome-jev-projects)** — A sibling directory aiming at ecosystem breadth with commit-pinned sources, four README languages and a generated site.
-  <sub>`Project` · ★100+ · logicrw · `JS`</sub>
-
 - **[celesto](https://github.com/CelestoAI/celesto)** — Secure and persistent computer for AI agents -- build your own Grokbot, and Muse.
   <sub>`Project` · ★100+ · celestoai · `Py`</sub>
 
@@ -944,9 +938,6 @@ Every catalogued example of this decision — 451 of them. The same rows, with c
 - **[jev_project_context](https://github.com/poiuyjie/jev_project_context)** — Evidence-first long-term experiment memory skill for AI coding agents, with optional Jev decision-model layers
   <sub>`Plugin` · poiuyjie · `Py`</sub>
 
-- **[jevai.org community site](https://www.jevai.org/)** — An unaffiliated community site with a playground, a preset decision API, an MCP server, downloadable skills and a gallery of community apps.
-  <sub>`Project` · `sh` · ⚠ `3rd-party key` `unverified claims`</sub>
-
 - **[jevals](https://github.com/dayhaysoos/jevals)** — Local evaluation workbench for TypeSafe Jev
   <sub>`Project` · dayhaysoos · `TS`</sub>
 
@@ -1322,6 +1313,12 @@ Every catalogued example of this decision — 451 of them. The same rows, with c
 - **[awesome-jev (yibie)](https://github.com/yibie/awesome-jev)** — Currently the most-starred sibling directory in this space.
   <sub>`Project` · ★1k+ · ⚠ `no licence`</sub>
 
+- **[awesome-jev (heyjunpenn)](https://github.com/heyjunpenn/awesome-jev)** — The broadest sibling directory: hundreds of projects in six languages, with a README that is itself the parsed data source.
+  <sub>`Project` · ★100+ · heyjunpenn</sub>
+
+- **[awesome-jev-projects](https://github.com/logicrw/awesome-jev-projects)** — A sibling directory aiming at ecosystem breadth with commit-pinned sources, four README languages and a generated site.
+  <sub>`Project` · ★100+ · logicrw</sub>
+
 - **[A new kind of AI model from a ChatGPT inventor is thrilling developers](https://techcrunch.com/2026/09/18/a-new-kind-of-ai-model-from-a-chatgpt-inventor-is-thrilling-developers/)** — The only launch coverage with first-hand developer quotes rather than vendor figures, including a caution that interpreting the thresholds is now your job.
   <sub>`Article` · Tim Fernholz</sub>
 
@@ -1351,6 +1348,9 @@ Every catalogued example of this decision — 451 of them. The same rows, with c
 
 - **[jevai.org community app gallery](https://www.jevai.org/apps)** — Thirty-six community builds curated from social posts: browser agents, spreadsheet tooling, inbox search by intent, ad blocking with judgement, games and robotics.
   <sub>`Project` · ⚠ `unverified claims`</sub>
+
+- **[jevai.org community site](https://www.jevai.org/)** — An unaffiliated community site with a playground, a preset decision API, an MCP server, downloadable skills and a gallery of community apps.
+  <sub>`Project` · ⚠ `3rd-party key` `unverified claims`</sub>
 
 - **[RLCD explained: Reinforcement Learning for Calibrated Decisions](https://systemonemodels.org/guides/rlcd-explained/)** — An independent write-up whose most useful finding is a negative one: there is no paper, no reward function, no dataset description and no reproducible evaluation for RLCD.
   <sub>`Article`</sub>

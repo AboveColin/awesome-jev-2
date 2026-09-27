@@ -108,6 +108,12 @@ def compute() -> dict:
         "call_site_rows": sum(1 for e in catalog if evidence_kind(e) == "call-site"),
         "wire_shape_rows": sum(1 for e in catalog if evidence_kind(e) == "wire-shape"),
         "example_only_rows": sum(1 for e in catalog if evidence_kind(e) == "example-only"),
+        # Rows with code that neither cite a file nor say why none can be
+        # cited. lint.py fails those in a GitHub repository; a row elsewhere
+        # (a docs page, a blog) is counted here without failing anything.
+        "has_code_unbacked": sum(
+            1 for e in catalog if e.get("has_code") and not (e.get("evidence") or e.get("evidence_none"))
+        ),
         # Machine signals listed in docs/review-queue.md, for a person to read.
         "review_examples_dir": sum(1 for e in catalog if examples_unjudged(e)),
         "review_single_model_name": sum(1 for e in catalog if single_model_name(e)),

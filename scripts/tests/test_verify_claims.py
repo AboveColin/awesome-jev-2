@@ -135,5 +135,69 @@ class MainTest(unittest.TestCase):
         self.assertIn("checked 3 of 3 claim(s): 3 failed, 0 skipped", summary)
 
 
+
+class DiscoverTest(unittest.TestCase):
+    """--discover serves every row lint now requires evidence of (I17), not only primitive claims."""
+
+    CODE = {"slug": "code", "url": "https://github.com/a/code", "kind": "project", "has_code": True}
+
+    def test_which_rows_need_a_proposal(self):
+        cases = (
+            (self.CODE, True),
+            (dict(self.CODE, has_code=False, question_types=["noul"]), True),
+            (dict(self.CODE, has_code=False), False),
+            (dict(self.CODE, evidence_none="docs-page"), False),
+            (dict(self.CODE, evidence=ROW["evidence"]), False),
+            (dict(self.CODE, url="https://example.com/code"), False),
+        )
+        for row, needs in cases:
+            with self.subTest(row=row):
+                self.assertEqual(vc.needs_discovery(row), needs)
+
+    def run_discover(self, rows: list[dict], only: str) -> tuple[str, str, list[str]]:
+        asked: list[str] = []
+
+        def discover(entry):
+            asked.append(entry["slug"])
+            proposal = {"slug": entry["slug"], "status": "proposed", "path": "srv.py", "matched": ["/v1/systemone"]}
+            if entry.get("kind") == "alternative":
+                proposal["kind"] = "wire-shape"
+            return proposal
+
+        with tempfile.TemporaryDirectory() as tmp:
+            catalog = pathlib.Path(tmp) / "catalog.json"
+            catalog.write_text(json.dumps(rows))
+            out, err = io.StringIO(), io.StringIO()
+            with mock.patch.object(vc, "CATALOG", catalog), \
+                 mock.patch.object(sys, "argv", ["verify_claims.py", "--discover", "--only", only]), \
+                 mock.patch.object(vc, "discover", discover), \
+                 contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+                self.assertEqual(vc.main(), 0)
+            return out.getvalue(), err.getvalue(), asked
+
+    def test_a_row_with_code_and_no_primitive_claim_gets_a_proposal(self):
+        out, _, asked = self.run_discover([self.CODE], "code")
+        self.assertEqual(asked, ["code"])
+        self.assertIn("path: srv.py", out)
+        self.assertNotIn("kind:", out)
+
+    def test_an_alternative_is_told_its_evidence_is_wire_shape(self):
+        out, _, _ = self.run_discover([dict(self.CODE, kind="alternative")], "code")
+        self.assertIn("kind: wire-shape", out)
+
+    def test_a_row_that_needs_nothing_says_why_nothing_ran(self):
+        _, err, asked = self.run_discover([dict(self.CODE, evidence_none="docs-page")], "code")
+        self.assertEqual(asked, [])
+        self.assertIn("code: not a row that needs one", err)
+
+    def test_the_real_discover_labels_an_alternative(self):
+        tree = {"tree": [{"type": "blob", "path": "jev_server.py"}]}
+        with mock.patch.object(vc, "default_branch", return_value="main"), \
+             mock.patch.object(vc, "api_get", return_value=tree), \
+             mock.patch.object(vc, "raw_get", return_value="@app.post('/v1/systemone')"):
+            self.assertEqual(vc.discover(dict(self.CODE, kind="alternative"))["kind"], "wire-shape")
+            self.assertNotIn("kind", vc.discover(self.CODE))
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -260,29 +260,33 @@ def check_entry_invariants(
     if entry.get("question_types") and not entry.get("has_code"):
         report.err(path, f"{slug}: question_types set but has_code is not true")
 
-    # A primitive claim must be re-checkable, or say why it is not. This was a
-    # warning until 2026-09-27, when no row broke it any more; `evidence_none`
-    # (`not-yet-backfilled` included) is always an honest way to satisfy it.
-    if entry.get("question_types") and not (
+    # A claim about code must be re-checkable, or say why it is not. For a
+    # primitive claim this was a warning until 2026-09-27, when no row broke it
+    # any more. The same day it grew to every row with code in a GitHub
+    # repository: keyed on question_types alone, 34 rows with code carried
+    # neither and nothing noticed. A retired row's repository is gone, so
+    # there is nothing left there to read. `evidence_none` (`not-yet-backfilled`
+    # included) is always an honest way to satisfy it.
+    claims_primitives = bool(entry.get("question_types"))
+    readable_code = bool(entry.get("has_code")) and on_github(entry) and not retired
+    if (claims_primitives or readable_code) and not (
         entry.get("evidence") or entry.get("evidence_none")
     ):
+        what = "claims primitives" if claims_primitives else "has code in a GitHub repository"
         report.err(
             path,
-            f"{slug}: claims primitives but carries neither evidence nor evidence_none. "
-            "Run 'python3 scripts/verify_claims.py --discover --only "
-            + str(slug)
-            + "'",
+            f"{slug}: {what} but carries neither evidence nor evidence_none. "
+            f"Run 'python3 scripts/verify_claims.py --discover --only {slug}' to propose a "
+            "call site, or set evidence_none to say why no file can be cited "
+            "(docs-page, no-jev-call-site, not-yet-backfilled, ...)",
         )
 
     # Evidence without a repository to read it from cannot be verified.
-    if entry.get("evidence"):
-        url = entry.get("url", "")
-        repo = entry.get("repo", "")
-        if "github.com" not in url and "github.com" not in repo:
-            report.err(
-                path,
-                f"{slug}: has evidence but no GitHub repository to re-read it from",
-            )
+    if entry.get("evidence") and not on_github(entry):
+        report.err(
+            path,
+            f"{slug}: has evidence but no GitHub repository to re-read it from",
+        )
     if entry.get("evidence") and entry.get("evidence_none"):
         report.err(path, f"{slug}: has both evidence and evidence_none; they are exclusive")
     evidence = entry.get("evidence")
@@ -377,6 +381,11 @@ def check_entry_invariants(
                 f"{slug}: flagged no-license but repo_license is {entry['repo_license']!r}",
             )
     return report.findings()
+
+
+def on_github(entry: dict) -> bool:
+    """The row names a GitHub repository in `url` or `repo`, where a file can be read."""
+    return any("github.com" in str(entry.get(field) or "") for field in ("url", "repo"))
 
 
 def check_self_submission(entry: dict, path: str, flags: list) -> Findings:
