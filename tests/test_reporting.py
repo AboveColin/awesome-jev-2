@@ -15,6 +15,7 @@ import assemble_site
 import build_docs
 import build_readme
 import lint_docs
+from readme import sections
 
 
 class CoverageReportingTests(unittest.TestCase):
@@ -82,9 +83,9 @@ class VerificationReportingTests(unittest.TestCase):
         self.assertEqual(stats["link_ok"], 0)
         self.assertEqual(stats["last_sweep"], "never")
 
-        with patch.object(_stats, "compute", return_value=stats), patch.object(build_readme, "START_HERE", []):
-            english = build_readme.render([entry], [], build_readme.EN, "2026-09-24")
-            chinese = build_readme.render([entry], [], build_readme.ZH, "2026-09-24")
+        with patch.object(_stats, "compute", return_value=stats), patch.object(sections, "START_HERE", []):
+            english = build_readme.render([entry], [], build_readme.EN)
+            chinese = build_readme.render([entry], [], build_readme.ZH)
         self.assertIn("1 call-site citation records", english)
         self.assertIn("**not latest CI passes**", english)
         self.assertIn("including entries without `code-untested`", english)
@@ -108,7 +109,7 @@ class ReadmePreviewTests(unittest.TestCase):
                 target = root / path
                 target.parent.mkdir(parents=True, exist_ok=True)
                 target.write_text("unchanged")
-            with patch.object(build_readme, "ROOT", root):
+            with patch.object(sections, "ROOT", root):
                 before = build_readme.preview_version()
                 self.assertEqual(before, build_readme.preview_version())
                 (root / "site/catalog.css").write_text("new layout")

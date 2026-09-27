@@ -332,7 +332,7 @@ of doing anything.
 A new pattern earns a heading when there are at least two independent real
 examples of it. Until then it goes under the closest existing one, because a
 taxonomy with empty branches is harder to use than a coarse one. Adding one means
-editing three places — the schema enum, the label table and order list in
-[`../scripts/build_readme.py`](../scripts/build_readme.py), and this page — and
-the build fails loudly if you miss the labels. See
+editing three places — the schema enum, the pattern's entry in
+[`../patterns.json`](../patterns.json) (its labels, blurbs and place in the
+order), and this page — and the build fails loudly if you miss the labels. See
 [`../CONTRIBUTING.md`](../CONTRIBUTING.md).

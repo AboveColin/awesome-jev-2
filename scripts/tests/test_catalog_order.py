@@ -168,10 +168,10 @@ class RealCatalogDisplayOrderTest(unittest.TestCase):
         for strings in (build_readme.EN, build_readme.ZH):
             with self.subTest(lang=strings["lang_code"]):
                 as_filed = build_readme.render(
-                    copy.deepcopy(self.catalog), copy.deepcopy(self.retired), strings, "2026-01-01"
+                    copy.deepcopy(self.catalog), copy.deepcopy(self.retired), strings
                 )
                 reversed_ = build_readme.render(
-                    copy.deepcopy(self.catalog[::-1]), copy.deepcopy(self.retired[::-1]), strings, "2026-01-01"
+                    copy.deepcopy(self.catalog[::-1]), copy.deepcopy(self.retired[::-1]), strings
                 )
                 self.assertEqual(as_filed, reversed_)
 
