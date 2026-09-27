@@ -93,6 +93,45 @@ class ShapeTest(unittest.TestCase):
         self.assertEqual(vc.weak_words("noulish Scores"), [])
 
 
+class TypeScriptSdkHelperTest(unittest.TestCase):
+    """The TypeScript SDK builds questions with choice(), score() and noul()
+    from @typesafe-ai/sdk (its README: `category: choice("What is this ticket
+    about?", {...})`). A lower-case name is only a shape when the file imports
+    it from the SDK by name and calls it."""
+
+    POSITIVE = (
+        ('import { choice, TypeSafeClient } from "@typesafe-ai/sdk";\n'
+         'const q = { category: choice("What is this ticket about?", { billing: "Billing" }) };', ["choice"]),
+        ("import { noul as yes } from '@typesafe-ai/sdk'\nconst q = { urgent: yes('Is it urgent?') };", ["noul"]),
+        ('import {\n  TypeSafeClient,\n  score,\n  noul,\n} from "@typesafe-ai/sdk";\n'
+         "const q = { severity: score ('How bad?', levels), done: noul('Done?') };", ["score", "noul"]),
+        ('import TypeSafe, { choice } from "@typesafe-ai/sdk";\nchoice("Pick", opts);', ["choice"]),
+    )
+    NEGATIVE = (
+        # Imported, never called.
+        'import { choice, noul } from "@typesafe-ai/sdk";\nexport { choice, noul };',
+        # Called, but not the SDK's.
+        'import { choice } from "./random";\nchoice(items);',
+        "from random import choice\nchoice(options)",
+        # A method of the same name.
+        'import { choice } from "@typesafe-ai/sdk";\nconst pick = rng.choice(xs);',
+        # Only the type is imported.
+        'import type { choice } from "@typesafe-ai/sdk";\nchoice(x);',
+        # The alias is called, not the name it hides.
+        'import { score as level } from "@typesafe-ai/sdk";\nscore(x);',
+    )
+
+    def test_an_sdk_helper_imported_and_called_names_its_primitive(self):
+        for text, expected in self.POSITIVE:
+            with self.subTest(text=text):
+                self.assertEqual(vc.primitive_signals(text), expected)
+
+    def test_a_lower_case_name_alone_is_not_a_shape(self):
+        for text in self.NEGATIVE:
+            with self.subTest(text=text):
+                self.assertEqual(vc.primitive_signals(text), [])
+
+
 class Files:
     """A fake raw host: {(branch, path): body}; a missing key is a 404."""
 
@@ -275,6 +314,21 @@ class WriteSignalsTest(unittest.TestCase):
         self.assertIn("## Primitive text signals", summary)
         self.assertIn("not a person's reading", summary)
         self.assertNotIn("verified", summary.lower())
+
+    def test_every_read_outcome_has_one_meaning(self):
+        # ok: the file's signals; the file, the claim or the repository gone:
+        # nothing; no read at all (rate limit, no GitHub repository): unchanged.
+        rows = [base_row(slug, primitives_seen=["choice"]) for slug in
+                ("ok", "claim-gone", "path-gone", "repo-gone", "skipped", "no-repo")]
+        results = [{"slug": "ok", "status": "ok", "primitive_signals": ["noul"]}] + [
+            {"slug": slug, "status": slug} for slug in ("claim-gone", "path-gone", "repo-gone", "skipped", "no-repo")
+        ]
+        out, outcome = vc.apply_signals(rows, results)
+        seen = {row["slug"]: row.get("primitives_seen") for row in out}
+        self.assertEqual(seen, {"ok": ["noul"], "claim-gone": None, "path-gone": None, "repo-gone": None,
+                                "skipped": ["choice"], "no-repo": ["choice"]})
+        self.assertEqual(len(outcome["removed"]), 3)
+        self.assertEqual(len(outcome["unread"]), 2)
 
     def test_write_signals_and_discover_do_not_combine(self):
         with self.assertRaises(SystemExit):

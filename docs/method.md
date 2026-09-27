@@ -167,21 +167,28 @@ answer shapes each cited file contains, as `primitives_seen`, and every surface
 keeps it apart from `question_types`. A person's reading named the primitives
 of 100 rows (72 of them citing a file), while the claims job fetched 1,129
 cited files every week and kept nothing but a substring test. The file of every
-claim that still holds is now searched for four written forms: the request's
+claim that still holds is now searched for five written forms: the request's
 `type` field (`"type": "choice"` in JSON, a Python dict or a JS object,
 `type: 'noul'` in a TS type, `"type" => "score"` in Ruby, PHP or Elixir, also
-inside an escaped JSON string), the SDKs' `Choice(`, `Score(` and `Noul(`
-constructors (not `click.Choice(`), and `.noul`. The bare words, `.choice`,
-`.score`, `type="noul"` as a keyword argument (the test doubles that build fake
-answers) and Vercel's `boolean` do not count. The first run read all 1,129
-files from the raw host in under two minutes, asking the API 13 times: 655 rows
-got a signal (choice in 443, score in 219, noul in 486), 608 of them rows with
-no `question_types`, and 25 of them alternatives whose file speaks the shape
-without building on Jev. Against the 72 cited readings it agreed exactly on 29,
-showed fewer primitives on 9 and none on 25 (a wrapper that builds the request
-from variables writes no shape out), and more on 9: TypeScript unions declaring
-all three types, fixtures, and helpers for primitives the code never calls.
-That is why it is a signal about a file and not about what the code calls. The
+inside an escaped JSON string), the `Choice(`, `Score(` and `Noul(`
+constructors (not `click.Choice(`), the TypeScript SDK's `choice(`, `score(`
+and `noul(` helpers when the file imports them from `@typesafe-ai/sdk`, and
+`.noul`. The bare words, `.choice`, `.score`, `type="noul"` as a keyword
+argument (the test doubles that build fake answers), a Go struct's `Type:`
+field, a Kotlin map's `put("type", …)` and Vercel's `boolean` do not count.
+Reading all 1,129 files from the raw host takes under two minutes and asks the
+API 13 times. 686 rows got a signal (choice in 488, score in 241, noul in 495),
+637 of them rows with no `question_types`, and 25 of them alternatives whose
+file speaks the shape without building on Jev; the first run, before review
+added the TypeScript SDK's helpers, had given 52 of those rows fewer primitives
+or none. Against the 72 cited readings it agreed exactly on 32, showed fewer
+primitives on 8, none on 23 (a wrapper that passes questions through or builds
+them from variables, or a form the list leaves out), and more on 9: TypeScript
+types declaring all three, a helper, test fixtures in the cited file, and on
+three rows a `noul` question built or its answer read where the reading records
+no `noul` — rows for a person to re-read, since the signal never corrects
+`question_types`. That is why it is a signal about a file and not about what
+the code calls. The
 field is written only by `verify_claims.py --write-signals` in the metadata run
 (a read the rate limit stops leaves a row as it was; a file that no longer holds
 its claim loses the signal); lint allows it only beside `evidence`; and nothing

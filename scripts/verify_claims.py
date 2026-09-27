@@ -27,7 +27,9 @@ workflow can open an issue.
 
 A file whose claim holds is also searched for the primitives' request and
 answer shapes — `"type": "choice"`, `Noul(`, `.noul` and the like
-(PRIMITIVE_SHAPES), never the bare words. What it finds is a machine text
+(PRIMITIVE_SHAPES), and a call to the TypeScript SDK's `choice()`, `score()`
+or `noul()` imported from `@typesafe-ai/sdk` (ts_sdk_helpers) — never the bare
+words. What it finds is a machine text
 signal about that one file: it does not say the code calls the primitive, and
 it is not `question_types`, which records what a person read the code calling.
 `--write-signals` records it in each row's `primitives_seen`, the only field
@@ -110,7 +112,9 @@ PRIMITIVE_SHAPES = (
     re.compile(rf"""(?<![\w$.])(?:{_QUOTE}type{_QUOTE}|type)\s*:\s*{_QUOTE}(choice|score|noul){_QUOTE}"""),
     # The same field in Ruby, PHP or Elixir.
     re.compile(rf"""(?:{_QUOTE}type{_QUOTE}|:type)\s*=>\s*{_QUOTE}(choice|score|noul){_QUOTE}"""),
-    # The SDKs' question constructors. click.Choice( is a CLI option, not Jev.
+    # Question constructors with a capital, as the Python SDK spells them (the
+    # TypeScript SDK's lower-case ones are ts_sdk_helpers). click.Choice( is a
+    # CLI option, not Jev.
     re.compile(r"""(?<!click\.)\b(Choice|Score|Noul)\("""),
     # Reading a noul answer.
     re.compile(r"""\.(noul)\b"""),
@@ -124,10 +128,34 @@ def weak_words(body: str) -> list[str]:
     return [w for w in WEAK if re.search(rf"\b{re.escape(w)}\b", body)]
 
 
+# The TypeScript SDK builds a question with choice(), score() or noul(), which
+# @typesafe-ai/sdk exports (its README: `category: choice("What is this ticket
+# about?", {...})`). Lower-case, those names are also random.choice, a local
+# score() and plain words, so one counts only when the file imports it from the
+# SDK by name — `import { choice }`, `import { noul as yes }`, never
+# `import type` — and calls it, not as a method.
+TS_SDK_IMPORT = re.compile(r"""\bimport\s+(?!type\b)(?:[\w$]+\s*,\s*)?\{([^}]*)\}\s*from\s*["']@typesafe-ai/sdk["']""")
+
+
+def ts_sdk_helpers(body: str) -> set[str]:
+    """The primitives whose @typesafe-ai/sdk helper the file imports by name and calls."""
+    found = set()
+    for match in TS_SDK_IMPORT.finditer(body):
+        for part in match.group(1).split(","):
+            words = part.split()
+            if len(words) not in (1, 3) or words[0] not in PRIMITIVES:
+                continue  # empty, `type choice`, or another export
+            local = words[-1]  # `choice`, or `pick` in `choice as pick`
+            if re.search(rf"(?<![\w$.]){re.escape(local)}\s*\(", body):
+                found.add(words[0])
+    return found
+
+
 def primitive_signals(body: str) -> list[str]:
-    """The primitives whose shape (PRIMITIVE_SHAPES) the text contains, in
-    PRIMITIVES order. A text signal about this one file, not a reading."""
+    """The primitives whose shape (PRIMITIVE_SHAPES, ts_sdk_helpers) the text
+    contains, in PRIMITIVES order. A text signal about this one file, not a reading."""
     found = {match.group(1).lower() for pattern in PRIMITIVE_SHAPES for match in pattern.finditer(body)}
+    found |= ts_sdk_helpers(body)
     return [name for name in PRIMITIVES if name in found]
 
 

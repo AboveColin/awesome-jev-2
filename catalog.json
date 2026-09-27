@@ -557,6 +557,8 @@
       "read_on": "2026-09-22"
     },
     "primitives_seen": [
+      "choice",
+      "score",
       "noul"
     ],
     "first_seen": "2026-09-22",
@@ -2682,6 +2684,7 @@
       "read_on": "2026-09-22"
     },
     "primitives_seen": [
+      "choice",
       "noul"
     ],
     "first_seen": "2026-09-22",
@@ -2953,7 +2956,10 @@
         "choice"
       ],
       "read_on": "2026-09-22"
-    }
+    },
+    "primitives_seen": [
+      "choice"
+    ]
   },
   {
     "slug": "bluenoise",
@@ -3130,6 +3136,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -3175,6 +3185,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -3511,6 +3524,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -4499,6 +4515,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "score"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -6225,6 +6244,11 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "javascript"
@@ -6568,6 +6592,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -6758,6 +6787,8 @@
       "read_on": "2026-09-22"
     },
     "primitives_seen": [
+      "choice",
+      "score",
       "noul"
     ],
     "first_seen": "2026-09-22",
@@ -7111,6 +7142,8 @@
       "read_on": "2026-09-22"
     },
     "primitives_seen": [
+      "choice",
+      "score",
       "noul"
     ],
     "first_seen": "2026-09-22",
@@ -9317,6 +9350,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -9751,6 +9787,7 @@
       "read_on": "2026-09-24"
     },
     "primitives_seen": [
+      "score",
       "noul"
     ],
     "zh_machine": true,
@@ -10072,6 +10109,8 @@
       "read_on": "2026-09-22"
     },
     "primitives_seen": [
+      "choice",
+      "score",
       "noul"
     ],
     "first_seen": "2026-09-22",
@@ -11630,6 +11669,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -13206,6 +13248,7 @@
       "read_on": "2026-09-22"
     },
     "primitives_seen": [
+      "score",
       "noul"
     ],
     "first_seen": "2026-09-22",
@@ -13708,6 +13751,7 @@
       "read_on": "2026-09-24"
     },
     "primitives_seen": [
+      "score",
       "noul"
     ],
     "zh_machine": true,
@@ -14729,6 +14773,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -14916,6 +14963,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -15760,6 +15810,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -16006,6 +16059,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -16193,6 +16249,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -18268,6 +18327,7 @@
       "read_on": "2026-09-22"
     },
     "primitives_seen": [
+      "choice",
       "noul"
     ],
     "first_seen": "2026-09-22",
@@ -18766,6 +18826,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -20093,6 +20156,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -20182,6 +20248,11 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -20852,6 +20923,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -21199,6 +21273,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -21943,6 +22020,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "javascript"
@@ -22383,6 +22463,8 @@
       "read_on": "2026-09-24"
     },
     "primitives_seen": [
+      "choice",
+      "score",
       "noul"
     ],
     "zh_machine": true,
@@ -23949,6 +24031,7 @@
       "read_on": "2026-09-22"
     },
     "primitives_seen": [
+      "choice",
       "noul"
     ],
     "first_seen": "2026-09-22",
@@ -24150,6 +24233,11 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -25554,6 +25642,8 @@
       "read_on": "2026-09-24"
     },
     "primitives_seen": [
+      "choice",
+      "score",
       "noul"
     ],
     "zh_machine": true,
@@ -25943,6 +26033,8 @@
       "read_on": "2026-09-22"
     },
     "primitives_seen": [
+      "choice",
+      "score",
       "noul"
     ]
   },
@@ -26286,6 +26378,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "score"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -28048,6 +28143,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "zh_machine": true,
     "languages": [
       "javascript"
@@ -28960,6 +29058,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -30480,7 +30581,12 @@
         "choice"
       ],
       "read_on": "2026-09-22"
-    }
+    },
+    "primitives_seen": [
+      "choice",
+      "score",
+      "noul"
+    ]
   },
   {
     "slug": "jev-voice-control",
@@ -31712,6 +31818,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -32491,6 +32600,7 @@
       "read_on": "2026-09-24"
     },
     "primitives_seen": [
+      "choice",
       "noul"
     ],
     "zh_machine": true,
@@ -35096,6 +35206,10 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice",
+      "noul"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -35778,6 +35892,10 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice",
+      "score"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -41376,6 +41494,7 @@
       "read_on": "2026-09-22"
     },
     "primitives_seen": [
+      "choice",
       "noul"
     ]
   },
@@ -43526,6 +43645,9 @@
       ],
       "read_on": "2026-09-22"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -45003,6 +45125,7 @@
       "read_on": "2026-09-22"
     },
     "primitives_seen": [
+      "choice",
       "noul"
     ],
     "first_seen": "2026-09-22",
@@ -46438,6 +46561,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -47051,6 +47177,8 @@
       "read_on": "2026-09-22"
     },
     "primitives_seen": [
+      "choice",
+      "score",
       "noul"
     ],
     "first_seen": "2026-09-22",
@@ -47911,6 +48039,7 @@
       "read_on": "2026-09-22"
     },
     "primitives_seen": [
+      "choice",
       "noul"
     ],
     "first_seen": "2026-09-22",
@@ -50613,6 +50742,8 @@
       "read_on": "2026-09-22"
     },
     "primitives_seen": [
+      "choice",
+      "score",
       "noul"
     ],
     "first_seen": "2026-09-22",
@@ -51058,6 +51189,8 @@
       "read_on": "2026-09-22"
     },
     "primitives_seen": [
+      "choice",
+      "score",
       "noul"
     ],
     "first_seen": "2026-09-22",
@@ -52188,6 +52321,9 @@
       ],
       "read_on": "2026-09-24"
     },
+    "primitives_seen": [
+      "choice"
+    ],
     "zh_machine": true,
     "languages": [
       "typescript"
@@ -52413,6 +52549,8 @@
       "read_on": "2026-09-22"
     },
     "primitives_seen": [
+      "choice",
+      "score",
       "noul"
     ],
     "first_seen": "2026-09-22",

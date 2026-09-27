@@ -22,8 +22,8 @@ is the point of dating it.
 | Rows citing only an example the project ships (`evidence.kind` `example-only`) | 0 |
 | Rows with code citing no file and giving no reason (neither `evidence` nor `evidence_none`) | 0 |
 | Rows naming the primitives a person read the code calling (`question_types`) | 100 |
-| Machine text signal: rows whose cited file contains a primitive's request or answer shape (`primitives_seen`; not a reading, never counted as `question_types`) | 655 |
-| Of those, rows with no `question_types`: the text signal is all that is recorded about their primitives | 608 |
+| Machine text signal: rows whose cited file contains a primitive's request or answer shape (`primitives_seen`; not a reading, never counted as `question_types`) | 686 |
+| Of those, rows with no `question_types`: the text signal is all that is recorded about their primitives | 637 |
 | Machine signal: evidence under an examples directory, not yet judged ([review queue](review-queue.md#examples-dir)) | 22 |
 | Machine signal: evidence resting on one model name or the API host ([review queue](review-queue.md#single-model-name)) | 76 |
 | Machine signal: `tool-selection` suggested only by keyword-rule words dropped on 2026-09-27 ([review queue](review-queue.md#tool-selection-broad-words)) | 65 |
