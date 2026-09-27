@@ -31,6 +31,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 
 import _stats  # noqa: E402
 import build_docs  # noqa: E402
+import build_readme  # noqa: E402
 import build_review_queue as queue  # noqa: E402
 import classify  # noqa: E402
 import lint  # noqa: E402
@@ -38,6 +39,7 @@ from readme import pages, rows, strings  # noqa: E402
 
 SCHEMA = json.loads((ROOT / "schema" / "entry.schema.json").read_text(encoding="utf-8"))
 CATALOG = json.loads((ROOT / "catalog.json").read_text(encoding="utf-8"))
+RETIRED = json.loads((ROOT / "retired.json").read_text(encoding="utf-8"))
 CJK = re.compile(r"[㐀-鿿]")
 
 
@@ -127,6 +129,10 @@ def overview_readme(text: str, heading: str) -> str:
 
 
 class ListingTest(unittest.TestCase):
+    """Rendered here from catalog.json, never read from the committed pages: a
+    pull request that re-files a row leaves those to the bot that regenerates
+    main, and CI runs these tests before it regenerates (scripts/check.py)."""
+
     def setUp(self):
         self.unindexed = [e for e in CATALOG if _stats.not_indexed_by_pattern(e)]
         self.overview = [e for e in CATALOG if e["patterns"] == ["overview"]]
@@ -136,7 +142,7 @@ class ListingTest(unittest.TestCase):
             lang = pack["lang_code"]
             heading = f"#### {pack['unindexed_h']}"
             with self.subTest(readme=name):
-                text = (ROOT / name).read_text(encoding="utf-8")
+                text = build_readme.render(CATALOG, RETIRED, pack)
                 section = overview_readme(text, rows.label(rows.PATTERN_LABELS, "overview", lang))
                 listed, note = section.split(heading, 1)
                 for row in self.unindexed:
@@ -147,9 +153,9 @@ class ListingTest(unittest.TestCase):
                 self.assertEqual("<sub>(机翻)</sub>" in note.split("\n\n")[1], pack is strings.ZH)
 
     def test_the_overview_page_lists_them_last_under_their_heading(self):
-        for lang, heading in (("en", "## Not yet indexed by pattern"), ("zh", "## 尚未按模式索引")):
-            with self.subTest(lang=lang):
-                text = (ROOT / "docs" / "by-pattern" / rows.page_name("overview", lang)).read_text(encoding="utf-8")
+        for pack, heading in ((strings.EN, "## Not yet indexed by pattern"), (strings.ZH, "## 尚未按模式索引")):
+            with self.subTest(lang=pack["lang_code"]):
+                text = pages.render_page("overview", rows.group_by_pattern(CATALOG)["overview"], pack)
                 before, after = text.split('<a name="unindexed"></a>', 1)
                 self.assertTrue(after.lstrip().startswith(heading))
                 for row in self.overview:
@@ -157,11 +163,12 @@ class ListingTest(unittest.TestCase):
                     self.assertIn(link, after if row in self.unindexed else before, row["slug"])
 
     def test_no_other_page_has_the_heading(self):
-        for path in sorted((ROOT / "docs" / "by-pattern").glob("*.md")):
-            if path.name.startswith("overview."):
+        for key, listed in rows.group_by_pattern(CATALOG).items():
+            if key == "overview" or not listed:
                 continue
-            with self.subTest(page=path.name):
-                self.assertNotIn('<a name="unindexed"></a>', path.read_text(encoding="utf-8"))
+            for pack in (strings.EN, strings.ZH):
+                with self.subTest(page=rows.page_name(key, pack["lang_code"])):
+                    self.assertNotIn('<a name="unindexed"></a>', pages.render_page(key, listed, pack))
 
     def test_a_recorded_reading_moves_a_row_back_into_the_list(self):
         rows_ = [entry("unplaced"), entry("placed", patterns_reviewed="2026-09-27"), entry("docs", kind="official-docs")]
@@ -206,16 +213,18 @@ class QueueAndDocsTest(unittest.TestCase):
                 self.assertEqual(build([dict(row, patterns_reviewed="2026-09-27")]).rows, ())
 
     def test_published_where_the_docs_say(self):
+        # What the generators write from catalog.json, not the committed files,
+        # which a pull request leaves stale for the bot (see ListingTest).
         s = _stats.compute()
-        status = (ROOT / "docs" / "status.md").read_text(encoding="utf-8")
+        docs = {str(path.relative_to(ROOT)): text for path, text in build_docs.render().items()}
+        status = docs["docs/status.md"]
         self.assertIn(f"review-queue.md#unsorted-overview)) | {s['overview_unindexed']} |", status)
         self.assertIn(f"any review of these rows was not recorded) | {s['patterns_rule_identical']} of {s['entries']} |", status)
-        page = (ROOT / "docs" / "review-queue.md").read_text(encoding="utf-8")
+        page = queue.render(CATALOG)
         self.assertIn(f"](#unsorted-overview) | {s['overview_unindexed']} |", page)
         for rel in ("docs/patterns.md", "llms.txt"):
             with self.subTest(doc=rel):
-                self.assertIn(f"<!--n:overview_unindexed-->{s['overview_unindexed']}<!--/n-->", (ROOT / rel).read_text())
-        self.assertIn("docs/patterns.md", [str(path.relative_to(ROOT)) for path in build_docs.render()])
+                self.assertIn(f"<!--n:overview_unindexed-->{s['overview_unindexed']}<!--/n-->", docs[rel])
 
 
 if __name__ == "__main__":

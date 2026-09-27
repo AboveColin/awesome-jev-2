@@ -25,6 +25,7 @@ ROOT = pathlib.Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "scripts"))
 
 import _stats  # noqa: E402
+import build_docs  # noqa: E402
 import build_review_queue as queue  # noqa: E402
 import classify  # noqa: E402
 import discover_candidates  # noqa: E402
@@ -225,13 +226,15 @@ class ReplayQueueTest(unittest.TestCase):
         self.assertEqual(cells[1:], ("★100+", "`tool-selection`", "`tool-selection`", "`overview`"))
 
     def test_counted_where_status_publishes_it(self):
+        # Rendered here rather than read from the committed files: a pull
+        # request that re-files a row leaves those to the bot, and CI runs the
+        # unit tests before it regenerates anything (scripts/check.py).
         catalog = json.loads((ROOT / "catalog.json").read_text())
-        self.assertEqual(
-            len(queue.tool_selection_broad_words(catalog).rows), _stats.compute()["review_tool_selection_broad"]
-        )
-        text = (ROOT / "docs" / "review-queue.md").read_text()
-        self.assertIn(f"](#tool-selection-broad-words) | {_stats.compute()['review_tool_selection_broad']} |", text)
-        self.assertIn("review-queue.md#tool-selection-broad-words", (ROOT / "docs" / "status.md").read_text())
+        count = _stats.compute()["review_tool_selection_broad"]
+        self.assertEqual(len(queue.tool_selection_broad_words(catalog).rows), count)
+        self.assertIn(f"](#tool-selection-broad-words) | {count} |", queue.render(catalog))
+        status = build_docs.render()[ROOT / "docs" / "status.md"]
+        self.assertIn(f"(review-queue.md#tool-selection-broad-words)) | {count} |", status)
 
     def test_stars_move_a_row_only_across_a_band_floor(self):
         rows = copy.deepcopy(self.ROWS)

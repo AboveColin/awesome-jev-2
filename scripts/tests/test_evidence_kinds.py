@@ -170,9 +170,12 @@ class RealCatalogueTest(unittest.TestCase):
         s = self.stats
         self.assertEqual(s["call_site_rows"] + s["wire_shape_rows"] + s["example_only_rows"], cited)
 
-    def test_the_committed_page_is_current_and_counts_what_status_publishes(self):
+    def test_the_page_counts_what_status_publishes(self):
+        # Rendered, not compared with the committed page: CI runs the unit
+        # tests before it regenerates, and a pull request that re-files a row
+        # (docs/review-queue.md lists pattern signals too) leaves the page to
+        # the bot. The `generated` step of scripts/check.py judges the file.
         text = queue.render(self.catalog)
-        self.assertEqual((ROOT / "docs" / "review-queue.md").read_text(), text)
         for key, stat in (("examples-dir", "review_examples_dir"), ("single-model-name", "review_single_model_name")):
             with self.subTest(key=key):
                 self.assertIn(f"](#{key}) | {self.stats[stat]} |", text)
