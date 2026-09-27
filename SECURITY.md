@@ -56,3 +56,7 @@ never for a pull request. (The Pages deploy holds `pages: write` to publish the
 site, not `contents: write`.) No workflow writes a human
 judgement — a summary, a pattern, a retirement — into the catalog. If you find
 a path that breaks any of those, please report it.
+
+Actions are referenced by their major version tag (`actions/checkout@v7`), not
+pinned to a commit. `.github/dependabot.yml` proposes each new major as a weekly
+pull request, which a person reads and merges; nothing merges it automatically.

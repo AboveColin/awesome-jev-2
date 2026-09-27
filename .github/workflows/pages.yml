@@ -40,9 +40,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
 
@@ -69,11 +69,16 @@ jobs:
           google-chrome --version
           python3 scripts/render_images.py
 
-      - uses: actions/configure-pages@v5
+      - uses: actions/configure-pages@v6
 
-      - uses: actions/upload-pages-artifact@v3
+      # Since v4 this action leaves dotfiles out unless told otherwise, and
+      # assemble_site.py writes site/.nojekyll. A deploy from an artifact never
+      # runs Jekyll, so the file changes nothing; keeping it keeps the artifact
+      # exactly what v3 uploaded (everything but .git and .github).
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: site
+          include-hidden-files: true
 
   deploy:
     needs: build
@@ -83,4 +88,4 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5

@@ -34,15 +34,15 @@ jobs:
     name: Harvest sibling lists and read the most-cited candidates
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
 
       # Restores the newest verdict cache; a unique key per run means the
       # updated cache is saved as a new entry at the end of the job.
-      - uses: actions/cache@v4
+      - uses: actions/cache@v6
         with:
           path: .cache/discover-seen.json
           key: discover-seen-${{ github.run_id }}
