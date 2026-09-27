@@ -31,14 +31,9 @@ def entry(sources: list, flags: list | None = None, **extra) -> dict:
 
 
 class SelfSubmittedInvariantTest(unittest.TestCase):
-    def setUp(self):
-        for name in ("errors", "warnings"):
-            getattr(lint, name).clear()
-            self.addCleanup(getattr(lint, name).clear)
-
     def check(self, row: dict) -> list[str]:
-        lint.check_entry_invariants(row, "catalog.json[0]", retired=False)
-        return list(lint.errors)
+        errors, _ = lint.check_entry_invariants(row, "catalog.json[0]", retired=False)
+        return list(errors)
 
     def test_author_submission_without_the_flag_is_an_error(self):
         errors = self.check(entry([AUTHOR]))
@@ -50,7 +45,6 @@ class SelfSubmittedInvariantTest(unittest.TestCase):
     def test_the_flag_without_an_author_submission_source_is_an_error(self):
         for sources in ([MAINTAINER], [UPSTREAM]):
             with self.subTest(source=sources[0]["catalog"]):
-                lint.errors.clear()
                 errors = self.check(entry(sources, ["self-submitted"]))
                 self.assertEqual(len(errors), 1, errors)
                 self.assertIn("flagged self-submitted", errors[0])
@@ -75,7 +69,6 @@ class SelfSubmittedInvariantTest(unittest.TestCase):
             "self submitted",
         ):
             with self.subTest(spelling=spelling):
-                lint.errors.clear()
                 source = {"catalog": spelling, "url": AUTHOR["url"]}
                 errors = self.check(entry([source], ["self-submitted"]))
                 spelled = [e for e in errors if "exactly" in e]

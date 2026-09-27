@@ -11,6 +11,11 @@ Two layers of checking:
    scripts/sort_catalog.py), status codes matching the file an entry lives
    in, date sanity, and the honesty rules that keep flags meaningful.
 
+Every check returns its Findings (errors, warnings) instead of printing or
+collecting into module state; only main() prints. scripts/tests/test_lint.py
+pins each rule with a row that breaks exactly that rule, and fails when the
+schema uses a keyword validate() does not enforce.
+
 Exit code is 0 when clean, 1 when any error was found. Warnings never fail the
 build; they are advice for a reviewer.
 
@@ -24,13 +29,14 @@ import json
 import pathlib
 import re
 import sys
-from typing import Any
+from typing import Any, NamedTuple
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 CATALOG = ROOT / "catalog.json"
 RETIRED = ROOT / "retired.json"
 SCHEMA = ROOT / "schema" / "entry.schema.json"
 PATTERNS_FILE = ROOT / "patterns.json"
+TAXONOMY_FILE = ROOT / "taxonomy.json"
 
 # Places we accept as TypeSafe AI speaking for itself. `official: true` anywhere
 # else is a mistake: the community site at jevai.org is not the vendor, and a
@@ -54,16 +60,34 @@ SELF_SUBMISSION_FLAG = "self-submitted"
 # Rejected rather than accepted, so the rule cannot be evaded by a typo.
 SELF_SUBMISSION_NEAR_MISS = re.compile(r"\b(?:author|self)[\s_-]*submi", re.IGNORECASE)
 
-errors: list[str] = []
-warnings: list[str] = []
+
+class Findings(NamedTuple):
+    """What a check found, in order. Errors fail the build; warnings are advice."""
+
+    errors: tuple[str, ...] = ()
+    warnings: tuple[str, ...] = ()
 
 
-def err(where: str, message: str) -> None:
-    errors.append(f"{where}: {message}")
+class Report:
+    """Collects one check's findings as `where: message` lines, in order."""
 
+    def __init__(self) -> None:
+        self._errors: list[str] = []
+        self._warnings: list[str] = []
 
-def warn(where: str, message: str) -> None:
-    warnings.append(f"{where}: {message}")
+    def err(self, where: str, message: str) -> None:
+        self._errors.append(f"{where}: {message}")
+
+    def warn(self, where: str, message: str) -> None:
+        self._warnings.append(f"{where}: {message}")
+
+    def add(self, found: Findings) -> None:
+        """Append another check's findings after the ones collected so far."""
+        self._errors.extend(found.errors)
+        self._warnings.extend(found.warnings)
+
+    def findings(self) -> Findings:
+        return Findings(tuple(self._errors), tuple(self._warnings))
 
 
 # --------------------------------------------------------------------------
@@ -73,6 +97,35 @@ def warn(where: str, message: str) -> None:
 # Deliberately loose: we only need to catch a contributor pasting a bare word
 # or a mailto: where a link belongs. check_links.py does the real verification.
 URI_RE = re.compile(r"^[a-z][a-z0-9+.\-]*://[^\s]+$", re.IGNORECASE)
+
+# The keywords validate() enforces. A keyword it does not know is silently
+# ignored, not rejected, so scripts/tests/test_lint.py fails when the schema
+# uses anything outside these sets: implement it in validate() first.
+SUPPORTED_KEYWORDS = frozenset(
+    {
+        "type",
+        "enum",
+        "minLength",
+        "maxLength",
+        "pattern",
+        "format",
+        "minimum",
+        "maximum",
+        "minItems",
+        "maxItems",
+        "uniqueItems",
+        "items",
+        "properties",
+        "required",
+        "additionalProperties",
+    }
+)
+# Keywords that describe and constrain nothing; validate() never reads them.
+ANNOTATION_KEYWORDS = frozenset({"$schema", "$id", "title", "description", "default"})
+# The only `format` validate() checks. Any other value would be ignored.
+SUPPORTED_FORMATS = frozenset({"uri"})
+# The types type_ok() knows. It raises on any other.
+SUPPORTED_TYPES = frozenset({"object", "array", "string", "integer", "number", "boolean", "null"})
 
 
 def type_ok(value: Any, expected: str) -> bool:
@@ -94,59 +147,61 @@ def type_ok(value: Any, expected: str) -> bool:
     raise ValueError(f"unhandled schema type {expected!r}")
 
 
-def validate(value: Any, schema: dict, path: str) -> None:
-    """Walk `schema` against `value`, appending to the module-level errors."""
+def validate(value: Any, schema: dict, path: str) -> Findings:
+    """Walk `schema` against `value` and return every mismatch as an error."""
+    report = Report()
     if "type" in schema and not type_ok(value, schema["type"]):
-        err(path, f"expected {schema['type']}, got {type(value).__name__}")
-        return
+        report.err(path, f"expected {schema['type']}, got {type(value).__name__}")
+        return report.findings()
 
     if "enum" in schema and value not in schema["enum"]:
         allowed = ", ".join(map(str, schema["enum"]))
-        err(path, f"{value!r} is not one of: {allowed}")
+        report.err(path, f"{value!r} is not one of: {allowed}")
 
     if isinstance(value, str):
         if "minLength" in schema and len(value) < schema["minLength"]:
-            err(path, f"shorter than minLength {schema['minLength']}")
+            report.err(path, f"shorter than minLength {schema['minLength']}")
         if "maxLength" in schema and len(value) > schema["maxLength"]:
-            err(path, f"{len(value)} chars exceeds maxLength {schema['maxLength']}")
+            report.err(path, f"{len(value)} chars exceeds maxLength {schema['maxLength']}")
         if "pattern" in schema and not re.search(schema["pattern"], value):
-            err(path, f"{value!r} does not match {schema['pattern']}")
+            report.err(path, f"{value!r} does not match {schema['pattern']}")
         if schema.get("format") == "uri" and not URI_RE.match(value):
-            err(path, f"{value!r} is not a URI")
+            report.err(path, f"{value!r} is not a URI")
 
     if isinstance(value, (int, float)) and not isinstance(value, bool):
         if "minimum" in schema and value < schema["minimum"]:
-            err(path, f"{value} below minimum {schema['minimum']}")
+            report.err(path, f"{value} below minimum {schema['minimum']}")
         if "maximum" in schema and value > schema["maximum"]:
-            err(path, f"{value} above maximum {schema['maximum']}")
+            report.err(path, f"{value} above maximum {schema['maximum']}")
 
     if isinstance(value, list):
         if "minItems" in schema and len(value) < schema["minItems"]:
-            err(path, f"needs at least {schema['minItems']} item(s)")
+            report.err(path, f"needs at least {schema['minItems']} item(s)")
         if "maxItems" in schema and len(value) > schema["maxItems"]:
-            err(path, f"has {len(value)} items, max {schema['maxItems']}")
+            report.err(path, f"has {len(value)} items, max {schema['maxItems']}")
         if schema.get("uniqueItems"):
             seen: list[Any] = []
             for item in value:
                 if item in seen:
-                    err(path, f"duplicate item {item!r}")
+                    report.err(path, f"duplicate item {item!r}")
                 seen.append(item)
         if "items" in schema:
             for i, item in enumerate(value):
-                validate(item, schema["items"], f"{path}[{i}]")
+                report.add(validate(item, schema["items"], f"{path}[{i}]"))
 
     if isinstance(value, dict):
         props = schema.get("properties", {})
         for key in schema.get("required", []):
             if key not in value:
-                err(path, f"missing required field {key!r}")
+                report.err(path, f"missing required field {key!r}")
         if schema.get("additionalProperties") is False:
             for key in value:
                 if key not in props:
-                    err(path, f"unknown field {key!r}")
+                    report.err(path, f"unknown field {key!r}")
         for key, sub in props.items():
             if key in value:
-                validate(value[key], sub, f"{path}.{key}")
+                report.add(validate(value[key], sub, f"{path}.{key}"))
+    return report.findings()
 
 
 # --------------------------------------------------------------------------
@@ -161,16 +216,25 @@ def parse_date(value: str) -> dt.date | None:
         return None
 
 
-def check_entry_invariants(entry: dict, path: str, *, retired: bool) -> None:
+def check_entry_invariants(
+    entry: dict, path: str, *, retired: bool, today: dt.date | None = None
+) -> Findings:
+    """The rules one row must follow that its schema cannot express.
+
+    `today` bounds the dates; it defaults to the real date and is a parameter
+    only so tests can fix it.
+    """
+    report = Report()
     slug = entry.get("slug", "?")
-    today = dt.date.today()
+    if today is None:
+        today = dt.date.today()
 
     # An entry claiming code should say what language it is in, and a question
     # type is a claim about code. These keep `has_code` filters trustworthy.
     if entry.get("has_code") and not entry.get("languages"):
-        warn(path, f"{slug}: has_code is true but languages is empty")
+        report.warn(path, f"{slug}: has_code is true but languages is empty")
     if entry.get("question_types") and not entry.get("has_code"):
-        err(path, f"{slug}: question_types set but has_code is not true")
+        report.err(path, f"{slug}: question_types set but has_code is not true")
 
     # A primitive claim should be re-checkable, or say why it is not. A warning
     # rather than an error so a new row is never blocked — but the count of
@@ -178,7 +242,7 @@ def check_entry_invariants(entry: dict, path: str, *, retired: bool) -> None:
     if entry.get("question_types") and not (
         entry.get("evidence") or entry.get("evidence_none")
     ):
-        warn(
+        report.warn(
             path,
             f"{slug}: claims primitives but carries neither evidence nor evidence_none. "
             "Run 'python3 scripts/verify_claims.py --discover --only "
@@ -191,12 +255,12 @@ def check_entry_invariants(entry: dict, path: str, *, retired: bool) -> None:
         url = entry.get("url", "")
         repo = entry.get("repo", "")
         if "github.com" not in url and "github.com" not in repo:
-            err(
+            report.err(
                 path,
                 f"{slug}: has evidence but no GitHub repository to re-read it from",
             )
     if entry.get("evidence") and entry.get("evidence_none"):
-        err(path, f"{slug}: has both evidence and evidence_none; they are exclusive")
+        report.err(path, f"{slug}: has both evidence and evidence_none; they are exclusive")
 
     # `official` is a factual claim about who published the thing, so it is
     # checked against the vendor's own hosts and GitHub org rather than trusted.
@@ -206,17 +270,17 @@ def check_entry_invariants(entry: dict, path: str, *, retired: bool) -> None:
         host_ok = any(host == h or host.endswith("." + h) for h in OFFICIAL_HOSTS)
         path_ok = any(url.startswith(prefix) for prefix in OFFICIAL_URL_PREFIXES)
         if not (host_ok or path_ok):
-            err(
+            report.err(
                 path,
                 f"{slug}: official is true but {url!r} is not published by TypeSafe AI",
             )
 
     # A flag that needs explaining is worse than no flag at all.
     flags = entry.get("flags", [])
-    check_self_submission(entry, path, flags)
+    report.add(check_self_submission(entry, path, flags))
     for flag in ("ai-generated", "unverified-claims", "code-untested"):
         if flag in flags and not entry.get("notes"):
-            warn(
+            report.warn(
                 path,
                 f"{slug}: flagged {flag!r} but notes is empty, so a reader gets no reason",
             )
@@ -225,23 +289,23 @@ def check_entry_invariants(entry: dict, path: str, *, retired: bool) -> None:
     # pattern. Mixing it with a specific pattern makes both filters lie.
     patterns = entry.get("patterns", [])
     if "overview" in patterns and len(patterns) > 1:
-        err(path, f"{slug}: 'overview' cannot be combined with specific patterns")
+        report.err(path, f"{slug}: 'overview' cannot be combined with specific patterns")
 
     # Dates must be real and not from the future.
     for field in ("published", "first_seen", "checked"):
         if field in entry:
             parsed = parse_date(entry[field])
             if parsed is None:
-                err(path, f"{slug}: {field} is not a valid date")
+                report.err(path, f"{slug}: {field} is not a valid date")
             elif parsed > today:
-                err(path, f"{slug}: {field} {entry[field]} is in the future")
+                report.err(path, f"{slug}: {field} {entry[field]} is in the future")
 
     published, checked = (
         parse_date(entry.get("published", "")),
         parse_date(entry.get("checked", "")),
     )
     if published and checked and published > checked:
-        err(
+        report.err(
             path,
             f"{slug}: published {entry['published']} is after checked {entry['checked']}",
         )
@@ -251,15 +315,15 @@ def check_entry_invariants(entry: dict, path: str, *, retired: bool) -> None:
     status = entry.get("link_status")
     if status is not None:
         if retired and 200 <= status < 300:
-            err(path, f"{slug}: retired entries must not carry a 2xx status ({status})")
+            report.err(path, f"{slug}: retired entries must not carry a 2xx status ({status})")
         if not retired and not 200 <= status < 300:
-            err(
+            report.err(
                 path,
                 f"{slug}: status {status} does not belong in catalog.json; move it to retired.json",
             )
 
     if retired and not entry.get("notes"):
-        err(path, f"{slug}: retired entries need notes saying why they were retired")
+        report.err(path, f"{slug}: retired entries need notes saying why they were retired")
 
     # `no-license` and repo_license "unknown" state the same fact twice, so they
     # must agree. They drifted once: a project added a LICENSE upstream, the
@@ -268,18 +332,19 @@ def check_entry_invariants(entry: dict, path: str, *, retired: bool) -> None:
     if "repo_license" in entry:
         unlicensed = entry["repo_license"] == "unknown"
         if unlicensed and "no-license" not in flags:
-            err(
+            report.err(
                 path,
                 f"{slug}: repo_license is 'unknown' but the row lacks the no-license flag",
             )
         if not unlicensed and "no-license" in flags:
-            err(
+            report.err(
                 path,
                 f"{slug}: flagged no-license but repo_license is {entry['repo_license']!r}",
             )
+    return report.findings()
 
 
-def check_self_submission(entry: dict, path: str, flags: list) -> None:
+def check_self_submission(entry: dict, path: str, flags: list) -> Findings:
     """`author submission` in sources and the `self-submitted` flag go together.
 
     The source string is where a contributor declares the relationship; the
@@ -288,12 +353,13 @@ def check_self_submission(entry: dict, path: str, flags: list) -> None:
     it. Purely declarative on purpose: nothing is inferred from a GitHub handle
     (rarely filled, and an owner is often an org) or from the wording of a note.
     """
+    report = Report()
     slug = entry.get("slug", "?")
     sources = [s for s in entry.get("sources", []) if isinstance(s, dict)]
     names = [s.get("catalog") for s in sources if isinstance(s.get("catalog"), str)]
     for name in names:
         if name != SELF_SUBMISSION_SOURCE and SELF_SUBMISSION_NEAR_MISS.search(name):
-            err(
+            report.err(
                 path,
                 f"{slug}: source catalog {name!r} looks like a self-submission; write "
                 f"exactly {SELF_SUBMISSION_SOURCE!r} so lint and every surface recognise it",
@@ -301,21 +367,22 @@ def check_self_submission(entry: dict, path: str, flags: list) -> None:
     declared = SELF_SUBMISSION_SOURCE in names
     flagged = SELF_SUBMISSION_FLAG in flags
     if declared and not flagged:
-        err(
+        report.err(
             path,
             f"{slug}: a source is {SELF_SUBMISSION_SOURCE!r} but flags lacks "
             f"{SELF_SUBMISSION_FLAG!r}; add it so every surface discloses the relationship",
         )
     if flagged and not declared:
-        err(
+        report.err(
             path,
             f"{slug}: flagged {SELF_SUBMISSION_FLAG} but no source has catalog "
             f"{SELF_SUBMISSION_SOURCE!r}; add that source (url: the pull request or "
             "issue that proposed the row) or drop the flag",
         )
+    return report.findings()
 
 
-def check_slug_order(label: str, data: list) -> None:
+def check_slug_order(label: str, data: list) -> Findings:
     """Both data files stay in slug order.
 
     The order is meaningless to readers (every generator sorts for itself), but
@@ -325,9 +392,158 @@ def check_slug_order(label: str, data: list) -> None:
     """
     from sort_catalog import COMMAND, order_problem
 
+    report = Report()
     problem = order_problem(data)
     if problem:
-        err(label, f"{problem}; run `{COMMAND}` and commit the result")
+        report.err(label, f"{problem}; run `{COMMAND}` and commit the result")
+    return report.findings()
+
+
+def check_patterns(schema: dict, patterns: list) -> Findings:
+    """patterns.json labels exactly the patterns the schema allows, every text filled in.
+
+    patterns.json feeds both README generators and the MCP server. If it
+    drifts from the schema enum, a pattern is either unlabelled in a figure
+    or unusable in the catalog, and both fail far from the cause.
+    """
+    report = Report()
+    taxonomy = {p["key"] for p in patterns}
+    enum = set(schema["properties"]["patterns"]["items"]["enum"])
+    for key in sorted(enum - taxonomy):
+        report.err(
+            "patterns.json",
+            f"schema allows {key!r} but patterns.json has no label for it",
+        )
+    for key in sorted(taxonomy - enum):
+        report.err(
+            "patterns.json",
+            f"patterns.json labels {key!r} but the schema does not allow it",
+        )
+    # The site shows the short blurb, the README the long one. Both must
+    # exist, or the site falls back to a raw slug without complaint.
+    for p in patterns:
+        for field in ("en", "zh", "blurb_en", "blurb_zh", "short_en", "short_zh"):
+            if not p.get(field):
+                report.err("patterns.json", f"{p['key']!r} has no {field}")
+    return report.findings()
+
+
+def check_languages(schema: dict, lang_ext: dict) -> Findings:
+    """Every language the schema accepts has file extensions in _github.LANG_EXT, and no other.
+
+    The scanners find code by extension. A language the schema accepts but
+    _github.LANG_EXT does not map is one discovery can never see: C and C++
+    were missing, so three database extensions looked test-only.
+    """
+    report = Report()
+    langs = set(schema["properties"]["languages"]["items"]["enum"])
+    for lang in sorted(langs - set(lang_ext)):
+        report.err("scripts/_github.py", f"schema language {lang!r} has no file extensions in LANG_EXT")
+    for lang in sorted(set(lang_ext) - langs):
+        report.err("scripts/_github.py", f"LANG_EXT maps {lang!r}, which the schema does not allow")
+    return report.findings()
+
+
+def check_taxonomy(schema: dict, labels: dict) -> Findings:
+    """taxonomy.json labels exactly the kinds and flags the schema allows, every text filled in.
+
+    taxonomy.json holds kind and flag labels for both the README and the site.
+    A key the schema allows but taxonomy.json lacks raises in build_readme but
+    renders as a raw slug on the site — loud in one place, silent in the other.
+    """
+    report = Report()
+    for group, enum in (
+        ("kinds", schema["properties"]["kind"]["enum"]),
+        ("flags", schema["properties"]["flags"]["items"]["enum"]),
+    ):
+        have = [item["key"] for item in labels[group]]
+        for key in sorted(set(enum) - set(have)):
+            report.err(
+                "taxonomy.json",
+                f"schema allows {group[:-1]} {key!r} but it has no label",
+            )
+        for key in sorted(set(have) - set(enum)):
+            report.err(
+                "taxonomy.json",
+                f"labels {group[:-1]} {key!r} but the schema does not allow it",
+            )
+        for item in labels[group]:
+            for field in ("en", "zh", "blurb_en", "blurb_zh"):
+                if not item.get(field):
+                    report.err(
+                        "taxonomy.json",
+                        f"{group[:-1]} {item['key']!r} has no {field}",
+                    )
+    return report.findings()
+
+
+def check_entries(schema: dict, catalog: list, retired: list) -> Findings:
+    """Each row against the schema and its invariants, then the rules that span rows.
+
+    Slugs and URLs are unique across both files together, and each file is in
+    slug order.
+    """
+    report = Report()
+    slugs: dict[str, str] = {}
+    urls: dict[str, str] = {}
+
+    for label, data, is_retired in (
+        ("catalog.json", catalog, False),
+        ("retired.json", retired, True),
+    ):
+        for i, entry in enumerate(data):
+            path = f"{label}[{i}]"
+            if not isinstance(entry, dict):
+                report.err(path, "entry must be an object")
+                continue
+            report.add(validate(entry, schema, path))
+            report.add(check_entry_invariants(entry, path, retired=is_retired))
+
+            slug = entry.get("slug")
+            if isinstance(slug, str):
+                if slug in slugs:
+                    report.err(path, f"duplicate slug {slug!r}, already used in {slugs[slug]}")
+                else:
+                    slugs[slug] = path
+
+            url = entry.get("url")
+            if isinstance(url, str):
+                # Trailing slashes and casing are the usual way a duplicate sneaks in.
+                key = url.rstrip("/").lower()
+                if key in urls:
+                    report.err(path, f"duplicate url {url!r}, already used in {urls[key]}")
+                else:
+                    urls[key] = path
+
+        report.add(check_slug_order(label, data))
+    return report.findings()
+
+
+def check_all(schema: dict, catalog: Any, retired: Any) -> Findings:
+    """Every check lint runs, in the order it reports them.
+
+    The label files are checked first. A data file that is not an array ends
+    the run there, since none of its rows can be read.
+    """
+    report = Report()
+    if PATTERNS_FILE.exists():
+        report.add(check_patterns(schema, json.loads(PATTERNS_FILE.read_text())["patterns"]))
+
+    sys.path.insert(0, str(ROOT / "scripts"))
+    from _github import LANG_EXT
+
+    report.add(check_languages(schema, LANG_EXT))
+
+    if TAXONOMY_FILE.exists():
+        report.add(check_taxonomy(schema, json.loads(TAXONOMY_FILE.read_text())))
+
+    for name, data in (("catalog.json", catalog), ("retired.json", retired)):
+        if not isinstance(data, list):
+            report.err(name, "top level must be an array of entries")
+            return report.findings()
+
+    report.add(check_entries(schema, catalog, retired))
+    return report.findings()
 
 
 def main() -> int:
@@ -342,124 +558,23 @@ def main() -> int:
     catalog = json.loads(CATALOG.read_text())
     retired = json.loads(RETIRED.read_text())
 
-    # patterns.json feeds both README generators and the MCP server. If it
-    # drifts from the schema enum, a pattern is either unlabelled in a figure
-    # or unusable in the catalog, and both fail far from the cause.
-    if PATTERNS_FILE.exists():
-        taxonomy = {p["key"] for p in json.loads(PATTERNS_FILE.read_text())["patterns"]}
-        enum = set(schema["properties"]["patterns"]["items"]["enum"])
-        for key in sorted(enum - taxonomy):
-            err(
-                "patterns.json",
-                f"schema allows {key!r} but patterns.json has no label for it",
-            )
-        for key in sorted(taxonomy - enum):
-            err(
-                "patterns.json",
-                f"patterns.json labels {key!r} but the schema does not allow it",
-            )
-        # The site shows the short blurb, the README the long one. Both must
-        # exist, or the site falls back to a raw slug without complaint.
-        for p in json.loads(PATTERNS_FILE.read_text())["patterns"]:
-            for field in ("en", "zh", "blurb_en", "blurb_zh", "short_en", "short_zh"):
-                if not p.get(field):
-                    err("patterns.json", f"{p['key']!r} has no {field}")
-
-    # The scanners find code by extension. A language the schema accepts but
-    # _github.LANG_EXT does not map is one discovery can never see: C and C++
-    # were missing, so three database extensions looked test-only.
-    sys.path.insert(0, str(ROOT / "scripts"))
-    from _github import LANG_EXT
-
-    langs = set(schema["properties"]["languages"]["items"]["enum"])
-    for lang in sorted(langs - set(LANG_EXT)):
-        err("scripts/_github.py", f"schema language {lang!r} has no file extensions in LANG_EXT")
-    for lang in sorted(set(LANG_EXT) - langs):
-        err("scripts/_github.py", f"LANG_EXT maps {lang!r}, which the schema does not allow")
-
-    # taxonomy.json holds kind and flag labels for both the README and the site.
-    # A key the schema allows but taxonomy.json lacks raises in build_readme but
-    # renders as a raw slug on the site — loud in one place, silent in the other.
-    taxonomy_file = ROOT / "taxonomy.json"
-    if taxonomy_file.exists():
-        labels = json.loads(taxonomy_file.read_text())
-        for group, enum in (
-            ("kinds", schema["properties"]["kind"]["enum"]),
-            ("flags", schema["properties"]["flags"]["items"]["enum"]),
-        ):
-            have = [item["key"] for item in labels[group]]
-            for key in sorted(set(enum) - set(have)):
-                err(
-                    "taxonomy.json",
-                    f"schema allows {group[:-1]} {key!r} but it has no label",
-                )
-            for key in sorted(set(have) - set(enum)):
-                err(
-                    "taxonomy.json",
-                    f"labels {group[:-1]} {key!r} but the schema does not allow it",
-                )
-            for item in labels[group]:
-                for field in ("en", "zh", "blurb_en", "blurb_zh"):
-                    if not item.get(field):
-                        err(
-                            "taxonomy.json",
-                            f"{group[:-1]} {item['key']!r} has no {field}",
-                        )
-
-    for name, data in (("catalog.json", catalog), ("retired.json", retired)):
-        if not isinstance(data, list):
-            err(name, "top level must be an array of entries")
-            print_report()
-            return 1
-
-    slugs: dict[str, str] = {}
-    urls: dict[str, str] = {}
-
-    for label, data, is_retired in (
-        ("catalog.json", catalog, False),
-        ("retired.json", retired, True),
-    ):
-        for i, entry in enumerate(data):
-            path = f"{label}[{i}]"
-            if not isinstance(entry, dict):
-                err(path, "entry must be an object")
-                continue
-            validate(entry, schema, path)
-            check_entry_invariants(entry, path, retired=is_retired)
-
-            slug = entry.get("slug")
-            if isinstance(slug, str):
-                if slug in slugs:
-                    err(path, f"duplicate slug {slug!r}, already used in {slugs[slug]}")
-                else:
-                    slugs[slug] = path
-
-            url = entry.get("url")
-            if isinstance(url, str):
-                # Trailing slashes and casing are the usual way a duplicate sneaks in.
-                key = url.rstrip("/").lower()
-                if key in urls:
-                    err(path, f"duplicate url {url!r}, already used in {urls[key]}")
-                else:
-                    urls[key] = path
-
-        check_slug_order(label, data)
-
-    print_report()
-    print(
-        f"checked {len(catalog)} catalog entr{'y' if len(catalog) == 1 else 'ies'} "
-        f"and {len(retired)} retired"
-    )
-    return 1 if errors else 0
+    findings = check_all(schema, catalog, retired)
+    print_report(findings)
+    if isinstance(catalog, list) and isinstance(retired, list):
+        print(
+            f"checked {len(catalog)} catalog entr{'y' if len(catalog) == 1 else 'ies'} "
+            f"and {len(retired)} retired"
+        )
+    return 1 if findings.errors else 0
 
 
-def print_report() -> None:
-    for warning in warnings:
+def print_report(findings: Findings) -> None:
+    for warning in findings.warnings:
         print(f"warning: {warning}")
-    for error in errors:
+    for error in findings.errors:
         print(f"error: {error}", file=sys.stderr)
-    if errors:
-        print(f"\n{len(errors)} error(s)", file=sys.stderr)
+    if findings.errors:
+        print(f"\n{len(findings.errors)} error(s)", file=sys.stderr)
 
 
 if __name__ == "__main__":

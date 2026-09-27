@@ -334,6 +334,19 @@ skipped, never as passed; in CI a missing tool fails the run. `metadata` now
 commits on the runner first and runs the checks strictly against that commit
 before pushing, so a regenerated file its `git add` left out would fail too.
 
+Since 2026-09-27, every rule `lint.py` enforces is pinned by a unit test,
+`scripts/tests/test_lint.py`: each test starts from a row that passes
+everything, breaks one rule, and checks that lint reports exactly that one
+finding in that rule's own words. Nothing tested lint before, so a rule written
+backwards would have passed CI and let through every row it was meant to stop.
+The same file holds the schema to what the validator actually does. `lint.py`
+implements the part of JSON Schema the schema uses, and a keyword it does not
+know (`oneOf`, `format: date`) is ignored rather than rejected, so a constraint
+added to `schema/entry.schema.json` could look enforced while checking nothing.
+The tests now fail when the schema uses a keyword, `format` or `type` outside
+that part, until `validate()` implements it. What lint accepts and rejects did
+not change.
+
 ## Kept current
 
 Every figure this repository publishes changes for one of four reasons, and each

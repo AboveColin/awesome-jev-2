@@ -110,20 +110,15 @@ class SortCatalogTest(unittest.TestCase):
 class LintOrderTest(unittest.TestCase):
     """lint.py rejects a data file that is not in slug order, and says how to fix it."""
 
-    def setUp(self):
-        lint.errors.clear()
-        self.addCleanup(lint.errors.clear)
-
     def test_appended_row_is_an_error_naming_the_script(self):
-        lint.check_slug_order("catalog.json", [{"slug": "alpha"}, {"slug": "zeta"}, {"slug": "beta"}])
-        self.assertEqual(len(lint.errors), 1)
-        self.assertIn("catalog.json", lint.errors[0])
-        self.assertIn("'beta'", lint.errors[0])
-        self.assertIn("scripts/sort_catalog.py", lint.errors[0])
+        errors, _ = lint.check_slug_order("catalog.json", [{"slug": "alpha"}, {"slug": "zeta"}, {"slug": "beta"}])
+        self.assertEqual(len(errors), 1)
+        self.assertIn("catalog.json", errors[0])
+        self.assertIn("'beta'", errors[0])
+        self.assertIn("scripts/sort_catalog.py", errors[0])
 
     def test_sorted_file_passes(self):
-        lint.check_slug_order("retired.json", [{"slug": "a"}, {"slug": "b"}])
-        self.assertEqual(lint.errors, [])
+        self.assertEqual(lint.check_slug_order("retired.json", [{"slug": "a"}, {"slug": "b"}]), lint.Findings())
 
 
 class LintWiringTest(unittest.TestCase):
@@ -133,9 +128,6 @@ class LintWiringTest(unittest.TestCase):
         tmp = tempfile.TemporaryDirectory()
         self.addCleanup(tmp.cleanup)
         self.dir = pathlib.Path(tmp.name)
-        for name in ("errors", "warnings"):
-            getattr(lint, name).clear()
-            self.addCleanup(getattr(lint, name).clear)
         for name in ("CATALOG", "RETIRED"):
             self.addCleanup(setattr, lint, name, getattr(lint, name))
 
@@ -146,15 +138,17 @@ class LintWiringTest(unittest.TestCase):
             path = self.dir / getattr(lint, name).name
             path.write_text(sort_catalog.render(rows[::-1]), encoding="utf-8")
             setattr(lint, name, path)
-        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+        stderr = io.StringIO()
+        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(stderr):
             status = lint.main()
         self.assertEqual(status, 1)
-        order_errors = [e for e in lint.errors if sort_catalog.COMMAND in e]
+        errors = [line[len("error: "):] for line in stderr.getvalue().splitlines() if line.startswith("error: ")]
+        order_errors = [e for e in errors if sort_catalog.COMMAND in e]
         self.assertEqual(len(order_errors), 2, order_errors)
         self.assertTrue(order_errors[0].startswith("catalog.json: "), order_errors[0])
         self.assertTrue(order_errors[1].startswith("retired.json: "), order_errors[1])
         # Reordering is the only thing wrong with these files.
-        self.assertEqual(lint.errors, order_errors)
+        self.assertEqual(errors, order_errors)
 
 
 class RealCatalogDisplayOrderTest(unittest.TestCase):

@@ -60,7 +60,10 @@ python3 scripts/check.py           # strict: every generated file committed and 
 ```
 
 No Python dependencies are needed, only Python 3.11 or newer (CI uses 3.12).
-The schema validator is self-contained.
+The schema validator in `scripts/lint.py` is self-contained: it implements the
+part of JSON Schema that `schema/entry.schema.json` uses, and a unit test fails
+if the schema starts using a keyword it does not enforce, so implement that in
+`validate()` first.
 
 To preview the site locally:
 
