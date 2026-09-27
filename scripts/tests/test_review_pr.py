@@ -115,6 +115,8 @@ class CardTest(unittest.TestCase):
         text = rp.markdown(card(rr.RowReview(evil, "changed", (evil,), (finding("link", "error"),))))
         self.assertNotIn("\n::error::", text)
         self.assertIn("| `x'\\|y ::error::z` | changed |", text)
+        # A slug still starts a console line: in CI, main() prints the card
+        # with workflow commands stopped (HistoryTest, test_ci_prints_…).
         log = rp.console(card(rr.RowReview(evil, "changed", (evil,), ())))
         self.assertFalse(any(line.startswith("::") for line in log.splitlines()), log)
 
@@ -249,6 +251,31 @@ class HistoryTest(GitCase):
         line = rp.slug_lines((self.tree / "catalog.json").read_text())["c"]
         self.assertIn(f"::warning file=catalog.json,line={line},title=Review card%3A c (Link)::", out)
         self.assertIn(f"::warning file=catalog.json,line={line},title=Review card%3A c (Author)::", out)
+
+    def test_ci_prints_the_pull_requests_strings_with_workflow_commands_stopped(self):
+        # The runner reads `::name::` after leading spaces, and a slug starts
+        # a console line, so a row could forge or silence annotations (review
+        # of I03). Only this script's own annotations may sit outside the stop.
+        evil = "::error title=Spoofed::all clear"
+        rows = [row(slug="a"), row(slug="b"),
+                row(slug=evil, flags=["ai-generated"], evidence={"path": "##[error]forged", "matched": ["x"]})]
+        (self.tree / "catalog.json").write_text(dump(rows))
+        with mock.patch.dict(os.environ, {"GITHUB_STEP_SUMMARY": str(self.dir / "summary.md"), "PR_AUTHOR": "bob"}):
+            code, out, _ = self.run_card("--tree", str(self.tree), "--base", "main", "--ci", "--offline")
+        self.assertEqual(code, 0)
+        lines = out.splitlines()
+        (stop,) = [i for i, line in enumerate(lines) if line.startswith("::stop-commands::")]
+        token = lines[stop].removeprefix("::stop-commands::")
+        self.assertRegex(token, r"^[0-9a-f]{32}$")
+        resume = lines.index(f"::{token}::")
+        self.assertTrue(any(line.strip().startswith(evil) for line in lines[stop + 1:resume]))
+        outside = lines[:stop] + lines[resume + 1:]
+        self.assertTrue(outside, "the annotations follow the card")
+        for line in outside:
+            with self.subTest(line=line):
+                if line.lstrip().startswith("::"):
+                    self.assertRegex(line, r"^::(warning|notice) file=catalog\.json,line=\d+,title=Review card%3A ")
+                    self.assertNotIn("::error title=Spoofed", line)
 
     def test_pr_author_comes_from_the_environment_and_is_checked(self):
         with mock.patch.dict(os.environ, {"PR_AUTHOR": "not a login"}):

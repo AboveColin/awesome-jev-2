@@ -46,6 +46,7 @@ import dataclasses
 import json
 import os
 import pathlib
+import secrets
 import subprocess
 import sys
 
@@ -385,7 +386,20 @@ def main(argv: list[str] | None = None) -> int:
         card, blocking=args.blocking, notes=card.notes + ((author_note,) if author_note else ())
     )
 
-    print(as_json(card) if args.json else console(card))
+    report = as_json(card) if args.json else console(card)
+    if args.ci:
+        # The log quotes the pull request's own strings (a slug starts a line),
+        # and the runner takes a line starting with `::` once its leading
+        # spaces are dropped (or holding the older `##[` form) for a workflow
+        # command. Commands stay off while the card prints; the token that
+        # turns them back on is random, so no row can name it. The annotations
+        # below come after it.
+        token = secrets.token_hex(16)
+        print(f"::stop-commands::{token}")
+        print(report)
+        print(f"::{token}::", flush=True)
+    else:
+        print(report)
     if args.ci:
         step_summary(markdown(card))
         text = (tree / CATALOG).read_text(encoding="utf-8", errors="replace") if (tree / CATALOG).exists() else ""
