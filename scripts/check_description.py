@@ -116,7 +116,9 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     data = api_get(f"/repos/{SELF}")
-    if not isinstance(data, dict):
+    # api_get answers a refused read with {"blocked": True}: a dict, but not the
+    # repository, and its missing description must not be reported as drift.
+    if not isinstance(data, dict) or data.get("blocked"):
         print(f"skipped: could not read the {SELF} description.")
         set_output("status", "skipped")
         return 0

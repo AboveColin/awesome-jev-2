@@ -154,6 +154,15 @@ class CheckDescriptionTest(unittest.TestCase):
         self.assertIn("status=skipped", self.status())
         self.assertFalse(self.report.exists())
 
+    def test_a_refused_read_is_skipped_never_drift(self):
+        # _github.api_get returns this for a 403 that names no rate limit.
+        blocked = {"blocked": True, "status": 403, "message": "Resource not accessible by integration"}
+        code, out = self.run_check(blocked, ["--report", str(self.report)])
+        self.assertEqual(code, 0)
+        self.assertIn("skipped", out)
+        self.assertIn("status=skipped", self.status())
+        self.assertFalse(self.report.exists())
+
 
 class WorkflowWiringTest(unittest.TestCase):
     """Lint's checks stay read-only and never check what they cannot fix.
