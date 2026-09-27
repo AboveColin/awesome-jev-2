@@ -34,10 +34,19 @@
 # network — every file declaring the version agrees — runs in the catalog
 # job's unit tests on every event.
 #
+# On a pull request, the review job writes a card for each row it adds or
+# changes (scripts/review_pr.py): cited strings, licence, archive status,
+# stars, the link and the author's relationship to the project, checked
+# against GitHub. It runs the base branch's copy of the scripts, so a pull
+# request cannot soften the checks that judge it. Advisory for now.
+#
 # Injection review: no `github.event.*` value is interpolated into any `run:`
 # block, so no attacker-controlled string (issue/PR title, body, branch name)
 # reaches a shell. The event name and ref appear only in `if:` expressions and
-# in the runner's own GITHUB_EVENT_NAME, never spliced into a script.
+# in the runner's own GITHUB_EVENT_NAME, never spliced into a script. The one
+# event value used anywhere, the pull request author's login in the review
+# job, is set in that step's `env:` as PR_AUTHOR and read by review_pr.py from
+# its environment, which checks it is a GitHub login; no `run:` line names it.
 name: lint
 
 on:
@@ -185,3 +194,53 @@ jobs:
 
       - name: pyproject.toml, plugin.json and PyPI agree
         run: python3 scripts/check_release.py
+
+  # The review card. Its checks read the pull request's catalog.json and ask
+  # GitHub about each added or changed row, but the code asking is the base
+  # branch's: HEAD^1, the merge commit's first parent, is checked out into a
+  # directory of its own and its scripts/ run with --tree pointing here, so
+  # nothing imported comes from the pull request, which cannot soften the
+  # checks by editing them. (It can edit this workflow, as any pull request
+  # can; a person sees that in its diff.) Until the base branch has
+  # review_pr.py there is no card: the first pull request after it lands is
+  # the first reviewed.
+  #
+  # The card goes to the run's summary, which a fork's pull request shows too,
+  # and each finding is an annotation on its row's line in catalog.json.
+  # Advisory while it is new: the script exits 0 whatever the card says, and
+  # the step cannot fail the job even if the script breaks. Once a fortnight
+  # of cards has shown no systematic false alarm, add --blocking and drop
+  # continue-on-error; see docs/method.md.
+  review:
+    name: Review card for added and changed rows
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # The base commit is the merge commit's first parent.
+          fetch-depth: 0
+          # Nothing here pushes, and no code from the pull request runs.
+          persist-credentials: false
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Review the rows with the base branch's scripts
+        continue-on-error: true
+        env:
+          # Read by review_pr.py from its environment; never part of a command
+          # line. See the injection review at the top.
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+          # Read-only on a pull request, a fork's included.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          base="$RUNNER_TEMP/base"
+          git worktree add --detach --quiet "$base" HEAD^1
+          if [ ! -f "$base/scripts/review_pr.py" ]; then
+            echo "The base branch has no scripts/review_pr.py yet, so there is no review card to run."
+            exit 0
+          fi
+          python3 "$base/scripts/review_pr.py" --ci --tree "$GITHUB_WORKSPACE" --base HEAD^1

@@ -78,6 +78,38 @@ Rows whose source is not a readable repository file — a docs page, a video, a
 paywalled article — carry `evidence_none` saying which, rather than a fabricated
 citation.
 
+Since 2026-09-27, a pull request's rows are checked before the merge, not only
+by the weekly jobs after it. Until then a pull request's own checkboxes were
+all that said its call site had been read, its stars and licence taken from the
+API, and whether it was its author's own project. `lint`'s `review` job now
+runs `scripts/review_pr.py`, which compares `catalog.json` with the merge base
+and, for each row added (and each changed field one of its checks reads),
+re-reads the cited file with the function `claims` uses; compares
+`repo_license` and the `archived` flag with the GitHub API exactly, and `stars`
+within five or a tenth of GitHub's count, since stars move every day; notes a
+repository with a single commit and no `single-commit` flag; requests the link;
+compares the pull request's author with the repository's owner and the row's
+recorded author, so an undisclosed self-submission is marked; checks that the
+flags needing a reason have `notes`; and says where the discovery script's
+keyword rules would have classified the row differently, as a hint. The result
+is a card in the run's summary, with each finding also marked on its line of
+`catalog.json`. These are the same grades of evidence as the weekly jobs — a
+text match and a comparison of facts — and the card is not a review: it
+neither replaces nor records anyone reading the call site. It runs the base
+branch's copy of `scripts/` against the pull request's data, from a separate
+checkout of the base commit, so a pull request cannot soften the checks that
+judge it by editing them (it can still edit the workflow, which its diff
+shows). The card is advisory at first: it exits 0 whatever it finds, and the
+step cannot fail the job. Once a fortnight of cards has shown no systematic
+false alarm, `--blocking` and the removal of the step's `continue-on-error`
+make an error fail the pull request. Run against the five pull requests open
+that day, it marked three rows whose authors own the repositories without the
+`self-submitted` flag, one repository with a single commit, and one star count
+a sixth below GitHub's. The same day `lint.py` made a row with `question_types`
+and neither `evidence` nor `evidence_none` an error instead of a warning; no
+row in either file broke the rule, and `not-yet-backfilled` remains an honest
+way to satisfy it.
+
 ## Discovery is crowdsourced, verification is not
 
 There are dozens of Jev directories. Each is a different person's sweep of the
@@ -329,6 +361,7 @@ python3 scripts/build_readme.py  # regenerate both READMEs and docs/by-pattern/
 python3 scripts/counts.py        # coverage, with gaps marked
 python3 scripts/check_links.py   # sweep every URL, report only
 python3 scripts/verify_claims.py # re-read every cited call site
+python3 scripts/review_pr.py     # the review card for this branch's rows against origin/main
 python3 scripts/build_assets.py  # regenerate the README figures
 python3 scripts/build_compat.py  # regenerate the compatibility tables
 python3 scripts/regenerate.py    # or: every generator above, in order
@@ -455,8 +488,10 @@ catalogue passed 800, and no build ever went red.
 
 - `lint` runs on every pull request, every push to `main`, and by hand; after
   a push to `main` it also commits the regenerated files and asks PyPI whether
-  the MCP package's version is released. Its checks, and their order, are
-  `scripts/check.py`'s list; `python3 scripts/check.py` runs them locally.
+  the MCP package's version is released, and on a pull request it writes the
+  review card for the rows the pull request adds or changes. Its checks, and
+  their order, are `scripts/check.py`'s list; `python3 scripts/check.py` runs
+  them locally.
 - `description` runs on every push to `main`, and by hand.
 - `pages` rebuilds the site and its images whenever the data, the site or the
   rendering scripts change.

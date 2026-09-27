@@ -42,7 +42,7 @@ Stdlib only, like the rest of scripts/.
 
 Run: python3 scripts/check.py           # every check, strict about generated files
      python3 scripts/check.py --fix     # sort the catalogue first; judge as a pull request
-     python3 scripts/check.py --quick   # skip the preview images (Chrome) and PyPI (network)
+     python3 scripts/check.py --quick   # skip the preview images (Chrome), PyPI and the review card (network)
      python3 scripts/check.py --list    # every step in order, and whether this mode runs it
      python3 scripts/check.py --only lint,lint-docs   # just these; --skip NAME,... leaves some out
      python3 scripts/check.py --ci      # lint.yml: log groups, annotations, a step summary
@@ -68,7 +68,7 @@ KINDS = ("fix", "generate", "verify", "report")
 NEEDS = ("", "node", "chrome", "network")
 # The lint.yml job that runs a step; "" for a step no workflow runs (--fix only).
 CI_JOB = "catalog"
-JOBS = (CI_JOB, "release", "")
+JOBS = (CI_JOB, "release", "review", "")
 DEFAULT_BASE = "origin/main"
 COMMAND = "python3 scripts/check.py"
 
@@ -176,6 +176,14 @@ STEPS = (
     Step(
         "release", "pyproject.toml, plugin.json and PyPI agree",
         ("python3", "scripts/check_release.py"), job="release", needs="network",
+    ),
+    # lint.yml's `review` job, on a pull request only, runs the base branch's
+    # copy of this script against the pull request's catalogue. Locally it
+    # reviews this branch against origin/main. Advisory: it reports and
+    # exits 0 whatever it finds.
+    Step(
+        "review", "Review card for the rows this branch adds or changes (advisory)",
+        ("python3", "scripts/review_pr.py"), kind="report", job="review", needs="network",
     ),
 )
 BY_NAME = {step.name: step for step in STEPS}

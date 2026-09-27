@@ -60,6 +60,10 @@ SELF_SUBMISSION_FLAG = "self-submitted"
 # Rejected rather than accepted, so the rule cannot be evaded by a typo.
 SELF_SUBMISSION_NEAR_MISS = re.compile(r"\b(?:author|self)[\s_-]*submi", re.IGNORECASE)
 
+# Flags a reader cannot interpret without a reason; each needs a `notes` line.
+# scripts/review_rows.py holds a pull request's new rows to the same list.
+FLAGS_NEEDING_NOTES = ("ai-generated", "unverified-claims", "code-untested")
+
 
 class Findings(NamedTuple):
     """What a check found, in order. Errors fail the build; warnings are advice."""
@@ -236,13 +240,13 @@ def check_entry_invariants(
     if entry.get("question_types") and not entry.get("has_code"):
         report.err(path, f"{slug}: question_types set but has_code is not true")
 
-    # A primitive claim should be re-checkable, or say why it is not. A warning
-    # rather than an error so a new row is never blocked — but the count of
-    # unbacked claims is what the README reports, so it stays visible.
+    # A primitive claim must be re-checkable, or say why it is not. This was a
+    # warning until 2026-09-27, when no row broke it any more; `evidence_none`
+    # (`not-yet-backfilled` included) is always an honest way to satisfy it.
     if entry.get("question_types") and not (
         entry.get("evidence") or entry.get("evidence_none")
     ):
-        report.warn(
+        report.err(
             path,
             f"{slug}: claims primitives but carries neither evidence nor evidence_none. "
             "Run 'python3 scripts/verify_claims.py --discover --only "
@@ -278,7 +282,7 @@ def check_entry_invariants(
     # A flag that needs explaining is worse than no flag at all.
     flags = entry.get("flags", [])
     report.add(check_self_submission(entry, path, flags))
-    for flag in ("ai-generated", "unverified-claims", "code-untested"):
+    for flag in FLAGS_NEEDING_NOTES:
         if flag in flags and not entry.get("notes"):
             report.warn(
                 path,

@@ -99,7 +99,7 @@ class LintIsCoveredTest(unittest.TestCase):
 
     def test_the_parser_finds_what_a_new_step_would_add(self):
         # Otherwise the test above could pass by reading nothing.
-        self.assertEqual(set(self.jobs), {"catalog", "regenerate", "release"})
+        self.assertEqual(set(self.jobs), {"catalog", "regenerate", "release", "review"})
         added = self.text.replace(
             "        run: python3 scripts/check.py --ci\n",
             "        run: python3 scripts/check.py --ci\n\n"
@@ -140,11 +140,14 @@ class LintIsCoveredTest(unittest.TestCase):
         self.assertLess(regenerate.index("uses: actions/setup-node@"), regenerate.index("scripts/check.py --ci"))
 
     def test_a_step_for_another_job_is_run_by_that_job(self):
+        # By its script: the review job runs the base branch's copy of it, from
+        # another directory and with CI's arguments (scripts/review_pr.py).
         for step in check.STEPS:
             if step.job in ("", check.CI_JOB):
                 continue
             with self.subTest(step=step.name):
-                self.assertIn(step.display(), self.jobs[step.job])
+                ran = set().union(*(invoked(command) for command in self.jobs[step.job]))
+                self.assertTrue(invoked(step.display()) <= ran, (step.display(), self.jobs[step.job]))
 
 
 class MetadataTest(unittest.TestCase):
@@ -343,11 +346,11 @@ class ModeTest(unittest.TestCase):
 
     def test_ci_runs_the_catalog_job(self):
         fates = planned(check.Options(ci=True))
-        self.assertEqual({n for n, f in fates.items() if f != "runs"}, {"sort", "release"})
+        self.assertEqual({n for n, f in fates.items() if f != "runs"}, {"sort", "release", "review"})
 
     def test_quick_skips_chrome_and_network(self):
         fates = planned(check.Options(quick=True))
-        self.assertEqual({n for n, f in fates.items() if f == "skipped"}, {"render", "release"})
+        self.assertEqual({n for n, f in fates.items() if f == "skipped"}, {"render", "release", "review"})
 
     def test_fix_sorts_first(self):
         self.assertEqual(planned(check.Options(fix=True))["sort"], "runs")

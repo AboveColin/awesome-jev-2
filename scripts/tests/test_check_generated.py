@@ -431,7 +431,10 @@ class LintWorkflowTest(unittest.TestCase):
                 self.assertNotIn("${{", line)
             elif in_run:
                 self.assertNotIn("${{", line)
-        self.assertNotIn("github.event.", self.text.split("\non:", 1)[1])
+        # One event value is used at all, and only as an environment variable
+        # of the review job's step, which review_pr.py reads (I03).
+        used = [line.strip() for line in self.text.split("\non:", 1)[1].splitlines() if "github.event." in line]
+        self.assertEqual(used, ["PR_AUTHOR: ${{ github.event.pull_request.user.login }}"])
 
 
 class WorkflowStepsTest(GitCase):

@@ -163,10 +163,11 @@ class EntryInvariantTest(FindingsAssertions):
                     "question_types set but has_code is not true",
                 )
 
-    def test_primitive_claim_without_evidence_warns_with_the_command(self):
+    def test_primitive_claim_without_evidence_fails_with_the_command(self):
+        # A warning until 2026-09-27 (I03).
         self.assertOnly(
             lint_row(row(FULL, evidence=DROP)),
-            "warning",
+            "error",
             "claims primitives but carries neither evidence nor evidence_none",
             "python3 scripts/verify_claims.py --discover --only demo-row",
         )

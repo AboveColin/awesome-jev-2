@@ -57,8 +57,12 @@ against a fixed shape before it is committed); and `lint`'s `regenerate`
 job, which commits only generated files and runs only for a push to `main`,
 never for a pull request. (The Pages deploy holds `pages: write` to publish the
 site, not `contents: write`.) No workflow writes a human
-judgement — a summary, a pattern, a retirement — into the catalog. If you find
-a path that breaks any of those, please report it.
+judgement — a summary, a pattern, a retirement — into the catalog. On a pull
+request, `lint`'s `review` job runs the base branch's scripts, from a separate
+checkout of the base commit, against the pull request's `catalog.json` with the
+read-only token; the pull request's author login reaches that script as an
+environment variable, never through a shell line. If you find a path that
+breaks any of those, please report it.
 
 Actions are referenced by their major version tag (`actions/checkout@v7`), not
 pinned to a commit. The one exception is `pypa/gh-action-pypi-publish`, the

@@ -54,7 +54,7 @@ The same list of checks, run other ways:
 
 ```bash
 python3 scripts/check.py --list    # every check in order, and what each needs
-python3 scripts/check.py --quick   # without the preview images (Chrome) and the PyPI check
+python3 scripts/check.py --quick   # without the preview images (Chrome), the PyPI check and the review card
 python3 scripts/check.py --only lint,lint-docs   # just these checks
 python3 scripts/check.py           # strict: every generated file committed and current
 ```
@@ -74,6 +74,51 @@ python3 scripts/assemble_site.py && python3 -m http.server --directory site
 A local preview has no link-preview tags: `site/index.html` keeps a
 placeholder in git, and only the Pages deploy (`assemble_site.py --deploy`)
 writes them.
+
+### The review card
+
+When CI runs on your pull request, `lint`'s `review` job writes a review card
+to the run's summary (open the `lint` run from the pull request's checks, then
+**Summary**) and marks each finding on its row's line in `catalog.json` under
+**Files changed**. For each row you added, and for each changed field one of
+its checks reads, it:
+
+- reads the cited file and checks every `evidence.matched` string is in it, as
+  the weekly `claims` job will, and that a row with `question_types` cites a
+  call site or says in `evidence_none` why it cannot;
+- asks GitHub about the repository: `repo_license` and the `archived` flag must
+  match exactly, `stars` only has to be close (within 5, or a tenth of GitHub's
+  count) because it moves every day, and a repository with one commit should
+  carry `single-commit`;
+- requests the link and expects a 2xx answer;
+- compares your GitHub login with the repository's owner and the row's
+  `author.handle` and `author.url`: a match without `self-submitted` is marked.
+  An organisation's repository escapes this comparison, so the template's
+  checkbox still counts;
+- checks that `ai-generated`, `unverified-claims` and `code-untested` come with
+  a `notes` line;
+- and, as a hint only, says which kind and patterns the keyword rules that
+  `discover` uses would have guessed from your summary.
+
+✗ is for you to fix before merging, ⚠ for a person to look at, ℹ is a hint,
+and *not checked* is not a pass. The card is advisory while it is new: it never
+fails the check. It is a second gate that matches text and compares facts with
+GitHub; it is not a review, and it does not replace a maintainer, who still
+reads the call site: strings present in a file do not show that the code calls
+Jev the way the row says, and a clean card is not an approval.
+
+The card runs the base branch's copy of `scripts/`, not your pull request's,
+so a pull request that edits the checks is still judged by the ones on `main`.
+On a first pull request it runs only after a maintainer clicks **Approve and
+run** (see *How changes reach `main`*). To see the same card before you push:
+
+```bash
+GITHUB_TOKEN=$(gh auth token) python3 scripts/review_pr.py --author <your GitHub login>
+```
+
+It compares your branch with `origin/main` (`--base upstream/main` if your
+remote has another name), and `--offline` leaves out everything that reads the
+network. `python3 scripts/check.py` runs it too, without an author.
 
 ## How changes reach `main`
 
@@ -145,6 +190,8 @@ turns red.
   instead and say which. Set `read_on` to the date you actually read that file;
   do not advance it after an automated text check. An `evidence` record is a
   citation, not a stored CI pass or proof that the integration executes.
+  `lint.py` fails a row with `question_types` and neither `evidence` nor
+  `evidence_none`; `not-yet-backfilled` is an honest value while you look.
 - **`official`** — true only for `typesafe.ai` hosts and the `typesafe-ai`
   GitHub org. A first-party integration published by another vendor is not
   official. The linter checks this.

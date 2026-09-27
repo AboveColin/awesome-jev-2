@@ -4,6 +4,8 @@
 
 ## If you edited catalog.json
 
+<!-- Once CI has run, the lint run's summary holds a review card for each row you added or changed: fix what it marks ✗. It matches text; a maintainer still reads the call site. -->
+
 - [ ] `python3 scripts/check.py --fix` passes: it sorts `catalog.json`, then runs every check CI runs
 - [ ] Generated files (READMEs, `docs/by-pattern/`, `docs/assets/`, generated numbers in docs) are either left out — a bot regenerates them on `main` after the merge — or exactly what `python3 scripts/check.py --fix` wrote, never edited by hand
 - [ ] I opened every link I added and wrote the summaries from what was there
