@@ -145,6 +145,10 @@ class LicenceStatementTest(unittest.TestCase):
         self.assertIn("1 more were taken from such a description and no longer match it", text)
         self.assertIn("the copyright in them is theirs: this repository does not dedicate them under `CC0-1.0`", text)
         self.assertIn("13 of their Chinese counterparts are machine translations", text)
+        # The Chinese README says the translations are outside the dedication
+        # too; the licence statement says the same.
+        self.assertIn("this repository does not dedicate it under `CC0-1.0` either", text)
+        self.assertIn("not a summary labelled as the project's own description or the Chinese translation of one", text)
         self.assertIn("*(upstream description)* or *(earlier upstream description)*", text)
         self.assertIn("2 summaries are marked `curated`", text)
         self.assertIn("The other 5 carry no `summary_source`", text)

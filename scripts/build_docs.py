@@ -204,7 +204,9 @@ def row_licences_block(s: dict, catalog: list[dict]) -> str:
             "match it (`upstream-description-stale`). The projects' authors wrote those words and the "
             "copyright in them is theirs: this repository does not dedicate them under `CC0-1.0`. "
             f"{s['summary_upstream_zh_machine']} of their Chinese counterparts are machine translations "
-            "of them (`zh_machine`). The READMEs, the pattern pages and the site mark each such summary "
+            "of them (`zh_machine`); the Chinese of such a row translates the project's words, and this "
+            "repository does not dedicate it under `CC0-1.0` either. The READMEs, the pattern pages and "
+            "the site mark each such summary "
             f"*({labels['upstream-description']})* or *({labels['upstream-description-stale']})*."
         )
     parts.append(
@@ -216,7 +218,7 @@ def row_licences_block(s: dict, catalog: list[dict]) -> str:
     scope = (
         "covers the row's structured metadata (slug, kind, patterns, flags, dates, counts, evidence "
         "records and the rest) and any text written for this catalogue, not a summary labelled as "
-        "the project's own description."
+        "the project's own description or the Chinese translation of one."
     )
     if set(by) == {"CC0-1.0"}:
         parts.append(f"Every row's `license` field is `CC0-1.0`. It {scope}")

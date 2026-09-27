@@ -373,7 +373,7 @@
       }
     },
     "license": {
-      "description": "Licence of this row's metadata, not of the linked work. CC-BY-4.0 when descriptive text was inherited from a CC BY 4.0 source (attribution is the sources[] array itself), otherwise CC0-1.0. It does not cover a summary labelled upstream-description or upstream-description-stale in summary_source: those words are the linked project's own.",
+      "description": "Licence of this row's metadata, not of the linked work. CC-BY-4.0 when descriptive text was inherited from a CC BY 4.0 source (attribution is the sources[] array itself), otherwise CC0-1.0. It does not cover a summary labelled upstream-description or upstream-description-stale in summary_source, nor the row's summary_zh translated from it: those words are the linked project's own.",
       "type": "string",
       "enum": [
         "CC0-1.0",
