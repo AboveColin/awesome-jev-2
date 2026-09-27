@@ -2,9 +2,10 @@
 
 lint.py is the gate every pull request passes through: a self-contained
 draft-07 subset validator for schema/entry.schema.json, then invariants a
-per-entry schema cannot express. Nothing tested it, so a rule written backwards
-(say, evidence and evidence_none required together instead of exclusive) would
-have passed CI and waved every bad row through after it.
+per-entry schema cannot express. Before this file only two of its rules (slug
+order, self-submission) had tests, so any other rule written backwards (say,
+evidence and evidence_none required together instead of exclusive) would have
+passed CI and waved every bad row through after it.
 
 Each test starts from a row that passes everything, changes one thing, and
 asserts lint reports exactly one finding whose text names the rule. A second
@@ -22,14 +23,17 @@ import pathlib
 import sys
 import tempfile
 import unittest
+from unittest import mock
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1]))
 
+import _github
 import lint
 from _github import LANG_EXT
 
 SCHEMA = json.loads(lint.SCHEMA.read_text(encoding="utf-8"))
-PATTERNS = json.loads(lint.PATTERNS_FILE.read_text(encoding="utf-8"))["patterns"]
+PATTERNS_DOC = json.loads(lint.PATTERNS_FILE.read_text(encoding="utf-8"))
+PATTERNS = PATTERNS_DOC["patterns"]
 TAXONOMY = json.loads(lint.TAXONOMY_FILE.read_text(encoding="utf-8"))
 TODAY = dt.date(2026, 9, 27)
 PATH = "catalog.json[0]"
@@ -305,11 +309,16 @@ class EntryInvariantTest(FindingsAssertions):
                 self.assertClean(lint_row(row(MINIMAL, link_status=status)))
 
     def test_retired_rows_carry_no_2xx_status(self):
-        self.assertOnly(
-            lint_row(row(RETIRED, link_status=200), retired=True),
-            "error",
-            "retired entries must not carry a 2xx status (200)",
-        )
+        for status in (200, 299):
+            with self.subTest(status=status):
+                self.assertOnly(
+                    lint_row(row(RETIRED, link_status=status), retired=True),
+                    "error",
+                    f"retired entries must not carry a 2xx status ({status})",
+                )
+        for status in (199, 300, 404):
+            with self.subTest(status=status):
+                self.assertClean(lint_row(row(RETIRED, link_status=status), retired=True))
 
     def test_retired_rows_need_a_reason(self):
         self.assertOnly(
@@ -634,7 +643,7 @@ class MainOutputTest(unittest.TestCase):
         tmp = tempfile.TemporaryDirectory()
         self.addCleanup(tmp.cleanup)
         self.dir = pathlib.Path(tmp.name)
-        for name in ("ROOT", "CATALOG", "RETIRED"):
+        for name in ("ROOT", "CATALOG", "RETIRED", "SCHEMA", "PATTERNS_FILE", "TAXONOMY_FILE"):
             self.addCleanup(setattr, lint, name, getattr(lint, name))
         lint.CATALOG = self.dir / "catalog.json"
         lint.RETIRED = self.dir / "retired.json"
@@ -668,19 +677,53 @@ class MainOutputTest(unittest.TestCase):
         self.assertEqual((status, err), (0, ""))
         self.assertIn("warning: catalog.json[0]: demo-row: flagged 'ai-generated' but notes is empty", out)
 
-    def test_a_file_that_is_not_an_array_stops_the_run(self):
-        status, out, err = self.run_main(MINIMAL, [])
+    def test_label_files_are_checked_before_the_rows(self):
+        # check_all() must run every label check, not only the helpers above.
+        blank = {**PATTERNS_DOC, "patterns": [{**PATTERNS[0], "zh": ""}, *PATTERNS[1:]]}
+        lint.PATTERNS_FILE = self.dir / "patterns.json"
+        lint.PATTERNS_FILE.write_text(json.dumps(blank), encoding="utf-8")
+        unlabelled = TAXONOMY["flags"][-1]["key"]
+        lint.TAXONOMY_FILE = self.dir / "taxonomy.json"
+        lint.TAXONOMY_FILE.write_text(json.dumps({**TAXONOMY, "flags": TAXONOMY["flags"][:-1]}), encoding="utf-8")
+        no_c = {k: v for k, v in LANG_EXT.items() if k != "c"}
+        with mock.patch.object(_github, "LANG_EXT", no_c):
+            status, out, err = self.run_main([row(MINIMAL, kind="blog")], [])
+        kinds = ", ".join(SCHEMA["properties"]["kind"]["enum"])
+        self.assertEqual((status, out), (1, "checked 1 catalog entry and 0 retired\n"))
         self.assertEqual(
-            (status, out, err), (1, "", "error: catalog.json: top level must be an array of entries\n\n1 error(s)\n")
+            err,
+            f"error: patterns.json: {PATTERNS[0]['key']!r} has no zh\n"
+            "error: scripts/_github.py: schema language 'c' has no file extensions in LANG_EXT\n"
+            f"error: taxonomy.json: schema allows flag {unlabelled!r} but it has no label\n"
+            f"error: catalog.json[0].kind: 'blog' is not one of: {kinds}\n"
+            "\n4 error(s)\n",
         )
+
+    def test_a_file_that_is_not_an_array_stops_the_run(self):
+        for catalog, retired, name in (
+            (MINIMAL, [], "catalog.json"),
+            ([MINIMAL], {}, "retired.json"),
+            (MINIMAL, "neither", "catalog.json"),
+        ):
+            with self.subTest(catalog=type(catalog).__name__, retired=type(retired).__name__):
+                self.assertEqual(
+                    self.run_main(catalog, retired),
+                    (1, "", f"error: {name}: top level must be an array of entries\n\n1 error(s)\n"),
+                )
 
     def test_a_missing_file_is_named(self):
         lint.ROOT = self.dir
-        lint.RETIRED.write_text("[]", encoding="utf-8")
-        err = io.StringIO()
-        with contextlib.redirect_stderr(err):
-            status = lint.main()
-        self.assertEqual((status, err.getvalue()), (1, "error: catalog.json is missing\n"))
+        lint.SCHEMA = self.dir / "schema" / "entry.schema.json"
+        for missing in ("catalog.json", "retired.json", "schema/entry.schema.json"):
+            with self.subTest(missing=missing):
+                for path in (lint.CATALOG, lint.RETIRED, lint.SCHEMA):
+                    path.parent.mkdir(exist_ok=True)
+                    path.write_text("[]" if path != lint.SCHEMA else json.dumps(SCHEMA), encoding="utf-8")
+                (self.dir / missing).unlink()
+                err = io.StringIO()
+                with contextlib.redirect_stderr(err):
+                    status = lint.main()
+                self.assertEqual((status, err.getvalue()), (1, f"error: {missing} is missing\n"))
 
 
 if __name__ == "__main__":

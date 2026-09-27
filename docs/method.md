@@ -337,8 +337,9 @@ before pushing, so a regenerated file its `git add` left out would fail too.
 Since 2026-09-27, every rule `lint.py` enforces is pinned by a unit test,
 `scripts/tests/test_lint.py`: each test starts from a row that passes
 everything, breaks one rule, and checks that lint reports exactly that one
-finding in that rule's own words. Nothing tested lint before, so a rule written
-backwards would have passed CI and let through every row it was meant to stop.
+finding in that rule's own words. Before, only the slug-order and
+self-submission rules had tests, so any other rule written backwards would have
+passed CI and let through every row it was meant to stop.
 The same file holds the schema to what the validator actually does. `lint.py`
 implements the part of JSON Schema the schema uses, and a keyword it does not
 know (`oneOf`, `format: date`) is ignored rather than rejected, so a constraint
