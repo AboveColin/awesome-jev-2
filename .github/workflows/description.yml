@@ -2,11 +2,11 @@
 # outside git, and no workflow token can edit it: that needs admin rights. So
 # drift is reported, not failed — a warning, a step summary, and one open issue
 # labelled `description` carrying the exact `gh repo edit` command, which later
-# runs comment on and the first matching run closes. This used to be a lint.yml
-# step that turned `main` red after every merged row until someone fixed the
-# description by hand; lint.yml stays read-only and its badge now reflects only
-# drift CI can fix itself. Pull requests see the would-be description in the
-# counts step of lint.yml instead.
+# runs comment on only when that command changes and the first matching run
+# closes. This used to be a lint.yml step that turned `main` red after every
+# merged row until someone fixed the description by hand; lint.yml stays
+# read-only and its badge now reflects only drift CI can fix itself. Pull
+# requests see the would-be description in the counts step of lint.yml instead.
 #
 # Injection review: no `github.event.*` value reaches a `run:` block. The issue
 # body is read from a file the script wrote, never interpolated into a shell.
@@ -55,7 +55,17 @@ jobs:
 
           existing=$(gh issue list --state open --label description --json number --jq '.[0].number')
           if [ -n "$existing" ]; then
-            gh issue comment "$existing" --body-file /tmp/description.md
+            # Every push to main lands here while the drift lasts, so comment
+            # only when the fix itself changed (a new hundred, or new wording);
+            # the same command again on every merge is noise, not news.
+            fix=$(grep -m1 '^gh repo edit ' /tmp/description.md || true)
+            seen=$(gh issue view "$existing" --json body,comments \
+              --jq '.body, .comments[].body' | tr -d '\r') || seen=""
+            if [ -n "$fix" ] && grep -qxF -- "$fix" <<<"$seen"; then
+              echo "issue #$existing already carries this command; not commenting again"
+            else
+              gh issue comment "$existing" --body-file /tmp/description.md
+            fi
           else
             gh issue create --title "Repository description is out of date" \
               --label description --body-file /tmp/description.md \

@@ -184,5 +184,105 @@ class WorkflowWiringTest(unittest.TestCase):
         self.assertIn(f"{_stats.next_public_change(entries):,}", out)
 
 
+class IssueStepsTest(unittest.TestCase):
+    """The two issue steps of description.yml, run under bash with a stub `gh`.
+
+    Every push to main reaches them while the description is stale, so they
+    must file one issue, stay quiet while the fix is unchanged, speak up when
+    it changes, and close the issue on the first match. Nothing reaches GitHub.
+    """
+
+    WORKFLOW = ROOT / ".github" / "workflows" / "description.yml"
+    STUB = "\n".join(
+        [
+            "#!/usr/bin/env bash",
+            'printf "%s\\n" "$*" >> "$GH_LOG"',
+            'case "$1 $2" in',
+            '  "issue list") printf "%s\\n" "$GH_EXISTING" ;;',
+            '  "issue view") printf "%s\\n" "$GH_SEEN"; exit "${GH_VIEW_EXIT:-0}" ;;',
+            "esac",
+            "",
+        ]
+    )
+
+    def setUp(self):
+        tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(tmp.cleanup)
+        self.dir = pathlib.Path(tmp.name)
+        stub = self.dir / "gh"
+        stub.write_text(self.STUB)
+        stub.chmod(0o755)
+        self.log = self.dir / "gh.log"
+        self.report = self.dir / "description.md"
+        self.expected = _stats.pitch_public({"entries": 1207})
+        self.fix = check_description.edit_command(self.expected)
+        self.report.write_text(check_description.issue_body("1207 public resources", self.expected, 1207) + "\n")
+
+    def step(self, name: str) -> str:
+        """The run: block of the named step, dedented."""
+        lines = self.WORKFLOW.read_text().splitlines()
+        start = lines.index(f"      - name: {name}")
+        run = next(i for i in range(start, len(lines)) if lines[i] == "        run: |")
+        body = []
+        for line in lines[run + 1 :]:
+            if line.strip() and not line.startswith(" " * 10):
+                break
+            body.append(line[10:])
+        return "\n".join(body).replace("/tmp/description.md", str(self.report))
+
+    def run_step(self, name: str, existing: str = "", seen: str = "", view_exit: int = 0):
+        env = {
+            **os.environ,
+            "PATH": f"{self.dir}{os.pathsep}{os.environ['PATH']}",
+            "GH_LOG": str(self.log),
+            "GH_EXISTING": existing,
+            "GH_SEEN": seen,
+            "GH_VIEW_EXIT": str(view_exit),
+        }
+        # The shell GitHub runs a `run:` block in.
+        done = subprocess.run(
+            ["bash", "--noprofile", "--norc", "-eo", "pipefail", "-c", self.step(name)],
+            env=env, capture_output=True, text=True,
+        )
+        self.assertEqual(done.returncode, 0, done.stderr)
+        calls = self.log.read_text().splitlines() if self.log.exists() else []
+        return calls, done.stdout
+
+    def verbs(self, calls):
+        return [" ".join(c.split()[:2]) for c in calls]
+
+    def test_first_drift_files_one_labelled_issue(self):
+        calls, _ = self.run_step("Open or update the description issue")
+        self.assertEqual(self.verbs(calls), ["label create", "issue list", "issue create"])
+        self.assertIn("--label description", calls[-1])
+        self.assertIn(str(self.report), calls[-1])
+
+    def test_unchanged_drift_does_not_comment_again(self):
+        # GitHub may hand bodies back with CRLF line endings.
+        seen = (self.report.read_text()).replace("\n", "\r\n")
+        calls, out = self.run_step("Open or update the description issue", existing="7", seen=seen)
+        self.assertEqual(self.verbs(calls), ["label create", "issue list", "issue view"])
+        self.assertIn("#7 already carries this command", out)
+
+    def test_a_changed_fix_is_commented(self):
+        stale = check_description.issue_body("x", _stats.pitch_public({"entries": 1107}), 1107)
+        self.assertNotIn(self.fix, stale)
+        calls, _ = self.run_step("Open or update the description issue", existing="7", seen=stale)
+        self.assertEqual(self.verbs(calls), ["label create", "issue list", "issue view", "issue comment"])
+        self.assertTrue(calls[-1].startswith("issue comment 7 --body-file"), calls[-1])
+
+    def test_an_unreadable_issue_is_commented_rather_than_skipped(self):
+        calls, _ = self.run_step("Open or update the description issue", existing="7", view_exit=1)
+        self.assertEqual(self.verbs(calls)[-1], "issue comment")
+
+    def test_a_match_closes_the_open_issue_and_nothing_else(self):
+        calls, _ = self.run_step("Close the description issue once it matches", existing="7")
+        self.assertEqual(self.verbs(calls), ["issue list", "issue close"])
+        self.assertTrue(calls[-1].startswith("issue close 7"), calls[-1])
+        self.log.unlink()
+        calls, _ = self.run_step("Close the description issue once it matches")
+        self.assertEqual(self.verbs(calls), ["issue list"])
+
+
 if __name__ == "__main__":
     unittest.main()
