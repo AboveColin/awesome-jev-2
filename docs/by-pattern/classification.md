@@ -138,7 +138,7 @@ Every catalogued example of this decision — 119 of them. The same rows, with c
   <sub>`Plugin` · ★10+ · bohutang · `JS`</sub>
 
 - **[typesafe-adblock](https://github.com/realZachi/typesafe-adblock)** — A Chrome extension that asks whether a DOM element is an advert.
-  <sub>`Project` · ★10+ · realzachi · `JS`</sub>
+  <sub>`Project` · ★10+ · realzachi · `JS` · ⚠ `one commit`</sub>
 
 - **[wechat-jev-assistant](https://github.com/yushen100/wechat-jev-assistant)** — A Windows WeChat conversation assistant: reads chats locally, redacts them, has TypeSafe Jev judge them, and keeps an encrypted history.
   <sub>`Project` · ★10+ · yushen100 · `Py` · ⚠ `no licence`</sub>
@@ -171,10 +171,10 @@ Every catalogued example of this decision — 119 of them. The same rows, with c
   <sub>`Plugin` · prasanthj · `C++`</sub>
 
 - **[github-issue-classification-using-jev](https://github.com/KalyanM45/GitHub-Issue-Classification-Using-Jev)** — This repository contains a GitHub issue classifier built on Jev, TypeSafe AI's System One model. It labels every new issue with typed values and calibrated confidence in milliseconds, labelling what it is sure about and escalating what it is not. Three guardrail layers guard every write, and a
-  <sub>`Project` · kalyanm45 · `Py`</sub>
+  <sub>`Project` · kalyanm45 · `Py` · ⚠ `one commit`</sub>
 
 - **[guard-jev](https://github.com/NorbertBodziony/guard-jev)** — A text-moderation demo: one systemOne call screens seven Noul hazards and one severity Score in parallel, and the verdict is computed in code from policy thresholds.
-  <sub>`Project` · norbertbodziony · `TS` · ⚠ `no licence`</sub>
+  <sub>`Project` · norbertbodziony · `TS` · ⚠ `one commit` `no licence`</sub>
 
 - **[himalaya-jev-mail-classify](https://github.com/initrd/himalaya-jev-mail-classify)** — Label and prioritise Gmail with a language model. Reads mail through himalaya, classifies each thread with Jev (TypeSafe) over OpenRouter, and applies Gmail labels and colours. Dry run by default, idempotent, no state file. <sub>(upstream description)</sub>
   <sub>`Project` · initrd · `Py`</sub>
@@ -186,7 +186,7 @@ Every catalogued example of this decision — 119 of them. The same rows, with c
   <sub>`Project` · emreozyoruk · `JS`</sub>
 
 - **[Jev by Example](https://github.com/ReallyArtificial/jev-by-example)** — Ten runnable JavaScript agent decisions, one file each: reconciling a new memory against a stored one, gating whether an HTTP 200 really satisfied the task, retry vs. reconcile after an uncertain write, scoring context against a budget, checking a handoff for dropped prohibitions.
-  <sub>`Project` · Really Artificial · `JS` · `choice` · `score` · `noul` · ⚠ `one commit` `AI-written`</sub>
+  <sub>`Project` · Really Artificial · `JS` · `choice` · `score` · `noul` · ⚠ `AI-written`</sub>
 
 - **[jev-agent-skill](https://github.com/yuyang2230/jev-agent-skill)** — Free typed judgments for AI agents: offload classify/screen/score/verify to Jev (TypeSafe System One) via OpenCode Zen. Claude Code / ZCode skill. 给AI代理省token的免费决策分流技能 <sub>(upstream description)</sub>
   <sub>`Plugin` · yuyang2230 · `Py`</sub>
@@ -210,7 +210,7 @@ Every catalogued example of this decision — 119 of them. The same rows, with c
   <sub>`Benchmark` · 4esv · `Py` · ⚠ `no licence`</sub>
 
 - **[jev-eval](https://github.com/onlyoneaman/jev-eval)** — TypeSafe's Jev vs gpt-5.4-mini and gpt-5.6-luna on four public classification sets: cases, per-item answers, scoring, charts <sub>(upstream description)</sub>
-  <sub>`Benchmark` · onlyoneaman · `TS`</sub>
+  <sub>`Benchmark` · onlyoneaman · `TS` · ⚠ `one commit`</sub>
 
 - **[jev-for-engineers](https://github.com/Foadsf/jev-for-engineers)** — Eight minimal working examples of TypeSafe's Jev (a System One model) applied to mechanical and electrical engineering: CAD/CAE/CAM routing, FEM result triage, DFM screening, BOM alignment, hallucination-proof extraction. Zero dependencies. <sub>(upstream description)</sub>
   <sub>`Project` · foadsf · `Py`</sub>
@@ -243,7 +243,7 @@ Every catalogued example of this decision — 119 of them. The same rows, with c
   <sub>`Plugin` · nexibeo · `JS`</sub>
 
 - **[jev-playwright-mcp](https://github.com/krw82/jev-playwright-mcp)** — Jev-augmented Playwright MCP proxy — page-state triage, prompt-injection shielding, goal-based snapshot pruning, risky-action gating. Drop-in wrapper around @playwright/mcp for any coding agent. <sub>(upstream description)</sub>
-  <sub>`Plugin` · krw82 · `TS`</sub>
+  <sub>`Plugin` · krw82 · `TS` · ⚠ `one commit`</sub>
 
 - **[jev-pr-labeler](https://github.com/1jehuang/jev-pr-labeler)** — Semantic GitHub PR labels using Jev's typed decisions, with conceptual scope instead of line counts <sub>(upstream description)</sub>
   <sub>`Project` · 1jehuang · `Py`</sub>
@@ -315,7 +315,7 @@ Every catalogued example of this decision — 119 of them. The same rows, with c
   <sub>`Project` · khmuhtadin · `TS`</sub>
 
 - **[notiq](https://github.com/chengyongru/notiq)** — Native Android notification filtering with natural-language rules, powered by Jev or self-hosted FastJev. <sub>(upstream description)</sub>
-  <sub>`Project` · chengyongru · `Kt` · ⚠ `no licence`</sub>
+  <sub>`Project` · chengyongru · `Kt` · ⚠ `one commit` `no licence`</sub>
 
 - **[omp-jevens-classifier](https://github.com/STRML/omp-jevens-classifier)** — Jev-powered model-judged permission gate for OMP (TypeSafe System One) <sub>(upstream description)</sub>
   <sub>`Project` · strml · `TS` · ⚠ `archived`</sub>
@@ -327,7 +327,7 @@ Every catalogued example of this decision — 119 of them. The same rows, with c
   <sub>`Project` · ashutoshvjti · `TS`</sub>
 
 - **[pulselane](https://github.com/ndolinschi/pulselane)** — PulseLane — clinic triage decisions via TypeSafe Jev <sub>(upstream description)</sub>
-  <sub>`Project` · ndolinschi · `TS` · ⚠ `no licence`</sub>
+  <sub>`Project` · ndolinschi · `TS` · ⚠ `one commit` `no licence`</sub>
 
 - **[tab-bouncer](https://github.com/MANISH007700/tab-bouncer)** — Chrome extension that closes the tabs you don't need, judged by TypeSafe's Jev in one call. Tell it what you're doing; it shows the rest the door. <sub>(upstream description)</sub>
   <sub>`Plugin` · manish007700 · `JS`</sub>
@@ -336,7 +336,7 @@ Every catalogued example of this decision — 119 of them. The same rows, with c
   <sub>`Project` · m0rphtail · `Rs`</sub>
 
 - **[twitter-jev-guard](https://github.com/qs-lll/twitter-jev-guard)** — Uses TypeSafe Jev to spot low-quality, spam and advertising posts on the X/Twitter timeline and stamps a conspicuous translucent watermark over their text.
-  <sub>`Plugin` · qs-lll · `JS` · ⚠ `no licence`</sub>
+  <sub>`Plugin` · qs-lll · `JS` · ⚠ `one commit` `no licence`</sub>
 
 - **[typesafe-image-diffusion](https://github.com/Wizhill05/typesafe-image-diffusion)** — Diffusion-style pixel art out of a general classifier (TypeSafe Jev): 256 parallel pixel questions + refinement passes <sub>(upstream description)</sub>
   <sub>`Project` · wizhill05 · `TS` · ⚠ `no licence`</sub>

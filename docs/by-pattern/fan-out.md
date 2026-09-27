@@ -33,7 +33,7 @@ Every catalogued example of this decision — 32 of them. The same rows, with ca
   <sub>`Project` · ★10+ · `TS` · `choice` · `noul`</sub>
 
 - **[jev-forge](https://github.com/zwliJay/jev-forge)** — An open training and inference stack for Jev-style decision models. Train models to score dynamic candidate branches from a shared prefix, with support for high-cardinality choice, calibration, and fast batched inference. <sub>(upstream description)</sub>
-  <sub>`Jev-like alternative` · ★10+ · zwlijay · `Py` · ⚠ `not Jev itself`</sub>
+  <sub>`Jev-like alternative` · ★10+ · zwlijay · `Py` · ⚠ `not Jev itself` `one commit`</sub>
 
 - **[jev-sift](https://github.com/kbhuw/jev-sift)** — Classify first. Read selectively. A portable agent plugin and MCP tool for batch text classification. <sub>(upstream description)</sub>
   <sub>`Plugin` · ★10+ · kbhuw · `JS` · ⚠ `no licence`</sub>
@@ -87,10 +87,10 @@ Every catalogued example of this decision — 32 of them. The same rows, with ca
   <sub>`SDK` · nsstudent · `Swift`</sub>
 
 - **[psearch](https://github.com/komikat/psearch)** — Parallel web search for terminals and agents, with local Chromium and Jev-guided exploration. <sub>(upstream description)</sub>
-  <sub>`Project` · komikat · `Py`</sub>
+  <sub>`Project` · komikat · `Py` · ⚠ `one commit`</sub>
 
 - **[snake-jev](https://github.com/siroccomask/snake-jev)** — Snake controlled by parallel Jev assessments, with one API call per game tick. <sub>(upstream description)</sub>
-  <sub>`Project` · siroccomask · `Py`</sub>
+  <sub>`Project` · siroccomask · `Py` · ⚠ `one commit`</sub>
 
 - **[sqlite-jev](https://github.com/mgaitan/sqlite-jev)** — Batched natural-language judgments for SQLite, powered by TypeSafe Jev <sub>(upstream description)</sub>
   <sub>`Plugin` · mgaitan · `C` · ⚠ `no licence`</sub>

@@ -82,6 +82,11 @@ def main() -> int:
         f"{stats['summary_upstream_stale']} upstream-description-stale, {stats['summary_curated']} curated, "
         f"{stats['summary_unlabelled']} unlabelled (summary_source)"
     )
+    last_pushes = ", ".join(f"{month} {count}" for month, count in stats["pushed_by_month"].items()) or "none"
+    print(
+        f"repositories   {stats['repo_facts_rows']} with GitHub's creation date, last push and commit count, "
+        f"{stats['single_commit_rows']} single-commit; last push by month (UTC): {last_pushes}"
+    )
     if stats["entries"]:
         print(f"zh hand-written {stats['zh_hand']}/{stats['entries']}")
 

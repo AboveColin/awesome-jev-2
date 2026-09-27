@@ -176,6 +176,8 @@
   在 MuJoCo 中直接对 xArm7 做笛卡尔控制，对比 Jev 与两个 LLM：每一步选择意图、移动方向和夹爪动作，附原始响应、轨迹与回放。每个控制器只跑了一次（seed 0），不是成功率估计。 <sub>(机翻)</sub><br>
   <sub>`基准测试` · ★10+ · openroboto-ai · `Py`</sub>
 
+  **注意:** `仅一次提交`
+
 - **[smartmoney-cub](https://github.com/myc0576/SmartMoney-Cub)**<br>
   只读的交易日志与复盘 harness：Jev 类型化判断、智能体集成，以及一个可复现的金融基准。 <sub>(项目自述)</sub> <sub>(机翻)</sub><br>
   <sub>`基准测试` · ★10+ · myc0576 · `Py`</sub>
@@ -191,6 +193,8 @@
 - **[agent-handoff-gate](https://github.com/zsoXi/agent-handoff-gate)**<br>
   面向证据感知的智能体交接与有界工作续跑的实验性协议。 <sub>(项目自述)</sub> <sub>(机翻)</sub><br>
   <sub>`基准测试` · zsoxi · `Py`</sub>
+
+  **注意:** `仅一次提交`
 
 - **[antigravity-mcp-semantic-search-with-typesafeai](https://github.com/greenyamao/Antigravity-mcp-semantic-search-with-TypeSafeAi)**<br>
   给 AI 编程助手的快速语义代码搜索与 diff 合理性审查。 <sub>(项目自述)</sub> <sub>(机翻)</sub><br>
@@ -240,6 +244,8 @@
   仅通过 API 对 Jev 做的独立校准审计。 <sub>(项目自述)</sub> <sub>(机翻)</sub><br>
   <sub>`基准测试` · jujumilk3 · `Py`</sub>
 
+  **注意:** `仅一次提交`
+
 - **[jev-certify](https://github.com/nikkoxgonzales/jev-certify)**<br>
   给 Jev 的有限样本保证：用保形风险控制把校准概率转成可证的约束。 <sub>(机翻)</sub><br>
   <sub>`基准测试` · nikkoxgonzales · `Py`</sub>
@@ -281,6 +287,8 @@
 - **[jev-eval](https://github.com/onlyoneaman/jev-eval)**<br>
   在四个公开分类数据集上比较 TypeSafe 的 Jev 与两款 GPT 模型：案例、逐条答案、评分全部公开。 <sub>(项目自述)</sub> <sub>(机翻)</sub><br>
   <sub>`基准测试` · onlyoneaman · `TS`</sub>
+
+  **注意:** `仅一次提交`
 
 - **[jev-eval](https://github.com/Shogo-nfrealmusic/jev-eval)**<br>
   第三方在相同条件下对比 Jev 与两款 LLM：为面向日本游客的摄影服务路由预订咨询，共六十条四种语言的合成消息。 <sub>(机翻)</sub><br>
@@ -422,7 +430,7 @@
   合成的吸烟史抽取基准：对比 Jev 与 OpenAI 结构化输出。 <sub>(项目自述)</sub> <sub>(机翻)</sub><br>
   <sub>`基准测试` · vclic · `Py`</sub>
 
-  **注意:** `无许可证`
+  **注意:** `仅一次提交` · `无许可证`
 
 - **[sysone-bench](https://github.com/instax-dutta/sysone-bench)**<br>
   首个独立的 System One 决策模型横评（Laya 对比 Jev）。 <sub>(项目自述)</sub> <sub>(机翻)</sub><br>
@@ -726,13 +734,13 @@ _判断失败的步骤是否值得重试。_
   评判智能体的每一步：通过／重试／升级／停止。 <sub>(项目自述)</sub> <sub>(机翻)</sub><br>
   <sub>`开源项目` · ndolinschi · `TS`</sub>
 
-  **注意:** `无许可证`
+  **注意:** `仅一次提交` · `无许可证`
 
 - **[Jev by Example](https://github.com/ReallyArtificial/jev-by-example)**<br>
   十个可运行的 JavaScript 智能体决策，一个文件一个：新记忆与旧记忆冲突时该改还是该留、工具返回 200 是否真的完成了任务、写入超时后该重试还是该对账、上下文分块在预算内如何取舍、压缩后的交接是否丢掉了某条禁令。Jev 只回答带类型的问题，阈值和最终提案由普通代码决定。<br>
   <sub>`开源项目` · Really Artificial · `JS` · `choice` · `score` · `noul`</sub>
 
-  **注意:** `仅一次提交` · `疑似 AI 生成`
+  **注意:** `疑似 AI 生成`
 
 - **[jev-harness](https://github.com/ismaelsoilet/jev-harness)**<br>
   零依赖的 System One 决策框架：用 5 道语义关卡，在琐碎错误和“死循环”上替前沿 AI 智能体省下 token。 <sub>(项目自述)</sub> <sub>(机翻)</sub><br>
@@ -898,7 +906,7 @@ _把大量问题（包括推测性的）打包进一次请求，再由代码挑�
   面向 Jev 式决策模型的开源训练与推理栈。 <sub>(项目自述)</sub> <sub>(机翻)</sub><br>
   <sub>`Jev 替代实现` · ★10+ · zwlijay · `Py`</sub>
 
-  **注意:** `并非 Jev 本身`
+  **注意:** `并非 Jev 本身` · `仅一次提交`
 
 - **[jev-sift](https://github.com/kbhuw/jev-sift)**<br>
   先分类，再选择性阅读：可移植的批量文本分类插件与 MCP 工具。 <sub>(项目自述)</sub> <sub>(机翻)</sub><br>
@@ -1338,7 +1346,7 @@ _介绍模型或整个领域，而非单一模式。_
 <details>
 <summary><b>查看可搜索站点预览</b></summary>
 
-<a href="https://kydlikebtc.github.io/awesome-jev/?lang=zh"><img src="https://kydlikebtc.github.io/awesome-jev/img/site-zh.png?v=7ee8d291d8ed9917" alt="可搜索的 Jev 目录：精选路径、筛选排序、带日期的来源证据与条目卡片" width="760"></a>
+<a href="https://kydlikebtc.github.io/awesome-jev/?lang=zh"><img src="https://kydlikebtc.github.io/awesome-jev/img/site-zh.png?v=f4f5d9a3519daf0c" alt="可搜索的 Jev 目录：精选路径、筛选排序、带日期的来源证据与条目卡片" width="760"></a>
 
 <sub>点击条形即可筛选。另有两个视图：<a href="https://kydlikebtc.github.io/awesome-jev/?view=prims&lang=zh">三个原语</a> · <a href="https://kydlikebtc.github.io/awesome-jev/?view=compat&lang=zh">兼容性矩阵</a>。每个筛选条件和每个条目都是可分享的 URL。</sub>
 
@@ -1383,7 +1391,7 @@ _介绍模型或整个领域，而非单一模式。_
 | `仅影子运行` | 接进去了但故意不生效 —— 它返回的东西不会进入任何对用户可见的决策。 |
 | `需早期访问` | 需要通过等候名单才能运行。 |
 | `代码未实测` | 代码是读过的，没有实际运行。 |
-| `仅一次提交` | 只有一次提交，基本不会有维护。 |
+| `仅一次提交` | 每周刷新上次询问 GitHub 时，默认分支只有一次提交；此标记由每周刷新自动添加和移除。 |
 | `无许可证` | 没有 LICENSE 文件，不管 README 徽章怎么写。复用时这是硬障碍。 |
 | `需第三方密钥` | 需要 TypeSafe 之外某个服务的密钥。 |
 | `厂商自报数据` | 照搬厂商自测数据，不是独立实测。 |

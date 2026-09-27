@@ -340,7 +340,7 @@ def check_repository(row: dict, fields: frozenset[str], added: bool, net: Net | 
                 f"{STAR_SHARE:.0%} apart. Take the count from the API, not a badge.",
             ))
     if wants("flags"):
-        found, counted = single_commit(key, repo, flags, net)
+        found, counted = single_commit(key, repo, flags, net, known=fresh.get("commits"))
         if counted:
             compared.append("commit count")
         out += found
@@ -349,13 +349,20 @@ def check_repository(row: dict, fields: frozenset[str], added: bool, net: Net | 
     return out
 
 
-def single_commit(key: str, repo: str, flags: list, net: Net) -> tuple[list[Finding], bool]:
+def single_commit(
+    key: str, repo: str, flags: list, net: Net, *, known: object = None
+) -> tuple[list[Finding], bool]:
     """The finding, if any, and whether the commits were counted at all: an
-    uncounted repository must not be said to agree on its commit count."""
-    try:
-        count = net.commits(repo)
-    except RateLimited:
-        return [Finding(key, "skipped", "Commits not counted: GitHub rate limit.")], False
+    uncounted repository must not be said to agree on its commit count.
+    `known` is the count the facts already carry (refresh_metadata.fetch()
+    reads it since 2026-09-27); GitHub is asked again only without one."""
+    if isinstance(known, int) and not isinstance(known, bool):
+        count = known
+    else:
+        try:
+            count = net.commits(repo)
+        except RateLimited:
+            return [Finding(key, "skipped", "Commits not counted: GitHub rate limit.")], False
     if count == 1 and "single-commit" not in flags:
         return [Finding(
             key, "warning",

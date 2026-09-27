@@ -33,7 +33,7 @@ _把大量问题（包括推测性的）打包进一次请求，再由代码挑�
   <sub>`开源项目` · ★10+ · `TS` · `choice` · `noul`</sub>
 
 - **[jev-forge](https://github.com/zwliJay/jev-forge)** — 面向 Jev 式决策模型的开源训练与推理栈。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`Jev 替代实现` · ★10+ · zwlijay · `Py` · ⚠ `并非 Jev 本身`</sub>
+  <sub>`Jev 替代实现` · ★10+ · zwlijay · `Py` · ⚠ `并非 Jev 本身` `仅一次提交`</sub>
 
 - **[jev-sift](https://github.com/kbhuw/jev-sift)** — 先分类，再选择性阅读：可移植的批量文本分类插件与 MCP 工具。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`插件` · ★10+ · kbhuw · `JS` · ⚠ `无许可证`</sub>
@@ -87,10 +87,10 @@ _把大量问题（包括推测性的）打包进一次请求，再由代码挑�
   <sub>`SDK` · nsstudent · `Swift`</sub>
 
 - **[psearch](https://github.com/komikat/psearch)** — 给终端与智能体的并行网页搜索，带本地 Chromium 与 Jev 引导的探索。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`开源项目` · komikat · `Py`</sub>
+  <sub>`开源项目` · komikat · `Py` · ⚠ `仅一次提交`</sub>
 
 - **[snake-jev](https://github.com/siroccomask/snake-jev)** — 由并行 Jev 判断控制的贪吃蛇，每个游戏 tick 一次 API 调用。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`开源项目` · siroccomask · `Py`</sub>
+  <sub>`开源项目` · siroccomask · `Py` · ⚠ `仅一次提交`</sub>
 
 - **[sqlite-jev](https://github.com/mgaitan/sqlite-jev)** — 为 SQLite 提供批量的自然语言判断，由 TypeSafe Jev 驱动。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`插件` · mgaitan · `C` · ⚠ `无许可证`</sub>

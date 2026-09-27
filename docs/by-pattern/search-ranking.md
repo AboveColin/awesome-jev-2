@@ -51,7 +51,7 @@ Every catalogued example of this decision — 64 of them. The same rows, with ca
   <sub>`Project` · ★100+ · uehaj · `JS`</sub>
 
 - **[jev-shell-history](https://github.com/mrnugget/jev-shell-history)** — Fish-style zsh history autosuggestions, ranked by Jev rather than by recency.
-  <sub>`Project` · ★100+ · mrnugget · `TS` · ⚠ `no licence`</sub>
+  <sub>`Project` · ★100+ · mrnugget · `TS` · ⚠ `one commit` `no licence`</sub>
 
 - **[neo4jev](https://github.com/jexp/neo4jev)** — Puts Jev inside a knowledge graph traversal: at each node it decides which edge is most worth following.
   <sub>`Project` · ★100+ · `Py` · `choice`</sub>
@@ -114,7 +114,7 @@ Every catalogued example of this decision — 64 of them. The same rows, with ca
   <sub>`Plugin` · ★10+ · safzanpirani · `TS`</sub>
 
 - **[transcript-lens](https://github.com/sensahin/transcript-lens)** — Explore YouTube transcripts by meaning: a Turkish interface, analysis by Jev, subtitle export and a Vercel deploy recipe.
-  <sub>`Project` · ★10+ · sensahin · `TS`</sub>
+  <sub>`Project` · ★10+ · sensahin · `TS` · ⚠ `one commit`</sub>
 
 - **[warrenduffer](https://github.com/arimanyus/warrenduffer)** — AI-driven intraday trading bot for Indian stocks. Jev ranks the Nifty 50 every 15s; code sizes each trade and places the stop; orders go live through Zerodha Kite or Kotak Neo. Day replay, kill switch, daily loss halt, terminal dashboard. <sub>(upstream description)</sub>
   <sub>`Project` · ★10+ · arimanyus · `TS`</sub>
@@ -135,7 +135,7 @@ Every catalogued example of this decision — 64 of them. The same rows, with ca
   <sub>`Project` · glud123 · `JS`</sub>
 
 - **[jev-bfs](https://github.com/komikat/jev-bfs)** — Wikipedia link races with direct Jev ranking and a live terminal display. <sub>(upstream description)</sub>
-  <sub>`Project` · komikat · `Py`</sub>
+  <sub>`Project` · komikat · `Py` · ⚠ `one commit`</sub>
 
 - **[jev-engineering](https://github.com/eugeniughelbur/jev-engineering)** — The decision layer for AI agents. Typed, calibrated decisions in ~400ms for two hundredths of a cent: gate tool calls, route models, rank options. With the 300-call injection test that found what breaks.
   <sub>`Project` · eugeniughelbur · `Py`</sub>
@@ -192,7 +192,7 @@ Every catalogued example of this decision — 64 of them. The same rows, with ca
   <sub>`Project` · tonyzdev · `TS`</sub>
 
 - **[sift](https://github.com/tylergibbs1/sift)** — Chrome extension that re-ranks Google results with TypeSafe Jev and folds away sales pages and SEO filler. <sub>(upstream description)</sub>
-  <sub>`Plugin` · tylergibbs1 · `TS`</sub>
+  <sub>`Plugin` · tylergibbs1 · `TS` · ⚠ `one commit`</sub>
 
 - **[typesafe-as-a-judge](https://github.com/E-FL/typesafe-as-a-judge)** — Unofficial community MCP plugin for Codex and Claude Code using TypeSafe Jev for bounded routing, ranking, extraction, verification, and escalation <sub>(upstream description)</sub>
   <sub>`Plugin` · e-fl · `JS`</sub>

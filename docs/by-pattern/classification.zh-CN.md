@@ -138,7 +138,7 @@ _把条目归入分类体系，包括用概率遍历的深层层级。_
   <sub>`插件` · ★10+ · bohutang · `JS`</sub>
 
 - **[typesafe-adblock](https://github.com/realZachi/typesafe-adblock)** — 一个 Chrome 扩展，逐个询问 DOM 元素是不是广告。
-  <sub>`开源项目` · ★10+ · realzachi · `JS`</sub>
+  <sub>`开源项目` · ★10+ · realzachi · `JS` · ⚠ `仅一次提交`</sub>
 
 - **[wechat-jev-assistant](https://github.com/yushen100/wechat-jev-assistant)** — Windows 微信对话分析助手：本地读取、脱敏、TypeSafe Jev 判断与加密历史
   <sub>`开源项目` · ★10+ · yushen100 · `Py` · ⚠ `无许可证`</sub>
@@ -171,10 +171,10 @@ _把条目归入分类体系，包括用概率遍历的深层层级。_
   <sub>`插件` · prasanthj · `C++`</sub>
 
 - **[github-issue-classification-using-jev](https://github.com/KalyanM45/GitHub-Issue-Classification-Using-Jev)** — 基于 Jev 的 GitHub issue 分类器。 <sub>(机翻)</sub>
-  <sub>`开源项目` · kalyanm45 · `Py`</sub>
+  <sub>`开源项目` · kalyanm45 · `Py` · ⚠ `仅一次提交`</sub>
 
 - **[guard-jev](https://github.com/NorbertBodziony/guard-jev)** — 一个文本审核演示：一次 systemOne 调用并行检查七个 Noul 风险项和一个严重程度 Score，最终结论由代码按策略阈值计算。 <sub>(机翻)</sub>
-  <sub>`开源项目` · norbertbodziony · `TS` · ⚠ `无许可证`</sub>
+  <sub>`开源项目` · norbertbodziony · `TS` · ⚠ `仅一次提交` `无许可证`</sub>
 
 - **[himalaya-jev-mail-classify](https://github.com/initrd/himalaya-jev-mail-classify)** — 用语言模型给 Gmail 打标签、排优先级：通过 himalaya 读取邮件，用 Jev（TypeSafe）为每个会话分类。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`开源项目` · initrd · `Py`</sub>
@@ -186,7 +186,7 @@ _把条目归入分类体系，包括用概率遍历的深层层级。_
   <sub>`开源项目` · emreozyoruk · `JS`</sub>
 
 - **[Jev by Example](https://github.com/ReallyArtificial/jev-by-example)** — 十个可运行的 JavaScript 智能体决策，一个文件一个：新记忆与旧记忆冲突时该改还是该留、工具返回 200 是否真的完成了任务、写入超时后该重试还是该对账、上下文分块在预算内如何取舍、压缩后的交接是否丢掉了某条禁令。Jev 只回答带类型的问题，阈值和最终提案由普通代码决定。
-  <sub>`开源项目` · Really Artificial · `JS` · `choice` · `score` · `noul` · ⚠ `仅一次提交` `疑似 AI 生成`</sub>
+  <sub>`开源项目` · Really Artificial · `JS` · `choice` · `score` · `noul` · ⚠ `疑似 AI 生成`</sub>
 
 - **[jev-agent-skill](https://github.com/yuyang2230/jev-agent-skill)** — 给 AI 智能体的免费类型化判断：把分类／筛查／打分／校验卸载给 Jev。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`插件` · yuyang2230 · `Py`</sub>
@@ -210,7 +210,7 @@ _把条目归入分类体系，包括用概率遍历的深层层级。_
   <sub>`基准测试` · 4esv · `Py` · ⚠ `无许可证`</sub>
 
 - **[jev-eval](https://github.com/onlyoneaman/jev-eval)** — 在四个公开分类数据集上比较 TypeSafe 的 Jev 与两款 GPT 模型：案例、逐条答案、评分全部公开。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`基准测试` · onlyoneaman · `TS`</sub>
+  <sub>`基准测试` · onlyoneaman · `TS` · ⚠ `仅一次提交`</sub>
 
 - **[jev-for-engineers](https://github.com/Foadsf/jev-for-engineers)** — 八个最小可运行示例：把 Jev 用在机械与电气工程场景。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`开源项目` · foadsf · `Py`</sub>
@@ -243,7 +243,7 @@ _把条目归入分类体系，包括用概率遍历的深层层级。_
   <sub>`插件` · nexibeo · `JS`</sub>
 
 - **[jev-playwright-mcp](https://github.com/krw82/jev-playwright-mcp)** — Jev 增强的 Playwright MCP 代理：页面状态分拣与提示注入防护。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`插件` · krw82 · `TS`</sub>
+  <sub>`插件` · krw82 · `TS` · ⚠ `仅一次提交`</sub>
 
 - **[jev-pr-labeler](https://github.com/1jehuang/jev-pr-labeler)** — 用 Jev 的类型化决策给 GitHub PR 打语义标签，依据概念范围而不是改动行数。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`开源项目` · 1jehuang · `Py`</sub>
@@ -315,7 +315,7 @@ _把条目归入分类体系，包括用概率遍历的深层层级。_
   <sub>`开源项目` · khmuhtadin · `TS`</sub>
 
 - **[notiq](https://github.com/chengyongru/notiq)** — 原生 Android 通知过滤，用自然语言写规则，由 Jev 或自托管的 FastJev 驱动。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`开源项目` · chengyongru · `Kt` · ⚠ `无许可证`</sub>
+  <sub>`开源项目` · chengyongru · `Kt` · ⚠ `仅一次提交` `无许可证`</sub>
 
 - **[omp-jevens-classifier](https://github.com/STRML/omp-jevens-classifier)** — 给 OMP 的模型裁决式权限闸门。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`开源项目` · strml · `TS` · ⚠ `已归档`</sub>
@@ -327,7 +327,7 @@ _把条目归入分类体系，包括用概率遍历的深层层级。_
   <sub>`开源项目` · ashutoshvjti · `TS`</sub>
 
 - **[pulselane](https://github.com/ndolinschi/pulselane)** — PulseLane：诊所分诊决策。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`开源项目` · ndolinschi · `TS` · ⚠ `无许可证`</sub>
+  <sub>`开源项目` · ndolinschi · `TS` · ⚠ `仅一次提交` `无许可证`</sub>
 
 - **[tab-bouncer](https://github.com/MANISH007700/tab-bouncer)** — 一个关闭多余标签页的 Chrome 扩展，由 TypeSafe Jev 一次调用完成判断。告诉它你在做什么即可。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`插件` · manish007700 · `JS`</sub>
@@ -336,7 +336,7 @@ _把条目归入分类体系，包括用概率遍历的深层层级。_
   <sub>`开源项目` · m0rphtail · `Rs`</sub>
 
 - **[twitter-jev-guard](https://github.com/qs-lll/twitter-jev-guard)** — 使用 TypeSafe Jev 在 X/Twitter 时间线上识别低质量、垃圾和广告帖子，并在文字区域显示醒目的半透明水印。
-  <sub>`插件` · qs-lll · `JS` · ⚠ `无许可证`</sub>
+  <sub>`插件` · qs-lll · `JS` · ⚠ `仅一次提交` `无许可证`</sub>
 
 - **[typesafe-image-diffusion](https://github.com/Wizhill05/typesafe-image-diffusion)** — 用通用分类器做扩散风格像素画：256 个并行像素问题。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`开源项目` · wizhill05 · `TS` · ⚠ `无许可证`</sub>

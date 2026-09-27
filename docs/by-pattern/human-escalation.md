@@ -60,7 +60,7 @@ Every catalogued example of this decision — 67 of them. The same rows, with ca
   <sub>`Project` · ★10+ · smkrv · `TS`</sub>
 
 - **[jev-forge](https://github.com/zwliJay/jev-forge)** — An open training and inference stack for Jev-style decision models. Train models to score dynamic candidate branches from a shared prefix, with support for high-cardinality choice, calibration, and fast batched inference. <sub>(upstream description)</sub>
-  <sub>`Jev-like alternative` · ★10+ · zwlijay · `Py` · ⚠ `not Jev itself`</sub>
+  <sub>`Jev-like alternative` · ★10+ · zwlijay · `Py` · ⚠ `not Jev itself` `one commit`</sub>
 
 - **[jev-harness](https://github.com/AntonioCoppe/jev-harness)** — Decision harness for TypeSafe Jev — confidence gates, shadow mode, recipes, and evals. Claude CLI 48.9s → Jev 1.3s on the same row-filter job. <sub>(upstream description)</sub>
   <sub>`Project` · ★10+ · antoniocoppe · `TS`</sub>
@@ -81,7 +81,7 @@ Every catalogued example of this decision — 67 of them. The same rows, with ca
   <sub>`Plugin` · ★10+ · brainwires · `TS`</sub>
 
 - **[muse-jev-playbook](https://github.com/Bodila51/muse-jev-playbook)** — Jev decision layer for Muse: a fast, cheap TypeSafe AI gate before expensive agent work — confidence policy, recipes, reference router, honest measurement. <sub>(upstream description)</sub>
-  <sub>`Plugin` · ★10+ · bodila51 · `Py`</sub>
+  <sub>`Plugin` · ★10+ · bodila51 · `Py` · ⚠ `one commit`</sub>
 
 - **[assay-001](https://github.com/jourdanlabs/assay-001)** — ASSAY-001: independent, pre-registered verification of TypeSafe Jev's calibration and type-safety claims. Split verdict, published in full. <sub>(upstream description)</sub>
   <sub>`Project` · jourdanlabs · `Py` · ⚠ `no licence`</sub>
@@ -93,7 +93,7 @@ Every catalogued example of this decision — 67 of them. The same rows, with ca
   <sub>`Snippet` · `Py` · `choice` · ⚠ `code untested`</sub>
 
 - **[grok-jev-guard](https://github.com/0xwhrari/grok-jev-guard)** — A typed preflight and approval layer for Grok Bot: local policy owns the hard boundaries, Jev judges the ambiguous cases, and Grok Bot executes within the envelope it gets back.
-  <sub>`Project` · 0xwhrari · `Py`</sub>
+  <sub>`Project` · 0xwhrari · `Py` · ⚠ `one commit`</sub>
 
 - **[jev-asks-until-sure](https://github.com/mintannn/jev-asks-until-sure)** — A twenty-questions guesser that keeps asking until Jev's calibrated confidence crosses a threshold — or gives up and says so <sub>(upstream description)</sub>
   <sub>`Project` · mintannn · `TS`</sub>
@@ -102,7 +102,7 @@ Every catalogued example of this decision — 67 of them. The same rows, with ca
   <sub>`Project` · ufec · `Kt`</sub>
 
 - **[jev-calibration-audit](https://github.com/jujumilk3/jev-calibration-audit)** — Independent API-only calibration audit of TypeSafe AI's Jev decision model <sub>(upstream description)</sub>
-  <sub>`Benchmark` · jujumilk3 · `Py`</sub>
+  <sub>`Benchmark` · jujumilk3 · `Py` · ⚠ `one commit`</sub>
 
 - **[jev-dspy-lab](https://github.com/jmanhype/jev-dspy-lab)** — Reproducible calibration and selective-risk benchmarks for Jev/TypeSafe decisions in DSPy workflows <sub>(upstream description)</sub>
   <sub>`Benchmark` · jmanhype · `Py`</sub>
@@ -192,7 +192,7 @@ Every catalogued example of this decision — 67 of them. The same rows, with ca
   <sub>`Plugin` · riskaversetech · `TS`</sub>
 
 - **[toolgate](https://github.com/ndolinschi/toolgate)** — Agent tool/MCP call gate — allow / ask_human / deny via TypeSafe Jev <sub>(upstream description)</sub>
-  <sub>`Plugin` · ndolinschi · `TS` · ⚠ `no licence`</sub>
+  <sub>`Plugin` · ndolinschi · `TS` · ⚠ `one commit` `no licence`</sub>
 
 - **[typed-decisions](https://github.com/kotoba-lang/typed-decisions)** — Jev-shaped typed-decision model (state + Choice/Score/Noul questions -> calibrated probabilities, one pass) on ModernBERT / DeBERTa / LLaDA-MoE, with measured latency, accuracy, calibration and training cost <sub>(upstream description)</sub>
   <sub>`Project` · kotoba-lang · `Py`</sub>

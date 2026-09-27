@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import {
   compareEntries, evidenceKind, evidenceUrl, matchesEntry, verification, isIndependentReport, EVIDENCE_KINDS,
   queryFromState, shareUrl, stateFromQuery, TOGGLES, VIEWS, SUMMARY_SOURCES, MARKED_SOURCES, summaryMarks,
-  UNINDEXED_KINDS, notIndexedByPattern, PRIMITIVES, primitiveLayers,
+  UNINDEXED_KINDS, notIndexedByPattern, PRIMITIVES, primitiveLayers, repositoryFacts,
 } from "../site/catalog-core.mjs";
 import { readFileSync } from "node:fs";
 
@@ -34,6 +34,24 @@ test("a summary in the project's own words is marked, and Chinese says when a mo
   assert.deepEqual(summaryMarks(row("bare"), "zh"), []);
   assert.deepEqual(summaryMarks(row("odd", {summary_source: "toString", zh_machine: "yes"}), "zh"), []);
   assert.deepEqual(MARKED_SOURCES, SUMMARY_SOURCES.slice(1));
+});
+
+test("GitHub's repository facts are shown as recorded days and a count, never an age", () => {
+  const facts = repositoryFacts(row("gh", {
+    repo_created_at: "2026-09-17T07:03:00Z", repo_pushed_at: "2026-09-17T23:59:59Z", repo_commits: 1,
+  }));
+  assert.deepEqual(facts, {created: "2026-09-17", pushed: "2026-09-17", commits: 1});
+  assert.deepEqual(repositoryFacts(row("none")), {created: null, pushed: null, commits: null});
+  // Not GitHub's form: absent, not guessed at.
+  const odd = repositoryFacts(row("odd", {repo_created_at: "2026-09-17", repo_pushed_at: 20260917, repo_commits: 0}));
+  assert.deepEqual(odd, {created: null, pushed: null, commits: null});
+  assert.equal(repositoryFacts(row("str", {repo_commits: "3"})).commits, null);
+  // The schema's field names and timestamp form are the ones read here.
+  const schema = JSON.parse(readFileSync(new URL("../schema/entry.schema.json", import.meta.url)));
+  for (const field of ["repo_created_at", "repo_pushed_at"]) {
+    assert.equal(schema.properties[field].pattern, "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$");
+  }
+  assert.equal(schema.properties.repo_commits.type, "integer");
 });
 
 test("a text signal about a primitive never becomes a person's reading of it", () => {

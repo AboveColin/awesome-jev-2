@@ -36,6 +36,7 @@ import sys
 import threading
 import time
 import urllib.error
+import urllib.parse
 import urllib.request
 from collections import Counter
 from dataclasses import dataclass
@@ -304,16 +305,42 @@ def _headers(accept: str | None = "application/vnd.github+json") -> dict[str, st
     }
 
 
-def api_fetch(path: str) -> tuple[int, dict | list | None]:
-    """(HTTP status, parsed JSON body) for a GET on an API path; status 0 means
-    no answer (timeout, reset connection). Raises RateLimited."""
+def api_response(path: str) -> tuple[int, dict | list | None, object]:
+    """(HTTP status, parsed JSON body, response headers) for a GET on an API
+    path; status 0 means no answer (timeout, reset connection) and headers are
+    then None. Raises RateLimited. For a caller that needs a header, such as
+    the `Link` header that says how many pages a list has."""
     req = urllib.request.Request(f"{API}{path}", headers=_headers())
-    status, body, _ = _request(req, "search" if path.startswith("/search/") else "core")
+    status, body, head = _request(req, "search" if path.startswith("/search/") else "core")
     try:
         data = json.loads(body) if body else None
     except ValueError:
         data = None
+    return status, data, head
+
+
+def api_fetch(path: str) -> tuple[int, dict | list | None]:
+    """(HTTP status, parsed JSON body) for a GET on an API path; status 0 means
+    no answer (timeout, reset connection). Raises RateLimited."""
+    status, data, _ = api_response(path)
     return status, data
+
+
+LAST_PAGE = re.compile(r'<([^>]*)>\s*;\s*rel="last"')
+
+
+def last_page(link: str | None) -> int | None:
+    """The page number of the `rel="last"` link in a `Link` header, or None
+    when there is none (the whole list fitted on one page) or it names no
+    page. With `per_page=1` that is the number of items in the list: how
+    GitHub's REST API says how many commits a branch has without listing them."""
+    match = LAST_PAGE.search(link or "")
+    if not match:
+        return None
+    query = urllib.parse.urlsplit(match.group(1)).query
+    pages = urllib.parse.parse_qs(query).get("page") or []
+    number = _int(pages[-1]) if pages else None
+    return number if number is not None and number > 0 else None
 
 
 def api_get(path: str) -> dict | list | None:

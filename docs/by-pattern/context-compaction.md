@@ -54,7 +54,7 @@ Every catalogued example of this decision — 34 of them. The same rows, with ca
   <sub>`Plugin` · leonaaardob · `TS`</sub>
 
 - **[Jev by Example](https://github.com/ReallyArtificial/jev-by-example)** — Ten runnable JavaScript agent decisions, one file each: reconciling a new memory against a stored one, gating whether an HTTP 200 really satisfied the task, retry vs. reconcile after an uncertain write, scoring context against a budget, checking a handoff for dropped prohibitions.
-  <sub>`Project` · Really Artificial · `JS` · `choice` · `score` · `noul` · ⚠ `one commit` `AI-written`</sub>
+  <sub>`Project` · Really Artificial · `JS` · `choice` · `score` · `noul` · ⚠ `AI-written`</sub>
 
 - **[jev-compact](https://github.com/fatelei/jev-compact)** — Jev-scored context compaction for OpenAI Codex CLI — scores every tool call before compaction and restores critical tool outputs verbatim after it <sub>(upstream description)</sub>
   <sub>`Plugin` · fatelei · `TS`</sub>
@@ -108,7 +108,7 @@ Every catalogued example of this decision — 34 of them. The same rows, with ca
   <sub>`Plugin` · shashank-h · `TS`</sub>
 
 - **[smoking-extraction-benchmark](https://github.com/vclic/smoking-extraction-benchmark)** — Synthetic smoking-history extraction benchmark comparing TypeSafe Jev and OpenAI structured outputs, with reproducible accuracy, cost, and latency results. <sub>(upstream description)</sub>
-  <sub>`Benchmark` · vclic · `Py` · ⚠ `no licence`</sub>
+  <sub>`Benchmark` · vclic · `Py` · ⚠ `one commit` `no licence`</sub>
 
 ---
 

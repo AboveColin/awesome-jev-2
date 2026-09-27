@@ -105,7 +105,7 @@ Every catalogued example of this decision — 134 of them. The same rows, with c
   <sub>`Project` · ★10+ · choxos · `JS`</sub>
 
 - **[jev-security-scan](https://github.com/win4r/jev-security-scan)** — 使用 TypeSafe Jev 审查 Skill 与 MCP 可疑行为 \| Review Agent Skills and MCP code with Jev, static evidence, and explicit coverage gaps <sub>(upstream description)</sub>
-  <sub>`Plugin` · ★10+ · win4r · `Py`</sub>
+  <sub>`Plugin` · ★10+ · win4r · `Py` · ⚠ `one commit`</sub>
 
 - **[jev-suite](https://github.com/klauswg/jev-suite)** — Four decision-quality tools on Jev (TypeSafe System One): Jev answers structured questions, deterministic code keeps the final say. <sub>(upstream description)</sub>
   <sub>`Project` · ★10+ · klauswg · `Java`</sub>
@@ -141,7 +141,7 @@ Every catalogued example of this decision — 134 of them. The same rows, with c
   <sub>`Project` · ripwords · `TS` · ⚠ `no licence`</sub>
 
 - **[agent-handoff-gate](https://github.com/zsoXi/agent-handoff-gate)** — An experimental protocol for evidence-aware agent handoffs, bounded worker continuation, and TypeSafe/Jev-assisted review, with reproducible evaluation. <sub>(upstream description)</sub>
-  <sub>`Benchmark` · zsoxi · `Py`</sub>
+  <sub>`Benchmark` · zsoxi · `Py` · ⚠ `one commit`</sub>
 
 - **[assay-001](https://github.com/jourdanlabs/assay-001)** — ASSAY-001: independent, pre-registered verification of TypeSafe Jev's calibration and type-safety claims. Split verdict, published in full. <sub>(upstream description)</sub>
   <sub>`Project` · jourdanlabs · `Py` · ⚠ `no licence`</sub>
@@ -177,7 +177,7 @@ Every catalogued example of this decision — 134 of them. The same rows, with c
   <sub>`Project` · tom-r-main · `Py`</sub>
 
 - **[hermes-jev-plugin](https://github.com/ajensenwaud/hermes-jev-plugin)** — TypeSafe Jev (System One) decision tools for Hermes Agent: jev_check / jev_route / jev_score / jev_evaluate <sub>(upstream description)</sub>
-  <sub>`Plugin` · ajensenwaud · `Py`</sub>
+  <sub>`Plugin` · ajensenwaud · `Py` · ⚠ `one commit`</sub>
 
 - **[human-compiler](https://github.com/asfarsadewa/human-compiler)** — A compiler for human language. Paste text, get diagnostics. Measured by TypeSafe Jev. <sub>(upstream description)</sub>
   <sub>`Project` · asfarsadewa · `TS`</sub>
@@ -189,7 +189,7 @@ Every catalogued example of this decision — 134 of them. The same rows, with c
   <sub>`Project` · jackalope-dev · `Rs`</sub>
 
 - **[Jev by Example](https://github.com/ReallyArtificial/jev-by-example)** — Ten runnable JavaScript agent decisions, one file each: reconciling a new memory against a stored one, gating whether an HTTP 200 really satisfied the task, retry vs. reconcile after an uncertain write, scoring context against a budget, checking a handoff for dropped prohibitions.
-  <sub>`Project` · Really Artificial · `JS` · `choice` · `score` · `noul` · ⚠ `one commit` `AI-written`</sub>
+  <sub>`Project` · Really Artificial · `JS` · `choice` · `score` · `noul` · ⚠ `AI-written`</sub>
 
 - **[jev-agent-skill](https://github.com/yuyang2230/jev-agent-skill)** — Free typed judgments for AI agents: offload classify/screen/score/verify to Jev (TypeSafe System One) via OpenCode Zen. Claude Code / ZCode skill. 给AI代理省token的免费决策分流技能 <sub>(upstream description)</sub>
   <sub>`Plugin` · yuyang2230 · `Py`</sub>
@@ -243,7 +243,7 @@ Every catalogued example of this decision — 134 of them. The same rows, with c
   <sub>`Plugin` · rashedint32 · `JS`</sub>
 
 - **[jev-guard](https://github.com/muratcakmak/jev-guard)** — Probability-scored guardrails for Claude Code: deny rule-breaking edits and unasked-for deploys, route your docs into each prompt, and check the final answer against the turn's own evidence. <sub>(upstream description)</sub>
-  <sub>`Plugin` · muratcakmak · `TS`</sub>
+  <sub>`Plugin` · muratcakmak · `TS` · ⚠ `one commit`</sub>
 
 - **[jev-labs](https://github.com/copyleftdev/jev-labs)** — Never confidently wrong: a TLA+-verified consensus kernel around TypeSafe's Jev, run through 1,680 chaos-tested pharmacy decisions with zero wrong verdicts. Film, code, and every captured call. <sub>(upstream description)</sub>
   <sub>`Project` · copyleftdev · `Py`</sub>
@@ -303,10 +303,10 @@ Every catalogued example of this decision — 134 of them. The same rows, with c
   <sub>`Project` · tech-byte-frontier · `Rs`</sub>
 
 - **[jevguard](https://github.com/Jhonnyr97/JevGuard)** — Claude Code + Codex CLI plugin that verifies the agent follows project rules through a System One (Jev) model <sub>(upstream description)</sub>
-  <sub>`Plugin` · jhonnyr97 · `TS`</sub>
+  <sub>`Plugin` · jhonnyr97 · `TS` · ⚠ `one commit`</sub>
 
 - **[jevibe-check](https://github.com/sriganesh/jevibe-check)** — A live tone labeler for Bluesky posts and drafts, using TypeSafe's Jev API. <sub>(upstream description)</sub>
-  <sub>`Project` · sriganesh · `JS`</sub>
+  <sub>`Project` · sriganesh · `JS` · ⚠ `one commit`</sub>
 
 - **[jevkit](https://github.com/ariel-frischer/jevkit)** — Fast Rust CLI for TypeSafe Jev: typed decisions, offline linting before you pay <sub>(upstream description)</sub>
   <sub>`Project` · ariel-frischer · `Rs`</sub>
@@ -318,7 +318,7 @@ Every catalogued example of this decision — 134 of them. The same rows, with c
   <sub>`Project` · unownone · `TS` · ⚠ `no licence`</sub>
 
 - **[JevTest](https://github.com/CorieW/JevTest)** — Bounded exploratory browser testing with Jev, deterministic assertions, and replayable evidence. <sub>(upstream description)</sub>
-  <sub>`Project` · coriew · `TS` · ⚠ `no licence`</sub>
+  <sub>`Project` · coriew · `TS` · ⚠ `one commit` `no licence`</sub>
 
 - **[jevtest](https://github.com/realZachi/jevtest)** — Semantic test matchers for Vitest and Jest, powered by TypeSafe's Jev model. Write expectations in plain English, get calibrated probabilities back. <sub>(upstream description)</sub>
   <sub>`SDK` · realzachi · `TS`</sub>
@@ -354,7 +354,7 @@ Every catalogued example of this decision — 134 of them. The same rows, with c
   <sub>`Project` · kamilpostrozny · `TS`</sub>
 
 - **[plotveil](https://github.com/Dearest/plotveil)** — A quiet spoiler blocker for YouTube comments. One typed Jev (TypeSafe System One) Noul decision per comment; covered while checked, still covered if the check fails. <sub>(upstream description)</sub>
-  <sub>`Project` · dearest · `TS`</sub>
+  <sub>`Project` · dearest · `TS` · ⚠ `one commit`</sub>
 
 - **[profanity-checker](https://github.com/4rays/profanity-checker)** — Cloudflare Worker to check for profanity using TypeSafe Jev <sub>(upstream description)</sub>
   <sub>`Project` · 4rays · `TS`</sub>
@@ -369,7 +369,7 @@ Every catalogued example of this decision — 134 of them. The same rows, with c
   <sub>`SDK` · mondaychen · `TS`</sub>
 
 - **[stepwarden](https://github.com/getexcited/stepwarden)** — Every tool call your agent makes, checked before it runs. A Claude Code plugin that uses TypeSafe AI's Jev to verify each pending tool call against the session plan, then allows it, asks you, or blocks it. Proof of concept <sub>(upstream description)</sub>
-  <sub>`Plugin` · getexcited · `TS`</sub>
+  <sub>`Plugin` · getexcited · `TS` · ⚠ `one commit`</sub>
 
 - **[system-one-playground](https://github.com/DonaldMurillo/system-one-playground)** — Readable scripting, semantic code checks, a Go System One client, and Studio. <sub>(upstream description)</sub>
   <sub>`Project` · donaldmurillo · `Go`</sub>

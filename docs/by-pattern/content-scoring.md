@@ -57,7 +57,7 @@ Every catalogued example of this decision — 164 of them. The same rows, with c
   <sub>`Project` · ★100+ · supercorp-ai · `Rs`</sub>
 
 - **[hookmeter-jev](https://github.com/ehui1226/hookmeter-jev)** — ⚡ Millisecond-level Viral Hook Telemetry & Co-pilot for Social Media (Chrome Extension + JEV System 1) <sub>(upstream description)</sub>
-  <sub>`Plugin` · ★10+ · ehui1226 · `Py`</sub>
+  <sub>`Plugin` · ★10+ · ehui1226 · `Py` · ⚠ `one commit`</sub>
 
 - **[jev-as-a-judge](https://github.com/danielgshea/jev-as-a-judge)** — Using Jev as an evaluator. <sub>(upstream description)</sub>
   <sub>`Project` · ★10+ · danielgshea · `Py` · ⚠ `no licence`</sub>
@@ -78,7 +78,7 @@ Every catalogued example of this decision — 164 of them. The same rows, with c
   <sub>`Project` · ★10+ · qew7 · `Rb`</sub>
 
 - **[jev-forge](https://github.com/zwliJay/jev-forge)** — An open training and inference stack for Jev-style decision models. Train models to score dynamic candidate branches from a shared prefix, with support for high-cardinality choice, calibration, and fast batched inference. <sub>(upstream description)</sub>
-  <sub>`Jev-like alternative` · ★10+ · zwlijay · `Py` · ⚠ `not Jev itself`</sub>
+  <sub>`Jev-like alternative` · ★10+ · zwlijay · `Py` · ⚠ `not Jev itself` `one commit`</sub>
 
 - **[jev-lint](https://github.com/mizchi/jev-lint)** — lint text in code by jev scorerer <sub>(upstream description)</sub>
   <sub>`Project` · ★10+ · mizchi · `TS`</sub>
@@ -159,7 +159,7 @@ Every catalogued example of this decision — 164 of them. The same rows, with c
   <sub>`Tutorial` · Flavio Copes · `JS` · `Py` · `TS` · `choice` · `score` · `noul`</sub>
 
 - **[a0-typesafe-ai](https://github.com/3clyp50/a0-typesafe-ai)** — TypeSafe AI Jev judgments for Agent Zero, with typed tools and probability cards. <sub>(upstream description)</sub>
-  <sub>`Project` · 3clyp50 · `Py`</sub>
+  <sub>`Project` · 3clyp50 · `Py` · ⚠ `one commit`</sub>
 
 - **[ai-provider-for-jev](https://github.com/soderlind/ai-provider-for-jev)** — Connect WordPress to TypeSafe's Jev System One model for structured decisions (choice, score, noul). <sub>(upstream description)</sub>
   <sub>`Integration` · soderlind · `PHP` · ⚠ `no licence`</sub>
@@ -189,7 +189,7 @@ Every catalogued example of this decision — 164 of them. The same rows, with c
   <sub>`Plugin` · vladyslavhontar · `Py`</sub>
 
 - **[decide-mcp](https://github.com/dakdevs/decide-mcp)** — Configurable decision MCP server with AI SDK, Jev, percentage scores, and bias profile routing <sub>(upstream description)</sub>
-  <sub>`SDK` · dakdevs · `TS`</sub>
+  <sub>`SDK` · dakdevs · `TS` · ⚠ `one commit`</sub>
 
 - **[decision-first](https://github.com/harrymunro/decision-first)** — Agent skill that spots bounded-judgment steps, tries a typed decision model (TypeSafe's Jev) first, and documents every attempt <sub>(upstream description)</sub>
   <sub>`Plugin` · harrymunro · `Py`</sub>
@@ -213,13 +213,13 @@ Every catalogued example of this decision — 164 of them. The same rows, with c
   <sub>`Benchmark` · xienda · `JS`</sub>
 
 - **[github-issue-classification-using-jev](https://github.com/KalyanM45/GitHub-Issue-Classification-Using-Jev)** — This repository contains a GitHub issue classifier built on Jev, TypeSafe AI's System One model. It labels every new issue with typed values and calibrated confidence in milliseconds, labelling what it is sure about and escalating what it is not. Three guardrail layers guard every write, and a
-  <sub>`Project` · kalyanm45 · `Py`</sub>
+  <sub>`Project` · kalyanm45 · `Py` · ⚠ `one commit`</sub>
 
 - **[gpt-vs-jev](https://github.com/TanayPadar/gpt-vs-jev)** — Compare GPT generated language with JEV structured Noul decisions on the same input. <sub>(upstream description)</sub>
-  <sub>`Project` · tanaypadar · `TS`</sub>
+  <sub>`Project` · tanaypadar · `TS` · ⚠ `one commit`</sub>
 
 - **[harnessjudge](https://github.com/ndolinschi/harnessjudge)** — Judge agent steps — ok / retry / escalate / stop via TypeSafe Jev <sub>(upstream description)</sub>
-  <sub>`Project` · ndolinschi · `TS` · ⚠ `no licence`</sub>
+  <sub>`Project` · ndolinschi · `TS` · ⚠ `one commit` `no licence`</sub>
 
 - **[heist-one](https://github.com/AbdelStark/heist-one)** — Observable browser stealth game: Jev makes typed guard judgments while deterministic code owns the world. <sub>(upstream description)</sub>
   <sub>`Project` · abdelstark · `TS`</sub>
@@ -237,7 +237,7 @@ Every catalogued example of this decision — 164 of them. The same rows, with c
   <sub>`Project` · mintannn · `TS`</sub>
 
 - **[jev-builder-loop](https://github.com/rainbowpuffpuff/jev-builder-loop)** — Grok skill: Jev as a judgment sensor in a builder-agent loop (priors × probabilities → next act) <sub>(upstream description)</sub>
-  <sub>`Plugin` · rainbowpuffpuff · `Py`</sub>
+  <sub>`Plugin` · rainbowpuffpuff · `Py` · ⚠ `one commit`</sub>
 
 - **[jev-carryforward](https://github.com/Dharundp6/jev-carryforward)** — What your last session knew, scored against what this one is doing. MCP server: a per-project ledger written as things happen, recalled per task with TypeSafe's Jev evaluation model via Vercel AI Gateway. <sub>(upstream description)</sub>
   <sub>`Plugin` · dharundp6 · `TS`</sub>
@@ -264,7 +264,7 @@ Every catalogued example of this decision — 164 of them. The same rows, with c
   <sub>`Project` · microchipgnu · `TS` · ⚠ `no licence`</sub>
 
 - **[jev-judgment](https://github.com/HyunjunJeon/jev-judgment)** — Agent Skill: send closed coding-agent judgments to TypeSafe Jev <sub>(upstream description)</sub>
-  <sub>`Plugin` · hyunjunjeon · `Py`</sub>
+  <sub>`Plugin` · hyunjunjeon · `Py` · ⚠ `one commit`</sub>
 
 - **[jev-llm-router-benchmark](https://github.com/erendikmenn/jev-llm-router-benchmark)** — Benchmark-driven Jev router and judge for cost-aware, reliable LLM coding workflows <sub>(upstream description)</sub>
   <sub>`Benchmark` · erendikmenn · `Py`</sub>
@@ -330,10 +330,10 @@ Every catalogued example of this decision — 164 of them. The same rows, with c
   <sub>`Plugin` · molis-ai · `TS`</sub>
 
 - **[jev-wrapped](https://github.com/gaborishka/jev-wrapped)** — Telegram channel X-ray: Jev judges a year of posts, you get a card. One Cloudflare Worker. <sub>(upstream description)</sub>
-  <sub>`Project` · gaborishka · `JS`</sub>
+  <sub>`Project` · gaborishka · `JS` · ⚠ `one commit`</sub>
 
 - **[jevaluate](https://github.com/ElshinQ/jevaluate)** — Jevaluate: evaluate before you trust. Field notes, runnable scripts and an agent skill for TypeSafe Jev: gated evals, a browser loop, a product walk with DeepSeek vision, a UI text judge and a first-click tree test. Co-authored with Claude Fable 5.1. <sub>(upstream description)</sub>
-  <sub>`Plugin` · elshinq · `JS`</sub>
+  <sub>`Plugin` · elshinq · `JS` · ⚠ `one commit`</sub>
 
 - **[jevbus](https://github.com/zkjoie/jevbus)** — A streaming event bus whose routing, subscription and consumption are decided by a probabilistic judge. The reference judge is TypeSafe AI's Jev (System One) model: send it a payload and a set of typed questions, get back calibrated probabilities instead of prose. <sub>(upstream description)</sub>
   <sub>`Project` · zkjoie · `Rs`</sub>
@@ -354,7 +354,7 @@ Every catalogued example of this decision — 164 of them. The same rows, with c
   <sub>`Project` · romiluz13 · `Py`</sub>
 
 - **[jevplay](https://github.com/ndolinschi/jevplay)** — TypeSafe Jev playground — custom Choice/Score/Noul builder with live distributions <sub>(upstream description)</sub>
-  <sub>`Project` · ndolinschi · `TS` · ⚠ `no licence`</sub>
+  <sub>`Project` · ndolinschi · `TS` · ⚠ `one commit` `no licence`</sub>
 
 - **[JevPromptCoach](https://github.com/CrowdLinker/JevPromptCoach)** — Claude Code plugin that scores how well you prompt a coding agent, and shows whether your habits are improving. Runs on TypeSafe's Jev model. Zero added latency. <sub>(upstream description)</sub>
   <sub>`Plugin` · crowdlinker · `TS`</sub>
@@ -432,13 +432,13 @@ Every catalogued example of this decision — 164 of them. The same rows, with c
   <sub>`Project` · cpaczek · `TS`</sub>
 
 - **[shady-town](https://github.com/tpaulshippy/shady-town)** — Shady Town: social-deduction party game for the living room TV, moderated by TypeSafe Jev <sub>(upstream description)</sub>
-  <sub>`Project` · tpaulshippy · `Rb` · ⚠ `no licence`</sub>
+  <sub>`Project` · tpaulshippy · `Rb` · ⚠ `one commit` `no licence`</sub>
 
 - **[sloppy-jevs-extension](https://github.com/neddes/sloppy-jevs-extension)** — Open-source Chrome extension that filters AI-generated prose and ads with Jev <sub>(upstream description)</sub>
   <sub>`Plugin` · neddes · `JS`</sub>
 
 - **[spendbrake](https://github.com/ndolinschi/spendbrake)** — Agent budget brake — continue / downgrade_model / stop via TypeSafe Jev <sub>(upstream description)</sub>
-  <sub>`Project` · ndolinschi · `TS` · ⚠ `no licence`</sub>
+  <sub>`Project` · ndolinschi · `TS` · ⚠ `one commit` `no licence`</sub>
 
 - **[system-one-gemma](https://github.com/akash-kamat/system-one-gemma)** — Open-source Jev-style System One decision model. Gemma 3 270M with a scoring head — fast, calibrated decisions in a single forward pass. No text generation. Inspired by TypeSafe.ai's Jev. <sub>(upstream description)</sub>
   <sub>`Jev-like alternative` · akash-kamat · `Py` · ⚠ `not Jev itself` `no licence`</sub>
@@ -465,7 +465,7 @@ Every catalogued example of this decision — 164 of them. The same rows, with c
   <sub>`Project` · y0usaf · `TS`</sub>
 
 - **[typesafe-demo-mcp](https://github.com/bestagentkits/typesafe-demo-mcp)** — MCP server exposing TypeSafe System One judgments (noul, choice, score) as agent tools <sub>(upstream description)</sub>
-  <sub>`Plugin` · bestagentkits · `TS` · ⚠ `no licence`</sub>
+  <sub>`Plugin` · bestagentkits · `TS` · ⚠ `one commit` `no licence`</sub>
 
 - **[typesafe-jev](https://github.com/gtaras7/typesafe-jev)** — Screen a folder of CVs with the TypeSafe Jev decision model: typed judgments, an editable policy, free re-scoring. <sub>(upstream description)</sub>
   <sub>`Project` · gtaras7 · `TS`</sub>
@@ -495,7 +495,7 @@ Every catalogued example of this decision — 164 of them. The same rows, with c
   <sub>`Project` · jexp · `Py` · ⚠ `no licence`</sub>
 
 - **[zcode-jev](https://github.com/Zahrannnn/zcode-jev)** — Typed judgment layer for coding agents — gates from PRD to ship. Jev-ready, provider-agnostic. <sub>(upstream description)</sub>
-  <sub>`Integration` · zahrannnn · `TS` · ⚠ `no licence`</sub>
+  <sub>`Integration` · zahrannnn · `TS` · ⚠ `one commit` `no licence`</sub>
 
 - **[jevai.org community showcase cases](https://www.jevai.org/cases)** — Nine worked community scenarios: intent routing, invoice classification, news filtering, product tagging, moderation, claim verification, CSV validation and more.
   <sub>`Project` · ⚠ `unverified claims`</sub>

@@ -17,7 +17,10 @@ is weakest. If you want to reproduce or audit it, this is the page.
    actual calling file was read to confirm which primitives are used. This is
    where README descriptions and reality diverge most often.
 4. **Verify repository metadata from the API.** Stars, licence, creation date and
-   last push came from the GitHub API on 2026-09-22, not from badges.
+   last push came from the GitHub API on 2026-09-22, not from badges. Only
+   stars and licence were stored in the rows then; creation date and last push
+   are stored since 2026-09-27, re-read every week (see *Why a status code is
+   not a verdict*).
 5. **Reject aggressively.** See "What was excluded".
 6. **Write both summaries by hand**, English and Chinese, from what the page
    actually said.
@@ -480,6 +483,44 @@ to `catalog.json`, because the site it shows sorts by the exact count.
 of the catalogue, runs every generator, and requires every generated file to
 come out the same except that link.
 
+Since 2026-09-27, the weekly refresh also records three facts GitHub states
+about each row's repository, as it states them: `repo_created_at` and
+`repo_pushed_at` (GitHub's `created_at` and `pushed_at`, UTC timestamps to the
+second) and `repo_commits`, the default branch's commit count. Step 4 of the
+pipeline above said creation dates and last pushes came from the API at the
+first build; no field held them, so nothing a reader could see showed them, and
+`single-commit` sat on two rows while nothing counted commits. The GraphQL
+query now also asks for `createdAt`, `pushedAt` and the default
+branch's `history.totalCount`; a row it leaves is read over REST, where the
+count is the page number of the `rel="last"` link when asking for one commit
+per page. Counting histories made a query of a hundred repositories take 9 to
+10 seconds, at GitHub's 10-second limit for a GraphQL request, so a query now
+asks about fifty (4.5 s on average, under 7 s at most that day). `--compare` read 101
+rows and then 45 more (every ★10k+ row, every archived or single-commit row,
+the eleven rows of one account whose repositories each hold one commit, and
+one more such row) both ways: dates and counts agreed on every one. The first
+run, with `--only-field repo_created_at --only-field repo_pushed_at
+--only-field repo_commits` (those three fields and the `single-commit` flag,
+which goes with the count, and nothing else), recorded them on 1,134 of the
+1,136 rows with a GitHub repository (two did not resolve) in 23 GraphQL and 2
+REST requests. 91 default branches had one commit: 90 rows gained `single-commit`,
+and one lost it (jev-by-example, which has three now). None of the 91 has a
+four-figure star count; the most-starred has 379. Every recorded last push
+fell in September 2026; 1,036 of the repositories were created that month,
+53 earlier in 2026 and 45 before it. From now on `single-commit` follows
+`repo_commits` both ways, as `archived` follows GitHub's flag, and lint requires
+the two to agree wherever a count is recorded; it needs no `notes` line, and its
+description now states the count instead of guessing that maintenance is
+unlikely. The digest counts a moved last push or commit count like a star count
+and lists a flag that changed; a creation date that changes is listed too,
+since GitHub keeps it through renames and transfers. None of the three is a
+verdict: nothing derives "stale" or "maintained" from them, and
+[vetting.md](vetting.md) still asks the reader to judge upkeep. The site's
+entry details and the MCP server's rows show them; `docs/status.md` counts rows
+per calendar month of the last push, absolute months rather than an age. The
+READMEs and pattern pages do not print them: a last push moves every week, and
+printing it would bring back the weekly rewrite the star bands above removed.
+
 ## Field precedence
 
 When sources disagree:
@@ -666,7 +707,7 @@ catalogue passed 800, and no build ever went red.
 | The repository description | When the count crosses a hundred, or the wording changes | Only an admin can edit it, so it states the count floored to the hundred: `_stats.pitch_public()`, the same sentence as the site's `description` and `og:description`. The `description` workflow compares the whole sentence on every push to `main`; on drift it warns and keeps one open issue, labelled `description`, holding the exact `gh repo edit` command, instead of failing a build nobody but an admin can fix. `lint` prints the would-be sentence on every run, pull requests included. Every other surface — the READMEs, `status.md`, `llms.txt`, the figures — carries the exact count. |
 | Labels for patterns, kinds and flags | When the taxonomy changes | One copy each, in `patterns.json` and `taxonomy.json`, read by the README generators and by the site at runtime. `lint` checks both against the schema; `lint_docs` checks `docs/patterns.md` has a section for each pattern. |
 | Model strings and limits | When the vendor or a gateway ships | One source, `compat.json`. `lint_docs` checks every copy — in docs, examples, and the generated README and figures — against it. `claims` re-reads each platform's documentation weekly and opens an issue if a recorded string disappears. |
-| Link status, stars, licences, archive status, whether a summary is the repository's own description | Continuously, upstream | `metadata` weekly: stamps every link that answers, re-reads the GitHub API, rebuilds everything generated, commits it, runs `lint`'s checks on that commit (`check.py --ci --quick`: all but the preview images, which `pages` renders), pushes to `main`, and redeploys the site. It opens an issue only for a change that is more than a star count, and falls back to a branch if `main` moved underneath it. `links` weekly is the separate alarm for a dead link, which only a person may retire, and for a sweep so refused by GitHub or by other hosts that it checked little. Both jobs, and `claims`, write their counts and the GitHub budget they spent to the run's summary. The site shows the date of the sweep its figure comes from, and the status page how many rows share it. |
+| Link status, stars, licences, archive status, whether a summary is the repository's own description, creation date, last push and commit count (with `single-commit`) | Continuously, upstream | `metadata` weekly: stamps every link that answers, re-reads the GitHub API, rebuilds everything generated, commits it, runs `lint`'s checks on that commit (`check.py --ci --quick`: all but the preview images, which `pages` renders), pushes to `main`, and redeploys the site. It opens an issue only for a change that is more than a star count, a last push or a commit count, and falls back to a branch if `main` moved underneath it. `links` weekly is the separate alarm for a dead link, which only a person may retire, and for a sweep so refused by GitHub or by other hosts that it checked little. Both jobs, and `claims`, write their counts and the GitHub budget they spent to the run's summary. The site shows the date of the sweep its figure comes from, and the status page how many rows share it. |
 | Whether cited text is still present | Continuously, upstream | `claims` is scheduled weekly to fetch each `evidence` file and report missing strings or files. Counts show citations recorded, not CI passes, and the job does not update the human `read_on` date. |
 | What the catalogue is missing | Continuously, upstream | `discover` weekly: harvests every sibling directory, reads the code of the most-cited uncatalogued repositories, searches for sibling directories not yet harvested, and keeps one issue: its description is the queue of every candidate, ticked or struck through from `catalog.json`, `retired.json` and `docs/declined.txt` (`queue_sync.py`), and each week's new candidates are a comment, a box per candidate to claim with the command that re-reads it. It never adds a row. Its verdicts are kept in `.discover/seen.json`, which `metadata` commits from `discover`'s artifact. |
 | The MCP package on PyPI | When `pyproject.toml`'s version changes | A release is a tag a maintainer pushes, so PyPI can lag `main`. `check_release.py` compares the two on every push to `main`, in `lint`'s `release` job: a version not yet on PyPI is a warning carrying the tag command; a version older than PyPI's newest, or `pyproject.toml` and `.claude-plugin/plugin.json` disagreeing, fails. The file comparison also runs on every pull request, as a unit test. After an upload, `publish` installs the release back from PyPI. |

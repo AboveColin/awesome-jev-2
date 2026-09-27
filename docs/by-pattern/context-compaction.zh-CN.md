@@ -54,7 +54,7 @@ _判断哪些工具调用和结果仍然相关，从而丢弃过期上下文。_
   <sub>`插件` · leonaaardob · `TS`</sub>
 
 - **[Jev by Example](https://github.com/ReallyArtificial/jev-by-example)** — 十个可运行的 JavaScript 智能体决策，一个文件一个：新记忆与旧记忆冲突时该改还是该留、工具返回 200 是否真的完成了任务、写入超时后该重试还是该对账、上下文分块在预算内如何取舍、压缩后的交接是否丢掉了某条禁令。Jev 只回答带类型的问题，阈值和最终提案由普通代码决定。
-  <sub>`开源项目` · Really Artificial · `JS` · `choice` · `score` · `noul` · ⚠ `仅一次提交` `疑似 AI 生成`</sub>
+  <sub>`开源项目` · Really Artificial · `JS` · `choice` · `score` · `noul` · ⚠ `疑似 AI 生成`</sub>
 
 - **[jev-compact](https://github.com/fatelei/jev-compact)** — 为 OpenAI Codex CLI 提供由 Jev 打分的上下文压缩——在压缩前为每个工具调用打分，并恢复关键内容。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`插件` · fatelei · `TS`</sub>
@@ -108,7 +108,7 @@ _判断哪些工具调用和结果仍然相关，从而丢弃过期上下文。_
   <sub>`插件` · shashank-h · `TS`</sub>
 
 - **[smoking-extraction-benchmark](https://github.com/vclic/smoking-extraction-benchmark)** — 合成的吸烟史抽取基准：对比 Jev 与 OpenAI 结构化输出。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`基准测试` · vclic · `Py` · ⚠ `无许可证`</sub>
+  <sub>`基准测试` · vclic · `Py` · ⚠ `仅一次提交` `无许可证`</sub>
 
 ---
 

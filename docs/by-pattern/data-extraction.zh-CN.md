@@ -51,10 +51,10 @@ _从杂乱文本中取出类型化字段 —— 靠在候选中选择，而不�
   <sub>`开源项目` · unownone · `TS` · ⚠ `无许可证`</sub>
 
 - **[smoking-extraction-benchmark](https://github.com/vclic/smoking-extraction-benchmark)** — 合成的吸烟史抽取基准：对比 Jev 与 OpenAI 结构化输出。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`基准测试` · vclic · `Py` · ⚠ `无许可证`</sub>
+  <sub>`基准测试` · vclic · `Py` · ⚠ `仅一次提交` `无许可证`</sub>
 
 - **[typesafe-ai-jev-example](https://github.com/ItBayMax/typesafe-ai-jev-example)** — Jev 的动手演示：六个可运行示例与四则实战笔记。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`开源项目` · itbaymax · `Py`</sub>
+  <sub>`开源项目` · itbaymax · `Py` · ⚠ `仅一次提交`</sub>
 
 ---
 

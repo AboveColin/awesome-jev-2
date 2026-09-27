@@ -111,7 +111,7 @@ Every catalogued example of this decision — 230 of them. The same rows, with c
   <sub>`Project` · ★100+ · timpratim · `Py`</sub>
 
 - **[mobile-jev](https://github.com/droidrun/mobile-jev)** — Mobile computer use: Jev picks the next on-screen action on a phone.
-  <sub>`Project` · ★100+ · droidrun · `JS`</sub>
+  <sub>`Project` · ★100+ · droidrun · `JS` · ⚠ `one commit`</sub>
 
 - **[neo4jev](https://github.com/jexp/neo4jev)** — Puts Jev inside a knowledge graph traversal: at each node it decides which edge is most worth following.
   <sub>`Project` · ★100+ · `Py` · `choice`</sub>
@@ -237,7 +237,7 @@ Every catalogued example of this decision — 230 of them. The same rows, with c
   <sub>`Project` · ★10+ · choxos · `JS`</sub>
 
 - **[jev-robot-control](https://github.com/openroboto-ai/jev-robot-control)** — Jev against two LLMs on direct Cartesian control of an xArm7 in MuJoCo — intent, movement and gripper each step — with recorded responses, trajectories and replays. One seed-0 trial per controller, not a success rate.
-  <sub>`Benchmark` · ★10+ · openroboto-ai · `Py`</sub>
+  <sub>`Benchmark` · ★10+ · openroboto-ai · `Py` · ⚠ `one commit`</sub>
 
 - **[jev-social](https://github.com/socai-io/jev-social)** — Read-only Instagram, TikTok and LinkedIn research: Jev routes the platform and selects each bounded socai CLI action from fresh browser evidence; code validates targets and preserves source links.
   <sub>`Project` · ★10+ · socai-io · `JS` · `choice` · ⚠ `3rd-party key`</sub>
@@ -375,7 +375,7 @@ Every catalogued example of this decision — 230 of them. The same rows, with c
   <sub>`Project` · itisshikhar · `TS`</sub>
 
 - **[harnessjudge](https://github.com/ndolinschi/harnessjudge)** — Judge agent steps — ok / retry / escalate / stop via TypeSafe Jev <sub>(upstream description)</sub>
-  <sub>`Project` · ndolinschi · `TS` · ⚠ `no licence`</sub>
+  <sub>`Project` · ndolinschi · `TS` · ⚠ `one commit` `no licence`</sub>
 
 - **[hearth-jev-rental-search](https://github.com/Nancy-Chauhan/hearth-jev-rental-search)** — Autonomous multi-source rental search powered by TypeSafe Jev <sub>(upstream description)</sub>
   <sub>`Project` · nancy-chauhan · `JS`</sub>
@@ -405,7 +405,7 @@ Every catalogued example of this decision — 230 of them. The same rows, with c
   <sub>`Project` · kyrylosyzonenko · `JS`</sub>
 
 - **[jev-browser](https://github.com/KesavanKing/jev-browser)** — Local browser automation UI that uses TypeSafe Jev to choose bounded page actions and a text model only for field values. <sub>(upstream description)</sub>
-  <sub>`Project` · kesavanking · `Py` · ⚠ `no licence`</sub>
+  <sub>`Project` · kesavanking · `Py` · ⚠ `one commit` `no licence`</sub>
 
 - **[jev-browser](https://github.com/MahmoudAdelbghany/jev-browser)** — Jev-powered browser MCP for LLM agents — ~300ms decisions, no LLM tokens in the loop. Benchmark vs Playwright MCP included. <sub>(upstream description)</sub>
   <sub>`Plugin` · mahmoudadelbghany · `JS` · ⚠ `no licence`</sub>
@@ -486,7 +486,7 @@ Every catalogued example of this decision — 230 of them. The same rows, with c
   <sub>`Benchmark` · erendikmenn · `Py`</sub>
 
 - **[jev-market-reflex](https://github.com/zzsong1023/jev-market-reflex)** — Fast typed AI decisions on live crypto markets using TypeSafe AI Jev. <sub>(upstream description)</sub>
-  <sub>`Project` · zzsong1023 · `TS`</sub>
+  <sub>`Project` · zzsong1023 · `TS` · ⚠ `one commit`</sub>
 
 - **[jev-mobile](https://github.com/Friedjof/jev-mobile)** — Fast structured Android control loops with TypeSafe Jev and Mobile MCP <sub>(upstream description)</sub>
   <sub>`Plugin` · friedjof · `Py`</sub>
@@ -519,7 +519,7 @@ Every catalogued example of this decision — 230 of them. The same rows, with c
   <sub>`Plugin` · brnyxx · `Py`</sub>
 
 - **[jev-robotics-demo](https://github.com/FazalAAli/jev-robotics-demo)** — Jev (TypeSafe System One) vs Claude Opus 5 driving a simulated robot arm in MuJoCo <sub>(upstream description)</sub>
-  <sub>`Project` · fazalaali · `Py`</sub>
+  <sub>`Project` · fazalaali · `Py` · ⚠ `one commit`</sub>
 
 - **[jev-routing](https://github.com/nekowasabi/jev-routing)** — Go Jev harness for Claude Code, Codex, and Grok Build. No npx. Not an MCP server. <sub>(upstream description)</sub>
   <sub>`Plugin` · nekowasabi · `Go`</sub>
@@ -567,7 +567,7 @@ Every catalogued example of this decision — 230 of them. The same rows, with c
   <sub>`Project` · erhanmeydan · `Py`</sub>
 
 - **[jevaluate](https://github.com/ElshinQ/jevaluate)** — Jevaluate: evaluate before you trust. Field notes, runnable scripts and an agent skill for TypeSafe Jev: gated evals, a browser loop, a product walk with DeepSeek vision, a UI text judge and a first-click tree test. Co-authored with Claude Fable 5.1. <sub>(upstream description)</sub>
-  <sub>`Plugin` · elshinq · `JS`</sub>
+  <sub>`Plugin` · elshinq · `JS` · ⚠ `one commit`</sub>
 
 - **[jevarena](https://github.com/raihankhan-rk/jevarena)** — JevArena — two Jev agents duel in click-only browser games (Browser Use + TypeSafe Jev) <sub>(upstream description)</sub>
   <sub>`Project` · raihankhan-rk · `TS`</sub>
@@ -600,7 +600,7 @@ Every catalogued example of this decision — 230 of them. The same rows, with c
   <sub>`Project` · lgy1027 · `Py`</sub>
 
 - **[JevTest](https://github.com/CorieW/JevTest)** — Bounded exploratory browser testing with Jev, deterministic assertions, and replayable evidence. <sub>(upstream description)</sub>
-  <sub>`Project` · coriew · `TS` · ⚠ `no licence`</sub>
+  <sub>`Project` · coriew · `TS` · ⚠ `one commit` `no licence`</sub>
 
 - **[langchain-skill-router](https://github.com/deyna256/langchain-skill-router)** — Per-turn skill selection for LangChain and deepagents agents: a fast judge picks the few skills a turn needs, so a catalog of hundreds stays out of the prompt. <sub>(upstream description)</sub>
   <sub>`Plugin` · deyna256 · `Py`</sub>
@@ -633,7 +633,7 @@ Every catalogued example of this decision — 230 of them. The same rows, with c
   <sub>`Project` · filedcom · `TS`</sub>
 
 - **[ps2-ai-agent](https://github.com/opaielsheikh/ps2-ai-agent)** — Autonomous PlayStation 2 AI Agent with real-time visual telemetry HUD powered by TypeSafe Jev System One <sub>(upstream description)</sub>
-  <sub>`Project` · opaielsheikh · `Py` · ⚠ `no licence`</sub>
+  <sub>`Project` · opaielsheikh · `Py` · ⚠ `one commit` `no licence`</sub>
 
 - **[reflex](https://github.com/kaustav1996/reflex)** — A coding agent and personal assistant with System One reflexes (TypeSafe Jev) on top of the Pi coding agent <sub>(upstream description)</sub>
   <sub>`Plugin` · kaustav1996 · `TS`</sub>
@@ -654,19 +654,19 @@ Every catalogued example of this decision — 230 of them. The same rows, with c
   <sub>`Project` · harshil1712 · `TS`</sub>
 
 - **[snake-jev](https://github.com/siroccomask/snake-jev)** — Snake controlled by parallel Jev assessments, with one API call per game tick. <sub>(upstream description)</sub>
-  <sub>`Project` · siroccomask · `Py`</sub>
+  <sub>`Project` · siroccomask · `Py` · ⚠ `one commit`</sub>
 
 - **[stepwarden](https://github.com/getexcited/stepwarden)** — Every tool call your agent makes, checked before it runs. A Claude Code plugin that uses TypeSafe AI's Jev to verify each pending tool call against the session plan, then allows it, asks you, or blocks it. Proof of concept <sub>(upstream description)</sub>
-  <sub>`Plugin` · getexcited · `TS`</sub>
+  <sub>`Plugin` · getexcited · `TS` · ⚠ `one commit`</sub>
 
 - **[swarmrouter](https://github.com/ndolinschi/swarmrouter)** — Route tasks to research/code/browser/support/writer agents via TypeSafe Jev <sub>(upstream description)</sub>
-  <sub>`Project` · ndolinschi · `TS` · ⚠ `no licence`</sub>
+  <sub>`Project` · ndolinschi · `TS` · ⚠ `one commit` `no licence`</sub>
 
 - **[terrarium](https://github.com/TheGali/terrarium)** — A sandbox where a TypeSafe System One model presses the controls of a small creature. Code runs the world. <sub>(upstream description)</sub>
   <sub>`Project` · thegali · `JS`</sub>
 
 - **[tictacjev](https://github.com/darthblanc/tictacjev)** — A tic-tac-toe app where one player is Jev, TypeSafe AI's System One Model with live confidence scores and probabilities. <sub>(upstream description)</sub>
-  <sub>`Project` · darthblanc · `TS` · ⚠ `no licence`</sub>
+  <sub>`Project` · darthblanc · `TS` · ⚠ `one commit` `no licence`</sub>
 
 - **[tsai-civ2](https://github.com/phyous/tsai-civ2)** — TypeSafe Jev plays original Civilization II in a browser, with live action probabilities. Experimental full-game harness. <sub>(upstream description)</sub>
   <sub>`Project` · phyous · `Py`</sub>
@@ -684,7 +684,7 @@ Every catalogued example of this decision — 230 of them. The same rows, with c
   <sub>`Project` · gtaras7 · `TS`</sub>
 
 - **[typesafe-jev-drone-demo](https://github.com/kxzk/typesafe-jev-drone-demo)** — Three.js drone simulator with a Python backend and live TypeSafe Jev navigation <sub>(upstream description)</sub>
-  <sub>`Project` · kxzk · `Py` · ⚠ `no licence`</sub>
+  <sub>`Project` · kxzk · `Py` · ⚠ `one commit` `no licence`</sub>
 
 - **[typesafe-minecraft-demo](https://github.com/ellistev/typesafe-minecraft-demo)** — A Minecraft Java player controlled by TypeSafe AI, with live decisions, Canadian flag building, and a side-by-side dashboard. <sub>(upstream description)</sub>
   <sub>`Project` · ellistev · `JS` · ⚠ `no licence`</sub>

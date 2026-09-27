@@ -60,7 +60,7 @@ _用校准置信度决定哪些情况必须由人来看。_
   <sub>`开源项目` · ★10+ · smkrv · `TS`</sub>
 
 - **[jev-forge](https://github.com/zwliJay/jev-forge)** — 面向 Jev 式决策模型的开源训练与推理栈。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`Jev 替代实现` · ★10+ · zwlijay · `Py` · ⚠ `并非 Jev 本身`</sub>
+  <sub>`Jev 替代实现` · ★10+ · zwlijay · `Py` · ⚠ `并非 Jev 本身` `仅一次提交`</sub>
 
 - **[jev-harness](https://github.com/AntonioCoppe/jev-harness)** — Jev 决策 harness：置信闸门、影子模式、配方与评测。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`开源项目` · ★10+ · antoniocoppe · `TS`</sub>
@@ -81,7 +81,7 @@ _用校准置信度决定哪些情况必须由人来看。_
   <sub>`插件` · ★10+ · brainwires · `TS`</sub>
 
 - **[muse-jev-playbook](https://github.com/Bodila51/muse-jev-playbook)** — 为 Muse 提供的 Jev 决策层：在昂贵的智能体工作之前加一道快速、便宜的 TypeSafe AI 关卡——置信度策略与配方。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`插件` · ★10+ · bodila51 · `Py`</sub>
+  <sub>`插件` · ★10+ · bodila51 · `Py` · ⚠ `仅一次提交`</sub>
 
 - **[assay-001](https://github.com/jourdanlabs/assay-001)** — ASSAY-001：对 Jev 校准度与类型安全宣称的独立、预注册验证。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`开源项目` · jourdanlabs · `Py` · ⚠ `无许可证`</sub>
@@ -93,7 +93,7 @@ _用校准置信度决定哪些情况必须由人来看。_
   <sub>`代码片段` · `Py` · `choice` · ⚠ `代码未实测`</sub>
 
 - **[grok-jev-guard](https://github.com/0xwhrari/grok-jev-guard)** — Grok Bot 的类型化预检与审批层：硬性边界由本地策略掌控，模糊情况交给 Jev 判断，Grok Bot 只在返回的范围内执行。 <sub>(机翻)</sub>
-  <sub>`开源项目` · 0xwhrari · `Py`</sub>
+  <sub>`开源项目` · 0xwhrari · `Py` · ⚠ `仅一次提交`</sub>
 
 - **[jev-asks-until-sure](https://github.com/mintannn/jev-asks-until-sure)** — 二十个问题猜谜：一直问下去，直到 Jev 的校准置信度越过阈值。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`开源项目` · mintannn · `TS`</sub>
@@ -102,7 +102,7 @@ _用校准置信度决定哪些情况必须由人来看。_
   <sub>`开源项目` · ufec · `Kt`</sub>
 
 - **[jev-calibration-audit](https://github.com/jujumilk3/jev-calibration-audit)** — 仅通过 API 对 Jev 做的独立校准审计。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`基准测试` · jujumilk3 · `Py`</sub>
+  <sub>`基准测试` · jujumilk3 · `Py` · ⚠ `仅一次提交`</sub>
 
 - **[jev-dspy-lab](https://github.com/jmanhype/jev-dspy-lab)** — 在 DSPy 工作流中对 Jev 决策做可复现的校准与选择性风险基准。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`基准测试` · jmanhype · `Py`</sub>
@@ -192,7 +192,7 @@ _用校准置信度决定哪些情况必须由人来看。_
   <sub>`插件` · riskaversetech · `TS`</sub>
 
 - **[toolgate](https://github.com/ndolinschi/toolgate)** — 智能体工具与 MCP 调用关卡：通过 TypeSafe Jev 决定放行、询问人类或拒绝。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`插件` · ndolinschi · `TS` · ⚠ `无许可证`</sub>
+  <sub>`插件` · ndolinschi · `TS` · ⚠ `仅一次提交` `无许可证`</sub>
 
 - **[typed-decisions](https://github.com/kotoba-lang/typed-decisions)** — Jev 形状的类型化决策模型：状态加问题进，校准概率出。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`开源项目` · kotoba-lang · `Py`</sub>

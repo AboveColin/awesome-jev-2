@@ -128,6 +128,32 @@ class PatternsReviewedTest(unittest.TestCase):
         self.assertIn("not yet indexed by pattern", doc)
 
 
+class RepositoryFactsTest(unittest.TestCase):
+    """GitHub's dates and commit count reach an agent as facts (I15)."""
+
+    FACTS = ("repo_created_at", "repo_pushed_at", "repo_commits")
+
+    @classmethod
+    def setUpClass(cls):
+        cls.server = load_server()
+
+    def test_compact_rows_carry_them_when_recorded(self):
+        entry = dict(next(e for e in self.server.CATALOG if "github.com" in e["url"]))
+        entry.update(repo_created_at="2026-09-17T07:03:00Z", repo_pushed_at="2026-09-17T07:06:04Z", repo_commits=1)
+        compact = self.server._compact(entry)
+        self.assertEqual([compact[key] for key in self.FACTS], ["2026-09-17T07:03:00Z", "2026-09-17T07:06:04Z", 1])
+        for key in self.FACTS:
+            entry.pop(key)
+        self.assertFalse(set(self.FACTS) & set(self.server._compact(entry)))
+
+    def test_the_tool_description_says_they_are_not_a_verdict(self):
+        doc = self.server.get_example.__doc__
+        for key in self.FACTS:
+            self.assertIn(f"`{key}`", doc)
+        self.assertIn("not a", doc.split("`repo_commits`", 1)[1].split("`question_types`", 1)[0])
+        self.assertIn("`single-commit`", doc)
+
+
 class PrimitiveSignalTest(unittest.TestCase):
     """A text signal about a primitive is not a primitive claim (I14)."""
 

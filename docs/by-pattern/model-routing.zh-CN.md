@@ -42,7 +42,7 @@ _选择由哪个下游模型或档位处理请求。_
   <sub>`开源项目` · ★10+ · das-rebel · `TS`</sub>
 
 - **[jev-router](https://github.com/prismhq/jev-router)** — 开源 LLM 路由器，在 LiteLLM 之上用 Jev 选模型。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`开源项目` · ★10+ · prismhq · `Py`</sub>
+  <sub>`开源项目` · ★10+ · prismhq · `Py` · ⚠ `仅一次提交`</sub>
 
 - **[jev-use](https://github.com/shitianfang/jev-use)** — 一个智能体插件：把不需要文本输出的步骤交给 Jev，而不是主模型。
   <sub>`插件` · ★10+ · shitianfang · `JS`</sub>
@@ -66,7 +66,7 @@ _选择由哪个下游模型或档位处理请求。_
   <sub>`插件` · justhalfbit · `JS`</sub>
 
 - **[hermes-jev-router](https://github.com/ussyverse/hermes-jev-router)** — 实验性 Hermes 插件：带预算与能力约束的 Jev 辅助模型路由方案。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`插件` · ussyverse · `Py`</sub>
+  <sub>`插件` · ussyverse · `Py` · ⚠ `仅一次提交`</sub>
 
 - **[janus](https://github.com/FirasSX914/Janus)** — 先在你自己的数据上衡量何时该用 Jev、何时该用别的模型，再据此路由。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`开源项目` · firassx914 · `Py`</sub>

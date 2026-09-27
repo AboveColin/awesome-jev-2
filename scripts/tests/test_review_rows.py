@@ -67,7 +67,11 @@ class FakeNet:
 
     def facts(self, entry):
         self.asked.append("facts")
-        return {"slug": entry["slug"], "repo": "alice/demo", **self.facts_answer}
+        answer = {"slug": entry["slug"], "repo": "alice/demo", **self.facts_answer}
+        # `facts_commits=N` plays refresh_metadata.fetch() carrying the count itself.
+        if "facts_commits" in answer:
+            answer["commits"] = answer.pop("facts_commits")
+        return answer
 
     def commits(self, repo):
         self.asked.append("commits")
@@ -239,6 +243,17 @@ class RepositoryTest(unittest.TestCase):
         self.assertNotIn("<b>", findings[0].text)
         findings, fake = self.check(row(), state="skipped")
         self.assertEqual((levels(findings), fake.asked), (["skipped"], ["facts"]))
+
+    def test_a_count_the_facts_already_carry_is_not_asked_for_again(self):
+        # refresh_metadata.fetch() counts commits since I15; the card reuses it.
+        findings, fake = self.check(row(), **{"commits": 99, "facts_commits": 1})
+        self.assertEqual(levels(findings), ["warning"])
+        self.assertEqual(fake.asked, ["facts"])
+        (finding,), fake = self.check(row(flags=["single-commit"]), facts_commits=1)
+        self.assertEqual((finding.level, fake.asked), ("ok", ["facts"]))
+        self.assertIn("commit count", finding.text)
+        findings, fake = self.check(row(flags=["single-commit"]), facts_commits=40)
+        self.assertEqual((levels(findings), fake.asked), (["info", "ok"], ["facts"]))
 
     def test_single_commit(self):
         findings, _ = self.check(row(), commits=1)

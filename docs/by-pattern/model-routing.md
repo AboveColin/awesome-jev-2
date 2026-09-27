@@ -42,7 +42,7 @@ Every catalogued example of this decision — 43 of them. The same rows, with ca
   <sub>`Project` · ★10+ · das-rebel · `TS`</sub>
 
 - **[jev-router](https://github.com/prismhq/jev-router)** — Open-source LLM router that uses TypeSafe's Jev to pick a model, on top of LiteLLM <sub>(upstream description)</sub>
-  <sub>`Project` · ★10+ · prismhq · `Py`</sub>
+  <sub>`Project` · ★10+ · prismhq · `Py` · ⚠ `one commit`</sub>
 
 - **[jev-use](https://github.com/shitianfang/jev-use)** — An agent plugin that hands steps needing no text output to Jev instead of the main model.
   <sub>`Plugin` · ★10+ · shitianfang · `JS`</sub>
@@ -66,7 +66,7 @@ Every catalogued example of this decision — 43 of them. The same rows, with ca
   <sub>`Plugin` · justhalfbit · `JS`</sub>
 
 - **[hermes-jev-router](https://github.com/ussyverse/hermes-jev-router)** — Experimental Hermes plugin: Jev-assisted model routing plans with budget and capability constraints. API access pending. <sub>(upstream description)</sub>
-  <sub>`Plugin` · ussyverse · `Py`</sub>
+  <sub>`Plugin` · ussyverse · `Py` · ⚠ `one commit`</sub>
 
 - **[janus](https://github.com/FirasSX914/Janus)** — Measure when to use Jev and other models on your data, then route accordingly. <sub>(upstream description)</sub>
   <sub>`Project` · firassx914 · `Py`</sub>

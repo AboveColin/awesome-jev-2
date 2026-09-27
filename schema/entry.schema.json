@@ -205,6 +205,21 @@
       "type": "string",
       "minLength": 1
     },
+    "repo_created_at": {
+      "description": "When the linked GitHub repository was created, in UTC, as GitHub's API states it (`created_at`). A GitHub fact, not a judgement: scripts/refresh_metadata.py records it on every weekly refresh; leave it to that run. Only on a row whose url or repo is a GitHub repository.",
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+    },
+    "repo_pushed_at": {
+      "description": "When anything was last pushed to any branch of the linked GitHub repository, in UTC, as GitHub's API states it (`pushed_at`) at the last weekly refresh. A GitHub fact, not a judgement: an old date does not mean the project is unmaintained and a recent one does not mean it works, and nothing derives either verdict from it. Recorded by scripts/refresh_metadata.py; leave it to that run. Only on a row whose url or repo is a GitHub repository.",
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+    },
+    "repo_commits": {
+      "description": "How many commits the linked GitHub repository's default branch had at the last weekly refresh, as GitHub's API counts them. A GitHub fact, not a judgement. Recorded by scripts/refresh_metadata.py, which also adds the single-commit flag when it is 1 and removes it when it is more; lint requires the two to agree. Leave it to that run. Only on a row whose url or repo is a GitHub repository.",
+      "type": "integer",
+      "minimum": 1
+    },
     "package": {
       "description": "Published package, when the example is installable.",
       "type": "object",

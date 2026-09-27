@@ -1,8 +1,10 @@
 # Weekly refresh of every machine-checkable fact in catalog.json: link status
-# (`checked`, `link_status`), stars, licences, archive status and whether
-# each summary is its repository's own description (`summary_source`) from the
-# GitHub API, and which primitives' request or answer shapes each row's cited
-# file contains (`primitives_seen`). Everything generated from those facts is
+# (`checked`, `link_status`), stars, licences, archive status, creation and
+# last-push dates and default-branch commit counts (`repo_created_at`,
+# `repo_pushed_at`, `repo_commits`, with the `single-commit` flag that restates
+# a count of one) and whether each summary is its repository's own description
+# (`summary_source`) from the GitHub API, and which primitives' request or
+# answer shapes each row's cited file contains (`primitives_seen`). Everything generated from those facts is
 # rebuilt in the same run and committed on the runner, and lint's checks
 # (scripts/check.py) have to pass on that commit before anything is pushed.
 #
@@ -23,9 +25,10 @@
 # push a branch and wait for a person to merge it each week; the week that did
 # not happen, one row went on claiming both an MIT licence and no licence at all.
 # Judgement calls still go to people: a dead link is links.yml's alarm, a moved
-# call site is claims.yml's issue, and anything here that is not a number moving
-# — a licence changing, a project archived, a repository gone or blocked, rows
-# the API budget left unread — opens an issue after it lands. If main moved
+# call site is claims.yml's issue, and anything here that is not a number or a
+# last-push date moving — a licence changing, a project archived, a flag gained
+# or lost, a repository gone or blocked, rows the API budget left unread —
+# opens an issue after it lands. If main moved
 # underneath the run and the refresh no longer rebases cleanly, it falls back
 # to a branch and an issue rather than forcing.
 #
@@ -104,7 +107,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # GraphQL in batches of a hundred, REST for whatever that leaves. A
+          # GraphQL in batches of fifty, REST for whatever that leaves. A
           # blocked repository or a spent budget costs those rows, not the run:
           # what was read is written, the digest counts what was not, and the
           # counts and the budget left go to the job summary. Not piped: the

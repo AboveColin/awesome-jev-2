@@ -92,8 +92,23 @@ def shape_block(s: dict) -> str:
             ["Summaries taken from that description that no longer match it (`upstream-description-stale`)", s["summary_upstream_stale"]],
             ["Summaries marked as written for this catalogue (`curated`)", s["summary_curated"]],
             ["Chinese summaries hand-written", f"{s['zh_hand']} of {s['entries']}"],
+            ["Rows recording GitHub's creation date, last push and default-branch commit count for their repository (`repo_created_at`, `repo_pushed_at`, `repo_commits`; GitHub's facts at the last weekly refresh, not a judgement of upkeep)", f"{s['repo_facts_rows']} of {s['entries']}"],
+            ["Rows flagged `single-commit`: one commit on the default branch (the refresh sets and clears it from `repo_commits`)", s["single_commit_rows"]],
             ["Retired links", s["retired"]],
         ],
+    )
+
+
+def pushed_block(s: dict) -> str:
+    """Rows per calendar month of their repository's last push, newest first.
+    Absolute months, never an age: the table changes only when a push lands
+    in a new month, and says nothing about whether anything is maintained."""
+    months = s["pushed_by_month"]
+    if not months:
+        return "No row records a last push yet."
+    return table(
+        ["Month of the last push (UTC)", "Rows"],
+        [[month, count] for month, count in months.items()],
     )
 
 
@@ -277,7 +292,7 @@ def render() -> dict[pathlib.Path, str]:
     values = inline_values(s)
 
     blocks = {
-        "docs/status.md": {"shape": shape_block(s), "gaps": gaps_block(s, patterns)},
+        "docs/status.md": {"shape": shape_block(s), "pushed": pushed_block(s), "gaps": gaps_block(s, patterns)},
         "docs/sources.md": {
             "sources": sources_block(catalog),
             "licences": licences_block(catalog),

@@ -105,7 +105,7 @@ _在输出到达用户前，按评分标准检查模型产出。_
   <sub>`开源项目` · ★10+ · choxos · `JS`</sub>
 
 - **[jev-security-scan](https://github.com/win4r/jev-security-scan)** — 使用 TypeSafe Jev 审查 Skill 与 MCP 的可疑行为，结合静态证据并明确标注覆盖范围。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`插件` · ★10+ · win4r · `Py`</sub>
+  <sub>`插件` · ★10+ · win4r · `Py` · ⚠ `仅一次提交`</sub>
 
 - **[jev-suite](https://github.com/klauswg/jev-suite)** — 基于 Jev（TypeSafe System One）的四个决策质量工具：Jev 回答结构化问题，最终决定权留在确定性代码手里。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`开源项目` · ★10+ · klauswg · `Java`</sub>
@@ -141,7 +141,7 @@ _在输出到达用户前，按评分标准检查模型产出。_
   <sub>`开源项目` · ripwords · `TS` · ⚠ `无许可证`</sub>
 
 - **[agent-handoff-gate](https://github.com/zsoXi/agent-handoff-gate)** — 面向证据感知的智能体交接与有界工作续跑的实验性协议。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`基准测试` · zsoxi · `Py`</sub>
+  <sub>`基准测试` · zsoxi · `Py` · ⚠ `仅一次提交`</sub>
 
 - **[assay-001](https://github.com/jourdanlabs/assay-001)** — ASSAY-001：对 Jev 校准度与类型安全宣称的独立、预注册验证。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`开源项目` · jourdanlabs · `Py` · ⚠ `无许可证`</sub>
@@ -177,7 +177,7 @@ _在输出到达用户前，按评分标准检查模型产出。_
   <sub>`开源项目` · tom-r-main · `Py`</sub>
 
 - **[hermes-jev-plugin](https://github.com/ajensenwaud/hermes-jev-plugin)** — 给 Hermes Agent 的 Jev 决策工具：check／route／score／evaluate 四件套。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`插件` · ajensenwaud · `Py`</sub>
+  <sub>`插件` · ajensenwaud · `Py` · ⚠ `仅一次提交`</sub>
 
 - **[human-compiler](https://github.com/asfarsadewa/human-compiler)** — 人类语言的编译器：粘贴文本，得到诊断，由 Jev 度量。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`开源项目` · asfarsadewa · `TS`</sub>
@@ -189,7 +189,7 @@ _在输出到达用户前，按评分标准检查模型产出。_
   <sub>`开源项目` · jackalope-dev · `Rs`</sub>
 
 - **[Jev by Example](https://github.com/ReallyArtificial/jev-by-example)** — 十个可运行的 JavaScript 智能体决策，一个文件一个：新记忆与旧记忆冲突时该改还是该留、工具返回 200 是否真的完成了任务、写入超时后该重试还是该对账、上下文分块在预算内如何取舍、压缩后的交接是否丢掉了某条禁令。Jev 只回答带类型的问题，阈值和最终提案由普通代码决定。
-  <sub>`开源项目` · Really Artificial · `JS` · `choice` · `score` · `noul` · ⚠ `仅一次提交` `疑似 AI 生成`</sub>
+  <sub>`开源项目` · Really Artificial · `JS` · `choice` · `score` · `noul` · ⚠ `疑似 AI 生成`</sub>
 
 - **[jev-agent-skill](https://github.com/yuyang2230/jev-agent-skill)** — 给 AI 智能体的免费类型化判断：把分类／筛查／打分／校验卸载给 Jev。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`插件` · yuyang2230 · `Py`</sub>
@@ -243,7 +243,7 @@ _在输出到达用户前，按评分标准检查模型产出。_
   <sub>`插件` · rashedint32 · `JS`</sub>
 
 - **[jev-guard](https://github.com/muratcakmak/jev-guard)** — 为 Claude Code 提供概率评分的护栏：拒绝违反规则的修改和未经要求的部署，并把文档路由到合适的位置。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`插件` · muratcakmak · `TS`</sub>
+  <sub>`插件` · muratcakmak · `TS` · ⚠ `仅一次提交`</sub>
 
 - **[jev-labs](https://github.com/copyleftdev/jev-labs)** — 绝不自信地犯错：围绕 Jev 的 TLA+ 验证共识内核。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`开源项目` · copyleftdev · `Py`</sub>
@@ -303,10 +303,10 @@ _在输出到达用户前，按评分标准检查模型产出。_
   <sub>`开源项目` · tech-byte-frontier · `Rs`</sub>
 
 - **[jevguard](https://github.com/Jhonnyr97/JevGuard)** — Claude Code 与 Codex CLI 插件：用 System One 判断校验智能体是否遵守项目规则。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`插件` · jhonnyr97 · `TS`</sub>
+  <sub>`插件` · jhonnyr97 · `TS` · ⚠ `仅一次提交`</sub>
 
 - **[jevibe-check](https://github.com/sriganesh/jevibe-check)** — 给 Bluesky 帖子与草稿做实时语气标注。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`开源项目` · sriganesh · `JS`</sub>
+  <sub>`开源项目` · sriganesh · `JS` · ⚠ `仅一次提交`</sub>
 
 - **[jevkit](https://github.com/ariel-frischer/jevkit)** — 用 Rust 写的快速 CLI：类型化决策，付费之前先离线 lint。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`开源项目` · ariel-frischer · `Rs`</sub>
@@ -318,7 +318,7 @@ _在输出到达用户前，按评分标准检查模型产出。_
   <sub>`开源项目` · unownone · `TS` · ⚠ `无许可证`</sub>
 
 - **[JevTest](https://github.com/CorieW/JevTest)** — 用 Jev 做有边界的探索式浏览器测试，配合确定性断言和可回放的证据。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`开源项目` · coriew · `TS` · ⚠ `无许可证`</sub>
+  <sub>`开源项目` · coriew · `TS` · ⚠ `仅一次提交` `无许可证`</sub>
 
 - **[jevtest](https://github.com/realZachi/jevtest)** — 面向 Vitest 与 Jest 的语义测试匹配器，由 TypeSafe Jev 模型驱动。用自然语言写期望。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`SDK` · realzachi · `TS`</sub>
@@ -354,7 +354,7 @@ _在输出到达用户前，按评分标准检查模型产出。_
   <sub>`开源项目` · kamilpostrozny · `TS`</sub>
 
 - **[plotveil](https://github.com/Dearest/plotveil)** — YouTube 评论的安静剧透拦截器：每条评论一次类型化 Noul 决策。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`开源项目` · dearest · `TS`</sub>
+  <sub>`开源项目` · dearest · `TS` · ⚠ `仅一次提交`</sub>
 
 - **[profanity-checker](https://github.com/4rays/profanity-checker)** — 用 Jev 检查脏话的 Cloudflare Worker。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`开源项目` · 4rays · `TS`</sub>
@@ -369,7 +369,7 @@ _在输出到达用户前，按评分标准检查模型产出。_
   <sub>`SDK` · mondaychen · `TS`</sub>
 
 - **[stepwarden](https://github.com/getexcited/stepwarden)** — 智能体的每一次工具调用在执行前都过一遍检查的 Claude Code 插件。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`插件` · getexcited · `TS`</sub>
+  <sub>`插件` · getexcited · `TS` · ⚠ `仅一次提交`</sub>
 
 - **[system-one-playground](https://github.com/DonaldMurillo/system-one-playground)** — 可读的脚本、语义代码检查、一个 Go System One 客户端与配套 Studio。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`开源项目` · donaldmurillo · `Go`</sub>

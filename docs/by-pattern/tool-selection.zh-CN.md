@@ -111,7 +111,7 @@ _智能体下一步该调用哪个工具或动作。_
   <sub>`开源项目` · ★100+ · timpratim · `Py`</sub>
 
 - **[mobile-jev](https://github.com/droidrun/mobile-jev)** — 移动端 computer use：由 Jev 决定手机屏幕上的下一个动作。
-  <sub>`开源项目` · ★100+ · droidrun · `JS`</sub>
+  <sub>`开源项目` · ★100+ · droidrun · `JS` · ⚠ `仅一次提交`</sub>
 
 - **[neo4jev](https://github.com/jexp/neo4jev)** — 把 Jev 塞进知识图谱。每走到一个节点，判断下一条最值得走的边，再一路找下去。
   <sub>`开源项目` · ★100+ · `Py` · `choice`</sub>
@@ -237,7 +237,7 @@ _智能体下一步该调用哪个工具或动作。_
   <sub>`开源项目` · ★10+ · choxos · `JS`</sub>
 
 - **[jev-robot-control](https://github.com/openroboto-ai/jev-robot-control)** — 在 MuJoCo 中直接对 xArm7 做笛卡尔控制，对比 Jev 与两个 LLM：每一步选择意图、移动方向和夹爪动作，附原始响应、轨迹与回放。每个控制器只跑了一次（seed 0），不是成功率估计。 <sub>(机翻)</sub>
-  <sub>`基准测试` · ★10+ · openroboto-ai · `Py`</sub>
+  <sub>`基准测试` · ★10+ · openroboto-ai · `Py` · ⚠ `仅一次提交`</sub>
 
 - **[jev-social](https://github.com/socai-io/jev-social)** — 只读的 Instagram、TikTok 与 LinkedIn 调研：Jev 先路由平台，再从最新浏览器证据中选择受限的 socai CLI 动作；代码校验目标并保留来源链接。 <sub>(机翻)</sub>
   <sub>`开源项目` · ★10+ · socai-io · `JS` · `choice` · ⚠ `需第三方密钥`</sub>
@@ -375,7 +375,7 @@ _智能体下一步该调用哪个工具或动作。_
   <sub>`开源项目` · itisshikhar · `TS`</sub>
 
 - **[harnessjudge](https://github.com/ndolinschi/harnessjudge)** — 评判智能体的每一步：通过／重试／升级／停止。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`开源项目` · ndolinschi · `TS` · ⚠ `无许可证`</sub>
+  <sub>`开源项目` · ndolinschi · `TS` · ⚠ `仅一次提交` `无许可证`</sub>
 
 - **[hearth-jev-rental-search](https://github.com/Nancy-Chauhan/hearth-jev-rental-search)** — 由 Jev 驱动的自主多源租房搜索。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`开源项目` · nancy-chauhan · `JS`</sub>
@@ -405,7 +405,7 @@ _智能体下一步该调用哪个工具或动作。_
   <sub>`开源项目` · kyrylosyzonenko · `JS`</sub>
 
 - **[jev-browser](https://github.com/KesavanKing/jev-browser)** — 本地浏览器自动化界面：用 TypeSafe Jev 选择有界的页面操作，只在需要填写字段时才调用文本模型。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`开源项目` · kesavanking · `Py` · ⚠ `无许可证`</sub>
+  <sub>`开源项目` · kesavanking · `Py` · ⚠ `仅一次提交` `无许可证`</sub>
 
 - **[jev-browser](https://github.com/MahmoudAdelbghany/jev-browser)** — 由 Jev 驱动、面向 LLM 智能体的浏览器 MCP——约 300 毫秒一次决策，循环中不消耗 LLM token，附与 Playwright MCP 的对比基准。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`插件` · mahmoudadelbghany · `JS` · ⚠ `无许可证`</sub>
@@ -486,7 +486,7 @@ _智能体下一步该调用哪个工具或动作。_
   <sub>`基准测试` · erendikmenn · `Py`</sub>
 
 - **[jev-market-reflex](https://github.com/zzsong1023/jev-market-reflex)** — 用 TypeSafe AI Jev 在实时加密市场上做快速的类型化决策。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`开源项目` · zzsong1023 · `TS`</sub>
+  <sub>`开源项目` · zzsong1023 · `TS` · ⚠ `仅一次提交`</sub>
 
 - **[jev-mobile](https://github.com/Friedjof/jev-mobile)** — 结合 Mobile MCP 的快速 Android 结构化控制循环。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`插件` · friedjof · `Py`</sub>
@@ -519,7 +519,7 @@ _智能体下一步该调用哪个工具或动作。_
   <sub>`插件` · brnyxx · `Py`</sub>
 
 - **[jev-robotics-demo](https://github.com/FazalAAli/jev-robotics-demo)** — Jev 对比某大模型：在 MuJoCo 里驾驶仿真机械臂。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`开源项目` · fazalaali · `Py`</sub>
+  <sub>`开源项目` · fazalaali · `Py` · ⚠ `仅一次提交`</sub>
 
 - **[jev-routing](https://github.com/nekowasabi/jev-routing)** — 给多个编程智能体的 Go 版 Jev harness，不依赖 npx，也不是 MCP server。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`插件` · nekowasabi · `Go`</sub>
@@ -567,7 +567,7 @@ _智能体下一步该调用哪个工具或动作。_
   <sub>`开源项目` · erhanmeydan · `Py`</sub>
 
 - **[jevaluate](https://github.com/ElshinQ/jevaluate)** — 先评估再信任：实战笔记、可运行脚本与一个 agent 技能。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`插件` · elshinq · `JS`</sub>
+  <sub>`插件` · elshinq · `JS` · ⚠ `仅一次提交`</sub>
 
 - **[jevarena](https://github.com/raihankhan-rk/jevarena)** — JevArena：两个 Jev 智能体在仅可点击的浏览器游戏里对决。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`开源项目` · raihankhan-rk · `TS`</sub>
@@ -600,7 +600,7 @@ _智能体下一步该调用哪个工具或动作。_
   <sub>`开源项目` · lgy1027 · `Py`</sub>
 
 - **[JevTest](https://github.com/CorieW/JevTest)** — 用 Jev 做有边界的探索式浏览器测试，配合确定性断言和可回放的证据。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`开源项目` · coriew · `TS` · ⚠ `无许可证`</sub>
+  <sub>`开源项目` · coriew · `TS` · ⚠ `仅一次提交` `无许可证`</sub>
 
 - **[langchain-skill-router](https://github.com/deyna256/langchain-skill-router)** — 为 LangChain 与 deepagents 智能体按轮选择技能：由快速的裁判挑出本轮需要的少数技能，让上百个技能的目录不必塞进提示词。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`插件` · deyna256 · `Py`</sub>
@@ -633,7 +633,7 @@ _智能体下一步该调用哪个工具或动作。_
   <sub>`开源项目` · filedcom · `TS`</sub>
 
 - **[ps2-ai-agent](https://github.com/opaielsheikh/ps2-ai-agent)** — 自主的 PS2 AI 智能体，带实时视觉遥测 HUD。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`开源项目` · opaielsheikh · `Py` · ⚠ `无许可证`</sub>
+  <sub>`开源项目` · opaielsheikh · `Py` · ⚠ `仅一次提交` `无许可证`</sub>
 
 - **[reflex](https://github.com/kaustav1996/reflex)** — 构建在 Pi 编码智能体之上的编码助手与个人助理，拥有 System One 式的“条件反射”（TypeSafe Jev）。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`插件` · kaustav1996 · `TS`</sub>
@@ -654,19 +654,19 @@ _智能体下一步该调用哪个工具或动作。_
   <sub>`开源项目` · harshil1712 · `TS`</sub>
 
 - **[snake-jev](https://github.com/siroccomask/snake-jev)** — 由并行 Jev 判断控制的贪吃蛇，每个游戏 tick 一次 API 调用。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`开源项目` · siroccomask · `Py`</sub>
+  <sub>`开源项目` · siroccomask · `Py` · ⚠ `仅一次提交`</sub>
 
 - **[stepwarden](https://github.com/getexcited/stepwarden)** — 智能体的每一次工具调用在执行前都过一遍检查的 Claude Code 插件。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`插件` · getexcited · `TS`</sub>
+  <sub>`插件` · getexcited · `TS` · ⚠ `仅一次提交`</sub>
 
 - **[swarmrouter](https://github.com/ndolinschi/swarmrouter)** — 用 Jev 把任务路由给研究／编码／浏览／客服／写作智能体。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`开源项目` · ndolinschi · `TS` · ⚠ `无许可证`</sub>
+  <sub>`开源项目` · ndolinschi · `TS` · ⚠ `仅一次提交` `无许可证`</sub>
 
 - **[terrarium](https://github.com/TheGali/terrarium)** — 一个沙盒：System One 模型按下小生物的操控键，代码负责其余。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`开源项目` · thegali · `JS`</sub>
 
 - **[tictacjev](https://github.com/darthblanc/tictacjev)** — 一个井字棋应用，其中一方是 TypeSafe AI 的 System One 模型 Jev，并实时显示置信度与概率。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`开源项目` · darthblanc · `TS` · ⚠ `无许可证`</sub>
+  <sub>`开源项目` · darthblanc · `TS` · ⚠ `仅一次提交` `无许可证`</sub>
 
 - **[tsai-civ2](https://github.com/phyous/tsai-civ2)** — 让 Jev 在浏览器里玩初代《文明 II》，实时展示动作概率。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`开源项目` · phyous · `Py`</sub>
@@ -684,7 +684,7 @@ _智能体下一步该调用哪个工具或动作。_
   <sub>`开源项目` · gtaras7 · `TS`</sub>
 
 - **[typesafe-jev-drone-demo](https://github.com/kxzk/typesafe-jev-drone-demo)** — Three.js 无人机模拟器，Python 后端加 Jev 实时导航。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`开源项目` · kxzk · `Py` · ⚠ `无许可证`</sub>
+  <sub>`开源项目` · kxzk · `Py` · ⚠ `仅一次提交` `无许可证`</sub>
 
 - **[typesafe-minecraft-demo](https://github.com/ellistev/typesafe-minecraft-demo)** — 由 TypeSafe AI 控制的 Minecraft Java 版玩家：实时决策、建造加拿大国旗，并配有并排的数据看板。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`开源项目` · ellistev · `JS` · ⚠ `无许可证`</sub>

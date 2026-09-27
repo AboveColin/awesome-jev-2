@@ -10,7 +10,7 @@ Catalog (<!--n:entries-->1207<!--/n--> entries): https://raw.githubusercontent.c
 Retired entries (dead links): https://raw.githubusercontent.com/kydlikebtc/awesome-jev/main/retired.json
 JSON Schema for one entry: https://raw.githubusercontent.com/kydlikebtc/awesome-jev/main/schema/entry.schema.json
 
-Each entry carries the fields defined in the JSON Schema: <!--n:fields-->slug, title, summary, summary_source, summary_zh, zh_machine, url, kind, patterns, patterns_reviewed, question_types, languages, platforms, author, repo, stars, repo_license, package, evidence, primitives_seen, evidence_none, official, has_code, published, first_seen, checked, link_status, flags, notes, notes_zh, sources, license<!--/n-->. `summary` is English and `summary_zh` Chinese; `summary_source` says whose words `summary` is (`upstream-description`: the project's own GitHub description; `upstream-description-stale`: taken from that description, which no longer reads the same; `curated`: written for this catalogue; absent: not recorded); `evidence` names the file a claim was read in, and `evidence_none` says why no file can be cited.
+Each entry carries the fields defined in the JSON Schema: <!--n:fields-->slug, title, summary, summary_source, summary_zh, zh_machine, url, kind, patterns, patterns_reviewed, question_types, languages, platforms, author, repo, stars, repo_license, repo_created_at, repo_pushed_at, repo_commits, package, evidence, primitives_seen, evidence_none, official, has_code, published, first_seen, checked, link_status, flags, notes, notes_zh, sources, license<!--/n-->. `summary` is English and `summary_zh` Chinese; `summary_source` says whose words `summary` is (`upstream-description`: the project's own GitHub description; `upstream-description-stale`: taken from that description, which no longer reads the same; `curated`: written for this catalogue; absent: not recorded); `evidence` names the file a claim was read in, and `evidence_none` says why no file can be cited.
 
 ## Two axes
 
@@ -44,7 +44,7 @@ Platform matrix: https://raw.githubusercontent.com/kydlikebtc/awesome-jev/main/c
 
 ## What is verified
 
-Link records: `link_status` and `checked` together record a dated HTTP response. A success establishes availability at that time, not code execution or access to protected page content. Repository stars and licences are metadata snapshots.
+Link records: `link_status` and `checked` together record a dated HTTP response. A success establishes availability at that time, not code execution or access to protected page content. Repository stars and licences are metadata snapshots. So are `repo_created_at` and `repo_pushed_at` (when GitHub says the repository was created and last pushed to, UTC) and `repo_commits` (commits on its default branch), re-read weekly; the `single-commit` flag is set exactly when `repo_commits` is 1. They are GitHub's figures, not a verdict on whether a project is maintained.
 
 Human review: `evidence.path` cites the file reviewed, and `evidence.read_on` records the reported reading date. Reading code is separate from running it. Summaries include source-project descriptions and machine translations; `zh_machine` marks the latter. See `docs/method.md` for the collection method and limits.
 

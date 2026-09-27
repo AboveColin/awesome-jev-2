@@ -126,8 +126,9 @@
       "key": "single-commit",
       "en": "one commit",
       "zh": "仅一次提交",
-      "blurb_en": "One commit, so maintenance is unlikely.",
-      "blurb_zh": "只有一次提交，基本不会有维护。"
+      "blurb_en": "The default branch had one commit when the weekly refresh last asked GitHub; the refresh adds and removes this flag.",
+      "blurb_zh": "每周刷新上次询问 GitHub 时，默认分支只有一次提交；此标记由每周刷新自动添加和移除。",
+      "zh_machine": true
     },
     {
       "key": "no-license",

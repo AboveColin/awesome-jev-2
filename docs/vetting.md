@@ -48,10 +48,16 @@ deliberately fails closed. Copy that shape, not the shape that trusts the score.
       example the project ships (`example-only`).
 - [ ] **Is it maintained?** `single-commit` and `archived` exist because this
       ecosystem is days old and a four-figure star count can sit on top of one
-      commit. Check the last push date yourself. The READMEs and pattern pages
-      show stars only as a band such as ★1k+: a popularity signal, not a
-      quality verdict, and silent on upkeep. The exact count is in
-      `catalog.json` and on the site.
+      commit. Both follow GitHub at every weekly refresh, and so do three
+      facts the site's entry details and the MCP server show: when the
+      repository was created, when anything was last pushed to it
+      (`repo_created_at`, `repo_pushed_at`, UTC) and how many commits its
+      default branch has (`repo_commits`). They are GitHub's figures as of
+      that refresh, not a verdict: an old push is not abandonment and a recent
+      one is not upkeep, so read the history yourself before you depend on
+      it. The READMEs and pattern pages show stars only as a band such as
+      ★1k+: a popularity signal, not a quality verdict, and silent on upkeep.
+      The exact count is in `catalog.json` and on the site.
 - [ ] **Can you legally use it?** `no-license` means no `LICENSE` file, whatever
       a README badge claims. `repo_license` records what the repository actually
       declares. Several otherwise good projects ship none.

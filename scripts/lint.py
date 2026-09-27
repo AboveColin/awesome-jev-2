@@ -84,6 +84,17 @@ ALTERNATIVE_EVIDENCE_KIND = "wire-shape"
 # question_types, and none reads this.
 PRIMITIVES_SEEN = "primitives_seen"
 
+# GitHub's own facts about the linked repository, as the weekly refresh records
+# them (scripts/refresh_metadata.py): two UTC timestamps and the default
+# branch's commit count. They describe a GitHub repository, so a row naming
+# none cannot carry them; `single-commit` restates a count of one, so the two
+# must agree whenever the count is recorded, as `no-license` and repo_license
+# "unknown" must. A timestamp is bounded by tomorrow rather than today: it is
+# UTC, and a person checking in a time zone behind UTC is still on yesterday.
+REPO_TIMESTAMPS = ("repo_created_at", "repo_pushed_at")
+REPO_COMMITS = "repo_commits"
+SINGLE_COMMIT_FLAG = "single-commit"
+
 # `summary_source: curated` says a person wrote the summary for this catalogue,
 # so CONTRIBUTING's "no marketing copy" is theirs to keep, and lint warns when a
 # word from this list or an emoji is in it. A summary labelled as the project's
@@ -415,6 +426,42 @@ def check_entry_invariants(
                 path,
                 f"{slug}: flagged no-license but repo_license is {entry['repo_license']!r}",
             )
+    report.add(check_repository_facts(entry, path, flags, today))
+    return report.findings()
+
+
+def parse_timestamp(value: object) -> dt.datetime | None:
+    try:
+        return dt.datetime.strptime(value, "%Y-%m-%dT%H:%M:%SZ")  # type: ignore[arg-type]
+    except (ValueError, TypeError):
+        return None
+
+
+def check_repository_facts(entry: dict, path: str, flags: list, today: dt.date) -> Findings:
+    """GitHub's dates and commit count: only on a GitHub row, real, not from
+    the future, and `single-commit` exactly when the count is one."""
+    report = Report()
+    slug = entry.get("slug", "?")
+    present = [field for field in (*REPO_TIMESTAMPS, REPO_COMMITS) if field in entry]
+    if present and not on_github(entry):
+        report.err(
+            path,
+            f"{slug}: has {', '.join(present)} but no GitHub repository: they are GitHub's facts "
+            "about one, written by refresh_metadata.py; remove them",
+        )
+    for field in REPO_TIMESTAMPS:
+        if field in entry:
+            parsed = parse_timestamp(entry[field])
+            if parsed is None:
+                report.err(path, f"{slug}: {field} is not a valid UTC timestamp")
+            elif parsed.date() > today + dt.timedelta(days=1):
+                report.err(path, f"{slug}: {field} {entry[field]} is in the future")
+    commits = entry.get(REPO_COMMITS)
+    if isinstance(commits, int):
+        if commits == 1 and SINGLE_COMMIT_FLAG not in flags:
+            report.err(path, f"{slug}: repo_commits is 1 but the row lacks the {SINGLE_COMMIT_FLAG} flag")
+        if commits > 1 and SINGLE_COMMIT_FLAG in flags:
+            report.err(path, f"{slug}: flagged {SINGLE_COMMIT_FLAG} but repo_commits is {commits}")
     return report.findings()
 
 

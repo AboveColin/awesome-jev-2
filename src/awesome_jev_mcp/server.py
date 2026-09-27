@@ -126,7 +126,12 @@ def _compact(entry: dict) -> dict[str, Any]:
     # with code then means "not yet indexed by pattern", not "surveys the space".
     if entry.get("patterns_reviewed"):
         out["patterns_reviewed"] = entry["patterns_reviewed"]
-    for key in ("question_types", "languages", "platforms", "stars", "repo_license"):
+    # GitHub's facts about the repository, as the weekly refresh last read
+    # them: an agent judging upkeep gets the dates, not a verdict.
+    for key in (
+        "question_types", "languages", "platforms", "stars", "repo_license",
+        "repo_created_at", "repo_pushed_at", "repo_commits",
+    ):
         if entry.get(key) is not None:
             out[key] = entry[key]
     if entry.get("official"):
@@ -275,6 +280,14 @@ def get_example(slug: str) -> dict[str, Any]:
     project's description, and `overview` is what those rules give when nothing
     matches, so a project or plugin with code filed only under `overview` and
     no `patterns_reviewed` is not yet indexed by pattern rather than a survey.
+
+    `repo_created_at`, `repo_pushed_at` and `repo_commits` are GitHub's own
+    facts about the linked repository as the weekly refresh last read them:
+    when it was created and last pushed to (UTC) and how many commits its
+    default branch has; search_examples() carries them too. They are not a
+    judgement: an old push does not mean abandoned, and nothing here says
+    whether a project is maintained. The `single-commit` caveat is set exactly
+    when `repo_commits` is 1. Absent on rows without a GitHub repository.
 
     `question_types` lists the primitives a person read the code calling.
     `primitives_seen` is something else: a weekly script's text signal that the

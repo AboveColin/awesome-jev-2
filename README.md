@@ -176,6 +176,8 @@ Independent measurement reports in the catalogue, including **negative results**
   Jev against two LLMs on direct Cartesian control of an xArm7 in MuJoCo — intent, movement and gripper each step — with recorded responses, trajectories and replays. One seed-0 trial per controller, not a success rate.<br>
   <sub>`Benchmark` · ★10+ · openroboto-ai · `Py`</sub>
 
+  **Caveats:** `one commit`
+
 - **[smartmoney-cub](https://github.com/myc0576/SmartMoney-Cub)**<br>
   Read-only trading journal and review harness: Jev typed judgments, agent integration, and a reproducible finance benchmark. No orders, no advice. <sub>(upstream description)</sub><br>
   <sub>`Benchmark` · ★10+ · myc0576 · `Py`</sub>
@@ -191,6 +193,8 @@ Independent measurement reports in the catalogue, including **negative results**
 - **[agent-handoff-gate](https://github.com/zsoXi/agent-handoff-gate)**<br>
   An experimental protocol for evidence-aware agent handoffs, bounded worker continuation, and TypeSafe/Jev-assisted review, with reproducible evaluation. <sub>(upstream description)</sub><br>
   <sub>`Benchmark` · zsoxi · `Py`</sub>
+
+  **Caveats:** `one commit`
 
 - **[antigravity-mcp-semantic-search-with-typesafeai](https://github.com/greenyamao/Antigravity-mcp-semantic-search-with-TypeSafeAi)**<br>
   Fast semantic code search & diff sanity auditor for AI coding assistants (Antigravity, Cursor, Claude Code) powered by TypeSafe System One. <sub>(upstream description)</sub><br>
@@ -240,6 +244,8 @@ Independent measurement reports in the catalogue, including **negative results**
   Independent API-only calibration audit of TypeSafe AI's Jev decision model <sub>(upstream description)</sub><br>
   <sub>`Benchmark` · jujumilk3 · `Py`</sub>
 
+  **Caveats:** `one commit`
+
 - **[jev-certify](https://github.com/nikkoxgonzales/jev-certify)**<br>
   Finite-sample guarantees for Jev (TypeSafe's System One). Conformal risk control turns calibrated probabilities into certified routing thresholds; prediction-powered inference audits them. 2,412 decisions on CLINC150 for $0.23 — including the shift and prevalence cases where the guarantee break<br>
   <sub>`Benchmark` · nikkoxgonzales · `Py`</sub>
@@ -281,6 +287,8 @@ Independent measurement reports in the catalogue, including **negative results**
 - **[jev-eval](https://github.com/onlyoneaman/jev-eval)**<br>
   TypeSafe's Jev vs gpt-5.4-mini and gpt-5.6-luna on four public classification sets: cases, per-item answers, scoring, charts <sub>(upstream description)</sub><br>
   <sub>`Benchmark` · onlyoneaman · `TS`</sub>
+
+  **Caveats:** `one commit`
 
 - **[jev-eval](https://github.com/Shogo-nfrealmusic/jev-eval)**<br>
   A third-party check of Jev against two LLMs under identical conditions: routing booking inquiries to a photo-shoot service for tourists in Japan, sixty synthetic messages in four languages.<br>
@@ -422,7 +430,7 @@ Independent measurement reports in the catalogue, including **negative results**
   Synthetic smoking-history extraction benchmark comparing TypeSafe Jev and OpenAI structured outputs, with reproducible accuracy, cost, and latency results. <sub>(upstream description)</sub><br>
   <sub>`Benchmark` · vclic · `Py`</sub>
 
-  **Caveats:** `no licence`
+  **Caveats:** `one commit` · `no licence`
 
 - **[sysone-bench](https://github.com/instax-dutta/sysone-bench)**<br>
   First independent head-to-head benchmark of System One decision models (Laya vs Jev) on byte-identical inputs <sub>(upstream description)</sub><br>
@@ -726,13 +734,13 @@ _Decide whether a failed step is worth retrying._
   Judge agent steps — ok / retry / escalate / stop via TypeSafe Jev <sub>(upstream description)</sub><br>
   <sub>`Project` · ndolinschi · `TS`</sub>
 
-  **Caveats:** `no licence`
+  **Caveats:** `one commit` · `no licence`
 
 - **[Jev by Example](https://github.com/ReallyArtificial/jev-by-example)**<br>
   Ten runnable JavaScript agent decisions, one file each: reconciling a new memory against a stored one, gating whether an HTTP 200 really satisfied the task, retry vs. reconcile after an uncertain write, scoring context against a budget, checking a handoff for dropped prohibitions.<br>
   <sub>`Project` · Really Artificial · `JS` · `choice` · `score` · `noul`</sub>
 
-  **Caveats:** `one commit` · `AI-written`
+  **Caveats:** `AI-written`
 
 - **[jev-harness](https://github.com/ismaelsoilet/jev-harness)**<br>
   Zero-dependency System One decision harness: 5 semantic gates saving frontier AI agent tokens on trivial errors & doom loops. Python + TypeScript + Rust. MCP-compatible. <sub>(upstream description)</sub><br>
@@ -898,7 +906,7 @@ _Pack many questions — including speculative ones — into one request and let
   An open training and inference stack for Jev-style decision models. Train models to score dynamic candidate branches from a shared prefix, with support for high-cardinality choice, calibration, and fast batched inference. <sub>(upstream description)</sub><br>
   <sub>`Jev-like alternative` · ★10+ · zwlijay · `Py`</sub>
 
-  **Caveats:** `not Jev itself`
+  **Caveats:** `not Jev itself` · `one commit`
 
 - **[jev-sift](https://github.com/kbhuw/jev-sift)**<br>
   Classify first. Read selectively. A portable agent plugin and MCP tool for batch text classification. <sub>(upstream description)</sub><br>
@@ -1338,7 +1346,7 @@ The parts that are not the catalog.
 <details>
 <summary><b>Preview the searchable catalogue</b></summary>
 
-<a href="https://kydlikebtc.github.io/awesome-jev/?lang=en"><img src="https://kydlikebtc.github.io/awesome-jev/img/site-en.png?v=7ee8d291d8ed9917" alt="Searchable Jev catalogue with curated paths, filters, dated source evidence and entry cards" width="760"></a>
+<a href="https://kydlikebtc.github.io/awesome-jev/?lang=en"><img src="https://kydlikebtc.github.io/awesome-jev/img/site-en.png?v=f4f5d9a3519daf0c" alt="Searchable Jev catalogue with curated paths, filters, dated source evidence and entry cards" width="760"></a>
 
 <sub>Filter by clicking a bar. Two more views: <a href="https://kydlikebtc.github.io/awesome-jev/?view=prims">primitives</a> · <a href="https://kydlikebtc.github.io/awesome-jev/?view=compat">compatibility</a>. Every filter and entry is a shareable URL.</sub>
 
@@ -1383,7 +1391,7 @@ The parts that are not the catalog.
 | `shadow mode` | Wired in but deliberately inert — nothing it returns reaches a user-visible decision. |
 | `early access` | Needs waitlist access to run. |
 | `code untested` | The code was read, not executed. |
-| `one commit` | One commit, so maintenance is unlikely. |
+| `one commit` | The default branch had one commit when the weekly refresh last asked GitHub; the refresh adds and removes this flag. |
 | `no licence` | No LICENSE file, whatever a README badge claims. A blocker for reuse. |
 | `3rd-party key` | Needs a key for a service other than TypeSafe. |
 | `vendor numbers` | Repeats the vendor's own benchmarks rather than an independent measurement. |

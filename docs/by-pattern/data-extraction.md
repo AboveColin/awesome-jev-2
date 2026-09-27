@@ -51,10 +51,10 @@ Every catalogued example of this decision — 16 of them. The same rows, with ca
   <sub>`Project` · unownone · `TS` · ⚠ `no licence`</sub>
 
 - **[smoking-extraction-benchmark](https://github.com/vclic/smoking-extraction-benchmark)** — Synthetic smoking-history extraction benchmark comparing TypeSafe Jev and OpenAI structured outputs, with reproducible accuracy, cost, and latency results. <sub>(upstream description)</sub>
-  <sub>`Benchmark` · vclic · `Py` · ⚠ `no licence`</sub>
+  <sub>`Benchmark` · vclic · `Py` · ⚠ `one commit` `no licence`</sub>
 
 - **[typesafe-ai-jev-example](https://github.com/ItBayMax/typesafe-ai-jev-example)** — Hands-on demos for TypeSafe's Jev (System One) model: six runnable examples and four field notes. Runs offline with no API key; samples/ holds real measured output from jev-1.13.0. <sub>(upstream description)</sub>
-  <sub>`Project` · itbaymax · `Py`</sub>
+  <sub>`Project` · itbaymax · `Py` · ⚠ `one commit`</sub>
 
 ---
 

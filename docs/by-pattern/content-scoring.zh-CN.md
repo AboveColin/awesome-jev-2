@@ -57,7 +57,7 @@ _在有序量表上给质量、风险或相关性打分。_
   <sub>`开源项目` · ★100+ · supercorp-ai · `Rs`</sub>
 
 - **[hookmeter-jev](https://github.com/ehui1226/hookmeter-jev)** — 毫秒级的社交媒体爆款开头遥测与辅助工具（Chrome 扩展 + JEV System 1）。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`插件` · ★10+ · ehui1226 · `Py`</sub>
+  <sub>`插件` · ★10+ · ehui1226 · `Py` · ⚠ `仅一次提交`</sub>
 
 - **[jev-as-a-judge](https://github.com/danielgshea/jev-as-a-judge)** — 把 Jev 当作评估器使用。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`开源项目` · ★10+ · danielgshea · `Py` · ⚠ `无许可证`</sub>
@@ -78,7 +78,7 @@ _在有序量表上给质量、风险或相关性打分。_
   <sub>`开源项目` · ★10+ · qew7 · `Rb`</sub>
 
 - **[jev-forge](https://github.com/zwliJay/jev-forge)** — 面向 Jev 式决策模型的开源训练与推理栈。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`Jev 替代实现` · ★10+ · zwlijay · `Py` · ⚠ `并非 Jev 本身`</sub>
+  <sub>`Jev 替代实现` · ★10+ · zwlijay · `Py` · ⚠ `并非 Jev 本身` `仅一次提交`</sub>
 
 - **[jev-lint](https://github.com/mizchi/jev-lint)** — 用 Jev 打分器给代码中的文本做 lint。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`开源项目` · ★10+ · mizchi · `TS`</sub>
@@ -159,7 +159,7 @@ _在有序量表上给质量、风险或相关性打分。_
   <sub>`教程` · Flavio Copes · `JS` · `Py` · `TS` · `choice` · `score` · `noul`</sub>
 
 - **[a0-typesafe-ai](https://github.com/3clyp50/a0-typesafe-ai)** — 给 Agent Zero 的 Jev 判断，带类型化工具与概率卡片。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`开源项目` · 3clyp50 · `Py`</sub>
+  <sub>`开源项目` · 3clyp50 · `Py` · ⚠ `仅一次提交`</sub>
 
 - **[ai-provider-for-jev](https://github.com/soderlind/ai-provider-for-jev)** — 把 WordPress 接到 Jev 上做结构化决策。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`平台集成` · soderlind · `PHP` · ⚠ `无许可证`</sub>
@@ -189,7 +189,7 @@ _在有序量表上给质量、风险或相关性打分。_
   <sub>`插件` · vladyslavhontar · `Py`</sub>
 
 - **[decide-mcp](https://github.com/dakdevs/decide-mcp)** — 可配置的决策 MCP server，带百分比分数与偏好画像。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`SDK` · dakdevs · `TS`</sub>
+  <sub>`SDK` · dakdevs · `TS` · ⚠ `仅一次提交`</sub>
 
 - **[decision-first](https://github.com/harrymunro/decision-first)** — 一个 agent 技能：识别出有界判断步骤，优先尝试用类型化决策模型解决。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`插件` · harrymunro · `Py`</sub>
@@ -213,13 +213,13 @@ _在有序量表上给质量、风险或相关性打分。_
   <sub>`基准测试` · xienda · `JS`</sub>
 
 - **[github-issue-classification-using-jev](https://github.com/KalyanM45/GitHub-Issue-Classification-Using-Jev)** — 基于 Jev 的 GitHub issue 分类器。 <sub>(机翻)</sub>
-  <sub>`开源项目` · kalyanm45 · `Py`</sub>
+  <sub>`开源项目` · kalyanm45 · `Py` · ⚠ `仅一次提交`</sub>
 
 - **[gpt-vs-jev](https://github.com/TanayPadar/gpt-vs-jev)** — 在同一输入上对比 GPT 的生成式语言与 JEV 的结构化 Noul 决策。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`开源项目` · tanaypadar · `TS`</sub>
+  <sub>`开源项目` · tanaypadar · `TS` · ⚠ `仅一次提交`</sub>
 
 - **[harnessjudge](https://github.com/ndolinschi/harnessjudge)** — 评判智能体的每一步：通过／重试／升级／停止。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`开源项目` · ndolinschi · `TS` · ⚠ `无许可证`</sub>
+  <sub>`开源项目` · ndolinschi · `TS` · ⚠ `仅一次提交` `无许可证`</sub>
 
 - **[heist-one](https://github.com/AbdelStark/heist-one)** — 可观测的浏览器潜行游戏：Jev 做类型化的守卫判断，确定性代码掌管世界规则。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`开源项目` · abdelstark · `TS`</sub>
@@ -237,7 +237,7 @@ _在有序量表上给质量、风险或相关性打分。_
   <sub>`开源项目` · mintannn · `TS`</sub>
 
 - **[jev-builder-loop](https://github.com/rainbowpuffpuff/jev-builder-loop)** — Grok 技能：把 Jev 当作构建者循环里的判断传感器（先验 × 概率 → 下一步）。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`插件` · rainbowpuffpuff · `Py`</sub>
+  <sub>`插件` · rainbowpuffpuff · `Py` · ⚠ `仅一次提交`</sub>
 
 - **[jev-carryforward](https://github.com/Dharundp6/jev-carryforward)** — 把上一轮会话知道的东西，对照这一轮正在做的事打分。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`插件` · dharundp6 · `TS`</sub>
@@ -264,7 +264,7 @@ _在有序量表上给质量、风险或相关性打分。_
   <sub>`开源项目` · microchipgnu · `TS` · ⚠ `无许可证`</sub>
 
 - **[jev-judgment](https://github.com/HyunjunJeon/jev-judgment)** — Agent 技能：把编程智能体的封闭式判断交给 Jev。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`插件` · hyunjunjeon · `Py`</sub>
+  <sub>`插件` · hyunjunjeon · `Py` · ⚠ `仅一次提交`</sub>
 
 - **[jev-llm-router-benchmark](https://github.com/erendikmenn/jev-llm-router-benchmark)** — 以基准驱动的 Jev 路由器与评判者，服务于成本可控的 LLM 编程流程。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`基准测试` · erendikmenn · `Py`</sub>
@@ -330,10 +330,10 @@ _在有序量表上给质量、风险或相关性打分。_
   <sub>`插件` · molis-ai · `TS`</sub>
 
 - **[jev-wrapped](https://github.com/gaborishka/jev-wrapped)** — Telegram 频道年度透视：Jev 评判一年的帖子，生成一张卡片，跑在一个 Cloudflare Worker 上。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`开源项目` · gaborishka · `JS`</sub>
+  <sub>`开源项目` · gaborishka · `JS` · ⚠ `仅一次提交`</sub>
 
 - **[jevaluate](https://github.com/ElshinQ/jevaluate)** — 先评估再信任：实战笔记、可运行脚本与一个 agent 技能。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`插件` · elshinq · `JS`</sub>
+  <sub>`插件` · elshinq · `JS` · ⚠ `仅一次提交`</sub>
 
 - **[jevbus](https://github.com/zkjoie/jevbus)** — 一个流式事件总线：路由、订阅与消费都由概率决策决定。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`开源项目` · zkjoie · `Rs`</sub>
@@ -354,7 +354,7 @@ _在有序量表上给质量、风险或相关性打分。_
   <sub>`开源项目` · romiluz13 · `Py`</sub>
 
 - **[jevplay](https://github.com/ndolinschi/jevplay)** — Jev playground：自定义 Choice／Score／Noul 构造器，带实时概率分布。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`开源项目` · ndolinschi · `TS` · ⚠ `无许可证`</sub>
+  <sub>`开源项目` · ndolinschi · `TS` · ⚠ `仅一次提交` `无许可证`</sub>
 
 - **[JevPromptCoach](https://github.com/CrowdLinker/JevPromptCoach)** — 给你向编码智能体提问的方式打分，并显示你的习惯是否在进步的 Claude Code 插件。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`插件` · crowdlinker · `TS`</sub>
@@ -432,13 +432,13 @@ _在有序量表上给质量、风险或相关性打分。_
   <sub>`开源项目` · cpaczek · `TS`</sub>
 
 - **[shady-town](https://github.com/tpaulshippy/shady-town)** — Shady Town：客厅电视上的社交推理派对游戏，由 Jev 主持。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`开源项目` · tpaulshippy · `Rb` · ⚠ `无许可证`</sub>
+  <sub>`开源项目` · tpaulshippy · `Rb` · ⚠ `仅一次提交` `无许可证`</sub>
 
 - **[sloppy-jevs-extension](https://github.com/neddes/sloppy-jevs-extension)** — 开源 Chrome 扩展：用 Jev 过滤 AI 生成的文字与广告。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`插件` · neddes · `JS`</sub>
 
 - **[spendbrake](https://github.com/ndolinschi/spendbrake)** — 智能体预算刹车：继续／降级模型／停止。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`开源项目` · ndolinschi · `TS` · ⚠ `无许可证`</sub>
+  <sub>`开源项目` · ndolinschi · `TS` · ⚠ `仅一次提交` `无许可证`</sub>
 
 - **[system-one-gemma](https://github.com/akash-kamat/system-one-gemma)** — 开源的 Jev 式 System One 决策模型：Gemma 3 270M 加一个打分头。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`Jev 替代实现` · akash-kamat · `Py` · ⚠ `并非 Jev 本身` `无许可证`</sub>
@@ -465,7 +465,7 @@ _在有序量表上给质量、风险或相关性打分。_
   <sub>`开源项目` · y0usaf · `TS`</sub>
 
 - **[typesafe-demo-mcp](https://github.com/bestagentkits/typesafe-demo-mcp)** — 把 System One 判断暴露成智能体工具的 MCP server。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`插件` · bestagentkits · `TS` · ⚠ `无许可证`</sub>
+  <sub>`插件` · bestagentkits · `TS` · ⚠ `仅一次提交` `无许可证`</sub>
 
 - **[typesafe-jev](https://github.com/gtaras7/typesafe-jev)** — 用 Jev 筛选一整个文件夹的简历：类型化判断、可编辑的策略、免费重新打分。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`开源项目` · gtaras7 · `TS`</sub>
@@ -495,7 +495,7 @@ _在有序量表上给质量、风险或相关性打分。_
   <sub>`开源项目` · jexp · `Py` · ⚠ `无许可证`</sub>
 
 - **[zcode-jev](https://github.com/Zahrannnn/zcode-jev)** — 给编程智能体的类型化判断层：从需求文档到发布的各道闸门。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`平台集成` · zahrannnn · `TS` · ⚠ `无许可证`</sub>
+  <sub>`平台集成` · zahrannnn · `TS` · ⚠ `仅一次提交` `无许可证`</sub>
 
 - **[jevai.org community showcase cases](https://www.jevai.org/cases)** — 九个社区演练场景：意图路由、发票分类、新闻过滤、商品打标、内容审核、主张核验、CSV 校验等。
   <sub>`开源项目` · ⚠ `宣称未核实`</sub>

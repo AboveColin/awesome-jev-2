@@ -51,7 +51,7 @@ _对来自廉价检索步骤的候选做打分或重排。_
   <sub>`开源项目` · ★100+ · uehaj · `JS`</sub>
 
 - **[jev-shell-history](https://github.com/mrnugget/jev-shell-history)** — Fish 风格的 zsh 历史自动建议，由 Jev 排序而不是按时间。
-  <sub>`开源项目` · ★100+ · mrnugget · `TS` · ⚠ `无许可证`</sub>
+  <sub>`开源项目` · ★100+ · mrnugget · `TS` · ⚠ `仅一次提交` `无许可证`</sub>
 
 - **[neo4jev](https://github.com/jexp/neo4jev)** — 把 Jev 塞进知识图谱。每走到一个节点，判断下一条最值得走的边，再一路找下去。
   <sub>`开源项目` · ★100+ · `Py` · `choice`</sub>
@@ -114,7 +114,7 @@ _对来自廉价检索步骤的候选做打分或重排。_
   <sub>`插件` · ★10+ · safzanpirani · `TS`</sub>
 
 - **[transcript-lens](https://github.com/sensahin/transcript-lens)** — 按含义浏览 YouTube 字幕：土耳其语界面、由 Jev 分析、可导出字幕，并附 Vercel 部署说明。 <sub>(机翻)</sub>
-  <sub>`开源项目` · ★10+ · sensahin · `TS`</sub>
+  <sub>`开源项目` · ★10+ · sensahin · `TS` · ⚠ `仅一次提交`</sub>
 
 - **[warrenduffer](https://github.com/arimanyus/warrenduffer)** — 面向印度股票的 AI 日内交易机器人：Jev 每 15 秒给 Nifty 50 排序，代码决定每笔交易的仓位并下单。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`开源项目` · ★10+ · arimanyus · `TS`</sub>
@@ -135,7 +135,7 @@ _对来自廉价检索步骤的候选做打分或重排。_
   <sub>`开源项目` · glud123 · `JS`</sub>
 
 - **[jev-bfs](https://github.com/komikat/jev-bfs)** — 用 Jev 直接排序来跑维基百科链接竞速，带实时终端显示。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`开源项目` · komikat · `Py`</sub>
+  <sub>`开源项目` · komikat · `Py` · ⚠ `仅一次提交`</sub>
 
 - **[jev-engineering](https://github.com/eugeniughelbur/jev-engineering)** — 面向 AI 智能体的决策层：约 400 毫秒、两百分之一美分的类型化校准决策，用于拦截工具调用。 <sub>(机翻)</sub>
   <sub>`开源项目` · eugeniughelbur · `Py`</sub>
@@ -192,7 +192,7 @@ _对来自廉价检索步骤的候选做打分或重排。_
   <sub>`开源项目` · tonyzdev · `TS`</sub>
 
 - **[sift](https://github.com/tylergibbs1/sift)** — 用 TypeSafe Jev 重排 Google 搜索结果的 Chrome 扩展，并收起销售页面和 SEO 填充内容。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`插件` · tylergibbs1 · `TS`</sub>
+  <sub>`插件` · tylergibbs1 · `TS` · ⚠ `仅一次提交`</sub>
 
 - **[typesafe-as-a-judge](https://github.com/E-FL/typesafe-as-a-judge)** — 给 Codex 与 Claude Code 的非官方社区 MCP 插件，用 Jev 做有界路由。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`插件` · e-fl · `JS`</sub>

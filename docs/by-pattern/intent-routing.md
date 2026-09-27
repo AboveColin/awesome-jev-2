@@ -90,7 +90,7 @@ Every catalogued example of this decision — 35 of them. The same rows, with ca
   <sub>`Benchmark` · shogo-nfrealmusic · `TS` · ⚠ `no licence`</sub>
 
 - **[jev-inbox-queue](https://github.com/tusharck/jev-inbox-queue)** — Turn an inbox into a short action queue with Jev (TypeSafe System One) <sub>(upstream description)</sub>
-  <sub>`Project` · tusharck · `Py`</sub>
+  <sub>`Project` · tusharck · `Py` · ⚠ `one commit`</sub>
 
 - **[jev-phishing-bench](https://github.com/anisselbd/jev-phishing-bench)** — Jev (TypeSafe) vs Claude Haiku 4.5 on 2 000 phishing emails: accuracy, calibration, latency, cost. Reproducible benchmark. <sub>(upstream description)</sub>
   <sub>`Benchmark` · anisselbd · `Py` · ⚠ `no licence`</sub>
@@ -99,7 +99,7 @@ Every catalogued example of this decision — 35 of them. The same rows, with ca
   <sub>`Project` · kushals256 · `TS`</sub>
 
 - **[lanebreak](https://github.com/ndolinschi/lanebreak)** — LaneBreak — support ticket priority+routing via TypeSafe Jev <sub>(upstream description)</sub>
-  <sub>`Project` · ndolinschi · `TS` · ⚠ `no licence`</sub>
+  <sub>`Project` · ndolinschi · `TS` · ⚠ `one commit` `no licence`</sub>
 
 - **[langchain-typesafe](https://docs.langchain.com/oss/python/integrations/providers/typesafe)** — The LangChain integration: a classifier plus experimental middleware for model routing and for gating risky tool calls before they run.
   <sub>`Integration` · `Py` · `choice` · `score` · `noul` · ⚠ `early access`</sub>

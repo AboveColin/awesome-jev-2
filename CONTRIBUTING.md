@@ -245,6 +245,15 @@ turns red.
   pages print only the band a count falls in (★10+, ★100+, …, nothing under
   10) and sort by it; the exact number stays in the row, and the weekly
   refresh keeps it current.
+- **`repo_created_at`**, **`repo_pushed_at`**, **`repo_commits`** — leave them
+  out; the weekly `metadata` run records them from the GitHub API
+  (`scripts/refresh_metadata.py`): when the repository was created, when
+  anything was last pushed to it (UTC timestamps as GitHub states them) and how
+  many commits its default branch has. They are GitHub's facts, not a
+  judgement of upkeep, and the READMEs do not print them (the site and the MCP
+  server do). The same run adds `single-commit` when the count is 1 and removes
+  it when it is more, and lint fails a row whose flag and recorded count
+  disagree, or that carries these fields without a GitHub repository.
 - **`sources`** — at least one, so the row is attributable. Name where you found
   it, not where it lives. Two fixed strings name submissions made directly to
   this repository, and they mean different things:
@@ -268,7 +277,7 @@ Use them generously. A flagged row is more useful than an unflagged one.
 | `not-jev`                                | it does not call Jev at all                     |
 | `shadow-mode-only`                       | Jev is wired in but changes no behaviour        |
 | `code-untested`                          | you read the code but did not run it            |
-| `single-commit`                          | one commit, so maintenance is unlikely          |
+| `single-commit`                          | one commit; the weekly refresh keeps it current |
 | `no-license`                             | no `LICENSE` file, whatever the README says     |
 | `archived`                               | development visibly stopped                     |
 | `paywalled`, `marketing`, `ai-generated` | as they say                                     |

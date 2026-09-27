@@ -998,7 +998,7 @@
     </footer>
 
     <script type="module">
-      import { SORTS, verification, evidenceKind, evidenceUrl, isIndependentReport, compareEntries, matchesEntry, queryFromState, shareUrl, stateFromQuery, summaryMarks, notIndexedByPattern, primitiveLayers } from "./catalog-core.mjs";
+      import { SORTS, verification, evidenceKind, evidenceUrl, isIndependentReport, compareEntries, matchesEntry, queryFromState, shareUrl, stateFromQuery, summaryMarks, notIndexedByPattern, primitiveLayers, repositoryFacts } from "./catalog-core.mjs";
       const STR = {
         en: {
           eyebrow: "Jev Decision Atlas · community index",
@@ -1019,6 +1019,8 @@
           third_party: "Third-party report", review_scope: "A dated citation is not a current CI result or a runtime test.",
           signals: "Recorded matching text", added: "Added", stars: "Repository stars", author: "Author", read_context: "Source context",
           prims_read: "Primitives read by a person", prims_signal: "Text signal only",
+          repo_created: "Repository created", repo_pushed: "Last push", repo_commits: "Commits on the default branch",
+          repo_facts_about: "As GitHub stated them at the last weekly refresh (days in UTC). A date says when someone last pushed, not whether the project is maintained.",
           prims_signal_about: "The cited file contains this primitive’s request or answer shape (primitives_seen). A script found the text; nobody recorded reading the code call it.",
           reason: "Why this pick", caution: "Before you use it", notes: "Editor’s note", empty_help: "Try a broader phrase or reset the filters.",
           trust_short: "Source checks ≠ runtime tests.", trust_link: "What we check ↗", patterns_count: "patterns",
@@ -1102,6 +1104,9 @@
           signals: "记录的匹配文本", added: "收录日期", stars: "仓库星标", author: "作者", read_context: "来源说明",
           // The Chinese of the primitive-layer strings here and in the primitives view (p_read … p_layers) is model-written; a person who revises it drops this note.
           prims_read: "人读确认的原语", prims_signal: "仅文本信号",
+          // The Chinese of the four repository-fact strings below is model-written; a person who revises it drops this note.
+          repo_created: "仓库创建", repo_pushed: "最近推送", repo_commits: "默认分支提交数",
+          repo_facts_about: "上次每周刷新时 GitHub 给出的数据（UTC 日期）。日期只说明最近何时有人推送，不代表项目是否仍在维护。",
           prims_signal_about: "所引文件含有这个原语的请求或回答结构（primitives_seen）。这是脚本找到的文本，没有人记录读过代码确认调用。",
           reason: "精选理由", caution: "使用前留意", notes: "编辑备注", empty_help: "试试更宽泛的关键词，或重置筛选条件。",
           trust_short: "来源核查 ≠ 运行验证。", trust_link: "了解核验范围 ↗", patterns_count: "类场景",
@@ -1442,6 +1447,15 @@
         // A person's reading and a script's text signal, each under its own label.
         const prims = primitiveLayers(e);
         const primPills = (names, cls) => `<div class="pills">${names.map(q => `<span class="${cls}">${QGLYPH[q] || ""} ${esc(q)}</span>`).join("")}</div>`;
+        // GitHub's dates and commit count, as recorded; the note goes under the last one shown.
+        const rf = repositoryFacts(e);
+        const rfRows = [
+          [S().repo_created, rf.created && `<time datetime="${esc(rf.created)}">${esc(rf.created)}</time>`],
+          [S().repo_pushed, rf.pushed && `<time datetime="${esc(rf.pushed)}">${esc(rf.pushed)}</time>`],
+          [S().repo_commits, rf.commits != null && Number(rf.commits).toLocaleString()],
+        ].filter(([, value]) => value);
+        const repoFacts = rfRows.map(([name, value], i) =>
+          `<dt>${name}</dt><dd>${value}${i === rfRows.length - 1 ? `<p class="sig-about">${S().repo_facts_about}</p>` : ""}</dd>`).join("");
         const permalink = `?lang=${L}#${encodeURIComponent(e.slug)}`;
         return `<article class="card ${flags.length ? "flagged" : ""}"${first ? ` id="${esc(e.slug)}"` : ""}>
           <div class="ct-row">
@@ -1471,6 +1485,7 @@
               <dl>
                 <dt>${S().added}</dt><dd>${esc(e.first_seen || "—")}</dd>
                 ${e.stars != null ? `<dt>${S().stars}</dt><dd>${Number(e.stars).toLocaleString()}</dd>` : ""}
+                ${repoFacts}
                 ${e.author ? `<dt>${S().author}</dt><dd>${esc(e.author.name)}</dd>` : ""}
                 <dt>${citeLabel}</dt><dd>${e.evidence ? `${esc(e.evidence.path)}${v.codeRead ? ` · ${esc(v.codeRead)}` : ""}` : S().code_missing}</dd>
                 ${e.evidence ? `<dt>${S().signals}</dt><dd>${e.evidence.matched.map(x => `<code>${esc(x)}</code>`).join(" ")}</dd>` : ""}

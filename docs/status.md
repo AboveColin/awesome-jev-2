@@ -35,8 +35,24 @@ is the point of dating it.
 | Summaries taken from that description that no longer match it (`upstream-description-stale`) | 0 |
 | Summaries marked as written for this catalogue (`curated`) | 0 |
 | Chinese summaries hand-written | 196 of 1207 |
+| Rows recording GitHub's creation date, last push and default-branch commit count for their repository (`repo_created_at`, `repo_pushed_at`, `repo_commits`; GitHub's facts at the last weekly refresh, not a judgement of upkeep) | 1134 of 1207 |
+| Rows flagged `single-commit`: one commit on the default branch (the refresh sets and clears it from `repo_commits`) | 91 |
 | Retired links | 2 |
 <!-- shape:end -->
+
+### When each repository was last pushed
+
+GitHub's `pushed_at` for every row that records one (`repo_pushed_at`), as the
+weekly refresh last read it, grouped by calendar month in UTC. A month says
+when someone last pushed to any branch, not whether a project is maintained or
+works; nothing here turns it into a verdict. The creation dates and commit
+counts behind the same refresh are on the site and in the MCP server's rows.
+
+<!-- pushed:start -->
+| Month of the last push (UTC) | Rows |
+| --- | --- |
+| 2026-09 | 1134 |
+<!-- pushed:end -->
 
 ### Coverage gaps
 

@@ -90,7 +90,7 @@ _判断用户意图，把请求分流到正确的分支。_
   <sub>`基准测试` · shogo-nfrealmusic · `TS` · ⚠ `无许可证`</sub>
 
 - **[jev-inbox-queue](https://github.com/tusharck/jev-inbox-queue)** — 用 Jev（TypeSafe System One）把收件箱变成一个简短的行动队列。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`开源项目` · tusharck · `Py`</sub>
+  <sub>`开源项目` · tusharck · `Py` · ⚠ `仅一次提交`</sub>
 
 - **[jev-phishing-bench](https://github.com/anisselbd/jev-phishing-bench)** — 在 2000 封钓鱼邮件上对比 Jev 与一个轻量 LLM：准确率、校准度、延迟、成本。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`基准测试` · anisselbd · `Py` · ⚠ `无许可证`</sub>
@@ -99,7 +99,7 @@ _判断用户意图，把请求分流到正确的分支。_
   <sub>`开源项目` · kushals256 · `TS`</sub>
 
 - **[lanebreak](https://github.com/ndolinschi/lanebreak)** — LaneBreak：工单优先级与路由。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`开源项目` · ndolinschi · `TS` · ⚠ `无许可证`</sub>
+  <sub>`开源项目` · ndolinschi · `TS` · ⚠ `仅一次提交` `无许可证`</sub>
 
 - **[langchain-typesafe](https://docs.langchain.com/oss/python/integrations/providers/typesafe)** — LangChain 集成：一个分类器，外加用于模型路由、以及在高风险工具调用执行前拦截它的实验性 middleware。
   <sub>`平台集成` · `Py` · `choice` · `score` · `noul` · ⚠ `需早期访问`</sub>

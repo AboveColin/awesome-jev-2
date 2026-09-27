@@ -63,6 +63,9 @@ class CountsTest(unittest.TestCase):
             "primitive_rows": 7020,
             "primitive_signal_rows": 7021,
             "primitive_signal_only_rows": 7022,
+            "repo_facts_rows": 7023,
+            "single_commit_rows": 7024,
+            "pushed_by_month": {"2026-10": 7025, "2026-09": 7026},
         }
         with patch.object(_stats, "compute", return_value=fake):
             text = run_counts()
@@ -81,6 +84,8 @@ class CountsTest(unittest.TestCase):
             "patterns       7017 equal the keyword rules' suggestion (no review recorded), 7018 patterns_reviewed, "
             "7019 overview rows with code not yet indexed by pattern",
             "summaries      7012 upstream-description, 7013 upstream-description-stale, 7014 curated, 7015 unlabelled",
+            "repositories   7023 with GitHub's creation date, last push and commit count, 7024 single-commit; "
+            "last push by month (UTC): 2026-10 7025, 2026-09 7026",
             "next changes at 7,100 entries",
             "  7,000+ public resources for Jev",
         ):

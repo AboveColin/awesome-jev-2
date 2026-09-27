@@ -249,6 +249,40 @@ class ApiTest(Base):
             _github.api_get("/search/repositories?q=y")
 
 
+class LinkHeaderTest(Base):
+    """I15: over REST a branch's commit count is the page number of the
+    rel="last" link when asking for one commit per page."""
+
+    LINK = (
+        '<https://api.github.com/repositories/70107786/commits?per_page=1&page=2>; rel="next", '
+        '<https://api.github.com/repositories/70107786/commits?per_page=1&page=35895>; rel="last"'
+    )
+
+    def test_last_page_is_the_count(self):
+        self.assertEqual(_github.last_page(self.LINK), 35895)
+        self.assertEqual(_github.last_page('<https://x/y?page=1&per_page=1>; rel="last"'), 1)
+
+    def test_no_last_link_is_none(self):
+        for link in (None, "", '<https://x/y?per_page=1&page=2>; rel="next"', '<https://x/y>; rel="last"',
+                     '<https://x/y?page=0>; rel="last"', '<https://x/y?page=abc>; rel="last"'):
+            with self.subTest(link=link):
+                self.assertIsNone(_github.last_page(link))
+
+    def test_api_response_returns_the_headers(self):
+        self.net(Ok([{"sha": "a"}], Link=self.LINK, **budget(4000)))
+        status, data, head = _github.api_response("/repos/vercel/next.js/commits?per_page=1")
+        self.assertEqual((status, data), (200, [{"sha": "a"}]))
+        self.assertEqual(_github.last_page(head.get("Link")), 35895)
+        self.assertEqual(_github.USAGE.requests["core"], 1)
+
+    def test_api_response_on_an_error_keeps_status_and_body(self):
+        self.net(error(409, {"message": "Git Repository is empty."}, **budget(4000)))
+        status, data, _ = _github.api_response("/repos/a/empty/commits?per_page=1")
+        self.assertEqual((status, data), (409, {"message": "Git Repository is empty."}))
+        self.net(socket.timeout("timed out"))
+        self.assertEqual(_github.api_response("/repos/a/b/commits?per_page=1"), (0, None, None))
+
+
 class GraphqlTest(Base):
     def test_returns_errors_beside_the_data_and_counts_points(self):
         body = {

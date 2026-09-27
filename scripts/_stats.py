@@ -74,6 +74,12 @@ SUMMARY_SOURCES = ("curated", "upstream-description", "upstream-description-stal
 # (scripts/verify_claims.py). A count of primitive claims reads the first only.
 PRIMITIVES = ("choice", "score", "noul")
 
+# GitHub's own facts about a row's repository, recorded by the weekly refresh
+# (scripts/refresh_metadata.py) as GitHub states them: creation and last push
+# as UTC timestamps, and the default branch's commit count. Published as counts
+# per calendar month, never as an age: "N days since" is true for one day.
+REPO_FACTS = ("repo_created_at", "repo_pushed_at", "repo_commits")
+
 
 def load() -> tuple[list[dict], list[dict], list[dict], dict, dict]:
     catalog = json.loads((ROOT / "catalog.json").read_text())
@@ -129,6 +135,14 @@ def primitive_layers(catalog: list[dict]) -> dict[str, dict[str, int]]:
         }
         for name in PRIMITIVES
     }
+
+
+def pushed_by_month(catalog: list[dict]) -> dict[str, int]:
+    """Rows per calendar month (UTC, `YYYY-MM`) of their repository's last push,
+    newest month first. Only rows that record one; a month nobody pushed in is
+    left out rather than shown as zero."""
+    months = Counter(e["repo_pushed_at"][:7] for e in catalog if isinstance(e.get("repo_pushed_at"), str))
+    return dict(sorted(months.items(), reverse=True))
 
 
 def not_indexed_by_pattern(entry: dict) -> bool:
@@ -221,6 +235,13 @@ def compute() -> dict:
         ),
         "primitive_layers": primitive_layers(catalog),
         "no_licence": sum(1 for e in catalog if e.get("repo_license") == "unknown"),
+        # GitHub's dates and commit count, as the weekly refresh last read
+        # them: how many rows record them, how many default branches had a
+        # single commit (the `single-commit` flag, which follows the count on
+        # every row the refresh reads), and last pushes per calendar month.
+        "repo_facts_rows": sum(1 for e in catalog if all(key in e for key in REPO_FACTS)),
+        "single_commit_rows": sum(1 for e in catalog if "single-commit" in (e.get("flags") or [])),
+        "pushed_by_month": pushed_by_month(catalog),
         # summary_source: the project's own description word for word; taken
         # from it and no longer matching; written for this catalogue; not
         # recorded. The refresh writes the first two, only a person the third.

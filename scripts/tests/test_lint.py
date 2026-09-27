@@ -67,6 +67,9 @@ FULL = {
     "repo": "https://github.com/someone/demo-row",
     "stars": 3,
     "repo_license": "MIT",
+    "repo_created_at": "2026-08-30T12:00:00Z",
+    "repo_pushed_at": "2026-09-20T09:15:00Z",
+    "repo_commits": 14,
     "package": {"registry": "pypi", "name": "demo-row", "url": "https://pypi.org/project/demo-row/"},
     "evidence": {"path": "demo.py", "matched": ["from jev import"], "kind": "call-site", "read_on": "2026-09-01"},
     "primitives_seen": ["choice", "noul"],
@@ -90,6 +93,10 @@ RETIRED = {
 }
 
 AUTHOR = {"catalog": "author submission", "url": "https://github.com/kydlikebtc/awesome-jev/pull/99"}
+
+# GitHub's facts about FULL's repository (I15). A row moved off GitHub drops
+# them too, or lint reports them as facts about no repository.
+NO_REPO_FACTS = {"repo_created_at": DROP, "repo_pushed_at": DROP, "repo_commits": DROP}
 
 
 def row(base: dict, **changes) -> dict:
@@ -172,7 +179,7 @@ class EntryInvariantTest(FindingsAssertions):
         for url in ("https://github.com/someone/demo-row", "https://example.com/demo-row"):
             with self.subTest(url=url):
                 self.assertOnly(
-                    lint_row(row(FULL, evidence=DROP, primitives_seen=DROP, url=url, repo=DROP)),
+                    lint_row(row(FULL, evidence=DROP, primitives_seen=DROP, url=url, repo=DROP, **NO_REPO_FACTS)),
                     "error",
                     "demo-row: claims primitives but carries neither evidence nor evidence_none",
                     "python3 scripts/verify_claims.py --discover --only demo-row",
@@ -197,7 +204,7 @@ class EntryInvariantTest(FindingsAssertions):
                 self.assertClean(lint_row(row(plain, evidence_none=reason)))
         # Nothing to read: no code, or no GitHub repository.
         self.assertClean(lint_row(row(plain, has_code=False, languages=DROP)))
-        self.assertClean(lint_row(row(plain, url="https://example.com/demo-row", repo=DROP)))
+        self.assertClean(lint_row(row(plain, url="https://example.com/demo-row", repo=DROP, **NO_REPO_FACTS)))
         # A retired row's repository is gone, so its code cannot be read either.
         retired = row(RETIRED, has_code=True, languages=["python"])
         self.assertClean(lint.check_entry_invariants(retired, "retired.json[0]", retired=True, today=TODAY))
@@ -209,7 +216,7 @@ class EntryInvariantTest(FindingsAssertions):
 
     def test_evidence_needs_a_github_repository(self):
         self.assertOnly(
-            lint_row(row(FULL, url="https://example.com/demo-row", repo=DROP)),
+            lint_row(row(FULL, url="https://example.com/demo-row", repo=DROP, **NO_REPO_FACTS)),
             "error",
             "has evidence but no GitHub repository to re-read it from",
         )
@@ -440,6 +447,60 @@ class EntryInvariantTest(FindingsAssertions):
             "error",
             "flagged no-license but repo_license is 'MIT'",
         )
+
+    def test_repository_facts_need_a_github_repository(self):
+        # I15: GitHub's dates and commit count describe a GitHub repository.
+        self.assertOnly(
+            lint_row(row(MINIMAL, url="https://example.com/demo-row", repo_pushed_at="2026-09-20T09:15:00Z",
+                         repo_commits=3)),
+            "error",
+            "demo-row: has repo_pushed_at, repo_commits but no GitHub repository",
+            "refresh_metadata.py",
+        )
+        self.assertClean(lint_row(row(MINIMAL, repo="https://github.com/someone/demo-row",
+                                      url="https://example.com/demo-row", repo_commits=3)))
+
+    def test_repository_timestamps_are_real_and_not_from_the_future(self):
+        for field in lint.REPO_TIMESTAMPS:
+            with self.subTest(field=field):
+                self.assertOnly(
+                    lint_row(row(MINIMAL, **{field: "2026-02-30T00:00:00Z"})),
+                    "error",
+                    f"{field} is not a valid UTC timestamp",
+                )
+                self.assertOnly(
+                    lint_row(row(MINIMAL, **{field: "2026-09-29T00:00:00Z"})),
+                    "error",
+                    f"{field} 2026-09-29T00:00:00Z is in the future",
+                )
+                # UTC runs ahead of a person's clock west of Greenwich: tomorrow is allowed.
+                self.assertClean(lint_row(row(MINIMAL, **{field: "2026-09-28T23:59:59Z"})))
+                # The schema holds the form: a bare date is not GitHub's timestamp.
+                errors, _ = lint_row(row(MINIMAL, **{field: "2026-09-20"}))
+                self.assertTrue(any("does not match" in e for e in errors), errors)
+
+    def test_one_commit_needs_the_single_commit_flag(self):
+        self.assertOnly(
+            lint_row(row(MINIMAL, repo_commits=1)),
+            "error",
+            "repo_commits is 1 but the row lacks the single-commit flag",
+        )
+        self.assertClean(lint_row(row(MINIMAL, repo_commits=1, flags=["single-commit"])))
+
+    def test_single_commit_flag_needs_a_count_of_one_when_one_is_recorded(self):
+        self.assertOnly(
+            lint_row(row(MINIMAL, repo_commits=5, flags=["single-commit"])),
+            "error",
+            "flagged single-commit but repo_commits is 5",
+        )
+        # A person's flag on a row the refresh has not counted stands.
+        self.assertClean(lint_row(row(MINIMAL, flags=["single-commit"])))
+
+    def test_a_commit_count_is_a_positive_integer(self):
+        for value, message in ((0, "minimum"), ("3", "integer"), (2.5, "integer")):
+            with self.subTest(value=value):
+                errors, _ = lint_row(row(MINIMAL, repo_commits=value))
+                self.assertTrue(any(message in e for e in errors), errors)
 
     def test_a_discovery_draft_is_refused(self):
         # I05: the one rule that keeps a draft from discover_drafts.py out as it

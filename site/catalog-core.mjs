@@ -64,6 +64,19 @@ export function primitiveLayers(entry) {
   return { read, signalOnly };
 }
 
+// GitHub's own facts about a row's repository, as the weekly refresh records
+// them (repo_created_at, repo_pushed_at, repo_commits; scripts/refresh_metadata.py):
+// the creation and last-push days in UTC and the default branch's commit count.
+// Shown as recorded, never turned into an age or a verdict on upkeep; a value
+// not in GitHub's form is shown as absent rather than guessed at.
+const GITHUB_TIMESTAMP = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/;
+
+export function repositoryFacts(entry) {
+  const day = value => typeof value === "string" && GITHUB_TIMESTAMP.test(value) ? value.slice(0, 10) : null;
+  const commits = Number.isInteger(entry.repo_commits) && entry.repo_commits > 0 ? entry.repo_commits : null;
+  return { created: day(entry.repo_created_at), pushed: day(entry.repo_pushed_at), commits };
+}
+
 export function evidenceUrl(entry) {
   if (!entry.evidence?.path) return null;
   for (const candidate of [entry.repo, entry.url]) {
