@@ -53,6 +53,37 @@ def parse(path: pathlib.Path) -> ast.Module:
     return ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
 
 
+def is_patch(node: ast.AST) -> bool:
+    """`patch`, `mock.patch` or `unittest.mock.patch`."""
+    return (isinstance(node, ast.Name) and node.id == "patch") or (
+        isinstance(node, ast.Attribute) and node.attr == "patch"
+    )
+
+
+def is_shell(node: ast.AST) -> bool:
+    return isinstance(node, ast.Name) and node.id == "build_readme"
+
+
+def rebinds_shell(node: ast.AST) -> bool:
+    """Whether `node` replaces or removes a name on the build_readme module."""
+    if isinstance(node, ast.Attribute) and isinstance(node.ctx, (ast.Store, ast.Del)):
+        return is_shell(node.value)
+    if not isinstance(node, ast.Call) or not node.args:
+        return False
+    first, func = node.args[0], node.func
+    if isinstance(func, ast.Name) and func.id in ("setattr", "delattr"):
+        return is_shell(first)
+    if isinstance(func, ast.Attribute) and func.attr in ("object", "multiple") and is_patch(func.value):
+        return is_shell(first)
+    if is_patch(func):
+        return (
+            isinstance(first, ast.Constant)
+            and isinstance(first.value, str)
+            and first.value.startswith("build_readme.")
+        )
+    return False
+
+
 class ShellTest(unittest.TestCase):
     def test_exported_names_are_the_package_objects(self):
         self.assertIn("main", build_readme.__all__)
@@ -84,22 +115,42 @@ class ShellTest(unittest.TestCase):
     def test_nothing_patches_the_shell(self):
         """patch.object(build_readme, "X", ...) rebinds the shell's copy of X.
         The package never reads that copy, so the patch would silently do
-        nothing. Patch the module that uses the name (readme.sections, ...)."""
+        nothing. Patch the module that uses the name (readme.sections, ...).
+
+        Every spelling this repository's tests use counts: patch.object and
+        mock.patch.object (or unittest.mock.patch.object), patch.multiple,
+        a "build_readme.X" target string, setattr, and plain assignment."""
         offenders = []
         for path in python_files():
             for node in ast.walk(parse(path)):
-                if (
-                    isinstance(node, ast.Call)
-                    and isinstance(node.func, ast.Attribute)
-                    and node.func.attr == "object"
-                    and isinstance(node.func.value, ast.Name)
-                    and node.func.value.id == "patch"
-                    and node.args
-                    and isinstance(node.args[0], ast.Name)
-                    and node.args[0].id == "build_readme"
-                ):
+                if rebinds_shell(node):
                     offenders.append(f"{path.relative_to(ROOT)}:{node.lineno}")
         self.assertEqual(offenders, [])
+
+    def test_the_patch_scan_sees_every_spelling(self):
+        """The scan above must not pass because it looks for one spelling only."""
+        caught = [
+            'patch.object(build_readme, "START_HERE", [])',
+            'mock.patch.object(build_readme, "START_HERE", [])',
+            'unittest.mock.patch.object(build_readme, "ROOT", None)',
+            "patch.multiple(build_readme, START_HERE=[])",
+            'patch("build_readme.START_HERE", [])',
+            'mock.patch("build_readme.ROOT", None)',
+            'setattr(build_readme, "ROOT", None)',
+            "build_readme.START_HERE = []",
+            "del build_readme.ROOT",
+        ]
+        allowed = [
+            'patch.object(sections, "START_HERE", [])',
+            'mock.patch.object(readme.sections, "ROOT", None)',
+            'patch("readme.sections.START_HERE", [])',
+            'patch.dict(build_readme.EN, {"lang_code": "en"})',
+            "build_readme.render([], [], build_readme.EN)",
+        ]
+        for source in caught + allowed:
+            with self.subTest(source=source):
+                found = any(rebinds_shell(node) for node in ast.walk(ast.parse(source)))
+                self.assertEqual(found, source in caught)
 
     def test_shell_defines_only_main(self):
         defined = [
