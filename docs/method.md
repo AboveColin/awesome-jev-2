@@ -324,8 +324,8 @@ catalogue passed 800, and no build ever went red.
 | --- | --- | --- |
 | Counts and tables about the catalogue | Whenever a row is added or edited | Generated from `catalog.json` — the READMEs by `build_readme.py`, the figures by `build_assets.py`, and every number inside the hand-written docs, `llms.txt` and the site's meta tags by `build_docs.py`. All numbers share one definition in `scripts/_stats.py`. `lint` fails on any drift, and `lint_docs.py` rejects a catalogue count typed anywhere else. |
 | Images that show data | Same | Rendered from the data on every Pages deploy by `render_images.py` and never committed: the site's `og:image`, and the README and compatibility screenshots. The deploy refuses to publish a page that did not finish loading its data. |
-| The GitHub social preview | Never | It can only be uploaded by hand, so it is the durable card: its one figure is a floor ("800+") that growth can only make an understatement, never wrong. `lint` reports whether one is uploaded. |
-| The repository description | Whenever the count changes | Compared, whole sentence, with the same `_stats.pitch()` the site uses for its `og:description`, on every push. |
+| The GitHub social preview | Never | It can only be uploaded by hand, so it is the durable card: its one figure is a floor ("800+") that growth can only make an understatement, never wrong. `description` reports whether one is uploaded. |
+| The repository description | When the count crosses a hundred, or the wording changes | Only an admin can edit it, so it states the count floored to the hundred: `_stats.pitch_public()`, the same sentence as the site's `description` and `og:description`. The `description` workflow compares the whole sentence on every push to `main`; on drift it warns and keeps one open issue, labelled `description`, holding the exact `gh repo edit` command, instead of failing a build nobody but an admin can fix. `lint` prints the would-be sentence on every run, pull requests included. Every other surface — the READMEs, `status.md`, `llms.txt`, the figures — carries the exact count. |
 | Labels for patterns, kinds and flags | When the taxonomy changes | One copy each, in `patterns.json` and `taxonomy.json`, read by the README generators and by the site at runtime. `lint` checks both against the schema; `lint_docs` checks `docs/patterns.md` has a section for each pattern. |
 | Model strings and limits | When the vendor or a gateway ships | One source, `compat.json`. `lint_docs` checks every copy — in docs, examples, and the generated README and figures — against it. `claims` re-reads each platform's documentation weekly and opens an issue if a recorded string disappears. |
 | Link status, stars, licences, archive status | Continuously, upstream | `metadata` weekly: stamps every link that answers, re-reads the GitHub API, rebuilds everything generated, runs the whole lint chain, commits to `main`, and redeploys the site. It opens an issue only for a change that is more than a star count, and falls back to a branch if `main` moved underneath it. `links` weekly is the separate alarm for a dead link, which only a person may retire. The site shows the date of the sweep its figure comes from. |
@@ -334,5 +334,16 @@ catalogue passed 800, and no build ever went red.
 | Dated history | Never | This page's log sections are append-only and exempt from the number rules: what the first build found is true forever. |
 
 - `lint` runs on every push and pull request.
+- `description` runs on every push to `main`, and by hand.
 - `pages` rebuilds the site and its images whenever the data, the site or the
   rendering scripts change.
+
+Since 2026-09-27, the repository description and the site's meta description
+state the catalogue size floored to the hundred rather than exactly, and the
+description's drift opens an issue instead of failing `lint`. The exact count
+made `main` red after every merged row, in the one check CI could never repair
+— editing the description needs admin rights — until someone ran
+`gh repo edit` by hand; a wording change alone did the same. A floor, like the
+social preview's, stays true as the catalogue grows and goes stale once per
+hundred rows. Until then the two surfaces show a smaller number than the
+READMEs; that difference is deliberate, and the READMEs are the exact figure.

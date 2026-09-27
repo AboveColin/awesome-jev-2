@@ -90,7 +90,7 @@ class VerificationReportingTests(unittest.TestCase):
         self.assertIn("不是最新 CI 通过数", chinese)
         self.assertIn("没有 `code-untested` 标签也不代表已测试", chinese)
         self.assertIn("`recommendation`", english)
-        self.assertNotIn("verified examples", _stats.pitch(stats))
+        self.assertNotIn("verified examples", _stats.pitch_public(stats))
         self.assertNotIn("verified examples", build_docs.meta_block(stats))
 
 

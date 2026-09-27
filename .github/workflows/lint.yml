@@ -98,17 +98,9 @@ jobs:
           fi
           echo "figures in sync"
 
-      # The description is the only published claim that does not live in git,
-      # so nothing here could ever catch it drifting. It sat at "148 verified
-      # examples" while the catalogue grew to 805. Checked on the same push
-      # that changes the count, because that is when it goes stale.
-      - name: Published description still matches the catalogue
-        # A PR may intentionally revise the public pitch; its branch should
-        # not require changing the live repository description before review.
-        if: github.event_name != 'pull_request'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: python3 scripts/check_description.py
-
+      # The published repository description is checked by description.yml, not
+      # here: no workflow token can edit it, so its drift is an issue for a
+      # person rather than a red build. This step prints what it should say once
+      # the tree is on main, so a pull request shows the change before merge.
       - name: Catalog stats
         run: python3 scripts/counts.py

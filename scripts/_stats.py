@@ -81,11 +81,34 @@ def compute() -> dict:
     }
 
 
-def pitch(stats: dict) -> str:
+def public_count(entries: int) -> str:
+    """The catalogue size as the public pitch states it: floored to the hundred.
+
+    The repository description quotes this, and CI cannot edit that description
+    (it needs admin rights no workflow token holds), so an exact count went
+    stale with every merged row. A floor stays true as the catalogue grows and
+    changes once per hundred, like the social preview's "800+". Below a hundred
+    the floor would say nothing, so the count is exact there.
+    """
+    if entries < 100:
+        return str(entries)
+    return f"{entries // 100 * 100:,}+"
+
+
+def next_public_change(entries: int) -> int:
+    """The catalogue size at which public_count() next reads differently."""
+    if entries < 100:
+        return entries + 1
+    return (entries // 100 + 1) * 100
+
+
+def pitch_public(stats: dict) -> str:
     """The one-line description used by the GitHub repository and the site's
-    meta tags. One function, so the two cannot drift into different sentences."""
+    meta tags. One function, so the two cannot drift into different sentences.
+    The count is public_count()'s floor; README, status.md and llms.txt carry
+    the exact figure."""
     return (
-        f"{stats['entries']} public resources for Jev, TypeSafe AI's System One "
+        f"{public_count(stats['entries'])} public resources for Jev, TypeSafe AI's System One "
         "decision model, indexed by decision pattern. Source citations, dated link "
         "checks and scheduled call-site text checks; runtime and performance are "
         "not independently tested here. EN/中文, JSON schema and platform compatibility."

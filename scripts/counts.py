@@ -12,9 +12,13 @@ from __future__ import annotations
 
 import json
 import pathlib
+import sys
 from collections import Counter
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT / "scripts"))
+
+import _stats  # noqa: E402
 
 catalog = json.loads((ROOT / "catalog.json").read_text())
 retired = json.loads((ROOT / "retired.json").read_text())
@@ -59,6 +63,16 @@ print(f"with code      {with_code}")
 print(f"official       {official}")
 if catalog:
     print(f"zh hand-written {hand_zh}/{len(catalog)}")
+
+# The repository description is the one published sentence CI cannot rewrite
+# (description.yml files an issue when it drifts), so every run, a pull
+# request's included, shows what it should say once this tree is on main. It
+# changes only when the count crosses a hundred or pitch_public() is reworded.
+print(
+    "\nrepository description once merged (count floored to the hundred; "
+    f"next changes at {_stats.next_public_change(len(catalog)):,} entries):"
+)
+print(f"  {_stats.pitch_public({'entries': len(catalog)})}")
 
 block("by pattern (! = gap)", patterns, all_patterns)
 block("by kind (! = gap)", kinds, all_kinds)

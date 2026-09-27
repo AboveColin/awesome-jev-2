@@ -190,9 +190,11 @@ def row_licences_block(catalog: list[dict]) -> str:
 
 def meta_block(s: dict) -> str:
     """Link-preview tags. og:description is the same sentence as the GitHub
-    repository description — both come from _stats.pitch — so a link to the
-    site and a link to the repo can no longer describe different catalogues."""
-    text = html.escape(_stats.pitch(s), quote=True)
+    repository description — both come from _stats.pitch_public, with the count
+    floored to the hundred — so a link to the site and a link to the repo can
+    no longer describe different catalogues. The image alt keeps the exact
+    count, because the card it describes is rendered with live data."""
+    text = html.escape(_stats.pitch_public(s), quote=True)
     alt = html.escape(
         "awesome-jev — "
         f"{s['entries']} public resources for TypeSafe AI's Jev, indexed by the "
