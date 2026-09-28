@@ -452,6 +452,11 @@ def by_resource_kind(page: Page) -> list[str]:
     return out
 
 
+# The vendor's own agent skill, which skills/awesome-jev/ complements. The
+# sentence under the table links its row and takes the address from it.
+OFFICIAL_SKILL = "typesafe-skills-repo"
+
+
 def also_in_this_repo(page: Page) -> list[str]:
     """The site preview and the files that are not the catalogue."""
     strings, lang = page.strings, page.lang
@@ -478,6 +483,10 @@ def also_in_this_repo(page: Page) -> list[str]:
     for path, what_en, what_zh in REPO_FILES:
         add(f"| [`{path}`]({path}) | {esc(what_zh if lang == 'zh' else what_en)} |")
     add("")
+    official = next((e for e in page.catalog if e["slug"] == OFFICIAL_SKILL), None)
+    if official:
+        add(marked(strings, "repo_skill_division", url=official["url"], row=f"{SITE}?lang={lang}#{OFFICIAL_SKILL}"))
+        add("")
     return out
 
 

@@ -44,7 +44,7 @@ Runnable examples: https://github.com/kydlikebtc/awesome-jev/blob/main/examples/
 
 MCP server: in Claude Code, `/plugin marketplace add kydlikebtc/awesome-jev` then `/plugin install awesome-jev@awesome-jev` (installs this and the agent skill together); elsewhere, `pip install awesome-jev-mcp` (if pip finds no such package, `pip install git+https://github.com/kydlikebtc/awesome-jev`) and run `awesome-jev-mcp`. Source at https://github.com/kydlikebtc/awesome-jev/tree/main/src/awesome_jev_mcp — query the catalogue by decision pattern, language and primitive rather than reading it. Tools: search_examples, get_example, list_patterns, compatibility, check_model_string. Every result carries the row's caveat flags; rows that do not call Jev at all are excluded by default.
 
-Agent skill: https://github.com/kydlikebtc/awesome-jev/blob/main/skills/awesome-jev/SKILL.md — the facts generated Jev code most often gets wrong, and the design rules worth following.
+Agent skill: https://github.com/kydlikebtc/awesome-jev/blob/main/skills/awesome-jev/SKILL.md — the facts generated Jev code most often gets wrong, how to reach the catalogue's examples, caveats, platform differences and independent results, and the few design rules the catalogue adds. It complements TypeSafe's own agent skill, https://github.com/typesafe-ai/skills (catalogued as typesafe-skills-repo), which, with the live docs it reads (https://docs.typesafe.ai/llms.txt), is the reference for the API contract and for designing questions.
 
 Decision taxonomy: https://kydlikebtc.github.io/awesome-jev/patterns.json
 Kind and flag labels (EN/中文): https://kydlikebtc.github.io/awesome-jev/taxonomy.json

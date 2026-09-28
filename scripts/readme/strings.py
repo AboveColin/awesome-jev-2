@@ -136,6 +136,12 @@ EN = {
     "th_find": "What you will find",
     "repo_h": "Also in this repo",
     "repo_intro": "The parts that are not the catalog.",
+    "repo_skill_division": (
+        "`skills/awesome-jev/` complements TypeSafe's own agent skill, [typesafe-ai/skills]({url}) "
+        "([its row]({row})), rather than replacing it: for the API contract and for designing questions, "
+        "that skill and the live docs it reads are the reference; this one adds what the public ecosystem "
+        "shows — worked examples and their caveats, platform differences, and independent and negative results."
+    ),
     "th_file": "File",
     "th_what": "What it is",
     "verified_h": "What is verified, and what is not",
@@ -375,6 +381,11 @@ ZH = {
     "th_find": "点开会看到",
     "repo_h": "本仓库还有什么",
     "repo_intro": "除目录数据之外的部分。",
+    "repo_skill_division": (
+        "`skills/awesome-jev/` 是对 TypeSafe 官方智能体技能 [typesafe-ai/skills]({url})（[目录条目]({row})）"
+        "的补充，而非替代：API 契约与问题设计以官方技能及其所读的实时文档为准；本技能补充公开生态里能看到的东西"
+        "——实际示例及其警示、各平台差异，以及独立测量与负面结果。"
+    ),
     "th_file": "文件",
     "th_what": "是什么",
     "verified_h": "哪些经过核实，哪些没有",
@@ -497,7 +508,7 @@ ZH_MACHINE = frozenset(
     {
         "stars_note", "verified_recheck", "verified_summaries", "license_summaries", "unindexed_readme",
         "unindexed_page", "prims_layers", "verified_primitives", "verified_translations",
-        "call_site_note", "measured_more", "measured_page_intro",
+        "call_site_note", "measured_more", "measured_page_intro", "repo_skill_division",
     }
 )
 

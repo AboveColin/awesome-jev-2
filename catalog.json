@@ -89954,6 +89954,8 @@
     "repo_created_at": "2026-08-24T23:58:39Z",
     "repo_pushed_at": "2026-09-12T05:42:06Z",
     "repo_commits": 2,
+    "notes": "TypeSafe's own agent skill. With the live docs it reads, it is the reference for the API contract and for designing questions; the skill in this repository (skills/awesome-jev) complements it with what the public ecosystem shows (worked examples and their caveats, platform differences, independent and negative results) rather than restating it. A model wrote this row's Chinese note.",
+    "notes_zh": "TypeSafe 官方的智能体技能。它与其所读的实时文档是 API 契约与问题设计的依据；本仓库的技能（skills/awesome-jev）是对它的补充而非复述，提供公开生态里能看到的东西（实际示例及其警示、各平台差异、独立测量与负面结果）。本条中文备注由模型撰写。",
     "first_seen": "2026-09-22",
     "sources": [
       {

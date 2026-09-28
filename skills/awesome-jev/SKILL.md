@@ -1,6 +1,6 @@
 ---
 name: awesome-jev
-description: Use when writing code that calls Jev, TypeSafe AI's System One decision model — choosing a model string, picking between choice/score/noul, designing a confidence threshold, or looking for a worked example of a specific decision such as tool selection, safety gating or context compaction. Also use when porting Jev code between gateways (Vercel, Cloudflare, OpenRouter, LiteLLM), because the model string, field names and request shape all differ per platform.
+description: Use when building on Jev, TypeSafe AI's System One decision model, and you need what the vendor's docs do not give — a public worked example of a specific decision such as tool selection, safety gating or context compaction, the caveat flags on a project you are about to copy from, whether a model string really exists, how the model string, field names and request shape differ on Vercel, Cloudflare, OpenRouter or LiteLLM, or which published measurements are independent or negative. For the API contract and for designing the questions themselves, follow TypeSafe's own typesafe-ai skill and the live docs at docs.typesafe.ai instead. This skill complements them with what the public ecosystem shows and does not restate them.
 ---
 
 # Building with Jev
@@ -8,6 +8,23 @@ description: Use when writing code that calls Jev, TypeSafe AI's System One deci
 A source-attributed catalogue of public Jev examples, indexed by the decision each one
 makes. Use it to find how someone already solved the decision you are wiring up,
 and to avoid the mistakes that recur in this ecosystem.
+
+## Division of labour
+
+TypeSafe publishes its own agent skill,
+[`typesafe-ai`](https://github.com/typesafe-ai/skills) (catalogued here as
+[`typesafe-skills-repo`](https://kydlikebtc.github.io/awesome-jev/?lang=en#typesafe-skills-repo)).
+It, and the live docs it sends you to, starting from
+[docs.typesafe.ai/llms.txt](https://docs.typesafe.ai/llms.txt), are the
+reference for the API contract, the SDKs and how to design the questions: the
+state, the instructions and criteria, which primitive fits. Where anything
+below disagrees with them on those, they are right.
+
+This skill covers what the vendor's pages cannot: what people have published —
+worked examples of each decision pattern with the file each claim was read in
+and the caveat flags that travel with it — how the surfaces differ, which model
+strings exist, and which measurements are independent or negative. It indexes
+other people's work: treat the code it lists as untested by this repository.
 
 ## Get the facts right first
 
@@ -85,32 +102,33 @@ A person can search [the site](https://kydlikebtc.github.io/awesome-jev/) itself
 
 ## Design rules worth following
 
-**Always give a closed choice an escape hatch.** A `choice` must return one of
-its options, so an agent with no suitable tool returns the least wrong tool
-rather than declining. Add a `none` option, and consider a separate `noul` for
-"is a tool needed at all" — those are different questions, one relative and one
-absolute.
+How to shape the questions — independent ones asked together in one request,
+known rules, arithmetic, counting and dates kept in code, a no-match outcome
+for a closed choice — is the official skill's ground: follow it. Four rules
+the catalogue adds:
 
-**Ask everything in one request.** The state is read once and every question is
-evaluated against it in parallel, so a second question costs roughly its own
-tokens rather than a round trip. Ask speculatively and let code pick what
-mattered.
+**A `none` option and a separate `noul` answer different questions.** A
+`choice` must return one of its options, and `none` wins only by beating every
+other one, so it is relative: whether the agent declines depends on what else
+is on the list. A `noul` such as "does this request need a tool at all?" is
+absolute: it weighs no option against another. Use the `noul` when acting at
+all must not depend on the list.
 
 **Thresholds are policy, not modelling.** They depend on what being wrong costs.
 One catalogued production system uses seven different thresholds for seven email
 decisions, ranging from 0.3 to 0.9. A threshold tuned on a `noul` probability is
-not a `choice` confidence, and one tuned against a model version does not
-survive an alias moving — pin the version once you have tuned anything.
+not a `choice` confidence.
+
+**Pin a model version once you have tuned anything.** A threshold tuned against
+one model version does not survive an alias moving to the next. Send the
+versioned string rather than the alias; `check_model_string` and `compat.json`
+list both.
 
 **A probabilistic gate is not a security boundary.** It is useful defence in
 depth in front of a shell command, a write or a spend. It is not a permission
 system: an attacker chooses the input, and the vendor's own documentation names
 adversarial content as a known weak spot. Anything destructive or irreversible
 needs a deterministic rule or a human.
-
-**Keep deterministic work in code.** Arithmetic, counting, date comparison and
-indirection are documented weak spots. Have the model name the parts and let
-code do the maths.
 
 ## Before believing a benchmark
 
