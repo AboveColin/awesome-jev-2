@@ -144,6 +144,9 @@ class ClaimsIssueTest(unittest.TestCase):
         self.assertIn("steps.compat.outputs.stale == 'true'", condition)
         self.assertIn("          COMPAT_AGE: ${{ steps.compat.outputs.age }}", self.lines)
         body = self.run_step(stale="true", age="59")
+        # Nothing stopped holding: the opening line must not say it did.
+        intro = body.split("\n\n", 1)[0]
+        self.assertIn("or a reading of the platform pages", intro)
         self.assertIn("### compat.json not read lately", body)
         self.assertIn("A person last read every platform page 59 day(s)", body)
         self.assertNotIn("### Cited call sites", body)

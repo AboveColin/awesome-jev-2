@@ -72,8 +72,9 @@ jobs:
           COMPAT_AGE: ${{ steps.compat.outputs.age }}
         run: |
           {
-            echo "A scheduled re-read found something this repository states that no"
-            echo "longer holds upstream. Each needs a person."
+            echo "A scheduled re-read found something that needs a person: a statement"
+            echo "here that no longer holds upstream, or a reading of the platform pages"
+            echo "that is due."
             if [ "$CLAIMS_FAILED" != "0" ]; then
               echo
               echo "### Cited call sites"
