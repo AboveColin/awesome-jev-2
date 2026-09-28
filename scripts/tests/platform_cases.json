@@ -45,6 +45,13 @@
         "id": "docs",
         "name": "Docs",
         "catalog_platforms": []
+      },
+      {
+        "id": "hosted",
+        "name": "Hosted",
+        "catalog_platforms": [
+          "hosted-gw"
+        ]
       }
     ]
   },
@@ -213,6 +220,24 @@
         "e",
         "f"
       ]
+    },
+    {
+      "asked": "hosted",
+      "surface": "hosted",
+      "values": [
+        "hosted-gw"
+      ],
+      "coarse": false,
+      "slugs": []
+    },
+    {
+      "asked": "hosted-gw",
+      "surface": null,
+      "values": [
+        "hosted-gw"
+      ],
+      "coarse": false,
+      "slugs": []
     },
     {
       "asked": "gw-",

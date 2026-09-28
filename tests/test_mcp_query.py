@@ -260,7 +260,12 @@ class PlatformTest(unittest.TestCase):
         self.assertEqual((answer["total_matching"], answer["platform"]["matched_values"]),
                          (0, ["cloudflare-workers-ai"]))
         # A value a surface lists is known before any row records it.
-        self.assertEqual(self.search(platform="gate-router", kind="benchmark")["total_matching"], 0)
+        listed = {**COMPAT, "platforms": [*COMPAT["platforms"],
+                                          {"id": "edge", "name": "Edge", "catalog_platforms": ["edge-fn"]}]}
+        answer = self.search(compat=listed, platform="edge-fn")
+        self.assertEqual((answer["total_matching"], answer["platform"]),
+                         (0, {"asked": "edge-fn", "matched_values": ["edge-fn"], "surfaces": ["edge"]}))
+        self.assertIn("error", self.search(platform="edge-fn"))
 
     def test_a_row_recording_two_of_a_surfaces_values_is_matched_once(self):
         rows = [row("both", has_code=True, platforms=["typesafe-api", "gate-router"])]
