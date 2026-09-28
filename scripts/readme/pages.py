@@ -14,6 +14,8 @@ from .rows import (
     ROOT,
     anchor,
     collection_link,
+    direction_bit,
+    direction_note,
     entry_list,
     group_by_pattern,
     is_measured,
@@ -59,6 +61,8 @@ def render_page(key: str, rows: list[dict], strings: dict) -> str:
         marked(strings, "call_site_note"),
         "",
     ]
+    if any(direction_bit(entry, strings) for entry in rows):
+        out += [direction_note(strings, docs="../"), ""]
     indexed, later = split_unindexed(rows)
     out.extend(entry_list(indexed, strings))
     if later:
@@ -126,6 +130,8 @@ def render_measured_page(rows: list[dict], strings: dict) -> str:
         marked(strings, "call_site_note"),
         "",
     ]
+    if any(direction_bit(entry, strings) for entry in rows):
+        out += [direction_note(strings, docs=""), ""]
     out.extend(entry_list(rows, strings, notes=True, readme_layout=True))
     out += ["---", "", strings["page_footer"], ""]
     return "\n".join(out)

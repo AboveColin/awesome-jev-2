@@ -16,5 +16,7 @@
 /docs/measured.zh-CN.md linguist-generated
 /docs/assets/*.svg linguist-generated
 /docs/review-queue.md linguist-generated
+/docs/benchmarks.md linguist-generated
+/docs/benchmarks.zh-CN.md linguist-generated
 /docs/zh-queue.md linguist-generated
 /examples/index.json linguist-generated

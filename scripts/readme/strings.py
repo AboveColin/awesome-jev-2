@@ -122,6 +122,13 @@ EN = {
     "call_site": "call site",
     "cited_file": "cited file",
     "read_on": ", read {date}",
+    "direction_bit": "author's conclusion: {direction} (author-stated, not reproduced here)",
+    "direction_note": (
+        "*Author's conclusion* is the direction a benchmark's own author states for Jev on the task they "
+        "measured (`measurement.direction`: favourable, mixed, unfavourable or inconclusive), indexed from "
+        "the author's report: author-stated, not reproduced here, and absent where the author states none "
+        "in words. [{page}]({page_link}) sets every benchmark's measurement side by side."
+    ),
     "call_site_note": (
         "A *call site* link opens the one file a row cites (`evidence.path`) at `HEAD` of the "
         "repository's default branch; the date after it is the day a person last read that file "
@@ -369,6 +376,12 @@ ZH = {
     "call_site": "调用点",
     "cited_file": "引用文件",
     "read_on": "，{date} 阅读",
+    "direction_bit": "作者结论：{direction}（作者自述，未经本仓库复现）",
+    "direction_note": (
+        "*作者结论*是基准测试作者本人对 Jev 在其所测任务上给出的结论方向（`measurement.direction`：有利、好坏参半、"
+        "不利或无定论），按作者的报告索引：属作者自述，未经本仓库复现；作者没有用文字说明结论的则不标。"
+        "[{page}]({page_link}) 把每条基准测试的测量字段并列展示。"
+    ),
     "call_site_note": (
         "*调用点*链接打开该行引用的那一个文件（`evidence.path`）在仓库默认分支 `HEAD` 上的版本；"
         "其后的日期是有人最近一次阅读该文件的日期（`evidence.read_on`）：这是阅读记录，不是运行过代码。"
@@ -508,7 +521,7 @@ ZH_MACHINE = frozenset(
     {
         "stars_note", "verified_recheck", "verified_summaries", "license_summaries", "unindexed_readme",
         "unindexed_page", "prims_layers", "verified_primitives", "verified_translations",
-        "call_site_note", "measured_more", "measured_page_intro", "repo_skill_division",
+        "call_site_note", "measured_more", "measured_page_intro", "repo_skill_division", "direction_note",
     }
 )
 

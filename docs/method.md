@@ -246,6 +246,55 @@ decision pattern", the section the README calls its primary index. README.md
 went from 120,440 to 94,523 bytes and README.zh-CN.md from 117,979 to 93,454,
 with the sections in the same order.
 
+Since 2026-09-28 a `kind: benchmark` row may carry `measurement`: what its own
+author measured, indexed field by field from the author's report. The task;
+named datasets and comparators, as the author names them; kinds of metric
+(`taxonomy.json` lists eleven, from accuracy to tokens); the main set's size
+`n` where the report gives one number; the model string, which `lint` holds to
+`compat.json`; the measurement's date `as_of`, required when the row has no
+`published` because a measurement is of the model served that day; whether
+per-item data is published and whether the protocol was fixed first; and
+`direction`, the author's own conclusion about Jev for that task (favourable,
+mixed, unfavourable or inconclusive), which every surface shows as
+author-stated, not reproduced here. Nothing in it was measured here. Until
+then, what a benchmark compared Jev with and on which dataset lived only in
+summaries and notes, and the MCP server could find it only by free text.
+`docs/benchmarks.md` and `docs/benchmarks.zh-CN.md` are generated from these
+fields by `build_benchmarks.py`: decision patterns by stated direction, each
+comparator and dataset with the rows that used it, and every measured row with
+its star band, whether it is independent, whether raw data is published, its
+caveat flags and its direction. `search_examples` gained `comparator`,
+`dataset` and `direction` filters, and a measured row it returns carries its
+`measurement`. `measurement.read_on` dates a person's reading of the report
+against the fields; a measurement without it is listed in the
+[review queue](review-queue.md#measurement-unread).
+
+The fields were first filled in the same day, for the 25 benchmark rows with at
+least five stars, by a model (the session that made this change) reading each
+repository's README, results files, pull requests and linked reports with
+read-only GitHub requests; no person has read them against the reports yet, so
+none carries `read_on`. It recorded only what an author writes down: no `n`,
+dataset or comparator it could not find stated, and a `direction` only where
+the author concludes in words, which 17 of the 24 do. Seven state none (a
+leaderboard, tables without a verdict, a show-and-tell), and legalforecastbench
+was left without a measurement because its author withholds the Jev results. A
+maintainer should spot-check all 24 against their reports:
+hermes-agent-jev-evaluation, worldmonitor-shadow-mode,
+no-mistakes-review-context, hippo-memory, ahastudio-til-jev-probing, jevbench,
+jev-arena, windtunnel, jev-robot-control, typesafe-ai-benchmark,
+jev-capability-atlas, smartmoney-cub, jev-benchmarks, jev-rag-benchmark,
+pdf-race, jev-dspy-lab, jev-rerank-bench, jev-benchmark,
+jev-korean-benchmark, jev-ood-calibration, jev-search-rerank-eval,
+jev-code-review-benchmark, jev-little-airways and jev-phishing-bench. Three are
+judgement calls. worldmonitor-shadow-mode is `unfavourable` because its author
+kept Jev in shadow after it only tied the fixed labeller on 413 blind-judged
+headlines (pull request 8326 in that repository); a later pre-registered
+held-out NO-GO (pull request 8625) was still open and is not recorded.
+jev-robot-control is `inconclusive` because its author calls its one seed-0
+trial per controller "not success-rate estimates". ahastudio-til-jev-probing
+summarises another author's API probing and states no direction. Benchmark
+rows below five stars carry no measurement yet.
+
 ## Discovery is crowdsourced, verification is not
 
 There are dozens of Jev directories. Each is a different person's sweep of the
@@ -716,6 +765,7 @@ python3 scripts/build_compat.py  # regenerate the compatibility tables
 python3 scripts/verify_compat.py # re-read each platform page for compat.json's strings
 python3 scripts/lint_docs.py --simulate-model <version>  # rehearse a model release; writes nothing
 python3 scripts/zh_audit.py      # the translation queue; --json: every machine translation measured
+python3 scripts/build_benchmarks.py  # docs/benchmarks*.md, every benchmark's measurement side by side
 python3 scripts/regenerate.py    # or: every generator above, in order
 ```
 
@@ -829,6 +879,7 @@ catalogue passed 800, and no build ever went red.
 | --- | --- | --- |
 | Counts and tables about the catalogue | Whenever a row is added or edited | Generated from `catalog.json` — the READMEs by `build_readme.py`, the figures by `build_assets.py`, and every number inside the hand-written docs and `llms.txt` by `build_docs.py`. The site's link-preview tags are written into the Pages artifact at deploy by `assemble_site.py --deploy` and never committed. All numbers share one definition in `scripts/_stats.py`. `lint` regenerates all of them on every run (next row), and `lint_docs.py` rejects a catalogue count typed anywhere else. |
 | Generated files after a merge | Whenever a pull request lands | A pull request need only change the sources. `lint` runs `regenerate.py` on every event, then `check_generated.py` decides: on a pull request each generated file must be untouched since the merge base or byte-identical to the regenerated output, with every verdict in the run's summary; on `main`, drift is handed to the `regenerate` job, which rebuilds from the tip, runs `lint`'s checks again and commits `chore: regenerate from catalog.json` as `github-actions[bot]` — rebasing if `main` moved, leaving a `regenerate/<sha>` branch if that no longer applies, never force-pushing. A dispatched or manual `lint` run is strict: any drift fails. |
+| What each benchmark's author measured | When a person reads a benchmark's report | Recorded by hand in the row's `measurement` (`kind: benchmark` rows only). `lint` holds it to its rules and its model string to `compat.json`; `build_benchmarks.py` regenerates `docs/benchmarks.md` and its Chinese twin from it; a measurement without `read_on` stays in the review queue until a person reads the report against it. Every direction is the author's, shown as author-stated, not reproduced here. |
 | Images that show data | Same | Rendered from the data on every Pages deploy by `render_images.py` and never committed: the site's `og:image`, and the README and compatibility screenshots. The deploy refuses to publish a page that did not finish loading its data. |
 | Files the site serves to agents | Same | Written into the Pages artifact at deploy by `assemble_site.py` and never committed: `retired.json`, the entry schema and `llms.txt` beside the page's own data, and under `api/v1/` an index plus one JSON file per decision pattern (`site_api.py`), each row shaped and ordered by the MCP server's own `query.py`. `check_site_data.py` refuses to publish a pattern file that differs from a rebuild or holds a different number of rows than `stats.json` counts for its pattern, and an index whose keys are not `patterns.json`'s. `llms.txt` is published with its values refilled from the same stats, so the site's copy never trails the data beside it. |
 | The GitHub social preview | Never | It can only be uploaded by hand, so it is the durable card: its one figure is a floor ("800+") that growth can only make an understatement, never wrong. `description` reports whether one is uploaded. |

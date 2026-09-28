@@ -10,6 +10,8 @@ _介绍模型或整个领域，而非单一模式。_
 
 *调用点*链接打开该行引用的那一个文件（`evidence.path`）在仓库默认分支 `HEAD` 上的版本；其后的日期是有人最近一次阅读该文件的日期（`evidence.read_on`）：这是阅读记录，不是运行过代码。*引用文件*链接同理，只是该文件表明项目采用了 Jev 的请求结构、并非基于 Jev 构建，或只是项目附带的示例（`evidence.kind`）。两种链接都没有固定到某个提交，打开的是文件的当前版本，可能与当时读到的不同；文件移动后链接就会失效，每周的 claims 检查会报告这种情况。 <sub>(机翻)</sub>
 
+*作者结论*是基准测试作者本人对 Jev 在其所测任务上给出的结论方向（`measurement.direction`：有利、好坏参半、不利或无定论），按作者的报告索引：属作者自述，未经本仓库复现；作者没有用文字说明结论的则不标。[docs/benchmarks.zh-CN.md](../benchmarks.zh-CN.md) 把每条基准测试的测量字段并列展示。 <sub>(机翻)</sub>
+
 - **[Official agent skill for Claude Code](https://docs.typesafe.ai/agent-skill)** ⭐ — 把 TypeSafe 官方技能装进 Claude Code，让智能体自己写出正确的 Jev 调用，不必每次手动贴 API 结构。
   <sub>`官方文档` · ★1k+ · `sh`</sub>
 
@@ -221,7 +223,7 @@ _介绍模型或整个领域，而非单一模式。_
   <sub>`SDK` · ★10+ · twister915 · `Rs` · 调用点 [`examples/tsg/main.rs`](https://github.com/Twister915/typesafe-ai/blob/HEAD/examples/tsg/main.rs)，2026-09-22 阅读</sub>
 
 - **[typesafe-ai-benchmark](https://github.com/iammrduncan/typesafe-ai-benchmark)** — 一个模仿其结构化输出形状的网关，用于与之对比测试。
-  <sub>`基准测试` · ★10+ · iammrduncan · `TS` · 调用点 [`packages/demos/lib/jev.ts`](https://github.com/iammrduncan/typesafe-ai-benchmark/blob/HEAD/packages/demos/lib/jev.ts)，2026-09-22 阅读</sub>
+  <sub>`基准测试` · ★10+ · iammrduncan · `TS` · 调用点 [`packages/demos/lib/jev.ts`](https://github.com/iammrduncan/typesafe-ai-benchmark/blob/HEAD/packages/demos/lib/jev.ts)，2026-09-22 阅读 · 作者结论：好坏参半（作者自述，未经本仓库复现）</sub>
 
 - **[typesafe-sdk-go](https://github.com/atharvamhaske/typesafe-sdk-go)** — TypeSafe AI 的非官方 Go SDK，与 TypeSafe AI 无关、未获其背书，是为了填补空缺而做的业余项目。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`SDK` · ★10+ · atharvamhaske · `Go` · 调用点 [`typesafe.go`](https://github.com/atharvamhaske/typesafe-sdk-go/blob/HEAD/typesafe.go)，2026-09-24 阅读</sub>
@@ -290,7 +292,7 @@ _介绍模型或整个领域，而非单一模式。_
   <sub>`SDK` · dougsong · `Kt` · 调用点 [`sdk/src/main/kotlin/io/github/jevandroid/JevProvider.kt`](https://github.com/dougsong/jev-android/blob/HEAD/sdk/src/main/kotlin/io/github/jevandroid/JevProvider.kt)，2026-09-22 阅读</sub>
 
 - **[jev-benchmark](https://github.com/wondertwins/jev-benchmark)** — Jev 的基准与 playground：国际象棋，以及语音转写中的说话对象判定。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`基准测试` · wondertwins · `Py` · 调用点 [`jevcommon/client.py`](https://github.com/wondertwins/jev-benchmark/blob/HEAD/jevcommon/client.py)，2026-09-22 阅读</sub>
+  <sub>`基准测试` · wondertwins · `Py` · 调用点 [`jevcommon/client.py`](https://github.com/wondertwins/jev-benchmark/blob/HEAD/jevcommon/client.py)，2026-09-22 阅读 · 作者结论：好坏参半（作者自述，未经本仓库复现）</sub>
 
 - **[jev-bun1](https://github.com/heiwa4126/jev-bun1)** — 用 TypeScript SDK 上手 Jev 的第一步（日语）。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`SDK` · heiwa4126 · `TS` · 调用点 [`src/ex0.ts`](https://github.com/heiwa4126/jev-bun1/blob/HEAD/src/ex0.ts)，2026-09-22 阅读 · ⚠ `无许可证`</sub>
@@ -323,7 +325,7 @@ _介绍模型或整个领域，而非单一模式。_
   <sub>`SDK` · smasato · `TS` · 调用点 [`src/jev.ts`](https://github.com/smasato/jev-jp-address/blob/HEAD/src/jev.ts)，2026-09-22 阅读 · ⚠ `仅一次提交` `无许可证`</sub>
 
 - **[jev-korean-benchmark](https://github.com/mahlernim/jev-korean-benchmark)** — 可复现的早期访问评测：Jev 在韩语理解与医学文本上的表现，附运行时与成本证据。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`基准测试` · mahlernim · `Py` · 调用点 [`jevbench/medqa_run.py`](https://github.com/mahlernim/jev-korean-benchmark/blob/HEAD/jevbench/medqa_run.py)，2026-09-22 阅读 · ⚠ `无许可证`</sub>
+  <sub>`基准测试` · mahlernim · `Py` · 调用点 [`jevbench/medqa_run.py`](https://github.com/mahlernim/jev-korean-benchmark/blob/HEAD/jevbench/medqa_run.py)，2026-09-22 阅读 · 作者结论：好坏参半（作者自述，未经本仓库复现） · ⚠ `无许可证`</sub>
 
 - **[jev-lab](https://github.com/danielhirt/jev-lab)** — 通过 OpenRouter 对 TypeSafe Jev（System One 决策模型）做的实验：可重复性、扰动敏感性与 LLM 基线对比。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
   <sub>`基准测试` · danielhirt · `TS` · 调用点 [`packages/codenames/src/judge.ts`](https://github.com/danielhirt/jev-lab/blob/HEAD/packages/codenames/src/judge.ts)，2026-09-24 阅读 · ⚠ `无许可证`</sub>

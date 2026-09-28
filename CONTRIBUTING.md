@@ -29,7 +29,8 @@ python3 scripts/check.py --fix
 ### Generated files are optional
 
 The READMEs, the pages under `docs/by-pattern/`,
-[`docs/measured.md`](docs/measured.md) and `docs/measured.zh-CN.md`, the
+[`docs/measured.md`](docs/measured.md) and `docs/measured.zh-CN.md`,
+[`docs/benchmarks.md`](docs/benchmarks.md) and `docs/benchmarks.zh-CN.md`, the
 figures in `docs/assets/`, [`docs/review-queue.md`](docs/review-queue.md),
 [`docs/zh-queue.md`](docs/zh-queue.md), `examples/index.json` and the
 generated numbers in `docs/status.md`, `docs/sources.md`, `docs/patterns.md`,
@@ -299,6 +300,25 @@ turn red, and writes nothing (the runbook is in
   server do). The same run adds `single-commit` when the count is 1 and removes
   it when it is more, and lint fails a row whose flag and recorded count
   disagree, or that carries these fields without a GitHub repository.
+- **`measurement`** — on a `kind: benchmark` row only (`lint.py` fails it
+  anywhere else): what the row's own author measured, indexed from their
+  report. `task` is required, a short English phrase; everything else only as
+  the report states it: `report` (the results file, pull request or write-up,
+  when that is not the row's `url`), `datasets` and `comparators` as the author
+  names them, `metrics` (the kinds in `taxonomy.json` `measurement_metrics`),
+  `n` (only when the report gives one number for its main set), `model_string`
+  (the one sent, or the version the author says answered; `lint.py` fails a
+  string `compat.json` does not list, so leave it out then), `as_of` (the
+  measurement's date; required when the row has no `published`), `raw_data`,
+  `preregistered`, and `direction`: the author's own conclusion about Jev for
+  that task (`favourable`, `mixed`, `unfavourable`, `inconclusive`), left out
+  unless the author states it in words. Every surface shows a direction as
+  author-stated, not reproduced here; `unfavourable` makes the row a negative
+  result. Never infer a number, a dataset or a direction. Set `read_on` to the
+  day you read the report against every field; a measurement without it was
+  filled in by a script or a model, and
+  [`docs/review-queue.md`](docs/review-queue.md#measurement-unread) lists it.
+  [`docs/benchmarks.md`](docs/benchmarks.md) is generated from these fields.
 - **`sources`** — at least one, so the row is attributable. Name where you found
   it, not where it lives. Two fixed strings name submissions made directly to
   this repository, and they mean different things:

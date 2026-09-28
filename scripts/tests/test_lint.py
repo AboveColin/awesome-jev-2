@@ -56,6 +56,8 @@ MINIMAL = {
 # evidence_none is the one field left out: it and evidence are exclusive.
 FULL = {
     **MINIMAL,
+    # A benchmark, so that `measurement` (allowed only there) is exercised too.
+    "kind": "benchmark",
     "summary_source": "curated",
     "patterns_reviewed": "2026-09-20",
     "zh_machine": True,
@@ -75,6 +77,20 @@ FULL = {
     "primitives_seen": ["choice", "noul"],
     "official": False,
     "published": "2026-01-02",
+    "measurement": {
+        "task": "Route demo tickets",
+        "report": "https://github.com/someone/demo-row/blob/main/RESULTS.md",
+        "datasets": ["Demo Tickets"],
+        "comparators": ["a keyword rule"],
+        "metrics": ["accuracy", "latency"],
+        "n": 40,
+        "model_string": "jev-latest",
+        "as_of": "2026-01-02",
+        "raw_data": True,
+        "preregistered": False,
+        "direction": "mixed",
+        "read_on": "2026-09-02",
+    },
     "first_seen": "2026-09-01",
     "checked": "2026-09-20",
     "link_status": 200,
@@ -267,20 +283,25 @@ class EntryInvariantTest(FindingsAssertions):
 
     def test_an_alternatives_evidence_is_marked_wire_shape(self):
         # I18: an alternative is not built on Jev, so a file it cites cannot be
-        # counted or shown as a call site.
+        # counted or shown as a call site. FULL is a benchmark; its measurement
+        # goes with the kind (I44).
         for kind in (DROP, "call-site", "example-only"):
             with self.subTest(kind=kind):
                 cited = row(FULL["evidence"], kind=kind)
                 self.assertOnly(
-                    lint_row(row(FULL, kind="alternative", evidence=cited)),
+                    lint_row(row(FULL, kind="alternative", measurement=DROP, evidence=cited)),
                     "error",
                     "demo-row: kind is 'alternative'",
                     "set evidence.kind to 'wire-shape'",
                 )
-        self.assertClean(lint_row(row(FULL, kind="alternative", evidence=row(FULL["evidence"], kind="wire-shape"))))
+        self.assertClean(
+            lint_row(row(FULL, kind="alternative", measurement=DROP, evidence=row(FULL["evidence"], kind="wire-shape")))
+        )
         # Without evidence there is nothing to mark.
         self.assertClean(
-            lint_row(row(FULL, kind="alternative", evidence=DROP, primitives_seen=DROP, evidence_none="docs-page"))
+            lint_row(
+                row(FULL, kind="alternative", measurement=DROP, evidence=DROP, primitives_seen=DROP, evidence_none="docs-page")
+            )
         )
         # Any other row may cite any kind of file: an adapter backed by other
         # models mirrors Jev's shape too.

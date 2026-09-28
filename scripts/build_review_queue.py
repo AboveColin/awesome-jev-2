@@ -35,6 +35,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 import _stats  # noqa: E402
 from classify import classify_broad, suggest  # noqa: E402
 from evidence_url import evidence_url  # noqa: E402
+from measurements import unread  # noqa: E402
 from readme.rows import esc, md_url, star_band, star_label  # noqa: E402
 
 ROOT = _stats.ROOT
@@ -322,7 +323,57 @@ def generic_summary(catalog: list[dict]) -> Section:
     )
 
 
-SECTIONS = (examples_dir, single_model_name, tool_selection_broad_words, unsorted_overview, generic_summary)
+def measurement_unread(catalog: list[dict]) -> Section:
+    marked = by_band(unread(catalog))
+    return Section(
+        key="measurement-unread",
+        title_en="Benchmark measurements no person has read against the report",
+        title_zh="尚无人对照报告核读的基准测试测量",
+        about_en=(
+            "The row's `measurement` has no `read_on`: a script or a model filled in its fields from the "
+            "author's README or results, and no person has checked them since. The fields index what the "
+            "author reports; the direction is the author's own conclusion (author-stated, not reproduced "
+            "here). The fields first filled in on 2026-09-28 were read by a model; "
+            "[method.md](method.md) says how. [benchmarks.md](benchmarks.md) shows every field."
+        ),
+        about_zh=(
+            "该行的 `measurement` 没有 `read_on`：字段由脚本或模型根据作者的 README 或结果填写，此后没有人核对过。"
+            "这些字段索引的是作者报告的内容；结论方向是作者本人的结论（作者自述，未经本仓库复现）。"
+            "2026-09-28 首次填写的字段由模型阅读得出，做法见 [method.md](method.md)。"
+            "全部字段见 [benchmarks.zh-CN.md](benchmarks.zh-CN.md)。"
+        ),
+        leave_en=(
+            "To take a row off, read the author's report (the row's link, or `measurement.report`) against "
+            "every field, correct or remove any the report does not state, and set `measurement.read_on` to "
+            "the day you read it (see the `measurement` field rules in "
+            "[CONTRIBUTING](../CONTRIBUTING.md#field-rules))."
+        ),
+        leave_zh=(
+            "移出方法：对照作者的报告（该行的链接，或 `measurement.report`）逐项核读，改正或删去报告里没有说的字段，"
+            "再把 `measurement.read_on` 设为核读当天（见 [CONTRIBUTING](../CONTRIBUTING.md#field-rules) 中关于 "
+            "`measurement` 的字段规则）。"
+        ),
+        columns=(
+            ("Row", "行"),
+            ("Stars", "星标"),
+            ("Direction (author-stated, not reproduced here)", "结论方向（作者自述，未经本仓库复现）"),
+            ("Report", "报告"),
+        ),
+        rows=tuple(
+            (
+                row_link(e),
+                star_label(e.get("stars")),
+                cell(e["measurement"]["direction"]) if e["measurement"].get("direction") else "—",
+                f"[{cell(e['measurement'].get('report') or e['url'])}]({md_url(e['measurement'].get('report') or e['url'])})",
+            )
+            for e in marked
+        ),
+    )
+
+
+SECTIONS = (
+    examples_dir, single_model_name, tool_selection_broad_words, unsorted_overview, generic_summary, measurement_unread,
+)
 
 HEADER = "<!-- Written by scripts/build_review_queue.py from catalog.json. Edit those, not this file. -->"
 PROVENANCE = (

@@ -1377,6 +1377,17 @@
     ],
     "notes": "The most actionable engineering caveat found anywhere: if option order alone can move a probability past your threshold, your threshold is not as stable as it looks. Independent and unreplicated, so treat the magnitude as indicative.",
     "notes_zh": "在所有资料里找到的最具操作价值的工程警示：如果仅仅选项顺序就能把概率推过你的阈值，那你的阈值没有看上去那么稳。这是独立且未被复现的结果，具体幅度请当作指示性数据。",
+    "measurement": {
+      "task": "Probe how Jev is built from about 10,000 API calls, including reversing the order of options",
+      "report": "https://github.com/ahastudio/til/blob/HEAD/jev/architecture-unmasked.md",
+      "metrics": [
+        "robustness",
+        "latency",
+        "tokens"
+      ],
+      "model_string": "jev-1.13.0",
+      "as_of": "2026-09-17"
+    },
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -15241,6 +15252,25 @@
     "repo_commits": 45327,
     "notes": "The single most credible row in this catalog. Recall came out below their existing summariser, and at a matched context budget it tied plain recency ordering. Cost was genuinely far lower. Publishing a negative result on a hyped model is rare.",
     "notes_zh": "本目录可信度最高的一条。召回率低于他们现有的摘要器，在相同上下文预算下与「按时间倒序」打平。成本确实低得多。在一个被热炒的模型上公开负面结果，非常少见。",
+    "measurement": {
+      "task": "Compact long agent transcripts with a port of fast-jev-compaction and score recall on a fixed question exam",
+      "report": "https://github.com/NousResearch/hermes-agent/blob/HEAD/evals/compaction/results/SCORECARD-2026-09-19-jev.md",
+      "comparators": [
+        "Hermes summary compaction with session_search recovery",
+        "Hermes summary compaction, closed-book",
+        "recency-ranked tool retention at the same budget"
+      ],
+      "metrics": [
+        "recall",
+        "tokens",
+        "cost",
+        "latency"
+      ],
+      "n": 45,
+      "model_string": "~typesafe/jev-latest",
+      "as_of": "2026-09-19",
+      "direction": "unfavourable"
+    },
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -15819,6 +15849,28 @@
     "primitives_seen": [
       "noul"
     ],
+    "measurement": {
+      "task": "Rerank memory-recall candidates with one Noul per candidate, scored on ranking and on graded answers",
+      "report": "https://github.com/kitfunso/hippo-memory/blob/HEAD/docs/evals/2026-09-19-jev-reranker.md",
+      "datasets": [
+        "LongMemEval"
+      ],
+      "comparators": [
+        "local cross-encoder reranker",
+        "base order without a reranker"
+      ],
+      "metrics": [
+        "ranking",
+        "recall",
+        "accuracy",
+        "latency",
+        "cost"
+      ],
+      "n": 300,
+      "model_string": "jev-1.13.0",
+      "as_of": "2026-09-19",
+      "direction": "mixed"
+    },
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -19697,6 +19749,23 @@
     "repo_pushed_at": "2026-09-20T15:00:39Z",
     "repo_commits": 9,
     "published": "2026-09-19",
+    "measurement": {
+      "task": "Label comments for relevance, sentiment and intent, scored against an independent AI reference labelling",
+      "report": "https://github.com/NanmiCoder/jev-arena/blob/HEAD/audit/accuracy-0919-124001/report.md",
+      "comparators": [
+        "DeepSeek Flash"
+      ],
+      "metrics": [
+        "accuracy",
+        "f1",
+        "latency",
+        "cost"
+      ],
+      "n": 10000,
+      "model_string": "typesafe/jev-1.13",
+      "as_of": "2026-09-19",
+      "raw_data": true
+    },
     "first_seen": "2026-09-24",
     "sources": [
       {
@@ -20880,6 +20949,24 @@
       ],
       "read_on": "2026-09-22"
     },
+    "measurement": {
+      "task": "Choose chess moves among legal candidates, and tell which game characters a spoken line addresses",
+      "comparators": [
+        "Stockfish",
+        "random mover",
+        "fuzzy name-matching heuristic"
+      ],
+      "metrics": [
+        "accuracy",
+        "f1",
+        "precision",
+        "latency"
+      ],
+      "model_string": "jev-1.13.0",
+      "as_of": "2026-09-16",
+      "raw_data": true,
+      "direction": "mixed"
+    },
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -21062,6 +21149,32 @@
     "primitives_seen": [
       "choice"
     ],
+    "measurement": {
+      "task": "Zero-shot single-label text classification with per-label probabilities, scored on accuracy, calibration and coverage at a fixed error budget",
+      "report": "https://github.com/AbdelStark/jev-benchmarks/blob/HEAD/results/reports/btzsc-pilot-v1.md",
+      "datasets": [
+        "BTZSC",
+        "AG News",
+        "Banking77",
+        "DAIR Emotion"
+      ],
+      "comparators": [
+        "GLiNER2.5 (fastino/gliner2.5-multi-v1)"
+      ],
+      "metrics": [
+        "accuracy",
+        "f1",
+        "calibration",
+        "latency",
+        "tokens"
+      ],
+      "n": 300,
+      "model_string": "jev-1.13.0",
+      "as_of": "2026-09-17",
+      "raw_data": false,
+      "preregistered": true,
+      "direction": "mixed"
+    },
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -23778,6 +23891,21 @@
     "primitives_seen": [
       "noul"
     ],
+    "measurement": {
+      "task": "Map where Jev's calibrated decisions hold and where they break, across small suites of its own and third-party reports",
+      "comparators": [
+        "Laya"
+      ],
+      "metrics": [
+        "accuracy",
+        "calibration",
+        "latency"
+      ],
+      "model_string": "jev-latest",
+      "as_of": "2026-09-18",
+      "raw_data": true,
+      "direction": "mixed"
+    },
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -25185,6 +25313,25 @@
     "repo_pushed_at": "2026-09-17T17:31:42Z",
     "repo_commits": 2,
     "published": "2026-09-17",
+    "measurement": {
+      "task": "Check whether small Python programs follow four supplied rules",
+      "report": "https://github.com/gemanor/jev-code-review-benchmark/blob/HEAD/docs/results/README.md",
+      "comparators": [
+        "Gemini 3.8 Flash",
+        "Claude Fable 5.1"
+      ],
+      "metrics": [
+        "accuracy",
+        "cost",
+        "latency",
+        "robustness"
+      ],
+      "n": 360,
+      "model_string": "jev-1.13.0",
+      "as_of": "2026-09-17",
+      "raw_data": true,
+      "direction": "mixed"
+    },
     "first_seen": "2026-09-24",
     "sources": [
       {
@@ -28288,6 +28435,21 @@
       "score",
       "noul"
     ],
+    "measurement": {
+      "task": "Confidence-gated support-ticket routing in a DSPy-style pipeline, on synthetic cases",
+      "report": "https://github.com/jmanhype/jev-dspy-lab/blob/HEAD/evidence/live/jev-latest/benchmark.md",
+      "metrics": [
+        "accuracy",
+        "calibration",
+        "latency",
+        "cost",
+        "tokens"
+      ],
+      "n": 24,
+      "model_string": "jev-latest",
+      "as_of": "2026-09-17",
+      "raw_data": true
+    },
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -32929,6 +33091,30 @@
     "primitives_seen": [
       "choice"
     ],
+    "measurement": {
+      "task": "Answer the same test questions in Korean and in English, to see whether Korean text needs translating first",
+      "datasets": [
+        "Belebele",
+        "PAWS-X",
+        "KorMedMCQA",
+        "MedQA"
+      ],
+      "comparators": [
+        "GPT-5.6 Luna, reasoning effort none"
+      ],
+      "metrics": [
+        "accuracy",
+        "calibration",
+        "robustness",
+        "latency",
+        "cost"
+      ],
+      "n": 100,
+      "model_string": "jev-latest",
+      "as_of": "2026-09-17",
+      "raw_data": true,
+      "direction": "mixed"
+    },
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -33913,6 +34099,15 @@
     "primitives_seen": [
       "choice"
     ],
+    "measurement": {
+      "task": "Make in-flight judgements for aircraft in a toy air-traffic simulation: divert, declare an emergency, give way, landing order",
+      "metrics": [
+        "latency",
+        "cost"
+      ],
+      "model_string": "jev-latest",
+      "as_of": "2026-09-17"
+    },
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -37112,6 +37307,23 @@
       "choice",
       "score"
     ],
+    "measurement": {
+      "task": "Check whether Jev's probabilities stay calibrated on a rule-based ticket task it cannot have seen, beside three public benchmarks",
+      "datasets": [
+        "OpenBookQA",
+        "CommonsenseQA",
+        "HellaSwag"
+      ],
+      "metrics": [
+        "accuracy",
+        "calibration"
+      ],
+      "n": 4621,
+      "model_string": "typesafe-ai/jev",
+      "as_of": "2026-09-19",
+      "raw_data": true,
+      "direction": "mixed"
+    },
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -37680,6 +37892,30 @@
       "choice",
       "noul"
     ],
+    "measurement": {
+      "task": "Decide whether an email agent should click the link in an email",
+      "report": "https://github.com/anisselbd/jev-phishing-bench/blob/HEAD/results/report.md",
+      "datasets": [
+        "PhishNChips v5.2"
+      ],
+      "comparators": [
+        "Claude Haiku 4.5",
+        "regex rule on link hosts"
+      ],
+      "metrics": [
+        "accuracy",
+        "recall",
+        "calibration",
+        "robustness",
+        "latency",
+        "cost"
+      ],
+      "n": 2000,
+      "model_string": "jev-1.13.0",
+      "as_of": "2026-09-17",
+      "raw_data": false,
+      "direction": "mixed"
+    },
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -39658,6 +39894,28 @@
       "choice",
       "noul"
     ],
+    "measurement": {
+      "task": "Rerank hybrid-retrieval candidates for a small RAG system with batched Nouls, then answer from the top five",
+      "datasets": [
+        "XQuAD-TR"
+      ],
+      "comparators": [
+        "Cohere Rerank 3.5",
+        "hybrid order without a reranker"
+      ],
+      "metrics": [
+        "recall",
+        "ranking",
+        "f1",
+        "latency",
+        "cost"
+      ],
+      "n": 1044,
+      "model_string": "typesafe/jev-1.13",
+      "as_of": "2026-09-20",
+      "raw_data": true,
+      "direction": "favourable"
+    },
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -40311,6 +40569,41 @@
       "score",
       "noul"
     ],
+    "measurement": {
+      "task": "Rerank BM25's top 30 search results, with several Jev question shapes, against dedicated rerankers",
+      "datasets": [
+        "SciFact",
+        "FiQA-2018",
+        "Natural Questions",
+        "NFCorpus",
+        "TREC-COVID",
+        "BRIGHT",
+        "CodeSearchNet",
+        "NevIR",
+        "MIRACL"
+      ],
+      "comparators": [
+        "Cohere Rerank 4 Pro",
+        "Cohere Rerank 4 Fast",
+        "ZeroEntropy zerank-2",
+        "DeepSeek V4.1 Flash",
+        "Qwen3-Reranker-4B",
+        "bge-reranker-v2-m3",
+        "Open-Jev 9B",
+        "Laya 421M"
+      ],
+      "metrics": [
+        "ranking",
+        "accuracy",
+        "latency",
+        "cost"
+      ],
+      "n": 1617,
+      "model_string": "jev-latest",
+      "as_of": "2026-09-16",
+      "raw_data": true,
+      "direction": "mixed"
+    },
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -41688,6 +41981,24 @@
     "repo_pushed_at": "2026-09-19T13:39:07Z",
     "repo_commits": 1,
     "published": "2026-09-19",
+    "measurement": {
+      "task": "Pick up an apple and place it on a plate with a simulated xArm7, choosing intent, motion direction and gripper each cycle",
+      "report": "https://github.com/openroboto-ai/jev-robot-control/blob/HEAD/docs/RESULTS.md",
+      "comparators": [
+        "GPT-6 Astra, low reasoning",
+        "GPT-4.1 mini"
+      ],
+      "metrics": [
+        "task-success",
+        "cost",
+        "latency"
+      ],
+      "n": 1,
+      "model_string": "typesafe/jev-1.13",
+      "as_of": "2026-09-19",
+      "raw_data": true,
+      "direction": "inconclusive"
+    },
     "first_seen": "2026-09-24",
     "sources": [
       {
@@ -42894,6 +43205,24 @@
     "repo_pushed_at": "2026-09-18T09:00:15Z",
     "repo_commits": 15,
     "published": "2026-09-18",
+    "measurement": {
+      "task": "Rerank a skills catalogue's search results with one Score per candidate, graded with the judge's own bias measured",
+      "comparators": [
+        "bge-m3",
+        "text-embedding-3-small",
+        "BM25",
+        "ash keyword ranker"
+      ],
+      "metrics": [
+        "ranking",
+        "precision"
+      ],
+      "n": 164,
+      "model_string": "~typesafe/jev-latest",
+      "as_of": "2026-09-18",
+      "raw_data": true,
+      "direction": "mixed"
+    },
     "first_seen": "2026-09-24",
     "sources": [
       {
@@ -51495,6 +51824,29 @@
         "/v1/systemone"
       ],
       "read_on": "2026-09-22"
+    },
+    "measurement": {
+      "task": "Rank decision models on bounded-rubric decisions by accuracy above chance, calibration, speed and cost",
+      "datasets": [
+        "JevBench"
+      ],
+      "comparators": [
+        "Imajev-4B",
+        "Plumb-4B",
+        "decider-4b v2",
+        "JevK5 v0.2.0",
+        "Laya",
+        "GLiNER2",
+        "djev"
+      ],
+      "metrics": [
+        "accuracy",
+        "calibration",
+        "latency",
+        "cost"
+      ],
+      "model_string": "jev-1.13.0",
+      "as_of": "2026-09-19"
     },
     "first_seen": "2026-09-22",
     "sources": [
@@ -65957,6 +66309,23 @@
     "repo_commits": 735,
     "notes": "Removed in PR #1165 (2026-09-22). Their offline measurement found the candidate generator excluded changed files by construction while nearly all review findings sit in changed files, and that per-file excerpts made the list less precise at higher token cost. The code is gone from the default branch, so this row cites the change that removed it.",
     "notes_zh": "已在 PR #1165（2026-09-22）中移除。他们的离线测量发现：候选生成器从构造上就排除了被改动的文件，而几乎所有审查发现都落在被改动的文件上；按文件附带摘录反而让列表更不精确、token 成本更高。代码已不在默认分支上，所以这一行引用的是移除它的那次改动。",
+    "measurement": {
+      "task": "Pre-brief a code review with a Jev-ranked list of candidate files, one Score per file",
+      "report": "https://github.com/kunchenguid/no-mistakes/blob/HEAD/benchmarks/issue-1055/results.md",
+      "comparators": [
+        "the same review without the pre-brief"
+      ],
+      "metrics": [
+        "tokens",
+        "latency",
+        "recall",
+        "precision"
+      ],
+      "model_string": "jev-1.13.0",
+      "as_of": "2026-09-19",
+      "raw_data": true,
+      "direction": "unfavourable"
+    },
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -69244,6 +69613,21 @@
     "repo_pushed_at": "2026-09-22T08:16:32Z",
     "repo_commits": 6,
     "published": "2026-09-20",
+    "measurement": {
+      "task": "Classify arXiv papers and pick their titles from their PDFs, scored against arXiv's own metadata",
+      "comparators": [
+        "Gemini 3.8 Flash on the parsed text",
+        "Gemini 3.8 Flash reading the PDF"
+      ],
+      "metrics": [
+        "accuracy",
+        "latency",
+        "cost"
+      ],
+      "n": 12,
+      "model_string": "jev-latest",
+      "raw_data": true
+    },
     "first_seen": "2026-09-24",
     "sources": [
       {
@@ -77720,6 +78104,26 @@
       "score",
       "noul"
     ],
+    "measurement": {
+      "task": "Answer typed finance judgements over trading logs, filings, industry news and central-bank text in a frozen offline suite",
+      "report": "https://github.com/myc0576/SmartMoney-Cub/blob/HEAD/assets/benchmark/run.json",
+      "datasets": [
+        "finance-jev-v1"
+      ],
+      "comparators": [
+        "deterministic rule baseline"
+      ],
+      "metrics": [
+        "accuracy",
+        "f1",
+        "calibration",
+        "latency"
+      ],
+      "n": 240,
+      "model_string": "jev-1.13.0",
+      "as_of": "2026-09-20",
+      "direction": "mixed"
+    },
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -83602,6 +84006,25 @@
       "choice",
       "noul"
     ],
+    "measurement": {
+      "task": "Seven synthetic application workloads (ticket triage, routing, driving, guardrails, approvals, answer scoring, home control) with the same typed outputs",
+      "report": "https://github.com/iammrduncan/typesafe-ai-benchmark/blob/HEAD/docs/benchmarks/README.md",
+      "comparators": [
+        "Qwen 3.8 27B on Cerebras, structured output",
+        "Needle 3, local"
+      ],
+      "metrics": [
+        "accuracy",
+        "latency",
+        "cost",
+        "tokens"
+      ],
+      "n": 480,
+      "model_string": "jev-latest",
+      "as_of": "2026-09-17",
+      "raw_data": true,
+      "direction": "mixed"
+    },
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -92320,6 +92743,31 @@
     "primitives_seen": [
       "choice"
     ],
+    "measurement": {
+      "task": "Complete browser tasks on eight self-hosted web apps, Jev choosing each action while Mercury 2.5 writes arguments and answers",
+      "report": "https://github.com/nekuda-ai/WindTunnel/blob/HEAD/results/2026-09-18-jev-mercury/PROVENANCE.md",
+      "datasets": [
+        "WindTunnel"
+      ],
+      "comparators": [
+        "GPT-5.6 Luna",
+        "GPT-5.6 SOL",
+        "GPT-6 Astra",
+        "Gemini 3.6 Flash",
+        "Sonnet 5",
+        "Claude Opus 5"
+      ],
+      "metrics": [
+        "task-success",
+        "cost",
+        "latency",
+        "tokens"
+      ],
+      "n": 49,
+      "model_string": "jev-1.13.0",
+      "as_of": "2026-09-18",
+      "raw_data": true
+    },
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -92591,6 +93039,21 @@
     ],
     "notes": "Wired in but deliberately inert: by their own statement nothing Jev returns reaches a label, a cache row or an alert. Ships a golden fixture. A model to copy for how to trial a new model without betting production on it.",
     "notes_zh": "接进去了但故意不生效：按他们自己的说法，Jev 返回的任何东西都不会进入标签、缓存行或告警。带黄金测试集。想在不拿生产环境下注的前提下试新模型，这是值得照抄的做法。",
+    "measurement": {
+      "task": "Label news headlines' threat level, scored on alerts against a blind human judgement",
+      "report": "https://github.com/koala73/worldmonitor/pull/8326",
+      "comparators": [
+        "DeepSeek V4.1 Flash labeller"
+      ],
+      "metrics": [
+        "recall",
+        "precision"
+      ],
+      "n": 413,
+      "model_string": "jev-1.13.0",
+      "as_of": "2026-09-19",
+      "direction": "unfavourable"
+    },
     "first_seen": "2026-09-22",
     "sources": [
       {

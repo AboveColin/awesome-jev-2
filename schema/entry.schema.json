@@ -332,6 +332,112 @@
       "type": "string",
       "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
     },
+    "measurement": {
+      "description": "What the row's own author measured, indexed field by field from the author's report: never a measurement made or repeated here. Only on a kind: benchmark row (scripts/lint.py). Every field records what the author states and nothing inferred; a field the report does not state is left out. `direction` is the author's own conclusion, author-stated and not reproduced here, and the only place a benchmark row records that it is a negative result (rows of other kinds use the negative-result flag). `read_on` dates a person's reading of the report against these fields; without it a script or a model filled them in and no person has checked since (docs/review-queue.md lists those rows). docs/benchmarks.md is generated from these fields.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "task"
+      ],
+      "properties": {
+        "task": {
+          "description": "What was measured, in a short English phrase: the decision asked of Jev and the setting.",
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "report": {
+          "description": "Where the author reports the measurement, when that is not the row's url: a results file, a pull request or a write-up.",
+          "type": "string",
+          "format": "uri"
+        },
+        "datasets": {
+          "description": "Named datasets or benchmark suites the measurement used, as the author names them. Left out when the author built an unnamed set of their own.",
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 10,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          }
+        },
+        "comparators": {
+          "description": "What the author compared Jev with (models, services, rules, or the same setup without Jev), as the author names them. Left out when the author compared Jev with nothing.",
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          }
+        },
+        "metrics": {
+          "description": "What the author reports, as kinds of measure (taxonomy.json measurement_metrics).",
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 11,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enum": [
+              "accuracy",
+              "precision",
+              "recall",
+              "f1",
+              "ranking",
+              "calibration",
+              "task-success",
+              "robustness",
+              "latency",
+              "cost",
+              "tokens"
+            ]
+          }
+        },
+        "n": {
+          "description": "How many items the author's main measurement set holds, as the author states it. Left out when the report gives no single number.",
+          "type": "integer",
+          "minimum": 1
+        },
+        "model_string": {
+          "description": "The model string the measurement used, as the author or the harness gives it: the one sent, or the version the author says answered. scripts/lint.py holds it to a string compat.json lists; a string compat.json does not list is left out.",
+          "type": "string",
+          "minLength": 1
+        },
+        "as_of": {
+          "description": "When the measurement was taken: the date the author gives for it, else the day the reported results were first committed or posted. Required when the row has no published date: model versions move, and a measurement is of the model served that day.",
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+        },
+        "raw_data": {
+          "description": "true when the author publishes per-item results or raw responses a reader can recount; false when the author says only aggregates are published. Left out when neither is established.",
+          "type": "boolean"
+        },
+        "preregistered": {
+          "description": "true when the author states that the protocol, the set or the predictions were fixed before the measurement ran. Left out otherwise.",
+          "type": "boolean"
+        },
+        "direction": {
+          "description": "The author's own stated conclusion about Jev for this task, never this catalogue's (taxonomy.json measurement_directions): favourable, mixed, unfavourable or inconclusive. Left out when the author states none in words. Author-stated, not reproduced here: every surface that shows it says so. unfavourable makes the row a negative result.",
+          "type": "string",
+          "enum": [
+            "favourable",
+            "mixed",
+            "unfavourable",
+            "inconclusive"
+          ]
+        },
+        "read_on": {
+          "description": "The day a person last read the author's report against these fields. Left out when a script or a model filled them in and no person has checked since.",
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+        }
+      }
+    },
     "first_seen": {
       "description": "Date this row entered the catalog.",
       "type": "string",

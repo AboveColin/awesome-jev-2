@@ -26,6 +26,8 @@ from .rows import (
     SITE,
     anchor,
     collection_link,
+    direction_bit,
+    direction_note,
     collection_slugs,
     entry_list,
     esc,
@@ -370,6 +372,8 @@ def measured_results(page: Page) -> list[str]:
         return []
     picks, others = inline_measured(measured, collection_slugs("measured"))
     out = [f"## {strings['measured_h']}", "", strings["measured_intro"], ""]
+    if any(direction_bit(entry, strings) for entry in picks + others):
+        out += [direction_note(strings, docs="docs/"), ""]
     out.extend(entry_list(picks, strings, notes=True, readme_layout=True, keep_order=True) if picks else [])
     out.extend(entry_list(others, strings, notes=True, readme_layout=True) if others else [])
     shown = len(picks) + len(others)

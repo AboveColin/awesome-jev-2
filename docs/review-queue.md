@@ -15,6 +15,7 @@ Rows a script has singled out for a person to read. Each entry is a machine sign
 | [Tool selection resting on words the keyword rules no longer count · 工具选择只靠关键词规则已不再计入的词](#tool-selection-broad-words) | 65 |
 | [Overview rows with code, not yet indexed by pattern · 带代码、尚未按模式索引的 overview 行](#unsorted-overview) | 252 |
 | [Rows with code whose summary names nothing about Jev · 带代码、摘要没有提到 Jev 的行](#generic-summary) | 102 |
+| [Benchmark measurements no person has read against the report · 尚无人对照报告核读的基准测试测量](#measurement-unread) | 24 |
 
 <a id="examples-dir"></a>
 
@@ -607,3 +608,42 @@ To take a row off, read the cited file and write a summary that says what the pr
 | [tripwire](https://kydlikebtc.github.io/awesome-jev/?lang=en#tripwire) | `integration` |  | Judge every LLM response before the user sees it. AI SDK middleware and OpenAI-compatible proxy. | `upstream-description` | [`src/judge/jev.ts`](https://github.com/noelzappy/tripwire/blob/HEAD/src/judge/jev.ts) |
 | [typesafe-sdk-elixir](https://kydlikebtc.github.io/awesome-jev/?lang=en#typesafe-sdk-elixir) | `sdk` |  | An Elixir port of the official SDK. | — | [`codegen/typesafe_sdk/codegen/source/openapi.ex`](https://github.com/nshkrdotcom/typesafe_sdk/blob/HEAD/codegen/typesafe_sdk/codegen/source/openapi.ex) |
 | [your-signal](https://kydlikebtc.github.io/awesome-jev/?lang=en#your-signal) | `plugin` |  | Open-source BYOK Chrome extension for personal, reversible X timeline filters. | `upstream-description` | [`eval/run.py`](https://github.com/MithrilMan/your-signal/blob/HEAD/eval/run.py) |
+
+<a id="measurement-unread"></a>
+
+## Benchmark measurements no person has read against the report · 尚无人对照报告核读的基准测试测量
+
+The row's `measurement` has no `read_on`: a script or a model filled in its fields from the author's README or results, and no person has checked them since. The fields index what the author reports; the direction is the author's own conclusion (author-stated, not reproduced here). The fields first filled in on 2026-09-28 were read by a model; [method.md](method.md) says how. [benchmarks.md](benchmarks.md) shows every field.
+
+该行的 `measurement` 没有 `read_on`：字段由脚本或模型根据作者的 README 或结果填写，此后没有人核对过。这些字段索引的是作者报告的内容；结论方向是作者本人的结论（作者自述，未经本仓库复现）。2026-09-28 首次填写的字段由模型阅读得出，做法见 [method.md](method.md)。全部字段见 [benchmarks.zh-CN.md](benchmarks.zh-CN.md)。
+
+To take a row off, read the author's report (the row's link, or `measurement.report`) against every field, correct or remove any the report does not state, and set `measurement.read_on` to the day you read it (see the `measurement` field rules in [CONTRIBUTING](../CONTRIBUTING.md#field-rules)).
+
+移出方法：对照作者的报告（该行的链接，或 `measurement.report`）逐项核读，改正或删去报告里没有说的字段，再把 `measurement.read_on` 设为核读当天（见 [CONTRIBUTING](../CONTRIBUTING.md#field-rules) 中关于 `measurement` 的字段规则）。
+
+| Row · 行 | Stars · 星标 | Direction (author-stated, not reproduced here) · 结论方向（作者自述，未经本仓库复现） | Report · 报告 |
+| --- | --- | --- | --- |
+| [hermes-agent-jev-evaluation](https://kydlikebtc.github.io/awesome-jev/?lang=en#hermes-agent-jev-evaluation) | ★100k+ | `unfavourable` | [`https://github.com/NousResearch/hermes-agent/blob/HEAD/evals/compaction/results/SCORECARD-2026-09-19-jev.md`](https://github.com/NousResearch/hermes-agent/blob/HEAD/evals/compaction/results/SCORECARD-2026-09-19-jev.md) |
+| [worldmonitor-shadow-mode](https://kydlikebtc.github.io/awesome-jev/?lang=en#worldmonitor-shadow-mode) | ★10k+ | `unfavourable` | [`https://github.com/koala73/worldmonitor/pull/8326`](https://github.com/koala73/worldmonitor/pull/8326) |
+| [no-mistakes-review-context](https://kydlikebtc.github.io/awesome-jev/?lang=en#no-mistakes-review-context) | ★1k+ | `unfavourable` | [`https://github.com/kunchenguid/no-mistakes/blob/HEAD/benchmarks/issue-1055/results.md`](https://github.com/kunchenguid/no-mistakes/blob/HEAD/benchmarks/issue-1055/results.md) |
+| [hippo-memory](https://kydlikebtc.github.io/awesome-jev/?lang=en#hippo-memory) | ★100+ | `mixed` | [`https://github.com/kitfunso/hippo-memory/blob/HEAD/docs/evals/2026-09-19-jev-reranker.md`](https://github.com/kitfunso/hippo-memory/blob/HEAD/docs/evals/2026-09-19-jev-reranker.md) |
+| [jevbench](https://kydlikebtc.github.io/awesome-jev/?lang=en#jevbench) | ★100+ | — | [`https://github.com/fstandhartinger/jevbench`](https://github.com/fstandhartinger/jevbench) |
+| [ahastudio-til-jev-probing](https://kydlikebtc.github.io/awesome-jev/?lang=en#ahastudio-til-jev-probing) | ★100+ | — | [`https://github.com/ahastudio/til/blob/HEAD/jev/architecture-unmasked.md`](https://github.com/ahastudio/til/blob/HEAD/jev/architecture-unmasked.md) |
+| [jev-arena](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-arena) | ★10+ | — | [`https://github.com/NanmiCoder/jev-arena/blob/HEAD/audit/accuracy-0919-124001/report.md`](https://github.com/NanmiCoder/jev-arena/blob/HEAD/audit/accuracy-0919-124001/report.md) |
+| [jev-benchmarks](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-benchmarks) | ★10+ | `mixed` | [`https://github.com/AbdelStark/jev-benchmarks/blob/HEAD/results/reports/btzsc-pilot-v1.md`](https://github.com/AbdelStark/jev-benchmarks/blob/HEAD/results/reports/btzsc-pilot-v1.md) |
+| [jev-capability-atlas](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-capability-atlas) | ★10+ | `mixed` | [`https://github.com/Zaious/jev-capability-atlas`](https://github.com/Zaious/jev-capability-atlas) |
+| [jev-rag-benchmark](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-rag-benchmark) | ★10+ | `favourable` | [`https://github.com/erendikmenn/jev-rag-benchmark`](https://github.com/erendikmenn/jev-rag-benchmark) |
+| [jev-robot-control](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-robot-control) | ★10+ | `inconclusive` | [`https://github.com/openroboto-ai/jev-robot-control/blob/HEAD/docs/RESULTS.md`](https://github.com/openroboto-ai/jev-robot-control/blob/HEAD/docs/RESULTS.md) |
+| [smartmoney-cub](https://kydlikebtc.github.io/awesome-jev/?lang=en#smartmoney-cub) | ★10+ | `mixed` | [`https://github.com/myc0576/SmartMoney-Cub/blob/HEAD/assets/benchmark/run.json`](https://github.com/myc0576/SmartMoney-Cub/blob/HEAD/assets/benchmark/run.json) |
+| [typesafe-ai-benchmark](https://kydlikebtc.github.io/awesome-jev/?lang=en#typesafe-ai-benchmark) | ★10+ | `mixed` | [`https://github.com/iammrduncan/typesafe-ai-benchmark/blob/HEAD/docs/benchmarks/README.md`](https://github.com/iammrduncan/typesafe-ai-benchmark/blob/HEAD/docs/benchmarks/README.md) |
+| [windtunnel](https://kydlikebtc.github.io/awesome-jev/?lang=en#windtunnel) | ★10+ | — | [`https://github.com/nekuda-ai/WindTunnel/blob/HEAD/results/2026-09-18-jev-mercury/PROVENANCE.md`](https://github.com/nekuda-ai/WindTunnel/blob/HEAD/results/2026-09-18-jev-mercury/PROVENANCE.md) |
+| [jev-benchmark](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-benchmark) |  | `mixed` | [`https://github.com/wondertwins/jev-benchmark`](https://github.com/wondertwins/jev-benchmark) |
+| [jev-code-review-benchmark](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-code-review-benchmark) |  | `mixed` | [`https://github.com/gemanor/jev-code-review-benchmark/blob/HEAD/docs/results/README.md`](https://github.com/gemanor/jev-code-review-benchmark/blob/HEAD/docs/results/README.md) |
+| [jev-dspy-lab](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-dspy-lab) |  | — | [`https://github.com/jmanhype/jev-dspy-lab/blob/HEAD/evidence/live/jev-latest/benchmark.md`](https://github.com/jmanhype/jev-dspy-lab/blob/HEAD/evidence/live/jev-latest/benchmark.md) |
+| [jev-korean-benchmark](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-korean-benchmark) |  | `mixed` | [`https://github.com/mahlernim/jev-korean-benchmark`](https://github.com/mahlernim/jev-korean-benchmark) |
+| [jev-little-airways](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-little-airways) |  | — | [`https://github.com/lbotinelly/jev-little-airways`](https://github.com/lbotinelly/jev-little-airways) |
+| [jev-ood-calibration](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-ood-calibration) |  | `mixed` | [`https://github.com/scienthoon/jev-ood-calibration`](https://github.com/scienthoon/jev-ood-calibration) |
+| [jev-phishing-bench](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-phishing-bench) |  | `mixed` | [`https://github.com/anisselbd/jev-phishing-bench/blob/HEAD/results/report.md`](https://github.com/anisselbd/jev-phishing-bench/blob/HEAD/results/report.md) |
+| [jev-rerank-bench](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-rerank-bench) |  | `mixed` | [`https://github.com/anessbelbati/jev-rerank-bench`](https://github.com/anessbelbati/jev-rerank-bench) |
+| [jev-search-rerank-eval](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-search-rerank-eval) |  | `mixed` | [`https://github.com/zhuyansen/jev-search-rerank-eval`](https://github.com/zhuyansen/jev-search-rerank-eval) |
+| [pdf-race](https://kydlikebtc.github.io/awesome-jev/?lang=en#pdf-race) |  | — | [`https://github.com/goodrahstar/pdf-race`](https://github.com/goodrahstar/pdf-race) |

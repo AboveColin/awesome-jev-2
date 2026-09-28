@@ -17,6 +17,8 @@ import re
 from collections import Counter
 
 from classify import classify_broad, suggest
+from measurements import directions as measurement_directions
+from measurements import measured, unread
 from sibling_lists import citations_of, own_repository
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
@@ -269,6 +271,13 @@ def compute() -> dict:
         "review_single_model_name": sum(1 for e in catalog if single_model_name(e)),
         "review_tool_selection_broad": sum(1 for e in catalog if tool_selection_broad_only(e)),
         "review_generic_summary": sum(1 for e in catalog if generic_summary(e)),
+        # A benchmark's own report, indexed (`measurement`): how many rows carry
+        # one, the directions their authors state (author-stated, not
+        # reproduced here), and how many no person has read against the report
+        # yet (docs/review-queue.md#measurement-unread).
+        "measured_rows": len(measured(catalog)),
+        "measurement_directions": measurement_directions(catalog),
+        "review_measurement_unread": len(unread(catalog)),
         # How patterns were chosen is recorded only by patterns_reviewed. A row
         # whose patterns equal the keyword rules' suggestion shows agreement
         # with the rules and nothing more: the review, if any, was not recorded.

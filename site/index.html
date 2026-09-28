@@ -999,7 +999,7 @@
     </footer>
 
     <script type="module">
-      import { SORTS, verification, evidenceKind, evidenceUrl, isIndependentReport, compareEntries, matchesEntry, queryFromState, shareUrl, stateFromQuery, summaryMarks, notIndexedByPattern, primitiveLayers, repositoryFacts, siblingCitations, platformRows, resolvePlatform, platformChoices } from "./catalog-core.mjs";
+      import { SORTS, verification, evidenceKind, evidenceUrl, isIndependentReport, compareEntries, matchesEntry, queryFromState, shareUrl, stateFromQuery, summaryMarks, notIndexedByPattern, primitiveLayers, repositoryFacts, siblingCitations, platformRows, resolvePlatform, platformChoices, measurementOf } from "./catalog-core.mjs";
       const STR = {
         en: {
           eyebrow: "Jev Decision Atlas · community index",
@@ -1024,6 +1024,10 @@
           repo_facts_about: "As GitHub stated them at the last weekly refresh (days in UTC). A date says when someone last pushed, not whether the project is maintained.",
           cited_one: "Cited by 1 other directory", cited_n: "Cited by {n} other directories", cited_h: "Other directories citing it",
           cited_about: "Sibling Jev directories whose README links this repository, as the weekly refresh last read them. They copy from each other: this counts mentions and is not a check of the project.",
+          m_h: "What its author measured", m_compared: "Compared with", m_datasets: "Datasets", m_direction: "Author’s conclusion",
+          m_qualifier: "author-stated, not reproduced here", m_report: "Report",
+          m_about: "Indexed from the author’s own report (measurement); this catalogue ran none of it. Without a reading date, a script or a model filled these fields in and no person has checked them.",
+          m_read: "A person read it against the report on {date}.",
           prims_signal_about: "The cited file contains this primitive’s request or answer shape (primitives_seen). A script found the text; nobody recorded reading the code call it.",
           reason: "Why this pick", caution: "Before you use it", notes: "Editor’s note", empty_help: "Try a broader phrase or reset the filters.",
           trust_short: "Source checks ≠ runtime tests.", trust_link: "What we check ↗", patterns_count: "patterns",
@@ -1122,6 +1126,11 @@
           // The Chinese of the four sibling-citation strings below is model-written; a person who revises it drops this note.
           cited_one: "被 1 个其他目录引用", cited_n: "被 {n} 个其他目录引用", cited_h: "引用它的其他目录",
           cited_about: "README 中链接了这个仓库的其他 Jev 目录，按上次每周刷新时读取的结果。这些目录相互转载：这里只统计被提及的次数，不是对项目的核查。",
+          // The Chinese of the measurement strings below (m_…) is model-written; a person who revises it drops this note.
+          m_h: "作者测了什么", m_compared: "对比对象", m_datasets: "数据集", m_direction: "作者结论",
+          m_qualifier: "作者自述，未经本仓库复现", m_report: "报告",
+          m_about: "按作者本人的报告索引（measurement）；本目录一项都没有运行过。没有核读日期的，是脚本或模型填写的字段，尚无人核对。",
+          m_read: "有人于 {date} 对照报告核读过。",
           prims_signal_about: "所引文件含有这个原语的请求或回答结构（primitives_seen）。这是脚本找到的文本，没有人记录读过代码确认调用。",
           reason: "精选理由", caution: "使用前留意", notes: "编辑备注", empty_help: "试试更宽泛的关键词，或重置筛选条件。",
           trust_short: "来源核查 ≠ 运行验证。", trust_link: "了解核验范围 ↗", patterns_count: "类场景",
@@ -1202,6 +1211,7 @@
         FLAG = {},
         SRC = {},
         SRC_ABOUT = {},
+        DIR = {},
         STATS = {},
         P_ORDER = [],
         F_ORDER = [],
@@ -1484,6 +1494,20 @@
         .map(([text, about]) => `<span class="src-mark"${about ? ` title="${esc(about)}"` : ""}>${esc(text)}</span>`)
         .join("");
 
+      // What a benchmark's author measured (measurement), as the author reports it.
+      function measured(e) {
+        const m = measurementOf(e);
+        if (!m) return "";
+        const sep = L === "zh" ? "、" : ", ";
+        const parts = [`<p>${esc(m.task)}</p>`];
+        if ((m.comparators || []).length) parts.push(`<p>${S().m_compared}: ${esc(m.comparators.join(sep))}</p>`);
+        if ((m.datasets || []).length) parts.push(`<p>${S().m_datasets}: ${esc(m.datasets.join(sep))}</p>`);
+        if (m.direction) parts.push(`<p>${S().m_direction}: <b>${esc(lbl(DIR, m.direction))}</b> (${S().m_qualifier})</p>`);
+        if (m.report) parts.push(`<p><a href="${esc(m.report)}" rel="noopener">${S().m_report} ↗</a></p>`);
+        const read = m.read_on ? " " + S().m_read.replace("{date}", `<time datetime="${esc(m.read_on)}">${esc(m.read_on)}</time>`) : "";
+        return `<dt>${S().m_h}</dt><dd>${parts.join("")}<p class="sig-about">${S().m_about}${read}</p></dd>`;
+      }
+
       function card(e) {
         const sum = local(e, "summary");
         const note = local(e, "notes");
@@ -1557,6 +1581,7 @@
                 ${e.evidence ? `<dt>${S().signals}</dt><dd>${e.evidence.matched.map(x => `<code>${esc(x)}</code>`).join(" ")}</dd>` : ""}
                 ${prims.read.length ? `<dt>${S().prims_read}</dt><dd>${primPills(prims.read, "p q")}</dd>` : ""}
                 ${prims.signalOnly.length ? `<dt>${S().prims_signal}</dt><dd>${primPills(prims.signalOnly, "p sig")}<p class="sig-about">${S().prims_signal_about}</p></dd>` : ""}
+                ${measured(e)}
                 ${e.evidence_none ? `<dt>${S().read_context}</dt><dd>${esc(evidenceContext(e.evidence_none))}</dd>` : ""}
               </dl>
               ${pick && note ? `<p><b>${S().notes}</b> ${esc(note)}</p>` : ""}
@@ -1950,6 +1975,8 @@
           // Whose words a summary is (summary_source): label, and its blurb as the tooltip.
           SRC = labelsFrom(taxonomy.summary_sources || [], false);
           SRC_ABOUT = Object.fromEntries((taxonomy.summary_sources || []).map((x) => [x.key, [x.blurb_en, x.blurb_zh]]));
+          // The directions a benchmark's own author may state (measurement.direction).
+          DIR = labelsFrom(taxonomy.measurement_directions || [], false);
           // Caveat order is taxonomy.json's, like the README's; a flag added
           // there sorts into place here with no second list to update.
           F_ORDER = taxonomy.flags.map((x) => x.key);

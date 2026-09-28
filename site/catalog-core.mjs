@@ -159,6 +159,19 @@ export function platformChoices(compat, entries) {
   return { surfaces, other };
 }
 
+// A kind: benchmark row's `measurement` indexes its own author's report
+// (schema/entry.schema.json): the task, named datasets, comparators, kinds of
+// metric, n, the model string, when, and the author's `direction`. Nothing in
+// it was measured here, and a direction is the author's own conclusion, so
+// every surface showing one says it is author-stated and not reproduced here.
+// src/awesome_jev_mcp/query.py measurement_of() is the same rule.
+export const DIRECTIONS = ["favourable", "mixed", "unfavourable", "inconclusive"];
+
+export function measurementOf(entry) {
+  const m = entry.measurement;
+  return m && typeof m === "object" && !Array.isArray(m) && Object.keys(m).length ? m : null;
+}
+
 export function isIndependentReport(entry) {
   return entry.kind === "benchmark" && !(entry.flags || []).includes("vendor-reported");
 }

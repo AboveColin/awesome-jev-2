@@ -10,6 +10,8 @@ Every catalogued example of this decision — 451 of them. The same rows, with c
 
 A *call site* link opens the one file a row cites (`evidence.path`) at `HEAD` of the repository's default branch; the date after it is the day a person last read that file (`evidence.read_on`): a reading, not a run of the code. A *cited file* link is the same for a file that shows the project speaking Jev's request shape rather than building on Jev, or only an example it ships (`evidence.kind`). Neither is pinned to a commit, so it opens the file as it is now, which may differ from what was read, and stops resolving once the file moves; the weekly claims check reports that.
 
+*Author's conclusion* is the direction a benchmark's own author states for Jev on the task they measured (`measurement.direction`: favourable, mixed, unfavourable or inconclusive), indexed from the author's report: author-stated, not reproduced here, and absent where the author states none in words. [docs/benchmarks.md](../benchmarks.md) sets every benchmark's measurement side by side.
+
 - **[Official agent skill for Claude Code](https://docs.typesafe.ai/agent-skill)** ⭐ — Installs a TypeSafe skill into Claude Code so an agent can write correct Jev calls without you pasting the API shape each time.
   <sub>`Official docs` · ★1k+ · `sh`</sub>
 
@@ -221,7 +223,7 @@ A *call site* link opens the one file a row cites (`evidence.path`) at `HEAD` of
   <sub>`SDK` · ★10+ · twister915 · `Rs` · call site [`examples/tsg/main.rs`](https://github.com/Twister915/typesafe-ai/blob/HEAD/examples/tsg/main.rs), read 2026-09-22</sub>
 
 - **[typesafe-ai-benchmark](https://github.com/iammrduncan/typesafe-ai-benchmark)** — A gateway that mimics the structured-output shape, used to benchmark against it.
-  <sub>`Benchmark` · ★10+ · iammrduncan · `TS` · call site [`packages/demos/lib/jev.ts`](https://github.com/iammrduncan/typesafe-ai-benchmark/blob/HEAD/packages/demos/lib/jev.ts), read 2026-09-22</sub>
+  <sub>`Benchmark` · ★10+ · iammrduncan · `TS` · call site [`packages/demos/lib/jev.ts`](https://github.com/iammrduncan/typesafe-ai-benchmark/blob/HEAD/packages/demos/lib/jev.ts), read 2026-09-22 · author's conclusion: mixed (author-stated, not reproduced here)</sub>
 
 - **[typesafe-sdk-go](https://github.com/atharvamhaske/typesafe-sdk-go)** — unofficial go sdk for typesafe ai. not affiliated with or endorsed by typesafe ai. a side project built to fill the missing go sdk gap, for the community to use. <sub>(upstream description)</sub>
   <sub>`SDK` · ★10+ · atharvamhaske · `Go` · call site [`typesafe.go`](https://github.com/atharvamhaske/typesafe-sdk-go/blob/HEAD/typesafe.go), read 2026-09-24</sub>
@@ -290,7 +292,7 @@ A *call site* link opens the one file a row cites (`evidence.path`) at `HEAD` of
   <sub>`SDK` · dougsong · `Kt` · call site [`sdk/src/main/kotlin/io/github/jevandroid/JevProvider.kt`](https://github.com/dougsong/jev-android/blob/HEAD/sdk/src/main/kotlin/io/github/jevandroid/JevProvider.kt), read 2026-09-22</sub>
 
 - **[jev-benchmark](https://github.com/wondertwins/jev-benchmark)** — Benchmarks and a playground for TypeSafe's Jev (System One) model: chess, and who-is-the-player-talking-to for speech-to-text game NPCs <sub>(upstream description)</sub>
-  <sub>`Benchmark` · wondertwins · `Py` · call site [`jevcommon/client.py`](https://github.com/wondertwins/jev-benchmark/blob/HEAD/jevcommon/client.py), read 2026-09-22</sub>
+  <sub>`Benchmark` · wondertwins · `Py` · call site [`jevcommon/client.py`](https://github.com/wondertwins/jev-benchmark/blob/HEAD/jevcommon/client.py), read 2026-09-22 · author's conclusion: mixed (author-stated, not reproduced here)</sub>
 
 - **[jev-bun1](https://github.com/heiwa4126/jev-bun1)** — TypeSafe の Jev を TypeScript SDK で使ってみる最初の 1 歩 <sub>(upstream description)</sub>
   <sub>`SDK` · heiwa4126 · `TS` · call site [`src/ex0.ts`](https://github.com/heiwa4126/jev-bun1/blob/HEAD/src/ex0.ts), read 2026-09-22 · ⚠ `no licence`</sub>
@@ -323,7 +325,7 @@ A *call site* link opens the one file a row cites (`evidence.path`) at `HEAD` of
   <sub>`SDK` · smasato · `TS` · call site [`src/jev.ts`](https://github.com/smasato/jev-jp-address/blob/HEAD/src/jev.ts), read 2026-09-22 · ⚠ `one commit` `no licence`</sub>
 
 - **[jev-korean-benchmark](https://github.com/mahlernim/jev-korean-benchmark)** — Reproducible early-access evaluation of Jev on Korean understanding and medical text, with runtime and cost evidence <sub>(upstream description)</sub>
-  <sub>`Benchmark` · mahlernim · `Py` · call site [`jevbench/medqa_run.py`](https://github.com/mahlernim/jev-korean-benchmark/blob/HEAD/jevbench/medqa_run.py), read 2026-09-22 · ⚠ `no licence`</sub>
+  <sub>`Benchmark` · mahlernim · `Py` · call site [`jevbench/medqa_run.py`](https://github.com/mahlernim/jev-korean-benchmark/blob/HEAD/jevbench/medqa_run.py), read 2026-09-22 · author's conclusion: mixed (author-stated, not reproduced here) · ⚠ `no licence`</sub>
 
 - **[jev-lab](https://github.com/danielhirt/jev-lab)** — Experiments on TypeSafe Jev (System One decision model) via OpenRouter: repeatability, perturbation, and LLM baseline comparison <sub>(upstream description)</sub>
   <sub>`Benchmark` · danielhirt · `TS` · call site [`packages/codenames/src/judge.ts`](https://github.com/danielhirt/jev-lab/blob/HEAD/packages/codenames/src/judge.ts), read 2026-09-24 · ⚠ `no licence`</sub>

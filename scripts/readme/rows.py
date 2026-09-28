@@ -13,6 +13,7 @@ import pathlib
 import _stats
 from _github import SELF as REPO
 from evidence_url import evidence_url
+from platform_values import load_query
 
 from .strings import ZH_MACHINE
 
@@ -48,6 +49,10 @@ FLAG_LABELS = {
 }
 SUMMARY_SOURCE_LABELS = {
     s["key"]: (s["en"], s["zh"], s["blurb_en"], s["blurb_zh"]) for s in _TAXONOMY["summary_sources"]
+}
+# The directions a benchmark's own author may state (measurement.direction).
+DIRECTION_LABELS = {
+    d["key"]: (d["en"], d["zh"], d["blurb_en"], d["blurb_zh"]) for d in _TAXONOMY["measurement_directions"]
 }
 # summary_source values a summary is marked with wherever it is shown: the
 # project's own words. `curated` is how a list is read anyway, so it gets none.
@@ -198,6 +203,23 @@ def call_site(entry: dict, strings: dict, *, with_path: bool = False) -> str:
     return link + strings["read_on"].format(date=read_on) if read_on else link
 
 
+def direction_bit(entry: dict, strings: dict) -> str:
+    """The direction a benchmark's author states (measurement.direction), with
+    whose conclusion it is, or "" when the row records none. Every surface that
+    shows a direction says it is author-stated and not reproduced here."""
+    direction = (load_query().measurement_of(entry) or {}).get("direction")
+    if not direction:
+        return ""
+    return strings["direction_bit"].format(direction=label(DIRECTION_LABELS, direction, strings["lang_code"]))
+
+
+def direction_note(strings: dict, *, docs: str) -> str:
+    """The sentence that says what an author's conclusion is, marked where a
+    model wrote the Chinese. `docs` is the relative path to docs/ from the page."""
+    page = "benchmarks.zh-CN.md" if strings["lang_code"] == "zh" else "benchmarks.md"
+    return marked(strings, "direction_note", page=f"docs/{page}", page_link=f"{docs}{page}")
+
+
 def sort_key(entry: dict) -> tuple:
     """Official first, then rows with code, then star band, then title.
 
@@ -264,6 +286,9 @@ def entry_list(
         cited = call_site(entry, strings, with_path=not readme_layout)
         if cited:
             bits.append(cited)
+        direction = direction_bit(entry, strings)
+        if direction:
+            bits.append(direction)
         flags = [
             f"`{label(FLAG_LABELS, flag, lang)}`"
             for flag in FLAG_ORDER

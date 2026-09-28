@@ -54,7 +54,7 @@ never starts.
 
 | Tool                 | What it answers                                                    |
 | -------------------- | ------------------------------------------------------------------ |
-| `search_examples`    | "Show me safety-gating examples in TypeScript that call `noul`."   |
+| `search_examples`    | "Show me safety-gating examples in TypeScript that call `noul`." Also "which benchmarks compared Jev with Cohere, or used LongMemEval?": a benchmark's `measurement` is its author's report, indexed, the direction author-stated and not reproduced here. |
 | `get_example`        | One row in full, including its sources and its `evidence`.         |
 | `list_patterns`      | The decision taxonomy, with how many examples exist for each.      |
 | `compatibility`      | Model string, field names, request shape and env var per platform, and how many catalogued rows record it. |

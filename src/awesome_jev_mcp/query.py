@@ -59,6 +59,25 @@ COLLECTIONS_NOTE = (
 # `#<key>` is the section's anchor on GitHub.
 PATTERNS_DOC = "https://github.com/kydlikebtc/awesome-jev/blob/main/docs/patterns.md"
 
+# A kind: benchmark row's `measurement` indexes its own author's report
+# (schema/entry.schema.json), field by field: the task, named datasets,
+# comparators, kinds of metric, n, the model string, when, and the author's
+# `direction`. Nothing in it was measured or reproduced here, and `direction`
+# is the author's conclusion, so every answer showing one says whose it is
+# (DIRECTION_NOTE). scripts/measurements.py holds rows to the rules and
+# site/catalog-core.mjs reads the same fields.
+BENCHMARK = "benchmark"
+DIRECTIONS = ("favourable", "mixed", "unfavourable", "inconclusive")
+DIRECTION_NOTE = "author-stated, not reproduced here"
+
+MEASUREMENT_NOTE = (
+    "A row's `measurement` indexes what its own author reported: the task, named datasets, "
+    "comparators, kinds of metric, n, the model string, when (`as_of`), and the author's "
+    "`direction`. None of it was measured or reproduced here; `direction` is the author's own "
+    "conclusion, author-stated, not reproduced here (direction_note). `read_on` dates a person's reading of the report against "
+    "these fields; without it a script or a model filled them in and nobody has checked since."
+)
+
 NOUL_WARNING = (
     "`noul` answers carry no confidence field on any surface — the probability "
     "is the answer. A helper reading .confidence uniformly returns nothing for "
@@ -100,7 +119,39 @@ def compact(entry: dict) -> dict[str, Any]:
         out["caveats"] = entry["flags"]
     if entry.get("notes"):
         out["note"] = entry["notes"]
+    # A benchmark's own report, indexed; a direction says whose conclusion it is.
+    measurement = measurement_of(entry)
+    if measurement:
+        out["measurement"] = measured_view(measurement)
     return out
+
+
+def measurement_of(entry: dict) -> dict | None:
+    """The row's `measurement` object, or None when it has none (or not an object)."""
+    measurement = entry.get("measurement")
+    return measurement if isinstance(measurement, dict) and measurement else None
+
+
+def measured_view(measurement: dict) -> dict[str, Any]:
+    """`measurement` as an answer shows it: the fields as recorded and, beside a
+    direction, whose conclusion it is."""
+    out = dict(measurement)
+    if "direction" in out:
+        out["direction_note"] = DIRECTION_NOTE
+    return out
+
+
+def is_independent_report(entry: dict) -> bool:
+    """A benchmark its vendor did not publish: the README's "Measured, not
+    claimed", docs/benchmarks.md's Independent column and the site's
+    independent-reports toggle (isIndependentReport in site/catalog-core.mjs)."""
+    return entry.get("kind") == BENCHMARK and "vendor-reported" not in (entry.get("flags") or [])
+
+
+def _names_match(names: object, asked: str) -> bool:
+    """Whether any of `names` (a list of strings) contains `asked`, ignoring case."""
+    needle = asked.strip().lower()
+    return isinstance(names, list) and any(needle in str(name).lower() for name in names)
 
 
 def caveat_glossary(flags: list[dict], seen) -> dict[str, str]:
@@ -255,6 +306,9 @@ def search(
     language: str = "",
     question_type: str = "",
     platform: str = "",
+    comparator: str = "",
+    dataset: str = "",
+    direction: str = "",
     query: str = "",
     official_only: bool = False,
     with_code_only: bool = False,
@@ -265,9 +319,20 @@ def search(
     to `limit` (clamped to 1..MAX_LIMIT), each as compact() shapes it, then the
     caveat_glossary of the flags those rows carry (`flags` is taxonomy.json's).
     `platform` is resolved against `compat` (resolve_platform()), and the
-    answer then says in `platform` what it matched and whether coarsely. An
-    unknown `pattern` or `platform` answers with the valid ones instead."""
+    answer then says in `platform` what it matched and whether coarsely.
+    `comparator` and `dataset` match a name in a row's measurement as a
+    fragment, ignoring case; `direction` matches the author's stated one
+    exactly. An answer holding a measured row says in `measurement_note`
+    what the fields are. An unknown `pattern`, `platform` or `direction`
+    answers with the valid ones instead."""
     limit = max(1, min(int(limit), MAX_LIMIT))
+    if direction and direction not in DIRECTIONS:
+        return {
+            "error": f"unknown direction {direction!r}",
+            "valid_directions": list(DIRECTIONS),
+            "hint": "the conclusion a benchmark's own author states (measurement.direction), "
+            "not a verdict reached here",
+        }
 
     # Resolved against every row, before any other filter narrows them: a
     # value is known whether or not this search's other filters keep a row
@@ -305,6 +370,13 @@ def search(
         rows = [e for e in rows if question_type in (e.get("question_types") or [])]
     if platform:
         rows = platform_rows(rows, values)
+    # What a benchmark's own author reported (measurement): a row without one never matches.
+    if comparator.strip():
+        rows = [e for e in rows if _names_match((measurement_of(e) or {}).get("comparators"), comparator)]
+    if dataset.strip():
+        rows = [e for e in rows if _names_match((measurement_of(e) or {}).get("datasets"), dataset)]
+    if direction:
+        rows = [e for e in rows if (measurement_of(e) or {}).get("direction") == direction]
     if official_only:
         rows = [e for e in rows if e.get("official")]
     if with_code_only:
@@ -325,16 +397,20 @@ def search(
     }
     if about:
         answer["platform"] = about
+    if any(measurement_of(e) for e in shown):
+        answer["measurement_note"] = MEASUREMENT_NOTE
     return _with_glossary(answer, flags, (e.get("flags") or [] for e in shown))
 
 
 def find_example(rows: list[dict], slug: str, flags: list[dict] = ()) -> dict[str, Any]:
     """get_example's answer: the row itself, with the caveat_glossary of its
     flags after its own fields, or up to five slugs containing the one asked
-    for."""
+    for. A measurement's direction gains its direction_note."""
     for entry in rows:
         if entry["slug"] == slug:
-            return _with_glossary(entry, flags, [entry.get("flags") or []])
+            measurement = measurement_of(entry)
+            shown = {**entry, "measurement": measured_view(measurement)} if measurement else entry
+            return _with_glossary(shown, flags, [entry.get("flags") or []])
     # Sorted rather than taken in file order: the copy that answered may be a
     # checkout mid-edit or an AWESOME_JEV_CATALOG directory, not the sorted file.
     close = sorted(e["slug"] for e in rows if slug.lower() in e["slug"].lower())[:5]

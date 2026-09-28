@@ -512,7 +512,8 @@ class ServerWiringTest(unittest.TestCase):
         self.assertEqual({name: p.default for name, p in params.items()}, wanted)
         # A value per argument that changes the answer on the real catalogue.
         changed = {"pattern": "safety-gating", "kind": "project", "language": "python", "question_type": "choice",
-                   "platform": "langchain", "query": "router", "official_only": True, "with_code_only": True,
+                   "platform": "langchain", "comparator": "Cohere", "dataset": "LongMemEval",
+                   "direction": "unfavourable", "query": "router", "official_only": True, "with_code_only": True,
                    "include_non_jev": True, "limit": 3}
         s = self.server
         default = query.search(s.CATALOG, s.PATTERNS, s.FLAGS, s.COMPAT)

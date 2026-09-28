@@ -4,7 +4,7 @@ import {
   compareEntries, evidenceKind, evidenceUrl, matchesEntry, verification, isIndependentReport, EVIDENCE_KINDS,
   queryFromState, shareUrl, stateFromQuery, TOGGLES, VIEWS, SUMMARY_SOURCES, MARKED_SOURCES, summaryMarks,
   UNINDEXED_KINDS, notIndexedByPattern, PRIMITIVES, primitiveLayers, repositoryFacts, siblingCitations,
-  COARSE, platformRows, resolvePlatform, platformChoices,
+  COARSE, platformRows, resolvePlatform, platformChoices, DIRECTIONS, measurementOf,
 } from "../site/catalog-core.mjs";
 import { readFileSync } from "node:fs";
 
@@ -305,4 +305,16 @@ test("a sibling-list citation is one fixed shape, and nothing else in sources co
     {name: "b/list", url: "https://github.com/b/list"},
   ]);
   assert.deepEqual(siblingCitations(row("none")), []);
+});
+
+test("a benchmark's measurement is read as recorded, and its directions are the schema's", () => {
+  const schema = JSON.parse(readFileSync(new URL("../schema/entry.schema.json", import.meta.url)));
+  assert.deepEqual(DIRECTIONS, schema.properties.measurement.properties.direction.enum);
+  const taxonomy = JSON.parse(readFileSync(new URL("../taxonomy.json", import.meta.url)));
+  assert.deepEqual(taxonomy.measurement_directions.map(x => x.key), DIRECTIONS, "every direction has a label");
+  const measured = row("bench", {kind: "benchmark", measurement: {task: "Rerank", direction: "mixed"}});
+  assert.deepEqual(measurementOf(measured), {task: "Rerank", direction: "mixed"});
+  for (const measurement of [undefined, null, {}, [], "text"]) {
+    assert.equal(measurementOf(row("none", {measurement})), null, JSON.stringify(measurement));
+  }
 });

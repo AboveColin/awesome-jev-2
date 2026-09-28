@@ -41,6 +41,7 @@ GENERATORS = (
     ("build_docs.py", "the generated values in docs/status.md, docs/sources.md, docs/patterns.md and llms.txt"),
     ("build_compat.py", "the generated tables in docs/compatibility.md"),
     ("build_review_queue.py", "docs/review-queue.md, the rows a script marks for a person to read"),
+    ("build_benchmarks.py", "docs/benchmarks.md and docs/benchmarks.zh-CN.md, the benchmark rows' measurements side by side"),
     ("zh_audit.py", "docs/zh-queue.md, the machine-translated Chinese summaries for a person to replace"),
     ("build_examples_index.py", "examples/index.json, the examples by decision pattern for the MCP server's prompt"),
 )
@@ -61,6 +62,8 @@ OUTPUTS = (
     "docs/patterns.md",
     "docs/compatibility.md",
     "docs/review-queue.md",
+    "docs/benchmarks.md",
+    "docs/benchmarks.zh-CN.md",
     "docs/zh-queue.md",
     "llms.txt",
     "examples/index.json",

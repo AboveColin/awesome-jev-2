@@ -88,6 +88,11 @@ def main() -> int:
         f"repositories   {stats['repo_facts_rows']} with GitHub's creation date, last push and commit count, "
         f"{stats['single_commit_rows']} single-commit; last push by month (UTC): {last_pushes}"
     )
+    directions = ", ".join(f"{key} {count}" for key, count in stats["measurement_directions"].items())
+    print(
+        f"measurements   {stats['measured_rows']} benchmark rows index their author's measurement "
+        f"(author-stated directions: {directions}), {stats['review_measurement_unread']} not read by a person"
+    )
     print(
         f"citations      {stats['cited_rows']} of {stats['citable_rows']} rows with a GitHub repository "
         "linked by at least one sibling directory (sources; a count of mentions, not a review)"

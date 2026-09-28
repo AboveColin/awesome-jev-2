@@ -69,6 +69,9 @@ class CountsTest(unittest.TestCase):
             "pushed_by_month": {"2026-10": 7025, "2026-09": 7026},
             "cited_rows": 7027,
             "citable_rows": 7028,
+            "measured_rows": 7030,
+            "measurement_directions": {"favourable": 7031, "mixed": 7032, "not stated": 7033},
+            "review_measurement_unread": 7034,
         }
         with patch.object(_stats, "compute", return_value=fake):
             text = run_counts()
@@ -90,6 +93,8 @@ class CountsTest(unittest.TestCase):
             "repositories   7023 with GitHub's creation date, last push and commit count, 7024 single-commit; "
             "last push by month (UTC): 2026-10 7025, 2026-09 7026",
             "citations      7027 of 7028 rows with a GitHub repository linked by at least one sibling directory",
+            "measurements   7030 benchmark rows index their author's measurement (author-stated directions: "
+            "favourable 7031, mixed 7032, not stated 7033), 7034 not read by a person",
             "next changes at 7,100 entries",
             "  7,000+ public resources for Jev",
         ):

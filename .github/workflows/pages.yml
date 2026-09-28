@@ -29,6 +29,8 @@ on:
       - "scripts/check_collections.py"
       - "scripts/check_site_data.py"
       - "scripts/classify.py"
+      - "scripts/measurements.py"
+      - "scripts/platform_values.py"
       - "scripts/render_images.py"
       - "scripts/sibling_lists.py"
       - "scripts/site_api.py"

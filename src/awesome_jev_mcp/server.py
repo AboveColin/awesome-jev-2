@@ -159,6 +159,9 @@ def search_examples(
     language: str = "",
     question_type: Literal["", "choice", "score", "noul"] = "",
     platform: str = "",
+    comparator: str = "",
+    dataset: str = "",
+    direction: Literal["", "favourable", "mixed", "unfavourable", "inconclusive"] = "",
     query: str = "",
     official_only: bool = False,
     with_code_only: bool = False,
@@ -190,6 +193,16 @@ def search_examples(
             whole, never as a fragment; `platform` in the answer says what
             matched, and "coarse" when the value does not tell the surface
             apart from another route. An unknown one lists the valid ones.
+        comparator: rows whose benchmark measurement compared Jev with
+            something named like this, e.g. "Cohere", "Haiku",
+            "cross-encoder" (a fragment, ignoring case). A row's
+            `measurement` is what its own author reported, indexed; nothing
+            was re-run here
+        dataset: rows whose measurement used a dataset named like this,
+            e.g. "LongMemEval", "BEIR", "AG News" (a fragment, ignoring case)
+        direction: the benchmark author's own stated conclusion about Jev
+            for the task. Author-stated, not reproduced here: every row
+            showing it carries `direction_note` saying so
         query: free text matched against title, summary, notes and platforms
         official_only: only material published by TypeSafe AI
         with_code_only: only rows whose link contains adaptable code
@@ -206,6 +219,9 @@ def search_examples(
         language=language,
         question_type=question_type,
         platform=platform,
+        comparator=comparator,
+        dataset=dataset,
+        direction=direction,
         query=query,
         official_only=official_only,
         with_code_only=with_code_only,
@@ -262,6 +278,15 @@ def get_example(slug: str) -> dict[str, Any]:
     shape (`"type": "choice"`, `Noul(`, `.noul`). A shape in a file is not a
     call, nobody read it, and search_examples(question_type=...) never matches
     on it.
+
+    `measurement`, on a benchmark row, indexes what the row's own author
+    reported: the task, named datasets, comparators, kinds of metric, n, the
+    model string, when (`as_of`), whether per-item data is published
+    (`raw_data`) or the protocol was fixed first (`preregistered`), and
+    `direction`, the author's conclusion: author-stated, not reproduced here,
+    as its `direction_note` says. `read_on` dates a person's reading of the
+    report against these fields; without it a script or a model filled them
+    in. search_examples() carries it too.
 
     `caveat_glossary`, after the row's own fields, says in English what each
     of its `flags` means (awesome-jev://flags lists them all).

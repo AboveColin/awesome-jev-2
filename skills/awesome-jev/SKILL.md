@@ -69,7 +69,10 @@ example returns `1.05` on a three-level scale. Do not assume an integer.
 If the MCP server is available, prefer it over guessing:
 
 - `search_examples(pattern=…, language=…, question_type=…)` — worked examples of
-  a specific decision
+  a specific decision. `comparator=…`, `dataset=…` and `direction=…` find the
+  benchmarks whose own authors compared Jev with something or used a dataset;
+  a row's `measurement` is what its author reported, and its `direction` is
+  author-stated, not reproduced here
 - `get_example(slug)` — one row in full: its sources, the file its claim was
   read in (`evidence`) and every caveat flag
 - `check_model_string(model)` — before writing any model string

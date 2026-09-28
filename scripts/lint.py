@@ -42,6 +42,8 @@ from typing import Any, NamedTuple
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 
 from _stats import shadow_path_unflagged  # noqa: E402
+from measurements import model_problems as measurement_model_problems  # noqa: E402
+from measurements import row_problems as measurement_problems  # noqa: E402
 from platform_values import problems as platform_problems  # noqa: E402
 from sibling_lists import FIX as CITATION_FIX  # noqa: E402
 from sibling_lists import citation_problems, listed_urls, read_lists, unlisted_citations  # noqa: E402
@@ -462,6 +464,15 @@ def check_entry_invariants(
             )
     report.add(check_repository_facts(entry, path, flags, today))
     report.add(check_sibling_citations(entry, path))
+    report.add(check_measurement(entry, path, today))
+    return report.findings()
+
+
+def check_measurement(entry: dict, path: str, today: dt.date) -> Findings:
+    """A benchmark's `measurement`: its rules live in scripts/measurements.py."""
+    report = Report()
+    for problem in measurement_problems(entry, today):
+        report.err(path, f"{entry.get('slug', '?')}: {problem}")
     return report.findings()
 
 
@@ -648,18 +659,21 @@ def check_languages(schema: dict, lang_ext: dict) -> Findings:
 
 
 def check_taxonomy(schema: dict, labels: dict) -> Findings:
-    """taxonomy.json labels exactly the kinds, flags and summary sources the
-    schema allows, every text filled in.
+    """taxonomy.json labels exactly the kinds, flags, summary sources and
+    measurement directions and metrics the schema allows, every text filled in.
 
     taxonomy.json holds those labels for both the README and the site. A key the
     schema allows but taxonomy.json lacks raises in build_readme but renders as
     a raw slug on the site — loud in one place, silent in the other.
     """
     report = Report()
+    measurement = schema["properties"]["measurement"]["properties"]
     for group, enum in (
         ("kinds", schema["properties"]["kind"]["enum"]),
         ("flags", schema["properties"]["flags"]["items"]["enum"]),
         ("summary_sources", schema["properties"]["summary_source"]["enum"]),
+        ("measurement_directions", measurement["direction"]["enum"]),
+        ("measurement_metrics", measurement["metrics"]["items"]["enum"]),
     ):
         have = [item["key"] for item in labels[group]]
         for key in sorted(set(enum) - set(have)):
@@ -753,6 +767,16 @@ def check_all(schema: dict, catalog: Any, retired: Any) -> Findings:
     if COMPAT_FILE.exists() and TAXONOMY_FILE.exists():
         compat, taxonomy = json.loads(COMPAT_FILE.read_text()), json.loads(TAXONOMY_FILE.read_text())
         report.add(check_platform_values(catalog, retired, compat, taxonomy))
+    if COMPAT_FILE.exists():
+        report.add(check_measurement_models(catalog, retired, json.loads(COMPAT_FILE.read_text())))
+    return report.findings()
+
+
+def check_measurement_models(catalog: list, retired: list, compat: dict) -> Findings:
+    """Every measurement.model_string is a string compat.json lists (scripts/measurements.py)."""
+    report = Report()
+    for where, message in measurement_model_problems(catalog, retired, compat):
+        report.err(where, message)
     return report.findings()
 
 
