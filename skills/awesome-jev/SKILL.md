@@ -120,9 +120,9 @@ decisions, ranging from 0.3 to 0.9. A threshold tuned on a `noul` probability is
 not a `choice` confidence.
 
 **Pin a model version once you have tuned anything.** A threshold tuned against
-one model version does not survive an alias moving to the next. Send the
-versioned string rather than the alias; `check_model_string` and `compat.json`
-list both.
+one model version does not survive an alias moving to the next. Where a
+surface documents a versioned string, send it rather than the alias;
+`compat.json` lists each surface's strings, and not every surface has one.
 
 **A probabilistic gate is not a security boundary.** It is useful defence in
 depth in front of a shell command, a write or a spend. It is not a permission
