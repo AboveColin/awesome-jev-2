@@ -15,8 +15,9 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "scripts"))
 import _stats
 import build_readme
 import build_readme_cover as cover
+from readme import sections
 
-STATS = {"entries": 12_345, "link_ok": 12_001, "evidence_rows": 9_876}
+STATS = {"entries": 12_345, "link_ok": 12_001, "call_site_rows": 9_876}
 SVG_NS = "{http://www.w3.org/2000/svg}"
 
 
@@ -222,9 +223,9 @@ class ReadmeHeaderTests(unittest.TestCase):
             stats = {**_stats.compute(), **STATS}
         with (
             patch.object(_stats, "compute", return_value=stats),
-            patch.object(build_readme, "START_HERE", []),
+            patch.object(sections, "START_HERE", []),
         ):
-            readme = build_readme.render([self.ENTRY], [], strings, "2026-09-25")
+            readme = build_readme.render([self.ENTRY], [], strings)
         return readme.split("\n## ", 1)[0]
 
     def test_hero_markup_uses_the_tested_source_order(self):

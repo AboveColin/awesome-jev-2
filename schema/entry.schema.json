@@ -36,6 +36,15 @@
       "minLength": 1,
       "maxLength": 300
     },
+    "summary_source": {
+      "description": "Where the words of summary come from; the same disclosure for the English text that zh_machine makes for the Chinese. `upstream-description`: the linked repository's own GitHub description, identical apart from letter case, runs of whitespace and one final full stop; scripts/refresh_metadata.py sets it whenever the two match. `upstream-description-stale`: labelled upstream-description once, and no longer identical to the description GitHub serves (the project changed it, or the summary kept only part of it); the words are still the project's. `curated`: a person wrote the summary for this catalogue; only a person sets it, and the refresh never changes it. Absent: not recorded. Anyone who rewrites a summary sets `curated`, or the refresh will call the new text stale.",
+      "type": "string",
+      "enum": [
+        "curated",
+        "upstream-description",
+        "upstream-description-stale"
+      ]
+    },
     "summary_zh": {
       "description": "One-line Chinese description. Hand-written unless zh_machine is true.",
       "type": "string",
@@ -43,7 +52,7 @@
       "maxLength": 300
     },
     "zh_machine": {
-      "description": "True when summary_zh was machine-translated rather than written by hand. The READMEs report the split rather than claiming every row is hand-written.",
+      "description": "True when summary_zh was machine-translated rather than written by hand. The READMEs report the split rather than claiming every row is hand-written. It records who wrote the words, not how good they are: a translation a model wrote or drafted keeps it however a person edited it, and only a person's own translation clears it. docs/zh-queue.md lists these rows for a person to replace.",
       "type": "boolean"
     },
     "url": {
@@ -101,8 +110,13 @@
         ]
       }
     },
+    "patterns_reviewed": {
+      "description": "Date a person last read this row against the decision patterns (docs/patterns.md) and set or confirmed `patterns`. Only that person writes it; nothing infers it. Patterns that match what the keyword rules suggest for the summary (scripts/classify.py) say nothing about a review either way, which is why this field exists. A project or plugin with code whose only pattern is `overview` is listed as not yet indexed by pattern until it is set or the pattern changes.",
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
     "question_types": {
-      "description": "Which Jev question primitives the example actually calls. The yes/no primitive is named `noul`, not `binary`. Omit when the entry contains no code.",
+      "description": "Which Jev question primitives the example actually calls. The yes/no primitive is named `noul`, not `binary`. Omit when the entry contains no code. A person's reading of the call site; primitives_seen is a script's text signal and never stands in for it.",
       "type": "array",
       "maxItems": 3,
       "uniqueItems": true,
@@ -144,7 +158,7 @@
       }
     },
     "platforms": {
-      "description": "How the example reaches Jev: directly, or through a gateway or framework.",
+      "description": "How the example reaches Jev: directly, or through a gateway or framework. Each value is one a compat.json surface lists in its catalog_platforms (typesafe-api, vercel-ai-gateway, cloudflare-workers-ai, ...) or one taxonomy.json lists in platforms_without_surface (a host, tool or framework the example runs in, or a route compat.json does not describe); lint.py checks it. Record what the cited file shows, no finer: a row on Vercel's gateway records vercel-ai-gateway whichever of its routes it takes.",
       "type": "array",
       "maxItems": 6,
       "uniqueItems": true,
@@ -191,6 +205,21 @@
       "type": "string",
       "minLength": 1
     },
+    "repo_created_at": {
+      "description": "When the linked GitHub repository was created, in UTC, as GitHub's API states it (`created_at`). A GitHub fact, not a judgement: scripts/refresh_metadata.py records it on every weekly refresh; leave it to that run. Only on a row whose url or repo is a GitHub repository.",
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+    },
+    "repo_pushed_at": {
+      "description": "When anything was last pushed to any branch of the linked GitHub repository, in UTC, as GitHub's API states it (`pushed_at`) at the last weekly refresh. A GitHub fact, not a judgement: an old date does not mean the project is unmaintained and a recent one does not mean it works, and nothing derives either verdict from it. Recorded by scripts/refresh_metadata.py; leave it to that run. Only on a row whose url or repo is a GitHub repository.",
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+    },
+    "repo_commits": {
+      "description": "How many commits the linked GitHub repository's default branch had at the last weekly refresh, as GitHub's API counts them. A GitHub fact, not a judgement. Recorded by scripts/refresh_metadata.py, which also adds the single-commit flag when it is 1 and removes it when it is more; lint requires the two to agree. Leave it to that run. Only on a row whose url or repo is a GitHub repository.",
+      "type": "integer",
+      "minimum": 1
+    },
     "package": {
       "description": "Published package, when the example is installable.",
       "type": "object",
@@ -222,7 +251,7 @@
       }
     },
     "evidence": {
-      "description": "Where the primitive claim in question_types was actually read, so a machine can re-check it. scripts/verify_claims.py fetches path from the repo's default branch and asserts every string in matched still appears. Deliberately not pinned to a commit: the point is to notice when a claim stops being true upstream.",
+      "description": "The file this row's code was read in, so a machine can re-check it: the call site, or what evidence.kind says the file shows instead. Required, or evidence_none in its place, when question_types is set, and when has_code is true and url or repo is a GitHub repository (scripts/lint.py enforces both; a retired row's repository is gone and is exempt from the second). scripts/verify_claims.py fetches path from the repo's default branch and asserts every string in matched still appears. Deliberately not pinned to a commit: the point is to notice when a claim stops being true upstream.",
       "type": "object",
       "additionalProperties": false,
       "required": [
@@ -246,6 +275,15 @@
             "minLength": 2
           }
         },
+        "kind": {
+          "description": "What the cited file shows. `call-site`: the project calls Jev there. `wire-shape`: the file shows the project speaking Jev's request or response shape rather than building on Jev — a reimplementation, a compatible server, an adapter backed by other models, or a script that sends Jev the same request for comparison; lint requires it on every `kind: alternative` row. `example-only`: the call is in an example or document the project ships, not in its own integration. Absent means `call-site`. A path under an examples/ directory only lists the row in docs/review-queue.md; recording this field is the decision of whoever reads the file.",
+          "type": "string",
+          "enum": [
+            "call-site",
+            "wire-shape",
+            "example-only"
+          ]
+        },
         "read_on": {
           "description": "Date the call site was last read by a person.",
           "type": "string",
@@ -253,8 +291,82 @@
         }
       }
     },
+    "primitives_seen": {
+      "description": "Machine text signal, not a person's reading: the Jev primitives whose request or answer shape (a `\"type\": \"choice\"` field, a `Noul(` constructor, a `.noul` read and the like) scripts/verify_claims.py found written in the one file evidence.path cites. It does not say the code calls them, and it is not question_types, which records the primitives a person read the code calling; nothing counts it as one. Written only by `verify_claims.py --write-signals` in the weekly metadata run: set from each read of that file that still holds the claim, removed when the file shows no shape or no longer holds the claim, left as it was when no read happened (a rate limit). Do not edit it by hand. Only on a row with evidence.",
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 3,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": [
+          "choice",
+          "score",
+          "noul"
+        ]
+      }
+    },
+    "observed_thresholds": {
+      "description": "Thresholds the file evidence.path cites compares a Jev answer with: each a constant written in that file, as a model or a person read it there. An observation, not a recommendation: a threshold is one project's policy for what being wrong costs it, tuned (if at all) on its own data and model version, and a noul probability is not a choice confidence. source must be one of evidence.matched, so scripts/verify_claims.py re-reads it every week, and value must be written in it. Only on a row with evidence, never on a not-jev row (its answers are another model's) or on this repository's own examples. scripts/thresholds.py holds the rules; docs/review-queue.md lists the rows no person has read.",
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 6,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "question_type",
+          "compares",
+          "value",
+          "decision",
+          "source"
+        ],
+        "properties": {
+          "question_type": {
+            "description": "The primitive whose answer the constant is compared with.",
+            "type": "string",
+            "enum": [
+              "choice",
+              "score",
+              "noul"
+            ]
+          },
+          "compares": {
+            "description": "Which quantity of that answer: `probability` (a noul's, or one option's or level's), `confidence` (a choice's or a score's) or `score` (a score's value, on its levels' scale). It names Jev's answer, whatever the project calls the variable. A noul answer carries a probability alone.",
+            "type": "string",
+            "enum": [
+              "probability",
+              "confidence",
+              "score"
+            ]
+          },
+          "value": {
+            "description": "The constant, as the file writes it. A probability or a confidence is at most 1.",
+            "type": "number",
+            "minimum": 0
+          },
+          "decision": {
+            "description": "What the code does, and on which side of the constant: `at or above: …`, `below: …`.",
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 80
+          },
+          "source": {
+            "description": "The text in the cited file that holds the constant, copied exactly: a named constant's definition or the comparison itself. One of evidence.matched.",
+            "type": "string",
+            "minLength": 2
+          },
+          "read_on": {
+            "description": "Date a person read the threshold in the file. Absent: a script or a model read it and no person has since.",
+            "type": "string",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+          }
+        }
+      }
+    },
     "evidence_none": {
-      "description": "Why this row carries no machine-checkable evidence — a documentation page, a video, a paywalled article. Required instead of evidence when question_types is set and the source is not a readable repository file. `removed-upstream` means the project removed its Jev integration on purpose; the row stays because why it was removed is the useful part, and notes cite the change.",
+      "description": "Why this row carries no machine-checkable evidence — a documentation page, a video, a paywalled article, or code that does not touch Jev. Required instead of evidence when no file can be cited and question_types is set, or has_code is true and url or repo is a GitHub repository. `removed-upstream` means the project removed its Jev integration on purpose; the row stays because why it was removed is the useful part, and notes cite the change. `no-jev-call-site` means the repository's code neither calls Jev nor speaks its request shape — an independent reimplementation with its own interface, or tooling about Jev — so there is no file whose strings would show a relationship to Jev.",
       "type": "string",
       "enum": [
         "not-a-repository",
@@ -262,8 +374,116 @@
         "video",
         "docs-page",
         "not-yet-backfilled",
-        "removed-upstream"
+        "removed-upstream",
+        "no-jev-call-site"
       ]
+    },
+    "wire": {
+      "description": "What a kind: alternative project's own files show about the interface it offers in place of Jev: a reading of its code, field by field, never inferred. A field the cited files do not show is left out, and every surface prints a dash for it. Only on a kind: alternative row that carries the not-jev flag (scripts/lint.py; the rules live in scripts/wire.py). A compatible interface implies nothing about calibration: every surface showing wire shows the not-jev caveat beside it. docs/compatibility.md's table of compatible interfaces that are not Jev is generated from it.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source"
+      ],
+      "properties": {
+        "endpoint": {
+          "description": "The HTTP method and path its server answers a decision request on, e.g. `POST /v1/systemone`. Lint requires the path inside one of wire.source's matched strings.",
+          "type": "string",
+          "pattern": "^(GET|POST|PUT) /[^ ]*$",
+          "maxLength": 80
+        },
+        "yesno_spelling": {
+          "description": "The `type` its requests give Jev's yes/no question: `noul`, as Jev's own API spells it, or another spelling such as `boolean`. Written as the cited file writes it; lint requires it inside one of wire.source's matched strings.",
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 40
+        },
+        "answer_field": {
+          "description": "The key a yes/no answer's probability is read from, e.g. `noul`. Written as the cited file writes it; lint requires it inside one of wire.source's matched strings.",
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 40
+        },
+        "confidence_field": {
+          "description": "The key a choice or score answer's confidence is read from, e.g. `confidence`. Present in the answer does not mean computed as Jev computes it. Written as the cited file writes it; lint requires it inside one of wire.source's matched strings.",
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 40
+        },
+        "envelope": {
+          "description": "`top-level` when state and questions sit at the top of the request body, as in Jev's own API; `wrapped` when they sit inside another field.",
+          "type": "string",
+          "enum": [
+            "top-level",
+            "wrapped"
+          ]
+        },
+        "weights": {
+          "description": "Where its answers come from in the default configuration the cited files show. `open`: a model whose weights you can run yourself, published or produced by the project's own training code. `closed`: a model only the project runs, weights unpublished. `proxy`: another provider's hosted model, which the server calls and reshapes.",
+          "type": "string",
+          "enum": [
+            "open",
+            "closed",
+            "proxy"
+          ]
+        },
+        "base_model": {
+          "description": "The model that answers in that default configuration, as the cited file names it: a checkpoint the project publishes, a model it runs, or another provider's model id. Left out when the default names no model: a local run directory, or a required argument. A local directory named for a published checkpoint names it. Written as the cited file writes it; lint requires it inside one of wire.source's matched strings.",
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "calls_real_jev_as_baseline": {
+          "description": "A cited file sends Jev the same requests to compare with. Only true is recorded: no string can show that a call is absent, so absent means the cited files do not show one. Lint requires a matched string naming Jev's own host or a gateway's id for Jev.",
+          "type": "boolean",
+          "enum": [
+            true
+          ]
+        },
+        "comparison_url": {
+          "description": "Where the project publishes a comparison of its answers with Jev's: a results file, a README section or a write-up. Its numbers are the project's, not reproduced here.",
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https://"
+        },
+        "source": {
+          "description": "The files the fields above were read in, each cited as evidence is: scripts/verify_claims.py re-reads every one each week and reports a file whose matched strings are gone.",
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 4,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "path",
+              "matched"
+            ],
+            "properties": {
+              "path": {
+                "description": "Repository-relative path of the file.",
+                "type": "string",
+                "minLength": 1
+              },
+              "matched": {
+                "description": "Strings in that file that back the fields read from it. Every one must still be present.",
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 6,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "minLength": 2
+                }
+              },
+              "read_on": {
+                "description": "Date a person last read this file against the fields. Absent means a script or a model read it and no person has since (docs/review-queue.md lists those rows).",
+                "type": "string",
+                "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+              }
+            }
+          }
+        }
+      }
     },
     "official": {
       "description": "True only when published by TypeSafe AI itself. Community content from the jevai.org site is NOT official.",
@@ -277,6 +497,112 @@
       "description": "Publication date at the source, when the source states one.",
       "type": "string",
       "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
+    "measurement": {
+      "description": "What the row's own author measured, indexed field by field from the author's report: never a measurement made or repeated here. Only on a kind: benchmark row (scripts/lint.py). Every field records what the author states and nothing inferred; a field the report does not state is left out. `direction` is the author's own conclusion, author-stated and not reproduced here, and the only place a benchmark row records that it is a negative result (rows of other kinds use the negative-result flag). `read_on` dates a person's reading of the report against these fields; without it a script or a model filled them in and no person has checked since (docs/review-queue.md lists those rows). docs/benchmarks.md is generated from these fields.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "task"
+      ],
+      "properties": {
+        "task": {
+          "description": "What was measured, in a short English phrase: the decision asked of Jev and the setting.",
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "report": {
+          "description": "Where the author reports the measurement, when that is not the row's url: a results file, a pull request or a write-up.",
+          "type": "string",
+          "format": "uri"
+        },
+        "datasets": {
+          "description": "Named datasets or benchmark suites the measurement used, as the author names them. Left out when the author built an unnamed set of their own.",
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 10,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          }
+        },
+        "comparators": {
+          "description": "What the author compared Jev with (models, services, rules, or the same setup without Jev), as the author names them. Left out when the author compared Jev with nothing.",
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          }
+        },
+        "metrics": {
+          "description": "What the author reports, as kinds of measure (taxonomy.json measurement_metrics).",
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 11,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enum": [
+              "accuracy",
+              "precision",
+              "recall",
+              "f1",
+              "ranking",
+              "calibration",
+              "task-success",
+              "robustness",
+              "latency",
+              "cost",
+              "tokens"
+            ]
+          }
+        },
+        "n": {
+          "description": "How many items the author's main measurement set holds, as the author states it. Left out when the report gives no single number.",
+          "type": "integer",
+          "minimum": 1
+        },
+        "model_string": {
+          "description": "The model string the measurement used, as the author or the harness gives it: the one sent, or the version the author says answered. scripts/lint.py holds it to a string compat.json lists; a string compat.json does not list is left out.",
+          "type": "string",
+          "minLength": 1
+        },
+        "as_of": {
+          "description": "When the measurement was taken: the date the author gives for it, else the day the reported results were first committed or posted. Required when the row has no published date: model versions move, and a measurement is of the model served that day.",
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+        },
+        "raw_data": {
+          "description": "true when the author publishes per-item results or raw responses a reader can recount; false when the author says only aggregates are published. Left out when neither is established.",
+          "type": "boolean"
+        },
+        "preregistered": {
+          "description": "true when the author states that the protocol, the set or the predictions were fixed before the measurement ran. Left out otherwise.",
+          "type": "boolean"
+        },
+        "direction": {
+          "description": "The author's own stated conclusion about Jev for this task, never this catalogue's (taxonomy.json measurement_directions): favourable, mixed, unfavourable or inconclusive. Left out when the author states none in words. Author-stated, not reproduced here: every surface that shows it says so. unfavourable makes the row a negative result.",
+          "type": "string",
+          "enum": [
+            "favourable",
+            "mixed",
+            "unfavourable",
+            "inconclusive"
+          ]
+        },
+        "read_on": {
+          "description": "The day a person last read the author's report against these fields. Left out when a script or a model filled them in and no person has checked since.",
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+        }
+      }
     },
     "first_seen": {
       "description": "Date this row entered the catalog.",
@@ -295,7 +621,7 @@
       "maximum": 599
     },
     "flags": {
-      "description": "Honesty markers a reader deserves before clicking. Kept deliberately blunt.",
+      "description": "Honesty markers a reader deserves before clicking. Kept deliberately blunt. `negative-result` marks a row whose own author measured Jev for its use and concluded against it; only on rows that are not kind: benchmark, which record that in measurement.direction instead (scripts/lint.py).",
       "type": "array",
       "maxItems": 6,
       "uniqueItems": true,
@@ -314,7 +640,9 @@
           "not-jev",
           "shadow-mode-only",
           "no-license",
-          "single-commit"
+          "single-commit",
+          "self-submitted",
+          "negative-result"
         ]
       }
     },
@@ -329,7 +657,7 @@
       "maxLength": 500
     },
     "sources": {
-      "description": "Where this row came from. At least one is required so every row is attributable.",
+      "description": "Where this row came from, then which sibling directories link its repository. At least one source is required so every row is attributable, and at least one must say where the row was found. An item shaped {\"catalog\": \"owner/name\", \"url\": \"https://github.com/owner/name\"} is a sibling-list citation: the directory at that URL, a line of docs/sibling-lists.txt, linked the row's repository in its README when scripts/attribute_sources.py last read it (weekly). A citation records a link, not a review of the project, and these lists copy from each other. Citations come after every other source, sorted by url ignoring case; only a row with a GitHub repository has them. Do not add or edit them by hand: lint checks their order and that each names a listed directory, and the weekly run rewrites them from the lists.",
       "type": "array",
       "minItems": 1,
       "items": {
@@ -341,7 +669,7 @@
         ],
         "properties": {
           "catalog": {
-            "description": "Human name of the upstream index, site or search that surfaced this entry.",
+            "description": "Human name of the upstream index, site or search that surfaced this entry, or, in a sibling-list citation, that list's owner/name. Two fixed strings name submissions to this repository: 'author submission' when the project's own author or maintainer proposed the row (the row then also carries the self-submitted flag; lint enforces both directions), and 'maintainer submission' when this list's maintainer added it on their own initiative.",
             "type": "string",
             "minLength": 1
           },
@@ -353,7 +681,7 @@
       }
     },
     "license": {
-      "description": "Licence of this row's metadata, not of the linked work. CC-BY-4.0 when descriptive text was inherited from a CC BY 4.0 source (attribution is the sources[] array itself), otherwise CC0-1.0.",
+      "description": "Licence of this row's metadata, not of the linked work. CC-BY-4.0 when descriptive text was inherited from a CC BY 4.0 source (attribution is the sources[] array itself), otherwise CC0-1.0. It does not cover a summary labelled upstream-description or upstream-description-stale in summary_source, nor the row's summary_zh translated from it: those words are the linked project's own.",
       "type": "string",
       "enum": [
         "CC0-1.0",

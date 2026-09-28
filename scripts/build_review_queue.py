@@ -1,0 +1,537 @@
+#!/usr/bin/env python3
+"""Write docs/review-queue.md: the rows a script singles out for a person to read.
+
+Every entry on the page is a machine signal: a path, a string or a combination
+of fields matched a rule. None is a finding about the row, and nothing here is
+written back into catalog.json. Whoever reads a row records the decision in that
+row, as each section says, and the row leaves the page at the next regeneration.
+
+Lint could warn once per row instead, but dozens or hundreds of warnings on
+every run is a log nobody reads. The same rules count their rows in
+_stats.compute(), so docs/status.md publishes the numbers and this page names
+the rows.
+
+One section per signal. A section is a function in SECTIONS that takes the
+catalogue and returns a Section; add a function there to add a signal. The
+Chinese is model-written, and the page says so once at the top.
+
+Stdlib only, like the rest of scripts/.
+
+Run: python3 scripts/build_review_queue.py
+     python3 scripts/build_review_queue.py --check    # exit 1 if the page is stale
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import pathlib
+import sys
+import urllib.parse
+from dataclasses import dataclass
+
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+
+import _stats  # noqa: E402
+from classify import classify_broad, suggest  # noqa: E402
+from evidence_url import evidence_url  # noqa: E402
+from measurements import unread  # noqa: E402
+from readme.rows import esc, md_url, star_band, star_label  # noqa: E402
+import thresholds  # noqa: E402
+import wire  # noqa: E402
+
+ROOT = _stats.ROOT
+OUT = ROOT / "docs" / "review-queue.md"
+SITE = "https://kydlikebtc.github.io/awesome-jev/"
+
+
+@dataclass(frozen=True)
+class Section:
+    """One machine signal and the rows it currently marks."""
+
+    key: str  # the HTML anchor; other pages link to it, so keep it stable
+    title_en: str
+    title_zh: str
+    about_en: str  # what the rule matches, and why that is not a verdict
+    about_zh: str
+    leave_en: str  # what a person records to take a row off the page
+    leave_zh: str
+    columns: tuple[tuple[str, str], ...]  # (en, zh) per column
+    rows: tuple[tuple[str, ...], ...]  # Markdown cells, one tuple per row
+
+
+def cell(text: str) -> str:
+    """Outside text as an inline code cell: no backtick can close it early,
+    no pipe can split the table, no newline can end the row."""
+    clean = text.replace("`", "'").replace("\n", " ").replace("|", "\\|")
+    return f"`{clean}`"
+
+
+def row_link(entry: dict) -> str:
+    slug = entry["slug"]
+    return f"[{slug}]({SITE}?lang=en#{urllib.parse.quote(slug)})"
+
+
+def file_link(entry: dict) -> str:
+    """The cited path, linked as the READMEs and the site link it (evidence_url)."""
+    path = entry["evidence"]["path"]
+    url = evidence_url(entry)
+    return f"[{cell(path)}]({md_url(url)})" if url else cell(path)
+
+
+EVIDENCE_COLUMNS = (("Row", "行"), ("Kind", "类型"), ("Cited file", "引用的文件"), ("Matched", "匹配文本"))
+
+
+def evidence_rows(catalog: list[dict], signal) -> tuple[tuple[str, ...], ...]:
+    marked = sorted((e for e in catalog if signal(e)), key=lambda e: e["slug"])
+    return tuple(
+        (row_link(e), cell(e["kind"]), file_link(e), " ".join(cell(m) for m in e["evidence"]["matched"]))
+        for e in marked
+    )
+
+
+def examples_dir(catalog: list[dict]) -> Section:
+    return Section(
+        key="examples-dir",
+        title_en="Evidence read from an examples directory",
+        title_zh="证据取自 examples 目录",
+        about_en=(
+            "The cited file sits under an `examples/` or `example/` directory and the row does not "
+            "record `evidence.kind`. An SDK's examples are often its clearest call site; a project's "
+            "examples can also be all it has, and say little about how it uses Jev itself. The path "
+            "cannot tell which."
+        ),
+        about_zh=(
+            "引用的文件位于 `examples/` 或 `example/` 目录下，而该行没有记录 `evidence.kind`。"
+            "SDK 的示例往往就是最清楚的调用点；但一个项目的示例也可能是它仅有的调用，"
+            "说明不了它自己如何使用 Jev。单凭路径无法判断是哪一种。"
+        ),
+        leave_en=(
+            "To take a row off, read the file and set `evidence.kind`: `call-site` when it is the "
+            "project's own use of Jev, `example-only` when it is only an example. Citing a better "
+            "file from the project's own code instead also takes it off."
+        ),
+        leave_zh=(
+            "移出方法：读这个文件，然后设置 `evidence.kind`——它就是项目自身对 Jev 的使用时设为 "
+            "`call-site`，只是示例时设为 `example-only`。改为引用项目自身代码中更合适的文件，也会让它移出。"
+        ),
+        columns=EVIDENCE_COLUMNS,
+        rows=evidence_rows(catalog, _stats.examples_unjudged),
+    )
+
+
+def single_model_name(catalog: list[dict]) -> Section:
+    names = ", ".join(cell(name) for name in _stats.MODEL_NAMES_AND_HOST)
+    return Section(
+        key="single-model-name",
+        title_en="Evidence resting on one model name or the API host",
+        title_zh="证据只靠一个模型名或 API 主机",
+        about_en=(
+            f"The only string in `evidence.matched` is one of {names}, or a pinned model version "
+            "(`jev-` and a version number). Any file that configures Jev "
+            "contains one of them (a settings file, a pricing table, a model list) whether or not it "
+            "calls the API, so the weekly text check can keep passing after the call itself is gone."
+        ),
+        about_zh=(
+            f"`evidence.matched` 里唯一的字符串是 {names} 之一，或一个固定的模型版本号"
+            "（`jev-` 加版本号）。任何配置 Jev 的文件都会包含它们"
+            "（设置文件、价格表、模型列表），不论是否真的调用 API；所以即使调用本身已经删除，"
+            "每周的文本检查也可能继续通过。"
+        ),
+        leave_en=(
+            "To take a row off, add a second string from the call itself (an import, the method "
+            "called, a question type) to `evidence.matched`, then run "
+            "`python3 scripts/verify_claims.py --only <slug>` to confirm the file holds every string."
+        ),
+        leave_zh=(
+            "移出方法：从调用本身再取一个字符串（import、被调用的方法、问题类型）加入 "
+            "`evidence.matched`，然后运行 `python3 scripts/verify_claims.py --only <slug>`，"
+            "确认文件含有每一个字符串。"
+        ),
+        columns=EVIDENCE_COLUMNS,
+        rows=evidence_rows(catalog, _stats.single_model_name),
+    )
+
+
+def by_band(entries) -> list[dict]:
+    """Most-starred band first, then by title: the order a person with an hour
+    would read them in. The band, not the count (readme/rows.py STAR_BANDS),
+    so the weekly star refresh moves a row only when it crosses a floor."""
+    return sorted(entries, key=lambda e: (-star_band(e.get("stars")), e["title"].lower(), e["slug"]))
+
+
+def patterns_cell(patterns) -> str:
+    return " ".join(cell(p) for p in patterns)
+
+
+def tool_selection_broad_words(catalog: list[dict]) -> Section:
+    marked = by_band(e for e in catalog if _stats.tool_selection_broad_only(e))
+    return Section(
+        key="tool-selection-broad-words",
+        title_en="Tool selection resting on words the keyword rules no longer count",
+        title_zh="工具选择只靠关键词规则已不再计入的词",
+        about_en=(
+            "The row carries `tool-selection`, and the keyword rules suggest it for the row's summary "
+            "and title only as they stood until 2026-09-27. They then counted \"control\", \"harness\" "
+            "and \"screen\" on their own, and \"robot\", \"autonomous\" and \"drive\" with no word for "
+            "deciding or acting beside them; the rules in `scripts/classify.py` no longer do. The bulk "
+            "passes took the rules' patterns, so a row here may never have been read against "
+            "tool-selection, or a person may have agreed with it without recording so. The rules read "
+            "a project's GitHub description at discovery; the summary stands in for it here."
+        ),
+        about_zh=(
+            "该行带有 `tool-selection`，而关键词规则只有按 2026-09-27 之前的写法才会从它的摘要和标题建议这个模式。"
+            "当时的规则单凭 \"control\"、\"harness\"、\"screen\" 就算数，\"robot\"、\"autonomous\"、"
+            "\"drive\" 旁边没有表示决定或动作的词也算数；`scripts/classify.py` 里现在的规则不再这样。"
+            "批量收录时直接采用了规则给出的模式，所以这里的行可能从未有人对照 tool-selection 读过，"
+            "也可能有人读过并同意，只是没有记录。规则在发现阶段读的是项目的 GitHub 描述；这里以摘要代替。"
+        ),
+        leave_en=(
+            "To take a row off, read the project against [`tool-selection`](patterns.md#tool-selection). "
+            "If nothing in it decides which tool or action comes next, replace `tool-selection` in "
+            "`patterns` with the pattern it does show, or with `overview`. Either way, set "
+            "`patterns_reviewed` to the date you read it; that alone takes off a row whose "
+            "`tool-selection` was right."
+        ),
+        leave_zh=(
+            "移出方法：对照 [`tool-selection`](patterns.md#tool-selection) 阅读该项目。"
+            "如果其中没有任何东西在决定下一步调用哪个工具或采取哪个动作，就把 `patterns` 里的 `tool-selection` "
+            "换成它实际体现的模式，或换成 `overview`。无论哪种情况，都把阅读日期写入 `patterns_reviewed`；"
+            "`tool-selection` 本来就对的行，只写这个日期也会移出。"
+        ),
+        columns=(
+            ("Row", "行"),
+            ("Stars", "星标"),
+            ("Patterns in the row", "该行的模式"),
+            ("Suggested until 2026-09-27", "2026-09-27 之前的建议"),
+            ("Suggested now", "现在的建议"),
+        ),
+        rows=tuple(
+            (
+                row_link(e),
+                star_label(e.get("stars")),
+                patterns_cell(e["patterns"]),
+                patterns_cell(suggest(e, classify_broad)[1]),
+                patterns_cell(suggest(e)[1]),
+            )
+            for e in marked
+        ),
+    )
+
+
+def unsorted_overview(catalog: list[dict]) -> Section:
+    marked = by_band(e for e in catalog if _stats.not_indexed_by_pattern(e))
+
+    def suggestion(entry: dict) -> str:
+        found = suggest(entry)[1]
+        return "—" if found == [_stats.OVERVIEW] else patterns_cell(found)
+
+    return Section(
+        key="unsorted-overview",
+        title_en="Overview rows with code, not yet indexed by pattern",
+        title_zh="带代码、尚未按模式索引的 overview 行",
+        about_en=(
+            "The row is a project or a plugin with code, its only pattern is `overview`, and it records no "
+            "`patterns_reviewed`. `overview` is for a row that surveys the model or the space "
+            "([patterns.md](patterns.md#overview)); it is also what the keyword rules suggest when nothing "
+            "matches, and the bulk passes took the rules' patterns. The READMEs, the Overview page and the "
+            "site list these rows apart, as not yet indexed by pattern. The last column is only a "
+            "suggestion: what the keyword rules (`scripts/classify.py`) make of the row's summary and "
+            "title, and a dash when none of them matches."
+        ),
+        about_zh=(
+            "该行是带代码的项目或插件，唯一的模式是 `overview`，且没有记录 `patterns_reviewed`。"
+            "`overview` 本是给介绍模型或整个领域的行用的（[patterns.md](patterns.md#overview)）；"
+            "它也是关键词规则什么都没匹配到时给出的建议，而批量收录时直接采用了规则给出的模式。"
+            "README、Overview 页面和站点把这些行单独列为“尚未按模式索引”。最后一列只是建议："
+            "关键词规则（`scripts/classify.py`）根据该行摘要和标题给出的结果，没有任何规则匹配时显示为破折号。"
+        ),
+        leave_en=(
+            "To take a row off, read the project against [the patterns](patterns.md). Put the patterns it "
+            "shows in `patterns`, or keep `overview` if it surveys the space, and set `patterns_reviewed` "
+            "to the date you read it."
+        ),
+        leave_zh=(
+            "移出方法：对照[决策模式](patterns.md)阅读该项目。把它体现的模式写进 `patterns`；"
+            "如果它确实是在介绍整个领域，就保留 `overview`。然后把阅读日期写入 `patterns_reviewed`。"
+        ),
+        columns=(
+            ("Row", "行"),
+            ("Kind", "类型"),
+            ("Stars", "星标"),
+            ("Keyword rules suggest (a suggestion)", "关键词规则的建议（仅供参考）"),
+        ),
+        rows=tuple(
+            (row_link(e), cell(e["kind"]), star_label(e.get("stars")), suggestion(e)) for e in marked
+        ),
+    )
+
+
+def generic_summary(catalog: list[dict]) -> Section:
+    marked = by_band(e for e in catalog if _stats.generic_summary(e))
+    listed = [cell(word) for word in ("jev", "typesafe", "System One", "choice", "score", "noul", "decision", "confidence")]
+    words, words_zh = ", ".join(listed), "、".join(listed)
+    return Section(
+        key="generic-summary",
+        title_en="Rows with code whose summary names nothing about Jev",
+        title_zh="带代码、摘要没有提到 Jev 的行",
+        about_en=(
+            "The row has code, is not TypeSafe AI's own (`official`), has no `notes`, and its English "
+            f"summary contains none of {words} (in any case, also inside a longer word). Most are the "
+            "project's own GitHub description (`summary_source`), which has no reason to mention Jev, "
+            "so a reader of the list cannot tell what the project asks Jev to decide. The words are a "
+            "floor, not a test: a summary without them may still say it, and one with them may say "
+            "little. The last column links the file the row cites, as the READMEs and the pattern "
+            "pages do."
+        ),
+        about_zh=(
+            "该行带代码，不是 TypeSafe AI 自己发布的（`official`），没有 `notes`，而且英文摘要里"
+            f"没有 {words_zh} 中的任何一个（不分大小写，出现在更长的词里也算）。其中多数是项目自己在 GitHub 上的描述"
+            "（`summary_source`），它没有理由提到 Jev，于是读列表的人看不出这个项目让 Jev 做什么决策。"
+            "这些词只是底线，不是检验：没有这些词的摘要也可能说清楚了，有这些词的也可能什么都没说。"
+            "最后一列链接到该行引用的文件，与 README 和模式页面一样。"
+        ),
+        leave_en=(
+            "To take a row off, read the cited file and write a summary that says what the project asks "
+            "Jev to decide, in words that include one of those above (naming Jev is enough; the rule reads "
+            "only the words), with `summary_source` set to `curated` and `summary_zh` to match (see the "
+            "`summary` field rules in [CONTRIBUTING](../CONTRIBUTING.md#field-rules)); or keep the "
+            "summary and add a `notes` line that says it."
+        ),
+        leave_zh=(
+            "移出方法：读引用的文件，写一条说明该项目让 Jev 决定什么的摘要，其中要含有上面列出的某个词（写出 Jev 即可；规则只看这些词），把 `summary_source` 设为 `curated`，"
+            "并相应更新 `summary_zh`（见 [CONTRIBUTING](../CONTRIBUTING.md#field-rules) 中关于 `summary` 的字段规则）；"
+            "或者保留摘要，加一行 `notes` 说明这一点。"
+        ),
+        columns=(
+            ("Row", "行"),
+            ("Kind", "类型"),
+            ("Stars", "星标"),
+            ("Summary", "摘要"),
+            ("Summary source", "摘要来源"),
+            ("Cited file", "引用的文件"),
+        ),
+        rows=tuple(
+            (
+                row_link(e),
+                cell(e["kind"]),
+                star_label(e.get("stars")),
+                esc(e["summary"]),
+                cell(e["summary_source"]) if e.get("summary_source") else "—",
+                file_link(e) if e.get("evidence") else "—",
+            )
+            for e in marked
+        ),
+    )
+
+
+def measurement_unread(catalog: list[dict]) -> Section:
+    marked = by_band(unread(catalog))
+    return Section(
+        key="measurement-unread",
+        title_en="Benchmark measurements no person has read against the report",
+        title_zh="尚无人对照报告核读的基准测试测量",
+        about_en=(
+            "The row's `measurement` has no `read_on`: a script or a model filled in its fields from the "
+            "author's README or results, and no person has checked them since. The fields index what the "
+            "author reports; the direction is the author's own conclusion (author-stated, not reproduced "
+            "here). The fields first filled in on 2026-09-28 were read by a model; "
+            "[method.md](method.md) says how. [benchmarks.md](benchmarks.md) shows every field."
+        ),
+        about_zh=(
+            "该行的 `measurement` 没有 `read_on`：字段由脚本或模型根据作者的 README 或结果填写，此后没有人核对过。"
+            "这些字段索引的是作者报告的内容；结论方向是作者本人的结论（作者自述，未经本仓库复现）。"
+            "2026-09-28 首次填写的字段由模型阅读得出，做法见 [method.md](method.md)。"
+            "全部字段见 [benchmarks.zh-CN.md](benchmarks.zh-CN.md)。"
+        ),
+        leave_en=(
+            "To take a row off, read the author's report (the row's link, or `measurement.report`) against "
+            "every field, correct or remove any the report does not state, and set `measurement.read_on` to "
+            "the day you read it (see the `measurement` field rules in "
+            "[CONTRIBUTING](../CONTRIBUTING.md#field-rules))."
+        ),
+        leave_zh=(
+            "移出方法：对照作者的报告（该行的链接，或 `measurement.report`）逐项核读，改正或删去报告里没有说的字段，"
+            "再把 `measurement.read_on` 设为核读当天（见 [CONTRIBUTING](../CONTRIBUTING.md#field-rules) 中关于 "
+            "`measurement` 的字段规则）。"
+        ),
+        columns=(
+            ("Row", "行"),
+            ("Stars", "星标"),
+            ("Direction (author-stated, not reproduced here)", "结论方向（作者自述，未经本仓库复现）"),
+            ("Report", "报告"),
+        ),
+        rows=tuple(
+            (
+                row_link(e),
+                star_label(e.get("stars")),
+                cell(e["measurement"]["direction"]) if e["measurement"].get("direction") else "—",
+                f"[{cell(e['measurement'].get('report') or e['url'])}]({md_url(e['measurement'].get('report') or e['url'])})",
+            )
+            for e in marked
+        ),
+    )
+
+
+def wire_unread(catalog: list[dict]) -> Section:
+    marked = by_band(wire.unread(catalog))
+    return Section(
+        key="wire-unread",
+        title_en="Interfaces of alternatives no person has read in the cited files",
+        title_zh="尚无人在所引文件中核读的替代实现接口",
+        about_en=(
+            "The row's `wire` record cites files without a `read_on`: a script or a model read the "
+            "project's code for its route, its yes/no spelling, where its answers come from and whether it "
+            "calls Jev to compare, and no person has checked since. Every value is backed by a string in a "
+            "cited file, which the weekly `claims` run re-reads; whether the strings mean what the fields say "
+            "is the reading. The records first filled in on 2026-09-28 were read by a model; "
+            "[method.md](method.md) says how. [compatibility.md](compatibility.md#7-compatible-interfaces-that-are-not-jev) "
+            "shows every field."
+        ),
+        about_zh=(
+            "该行的 `wire` 记录所引文件没有 `read_on`：由脚本或模型阅读项目代码，得出其路由、是/否题型的写法、"
+            "答案来自哪里、是否调用 Jev 做对比，此后没有人核对过。每个值都有所引文件中的一段字符串作依据，"
+            "每周的 `claims` 任务会重读这些字符串；这些字符串是否真如字段所说，则要靠人读。"
+            "2026-09-28 首次填写的记录由模型阅读得出，做法见 [method.md](method.md)。"
+            "全部字段见 [compatibility.md](compatibility.md#7-compatible-interfaces-that-are-not-jev)。"
+        ),
+        leave_en=(
+            "To take a row off, read each file in `wire.source` against every field, correct or remove any "
+            "field the files do not show, and set `read_on` on each source to the day you read it (see the "
+            "`wire` field rules in [CONTRIBUTING](../CONTRIBUTING.md#field-rules))."
+        ),
+        leave_zh=(
+            "移出方法：对照 `wire.source` 中的每个文件逐项核读，改正或删去文件里看不出的字段，再把每个来源的 "
+            "`read_on` 设为核读当天（见 [CONTRIBUTING](../CONTRIBUTING.md#field-rules) 中关于 `wire` 的字段规则）。"
+        ),
+        columns=(("Row", "行"), ("Stars", "星标"), ("Weights", "权重"), ("Cited files", "引用的文件")),
+        rows=tuple(
+            (
+                row_link(e),
+                star_label(e.get("stars")),
+                cell(e["wire"]["weights"]) if e["wire"].get("weights") else "—",
+                " ".join(cell(item["path"]) for item in wire.sources(e["wire"])),
+            )
+            for e in marked
+        ),
+    )
+
+
+def threshold_cell(item: dict) -> str:
+    """One threshold as the row records it: question type, quantity, constant."""
+    return cell(f"{item.get('question_type')} {item.get('compares')} {thresholds.number(item.get('value'))}")
+
+
+def thresholds_unread(catalog: list[dict]) -> Section:
+    marked = by_band(thresholds.unread(catalog))
+    return Section(
+        key="thresholds-unread",
+        title_en="Thresholds no person has read in the cited file",
+        title_zh="尚无人在所引文件中核读的阈值",
+        about_en=(
+            "The row's `observed_thresholds` has an item without a `read_on`: a script or a model read the "
+            "cited file for the constants it compares a Jev answer with, and no person has checked since. "
+            "Each item's `source` is a string in `evidence.matched`, which the weekly `claims` run re-reads, "
+            "and its `value` is written in it; which answer the constant is compared with, and what the code "
+            "does on each side, is the reading. They are what the project chose, not recommendations. The "
+            "thresholds first recorded on 2026-09-28 were read by a model; [method.md](method.md) says how."
+        ),
+        about_zh=(
+            "该行的 `observed_thresholds` 中有条目没有 `read_on`：由脚本或模型阅读所引文件，找出其中与 Jev "
+            "答案比较的常量，此后没有人核对过。每个条目的 `source` 是 `evidence.matched` 中的一段字符串，"
+            "每周的 `claims` 任务会重读它，`value` 就写在其中；常量与哪个答案比较、两侧代码各做什么，则要靠人读。"
+            "这些是该项目自己的选择，不是推荐值。2026-09-28 首次记录的阈值由模型阅读得出，做法见 "
+            "[method.md](method.md)。"
+        ),
+        leave_en=(
+            "To take a row off, read the cited file against every item: correct `question_type`, `compares` "
+            "and `decision`, remove any item that is not a decision on a Jev answer, and set each item's "
+            "`read_on` to the day you read it (see the `observed_thresholds` field rules in "
+            "[CONTRIBUTING](../CONTRIBUTING.md#field-rules))."
+        ),
+        leave_zh=(
+            "移出方法：对照所引文件逐条核读，改正 `question_type`、`compares` 和 `decision`，删去不是基于 Jev "
+            "答案做决定的条目，再把每个条目的 `read_on` 设为核读当天（见 "
+            "[CONTRIBUTING](../CONTRIBUTING.md#field-rules) 中关于 `observed_thresholds` 的字段规则）。"
+        ),
+        columns=(("Row", "行"), ("Stars", "星标"), ("Thresholds", "阈值"), ("Cited file", "引用的文件")),
+        rows=tuple(
+            (
+                row_link(e),
+                star_label(e.get("stars")),
+                " ".join(threshold_cell(item) for item in thresholds.recorded(e)),
+                file_link(e),
+            )
+            for e in marked
+        ),
+    )
+
+
+SECTIONS = (
+    examples_dir, single_model_name, tool_selection_broad_words, unsorted_overview, generic_summary, measurement_unread,
+    wire_unread, thresholds_unread,
+)
+
+HEADER = "<!-- Written by scripts/build_review_queue.py from catalog.json. Edit those, not this file. -->"
+PROVENANCE = (
+    "<sub>The Chinese on this page is model-written and has not been reviewed by a person. · "
+    "本页中文由模型撰写（机翻），未经人工审校。</sub>"
+)
+INTRO_EN = (
+    "Rows a script has singled out for a person to read. Each entry is a machine signal (a path, "
+    "a string or a combination of fields matched a rule), not a finding about the row, and nothing on this page is written "
+    "into `catalog.json`. Whoever reads a row records the decision in it, as each section says, and "
+    "the row leaves this page when it is next regenerated. [status.md](status.md) publishes the "
+    "counts."
+)
+INTRO_ZH = (
+    "脚本挑出、需要人来读的行。每一项都是机器信号（某个路径、字符串或字段组合命中了规则），"
+    "不是对该行的结论，本页内容也不会写回 `catalog.json`。读过某一行的人按各节所说把判断记进该行，"
+    "下次重新生成时它就会离开本页。数量见 [status.md](status.md)。"
+)
+
+
+def table(columns: tuple[tuple[str, str], ...], rows) -> list[str]:
+    head = " | ".join(f"{en} · {zh}" for en, zh in columns)
+    return [f"| {head} |", "|" + "|".join(" --- " for _ in columns) + "|"] + [
+        "| " + " | ".join(cells) + " |" for cells in rows
+    ]
+
+
+def render(catalog: list[dict]) -> str:
+    sections = [build(catalog) for build in SECTIONS]
+    out = [HEADER, "", "# Review queue · 复核队列", "", PROVENANCE, "", INTRO_EN, "", INTRO_ZH, ""]
+    out += table(
+        (("Signal", "信号"), ("Rows", "行数")),
+        [(f"[{s.title_en} · {s.title_zh}](#{s.key})", str(len(s.rows))) for s in sections],
+    )
+    for s in sections:
+        out += ["", f'<a id="{s.key}"></a>', "", f"## {s.title_en} · {s.title_zh}", ""]
+        out += [s.about_en, "", s.about_zh, "", s.leave_en, "", s.leave_zh, ""]
+        out += table(s.columns, s.rows) if s.rows else ["Nothing is on this list. · 此列表为空。"]
+    return "\n".join(out) + "\n"
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
+    parser.add_argument("--check", action="store_true", help="exit 1 instead of writing a stale page")
+    args = parser.parse_args(argv)
+
+    catalog = json.loads((ROOT / "catalog.json").read_text())
+    text = render(catalog)
+    counts = ", ".join(f"{build.__name__}: {len(build(catalog).rows)}" for build in SECTIONS)
+    rel = OUT.relative_to(ROOT)
+    current = OUT.read_text() if OUT.exists() else None
+    if text == current:
+        print(f"{rel} is current ({counts})")
+        return 0
+    if args.check:
+        print(f"error: {rel} is stale; run python3 scripts/build_review_queue.py ({counts})", file=sys.stderr)
+        return 1
+    OUT.write_text(text)
+    print(f"wrote {rel} ({counts})")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

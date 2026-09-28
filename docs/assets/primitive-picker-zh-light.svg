@@ -1,0 +1,155 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="1089" viewBox="0 0 720 1089" role="img" aria-label="选哪个原语？一份依据 TypeSafe 官方文档整理的判断顺序。每个「是」依次通向：生成式模型，不用 Jev；用代码，不用 Jev；每件事各问一个问题；每个条目一个 noul；score；noul；choice。全部为「否」时：还不是一个即时判断。">
+<style>.t{font:600 15px ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,monospace;fill:#1f2328}.k{font:10.5px ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,monospace;fill:#818b98}.q{font:12.5px -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;fill:#1f2328}.n{font:600 13px -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;fill:#1f2328}.g{fill:#1a7f37}.d{font:11.5px -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;fill:#59636e}.c{font:600 11px ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,monospace;fill:#1f2328}.a{font:italic 11px -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;fill:#59636e}.l{font:11px -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;fill:#818b98}</style>
+<text x="12" y="22" class="t">选哪个原语？</text>
+<text x="12" y="40" class="k">按 TypeSafe 官方文档整理的判断顺序：自上而下，遇到第一个「是」即停</text>
+<rect x="12" y="58" width="296" height="66" rx="3" fill="none" stroke="#d1d9e0"/>
+<rect x="12" y="58" width="296" height="2" fill="#0969da"/>
+<text x="26" y="80" class="c">1</text>
+<text x="46" y="80" class="q">要的答案是一段待写出的文字吗：回</text>
+<text x="46" y="96" class="q">复、摘要、解释？</text>
+<text x="296" y="79" class="k" text-anchor="end">[1]</text>
+<line x1="308" y1="76" x2="346" y2="76" stroke="#59636e"/>
+<path d="M346 72l6 4-6 4z" fill="#59636e"/>
+<text x="330.0" y="71" class="a" text-anchor="middle">是</text>
+<rect x="352" y="58" width="356" height="66" rx="3" fill="none" stroke="#d1d9e0"/>
+<rect x="352" y="58" width="356" height="2" fill="#59636e"/>
+<text x="366" y="80" class="n">生成式模型，不用 Jev</text>
+<text x="696" y="79" class="k" text-anchor="end">[1]</text>
+<text x="366" y="95" class="d">Jev 没有为写文字而训练。要抽取一个值，先由代码或别的模型</text>
+<text x="366" y="110" class="d">列出候选，再让 Jev 选一个。</text>
+<line x1="36" y1="124" x2="36" y2="144" stroke="#59636e"/>
+<path d="M32 144l4 6 4-6z" fill="#59636e"/>
+<text x="44" y="141.0" class="a">否</text>
+<rect x="12" y="150" width="296" height="66" rx="3" fill="none" stroke="#d1d9e0"/>
+<rect x="12" y="150" width="296" height="2" fill="#0969da"/>
+<text x="26" y="172" class="c">2</text>
+<text x="46" y="172" class="q">代码能精确算出来吗：规则、算术、日</text>
+<text x="46" y="188" class="q">期比较？</text>
+<text x="296" y="171" class="k" text-anchor="end">[2]</text>
+<line x1="308" y1="168" x2="346" y2="168" stroke="#59636e"/>
+<path d="M346 164l6 4-6 4z" fill="#59636e"/>
+<text x="330.0" y="163" class="a" text-anchor="middle">是</text>
+<rect x="352" y="150" width="356" height="66" rx="3" fill="none" stroke="#d1d9e0"/>
+<rect x="352" y="150" width="356" height="2" fill="#59636e"/>
+<text x="366" y="172" class="n">用代码，不用 Jev</text>
+<text x="696" y="171" class="k" text-anchor="end">[2]</text>
+<text x="366" y="187" class="d">确定性的工作留在代码里，可靠又便宜。</text>
+<line x1="36" y1="216" x2="36" y2="236" stroke="#59636e"/>
+<path d="M32 236l4 6 4-6z" fill="#59636e"/>
+<text x="44" y="233.0" class="a">否</text>
+<rect x="12" y="242" width="296" height="79" rx="3" fill="none" stroke="#d1d9e0"/>
+<rect x="12" y="242" width="296" height="2" fill="#0969da"/>
+<text x="26" y="264" class="c">3</text>
+<text x="46" y="264" class="q">这个判断取决于几件彼此独立的事吗？</text>
+<text x="296" y="263" class="k" text-anchor="end">[3]</text>
+<line x1="308" y1="260" x2="346" y2="260" stroke="#59636e"/>
+<path d="M346 256l6 4-6 4z" fill="#59636e"/>
+<text x="330.0" y="255" class="a" text-anchor="middle">是</text>
+<rect x="352" y="242" width="356" height="79" rx="3" fill="none" stroke="#d1d9e0"/>
+<rect x="352" y="242" width="356" height="2" fill="#bc7503"/>
+<text x="366" y="264" class="n">每件事各问一个问题</text>
+<text x="696" y="263" class="k" text-anchor="end">[3]</text>
+<text x="366" y="279" class="d">在一个请求里一起问，在代码里给答案加权，再让每个问题从头</text>
+<text x="366" y="294" class="d">走一遍这张清单。</text>
+<text x="366" y="309" class="k">模式：并行扇出</text>
+<line x1="36" y1="321" x2="36" y2="341" stroke="#59636e"/>
+<path d="M32 341l4 6 4-6z" fill="#59636e"/>
+<text x="44" y="338.0" class="a">否</text>
+<rect x="12" y="347" width="296" height="94" rx="3" fill="none" stroke="#d1d9e0"/>
+<rect x="12" y="347" width="296" height="2" fill="#0969da"/>
+<text x="26" y="369" class="c">4</text>
+<text x="46" y="369" class="q">这是一份清单吗：每个条件或选项都需</text>
+<text x="46" y="385" class="q">要各自的是或否？</text>
+<text x="296" y="368" class="k" text-anchor="end">[4]</text>
+<line x1="308" y1="365" x2="346" y2="365" stroke="#59636e"/>
+<path d="M346 361l6 4-6 4z" fill="#59636e"/>
+<text x="330.0" y="360" class="a" text-anchor="middle">是</text>
+<rect x="352" y="347" width="356" height="94" rx="3" fill="none" stroke="#d1d9e0"/>
+<rect x="352" y="347" width="356" height="2" fill="#1a7f37"/>
+<text x="366" y="369" class="n"><tspan class="g">◐</tspan> 每个条目一个 noul</text>
+<text x="696" y="368" class="k" text-anchor="end">[5]</text>
+<text x="366" y="384" class="d">每个 noul 是绝对判断，可以对所有条目都偏低；choice 是相对</text>
+<text x="366" y="399" class="d">判断，只挑其中最合适的一个。</text>
+<text x="366" y="414" class="k">模式：上下文压缩</text>
+<text x="366" y="429" class="c">人读确认 7 条 · 仅文本信号 16 条</text>
+<line x1="36" y1="441" x2="36" y2="461" stroke="#59636e"/>
+<path d="M32 461l4 6 4-6z" fill="#59636e"/>
+<text x="44" y="458.0" class="a">否</text>
+<rect x="12" y="467" width="296" height="94" rx="3" fill="none" stroke="#d1d9e0"/>
+<rect x="12" y="467" width="296" height="2" fill="#0969da"/>
+<text x="26" y="489" class="c">5</text>
+<text x="46" y="489" class="q">答案落在一条你能逐点描述的尺度上</text>
+<text x="46" y="505" class="q">吗？</text>
+<text x="296" y="488" class="k" text-anchor="end">[6]</text>
+<line x1="308" y1="485" x2="346" y2="485" stroke="#59636e"/>
+<path d="M346 481l6 4-6 4z" fill="#59636e"/>
+<text x="330.0" y="480" class="a" text-anchor="middle">是</text>
+<rect x="352" y="467" width="356" height="94" rx="3" fill="none" stroke="#d1d9e0"/>
+<rect x="352" y="467" width="356" height="2" fill="#1a7f37"/>
+<text x="366" y="489" class="n"><tspan class="g">▮</tspan> score</text>
+<text x="696" y="488" class="k" text-anchor="end">[7]</text>
+<text x="366" y="504" class="d">每个问题只量一个维度；每一级写成一种情形，而不是一个程</text>
+<text x="366" y="519" class="d">度。</text>
+<text x="366" y="534" class="k">模式：内容评分</text>
+<text x="366" y="549" class="c">人读确认 11 条 · 仅文本信号 45 条</text>
+<line x1="36" y1="561" x2="36" y2="581" stroke="#59636e"/>
+<path d="M32 581l4 6 4-6z" fill="#59636e"/>
+<text x="44" y="578.0" class="a">否</text>
+<rect x="12" y="587" width="296" height="79" rx="3" fill="none" stroke="#d1d9e0"/>
+<rect x="12" y="587" width="296" height="2" fill="#0969da"/>
+<text x="26" y="609" class="c">6</text>
+<text x="46" y="609" class="q">这是一个干净的是非问题、概率本身就</text>
+<text x="46" y="625" class="q">是有用的信号吗？</text>
+<text x="296" y="608" class="k" text-anchor="end">[6]</text>
+<line x1="308" y1="605" x2="346" y2="605" stroke="#59636e"/>
+<path d="M346 601l6 4-6 4z" fill="#59636e"/>
+<text x="330.0" y="600" class="a" text-anchor="middle">是</text>
+<rect x="352" y="587" width="356" height="79" rx="3" fill="none" stroke="#d1d9e0"/>
+<rect x="352" y="587" width="356" height="2" fill="#1a7f37"/>
+<text x="366" y="609" class="n"><tspan class="g">◐</tspan> noul</text>
+<text x="696" y="608" class="k" text-anchor="end">[8]</text>
+<text x="366" y="624" class="d">每个问题只问一个条件，并让高值表示「是」。</text>
+<text x="366" y="639" class="k">模式：安全闸门</text>
+<text x="366" y="654" class="c">人读确认 12 条 · 仅文本信号 66 条</text>
+<line x1="36" y1="666" x2="36" y2="686" stroke="#59636e"/>
+<path d="M32 686l4 6 4-6z" fill="#59636e"/>
+<text x="44" y="683.0" class="a">否</text>
+<rect x="12" y="692" width="296" height="94" rx="3" fill="none" stroke="#d1d9e0"/>
+<rect x="12" y="692" width="296" height="2" fill="#0969da"/>
+<text x="26" y="714" class="c">7</text>
+<text x="46" y="714" class="q">答案是一组已知选项中的一个、选项之</text>
+<text x="46" y="730" class="q">间没有顺序吗？</text>
+<text x="296" y="713" class="k" text-anchor="end">[6]</text>
+<line x1="308" y1="710" x2="346" y2="710" stroke="#59636e"/>
+<path d="M346 706l6 4-6 4z" fill="#59636e"/>
+<text x="330.0" y="705" class="a" text-anchor="middle">是</text>
+<rect x="352" y="692" width="356" height="94" rx="3" fill="none" stroke="#d1d9e0"/>
+<rect x="352" y="692" width="356" height="2" fill="#1a7f37"/>
+<text x="366" y="714" class="n"><tspan class="g">◆</tspan> choice</text>
+<text x="696" y="713" class="k" text-anchor="end">[6]</text>
+<text x="366" y="729" class="d">给出完整的选项列表；若它可能覆盖不了所有输入，加一个</text>
+<text x="366" y="744" class="d">other 或 none 选项。</text>
+<text x="366" y="759" class="k">模式：工具选择</text>
+<text x="366" y="774" class="c">人读确认 25 条 · 仅文本信号 110 条</text>
+<line x1="36" y1="786" x2="36" y2="806" stroke="#59636e"/>
+<path d="M32 806l4 6 4-6z" fill="#59636e"/>
+<text x="44" y="803.0" class="a">否</text>
+<rect x="12" y="812" width="696" height="49" rx="3" fill="none" stroke="#d1d9e0"/>
+<rect x="12" y="812" width="696" height="2" fill="#59636e"/>
+<text x="26" y="834" class="n">还不是一个即时判断</text>
+<text x="696" y="833" class="k" text-anchor="end">[9]</text>
+<text x="26" y="849" class="d">把它拆成更窄的问题，或写明确切的条件，再从头走一遍。</text>
+<text x="12" y="887" class="k">来源：docs.typesafe.ai 上的页面与小节</text>
+<text x="12" y="902" class="k">[1] docs.typesafe.ai/model-jaggedness/jev-1.13#generation</text>
+<text x="12" y="917" class="k">[2] docs.typesafe.ai/concepts/how-to-build-with-system-one#use-code-when-you-can</text>
+<text x="12" y="932" class="k">[3] docs.typesafe.ai/primitives#split-a-complex-judgment-into-several-questions</text>
+<text x="12" y="947" class="k">[4] docs.typesafe.ai/primitives/noul#good-practice-ask-more-than-one-question-per-call</text>
+<text x="12" y="962" class="k">[5] docs.typesafe.ai/model-jaggedness/jev-1.13#common-sense-structural-invariants</text>
+<text x="12" y="977" class="k">[6] docs.typesafe.ai/primitives#choose-a-question-type</text>
+<text x="12" y="992" class="k">[7] docs.typesafe.ai/primitives/score#writing-good-levels</text>
+<text x="12" y="1007" class="k">[8] docs.typesafe.ai/primitives/noul#writing-a-noul-question</text>
+<text x="12" y="1022" class="k">[9] docs.typesafe.ai/primitives#ask-for-one-snap-judgment-per-question</text>
+<text x="12" y="1045" class="l">原语旁是归入该模式的行：question_types 中有人记录读到它的行，以及只有所引文件的文本显示它的行（primitives_seen）。两者从不相</text>
+<text x="12" y="1060" class="l">加。</text>
+<text x="12" y="1075" class="l">这是附有来源的设计指引，不是对任何收录条目的推荐。(机翻)</text>
+</svg>

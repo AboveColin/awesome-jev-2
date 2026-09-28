@@ -8,15 +8,35 @@
 # not yet harvested, and files what it found as one issue.
 #
 # It never adds a row. A call site found by a script is a reason for a person to
-# read the code; the catalogue's whole claim is that someone did.
+# read the code; the catalogue's whole claim is that someone did. So each week's
+# comment is a task list: one box per new candidate, a `claim owner/name`
+# comment to take one, and under each box the command that re-reads that
+# repository (`discover_candidates.py --only owner/name`, which with
+# `--drafts drafts` also writes a draft row that lint refuses until a person
+# completes it). The issue's description is the queue (scripts/queue_sync.py):
+# every candidate so far, ticked once `catalog.json` has its row and struck
+# through once `docs/declined.txt` declines it, derived from those files on
+# every run and rewritten only when it changed.
 #
-# Verdicts persist between runs in the Actions cache rather than in git: a
-# repository found not to call Jev is not re-read for 60 days, and a candidate
-# already proposed is counted rather than listed again. Nothing is committed.
+# Verdicts persist between runs: a repository found not to call Jev is not
+# re-read for 60 days, and a candidate already proposed is listed among the
+# earlier ones rather than as new. They live in git, in .discover/seen.json
+# (scripts/discover_seen.py), as the Actions cache alone can lose them: GitHub
+# evicts a cache after seven days without access, which is this schedule, and
+# scheduled runs start hours late. This workflow reads strangers' repositories,
+# so it holds no write permission: it leaves the verdicts as an artifact, and
+# metadata.yml, which already commits the weekly facts, commits them. The cache
+# stays as the fast path: it restores the newest run's verdicts, which the
+# committed file may not have yet, and the script keeps the newer of the two.
 #
-# Injection review: no `github.event.*` value reaches a `run:` block. The issue
-# body is read from a file the script wrote. Repository descriptions from the
-# search API land in that body as Markdown text, never in a shell.
+# Injection review: no `github.event.*` value reaches a `run:` block. The issue's
+# comment and description are read from files the scripts wrote, and reach
+# `gh` only as --body-file. Repository descriptions from the search API and
+# file paths from a candidate's tree land in the comment as Markdown text
+# (neutralised by inert() and code_span()), never in a shell. The description
+# holds repository names shape-checked by discover_seen.py, catalogue slugs, and
+# the reasons in docs/declined.txt, also passed through inert(). The issue's
+# current description is compared in the shell, never evaluated.
 name: discover
 
 on:
@@ -34,15 +54,16 @@ jobs:
     name: Harvest sibling lists and read the most-cited candidates
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
 
       # Restores the newest verdict cache; a unique key per run means the
-      # updated cache is saved as a new entry at the end of the job.
-      - uses: actions/cache@v4
+      # updated cache is saved as a new entry at the end of the job. A cache
+      # from before the verdicts moved into git (a bare mapping) still reads.
+      - uses: actions/cache@v6
         with:
           path: .cache/discover-seen.json
           key: discover-seen-${{ github.run_id }}
@@ -53,14 +74,58 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           python3 scripts/discover_candidates.py --top 150 --find-lists \
-            --seen .cache/discover-seen.json --markdown /tmp/body.md > /tmp/discover.log
+            --seen .discover/seen.json --seen .cache/discover-seen.json \
+            --markdown /tmp/body.md > /tmp/discover.log
           tail -20 /tmp/discover.log
+
+      # metadata.yml takes the newest of these from a successful run on main
+      # and commits it. Kept for the longest GitHub allows, so a few missed
+      # weekly refreshes lose nothing. The path is in a dot-directory, which
+      # upload-artifact leaves out unless told otherwise.
+      - name: Leave the verdicts for the weekly refresh to commit
+        uses: actions/upload-artifact@v7
+        with:
+          name: discover-seen
+          path: .discover/seen.json
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 90
+
+      # The queue: every candidate the verdicts record (this run's included) and
+      # whether a row in catalog.json or retired.json, or a line in
+      # docs/declined.txt, has settled it. Same files, same bytes.
+      - name: Write the discovery queue
+        run: python3 scripts/queue_sync.py --out /tmp/queue.md
 
       - name: Open or update the discovery issue
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          if ! grep -qE '^### ' /tmp/body.md; then
+          new=no
+          if grep -qE '^### ' /tmp/body.md; then
+            new=yes
+          fi
+
+          existing=$(gh issue list --state open --label discovery --json number --jq '.[0].number')
+          if [ -n "$existing" ]; then
+            # The description is the queue, rewritten only when it changed.
+            # Compared without carriage returns, which an edit in the browser adds.
+            current=$(gh issue view "$existing" --json body --jq .body | tr -d '\r')
+            if [ "$current" = "$(cat /tmp/queue.md)" ]; then
+              echo "the queue in #$existing is current"
+            else
+              gh issue edit "$existing" --body-file /tmp/queue.md
+              echo "rewrote the queue in #$existing"
+            fi
+            if [ "$new" = yes ]; then
+              gh issue comment "$existing" --body-file /tmp/body.md
+            else
+              echo "no new candidates and no new sibling directories this week"
+            fi
+            exit 0
+          fi
+
+          if [ "$new" = no ]; then
             echo "no new candidates and no new sibling directories this week"
             exit 0
           fi
@@ -68,12 +133,15 @@ jobs:
           gh label create discovery --color 8250df \
             --description "Candidates the weekly discovery run found" 2>/dev/null || true
 
-          existing=$(gh issue list --state open --label discovery --json number --jq '.[0].number')
-          if [ -n "$existing" ]; then
-            gh issue comment "$existing" --body-file /tmp/body.md
-          else
-            gh issue create --title "Discovery: candidates to read" \
-              --label discovery --body-file /tmp/body.md \
-              || gh issue create --title "Discovery: candidates to read" \
-                   --body-file /tmp/body.md
-          fi
+          # `help wanted` is one of GitHub's default labels: reading a call site
+          # and writing two lines is work anyone can pick up. A repository
+          # without it (a fork) still gets the `discovery` label, which is how
+          # next week's run finds this issue again. The new issue's description
+          # is the queue; this week's report is its first comment.
+          issue=$(gh issue create --title "Discovery: candidates to read" \
+              --label discovery --label "help wanted" --body-file /tmp/queue.md \
+            || gh issue create --title "Discovery: candidates to read" \
+                 --label discovery --body-file /tmp/queue.md \
+            || gh issue create --title "Discovery: candidates to read" \
+                 --body-file /tmp/queue.md)
+          gh issue comment "$issue" --body-file /tmp/body.md

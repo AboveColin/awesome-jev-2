@@ -8,14 +8,38 @@
 # nothing to leak and nothing to rotate.
 #
 # To release:
-#   1. set `version` in pyproject.toml and merge it to main
+#   1. set `version` in pyproject.toml and .claude-plugin/plugin.json, and
+#      merge it to main
 #   2. git tag awesome-jev-mcp-v<version> <that commit> && git push origin <tag>
 # The build job refuses a tag that does not match pyproject.toml, because a
-# PyPI version, once uploaded, can never be uploaded again.
+# PyPI version, once uploaded, can never be uploaded again. The smoke job then
+# installs the release back from PyPI, as a reader would.
+#
+# The first release also needs, once: a pending trusted publisher on PyPI
+# (project awesome-jev-mcp, owner kydlikebtc, repository awesome-jev, workflow
+# publish.yml, environment pypi) and the `pypi` environment in this
+# repository's settings. Until a version is uploaded, lint's `release` job
+# (scripts/check_release.py) warns on every push to main that it is pending.
 #
 # The build job also runs on pull requests that touch the package, so the exact
 # steps a release depends on are exercised long before the irreversible one.
 # Only a tag reaches the publish job.
+#
+# "Touch the package" means its code, its metadata or this file. It used to
+# include catalog.json, compat.json and patterns.json, so every pull request
+# adding a row ran a second workflow (on a first-time contributor's pull
+# request, one more run held for approval) to test packaging the row cannot
+# change: the wheel copies those files in verbatim at build time. lint validates
+# the data on every pull request and imports the server against it, and makes
+# the one data-dependent assertion here too, that the fabricated
+# `typesafe/jev-1` is still rejected against compat.json
+# (tests/test_repository_policy.py), on the source tree rather than a wheel.
+# lint also tests what the tools, resources and prompt answer (query.py,
+# prompts.py; tests/test_mcp_query.py, tests/test_mcp_resources.py,
+# tests/test_mcp_prompt.py) and where their data comes from (data.py,
+# tests/test_mcp_data.py), with `mcp` stubbed out, since lint installs nothing.
+# What only this job can check is that the real SDK registers the tools,
+# resources and prompt, which the smoke step below asks it.
 #
 # The bundled snapshot inside the wheel is the catalogue as of the tagged
 # commit — the offline last resort. The server fetches the live catalogue from
@@ -33,9 +57,6 @@ on:
     paths:
       - "src/**"
       - "pyproject.toml"
-      - "catalog.json"
-      - "compat.json"
-      - "patterns.json"
       - ".github/workflows/publish.yml"
 
 permissions:
@@ -46,9 +67,9 @@ jobs:
     name: Build, check and smoke-test the distributions
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
 
@@ -90,20 +111,39 @@ jobs:
           got = importlib.metadata.version("awesome-jev-mcp")
           assert got == want, f"installed {got}, pyproject says {want}"
 
-          # The offline fallback must be this commit's catalogue, all three
-          # files, or it is not the fallback it claims to be.
+          # The offline fallback must be this commit's catalogue, every file
+          # data.FILES names, or it is not the fallback it claims to be.
           snapshot = data._read_dir(data.BUNDLED)
           assert snapshot, f"no complete bundled snapshot at {data.BUNDLED}"
           for name in data.FILES:
               assert snapshot[name] == json.loads((repo / name).read_text()), f"bundled {name} differs from the repository's"
+          # And the examples index the wire_pattern prompt reads, which is loaded apart.
+          examples = data._read_dir(data.BUNDLED, (data.EXAMPLES,))
+          assert examples and examples[data.EXAMPLES] == json.loads((repo / data.EXAMPLES).read_text()), "bundled examples index differs"
 
-          # And the server itself imports, registers its tools and answers.
+          # And the server itself imports, registers its tools, resources and
+          # prompt with the real MCP SDK, which no other check installs, and
+          # answers.
+          import asyncio
           from awesome_jev_mcp import server
+          tools = sorted(tool.name for tool in asyncio.run(server.mcp.list_tools()))
+          assert tools == ["check_model_string", "compatibility", "get_example", "list_patterns", "search_examples"], tools
+          resources = sorted(str(r.uri) for r in asyncio.run(server.mcp.list_resources()))
+          assert resources == ["awesome-jev://collections", "awesome-jev://flags"], resources
+          templates = sorted(t.uri_template for t in asyncio.run(server.mcp.list_resource_templates()))
+          assert templates == ["awesome-jev://collections/{id}", "awesome-jev://patterns/{key}"], templates
+          [read] = asyncio.run(server.mcp.read_resource("awesome-jev://patterns/safety-gating"))
+          assert json.loads(read.content)["entries"] and read.mime_type == "application/json", read
+          prompts = sorted(p.name for p in asyncio.run(server.mcp.list_prompts()))
+          assert prompts == ["wire_pattern"], prompts
+          said = asyncio.run(server.mcp.get_prompt("wire_pattern", {"pattern": "tool-selection", "language": "python"}))
+          text = said.messages[0].content.text
+          assert "## Skeleton" in text and "No examples index could be read" not in text, text
           assert server.check_model_string(model="typesafe/jev-1")["valid"] is False
           print(f"ok: {got}, {server.PROVENANCE.line()}")
           PY
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: dist
           path: dist/
@@ -123,9 +163,52 @@ jobs:
     permissions:
       id-token: write
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: dist
           path: dist/
 
       - uses: pypa/gh-action-pypi-publish@release/v1
+
+  # The build job proved the wheel works; this proves PyPI serves it. It checks
+  # out nothing, so what it imports can only have come from the index. PyPI can
+  # take a moment to list a fresh upload, so an install that finds nothing is
+  # retried; an install that succeeds and then fails to import is a broken
+  # release, and fails at once.
+  smoke:
+    name: The release installs from PyPI
+    if: startsWith(github.ref, 'refs/tags/awesome-jev-mcp-v')
+    needs: publish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Install the release from PyPI, retrying while the index catches up
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          version="${TAG#awesome-jev-mcp-v}"
+          python3 -m venv "$RUNNER_TEMP/released"
+          cd "$RUNNER_TEMP"
+          for attempt in 1 2 3 4 5; do
+            if "$RUNNER_TEMP/released/bin/pip" install --quiet --no-cache-dir "awesome-jev-mcp==$version"; then
+              "$RUNNER_TEMP/released/bin/python" - "$version" <<'PY'
+          import importlib.metadata, sys
+
+          from awesome_jev_mcp import data
+
+          want = sys.argv[1]
+          got = importlib.metadata.version("awesome-jev-mcp")
+          assert got == want, f"PyPI served {got}, the tag says {want}"
+          assert data._read_dir(data.BUNDLED), "the release carries no bundled snapshot"
+          print(f"ok: awesome-jev-mcp {got} installs from PyPI, imports and carries its snapshot")
+          PY
+              exit 0
+            fi
+            echo "attempt $attempt of 5: awesome-jev-mcp==$version does not install from PyPI yet"
+            if [ "$attempt" -lt 5 ]; then sleep 30; fi
+          done
+          echo "::error title=Release does not install::awesome-jev-mcp==$version was uploaded but did not install from PyPI in 5 attempts over two minutes"
+          exit 1

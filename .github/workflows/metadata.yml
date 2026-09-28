@@ -1,7 +1,14 @@
 # Weekly refresh of every machine-checkable fact in catalog.json: link status
-# (`checked`, `link_status`), and stars, licences and archive status from the
-# GitHub API. Everything generated from those facts is rebuilt in the same run,
-# and the full lint chain has to pass before anything is pushed.
+# (`checked`, `link_status`), stars, licences, archive status, creation and
+# last-push dates and default-branch commit counts (`repo_created_at`,
+# `repo_pushed_at`, `repo_commits`, with the `single-commit` flag that restates
+# a count of one) and whether each summary is its repository's own description
+# (`summary_source`) from the GitHub API, which primitives' request or
+# answer shapes each row's cited file contains (`primitives_seen`), and which
+# sibling directories' READMEs link each row's repository (the sibling-list
+# citations at the end of `sources`). Everything generated from those facts is
+# rebuilt in the same run and committed on the runner, and lint's checks
+# (scripts/check.py) have to pass on that commit before anything is pushed.
 #
 # Link stamping used to be nobody's job. links.yml reports dead links but never
 # writes, so `checked` froze at the first sweep while the site went on saying
@@ -10,26 +17,42 @@
 #
 # The bot only ever touches facts a machine can check. Summaries, notes,
 # patterns and question_types are human judgements, and retiring a dead row
-# needs a human-written reason, so neither happens here.
+# needs a human-written reason, so neither happens here. `summary_source`
+# records a text comparison, never who wrote a summary: `curated` is a person's.
+# `primitives_seen` records a text match in one file, never which primitives
+# the code calls: that is `question_types`, and only a person writes it.
 #
 # Delivery: commits straight to main, because every fact here is mechanical and
-# the whole lint chain has passed before the commit is made. It used to push a
-# branch and wait for a person to merge it each week; the week that did not
-# happen, one row went on claiming both an MIT licence and no licence at all.
+# lint's checks have passed on the commit before it is pushed. It used to
+# push a branch and wait for a person to merge it each week; the week that did
+# not happen, one row went on claiming both an MIT licence and no licence at all.
 # Judgement calls still go to people: a dead link is links.yml's alarm, a moved
-# call site is claims.yml's issue, and anything here that is not a number moving
-# — a licence changing, a project archived, a repository gone — opens an issue
-# after it lands. If main moved underneath the run and the refresh no longer
-# rebases cleanly, it falls back to a branch and an issue rather than forcing.
+# call site is claims.yml's issue, and anything here that is not a number or a
+# last-push date moving — a licence changing, a project archived, a flag gained
+# or lost, a repository gone or blocked, rows the API budget left unread —
+# opens an issue after it lands. Which sibling lists link a repository changes
+# most weeks and is counted in the digest, not listed. If main moved
+# underneath the run and the refresh no longer rebases cleanly, it falls back
+# to a branch and an issue rather than forcing.
+#
+# The run also commits the discovery verdicts (.discover/seen.json):
+# discover.yml reads strangers' repositories and holds no write permission, so
+# it leaves them as an artifact, and this run merges the newest one in. Every
+# entry is checked against a fixed shape on the way (scripts/discover_seen.py),
+# and a missing or broken artifact costs only a warning. And it keeps a dated
+# snapshot of the catalogue's counts in history/ (scripts/snapshot_stats.py):
+# derived from catalog.json, never read back into it.
 #
 # A push made with GITHUB_TOKEN does not trigger other workflows, so the run
 # dispatches pages (and lint, for a visible check) itself; workflow_dispatch is
 # the documented exception. Without that the site would keep serving last
 # week's figures and images.
 #
-# Permissions note: the one workflow here that is not read-only. It needs
-# `contents: write` to push, `issues: write` to file a notice, and
-# `actions: write` to dispatch the rebuild.
+# Permissions note: one of the two places that can push to this repository;
+# the other is lint.yml's `regenerate` job, which commits only generated files.
+# It needs `contents: write` to push, `issues: write` to file a notice, and
+# `actions: write` to dispatch the rebuild (which also lets it download the
+# discovery run's artifact).
 #
 # Injection review: no `github.event.*` value reaches a `run:` block. The issue
 # body is read from a file a script wrote, never interpolated into a shell.
@@ -56,57 +79,174 @@ jobs:
     name: Re-stamp links and re-read repository facts
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "22"
 
       - name: Stamp every link that still answers
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # A dead link exits non-zero; that is links.yml's alarm to raise, and
-          # must not stop the live rows from being stamped here. --write only
-          # ever stamps rows that answered, so a partial run is still correct.
-          python3 scripts/check_links.py --write > /tmp/links.log || true
-          tail -5 /tmp/links.log
+          # Exit 1 (dead links) and 3 (too many refusals to trust GitHub's or
+          # the other hosts' results) are links.yml's alarms to raise, and must
+          # not stop the live rows from being stamped here: --write only ever
+          # stamps rows that answered, so a partial run is still correct. The
+          # counts go to the job summary and end the log; the whole log is kept
+          # as an artifact. A run that never printed its counts crashed.
+          code=0
+          python3 scripts/check_links.py --write > /tmp/links.log || code=$?
+          tail -n 2 /tmp/links.log
+          if ! grep -q '^links: ' /tmp/links.log; then
+            echo "::error title=Link sweep stopped::check_links.py exited $code before its counts; see the metadata-logs artifact"
+            exit 1
+          fi
+          echo "check_links.py exit $code (0 all fine, 1 dead links, 3 too many refusals)"
 
       - name: Refresh stars, licences and archive status
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Not piped: the default shell has no pipefail, and a rate-limited run
-          # must fail this step rather than carry on as if it had refreshed.
+          # GraphQL in batches of fifty, REST for whatever that leaves. A
+          # blocked repository or a spent budget costs those rows, not the run:
+          # what was read is written, the digest counts what was not, and the
+          # counts and the budget left go to the job summary. Not piped: the
+          # default shell has no pipefail, and a crash must still fail the step.
           python3 scripts/refresh_metadata.py --write --digest /tmp/digest.md > /tmp/refresh.log
           tail -3 /tmp/refresh.log
 
-      - name: Rebuild everything generated from those facts, then lint it all
+      # The primitives whose request or answer shape each row's cited file
+      # contains, as primitives_seen: a text signal about that one file, not a
+      # person's reading and never question_types. Files come from the raw
+      # host, outside the API budget; the API is asked only about a file
+      # missing or changed at HEAD, and a rate limit leaves a row as it was.
+      # A crash costs this step, not the week's refresh: nothing is written
+      # before the last row is read, and lint's checks run on the commit.
+      - name: Record the primitive text signals in each cited file
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          python3 scripts/build_readme.py
-          python3 scripts/build_assets.py
-          python3 scripts/build_docs.py
-          python3 scripts/lint.py
-          python3 scripts/build_compat.py --check
-          python3 scripts/build_docs.py --check
-          python3 scripts/lint_docs.py
+          code=0
+          python3 scripts/verify_claims.py --write-signals > /tmp/signals.log || code=$?
+          tail -n 1 /tmp/signals.log
+          exit "$code"
 
-      - name: Commit to main, or fall back to a branch if main moved
-        id: land
+      # Which sibling directories (docs/sibling-lists.txt) link each row's
+      # repository in their README, recorded as the citations at the end of
+      # the row's `sources`: the list's owner/name and URL, nothing of its
+      # text. READMEs come from the raw host, outside the API budget. A list
+      # that does not answer keeps what it cited; one no longer listed loses
+      # its citations. The digest counts the changes and names no row, so they
+      # open no notice. A crash costs this step, not the week's refresh.
+      - name: Record which sibling directories link each repository
+        continue-on-error: true
+        run: |
+          code=0
+          python3 scripts/attribute_sources.py --write --digest /tmp/digest.md > /tmp/sources.log || code=$?
+          tail -n 1 /tmp/sources.log
+          exit "$code"
+
+      # Every row's verdict, for when the summary's counts need explaining.
+      - name: Keep the sweep and refresh logs
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: metadata-logs
+          path: |
+            /tmp/links.log
+            /tmp/refresh.log
+            /tmp/signals.log
+            /tmp/sources.log
+            /tmp/digest.md
+          if-no-files-found: ignore
+          retention-days: 30
+
+      # The newest discovery verdicts, merged into the committed file: newest
+      # verdict per repository wins, and anything not shaped like a verdict
+      # (owner/name, a known verdict, a date) is left out with a warning.
+      # Only runs on main count, so a dispatch from a branch feeds nothing in.
+      # Never fails the refresh: without the artifact, the discovery run's
+      # Actions cache still carries the verdicts to its next run.
+      - name: Take in the latest discovery verdicts
+        continue-on-error: true
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          if git diff --quiet; then
+          run=$(gh run list --workflow discover.yml --branch main --status success \
+                  --limit 1 --json databaseId --jq '.[0].databaseId // empty')
+          if [ -z "$run" ]; then
+            echo "no successful discovery run on main to take verdicts from"
+            exit 0
+          fi
+          rm -rf /tmp/discover-seen
+          if ! gh run download "$run" --name discover-seen --dir /tmp/discover-seen; then
+            echo "::warning title=Discovery verdicts not taken in::run $run left no discover-seen artifact (expired, or the run predates it)"
+            exit 0
+          fi
+          src=$(find /tmp/discover-seen -name seen.json -type f | head -n 1)
+          if [ -z "$src" ]; then
+            echo "::warning title=Discovery verdicts not taken in::run $run's artifact holds no seen.json"
+            exit 0
+          fi
+          echo "discovery run $run"
+          python3 scripts/discover_seen.py .discover/seen.json "$src"
+
+      # A dated copy of the catalogue's counts, history/<UTC date>.json: every
+      # number compute() publishes, rows per kind, pattern, flag, language and
+      # licence, and each row's stars, licence and flags, as this refresh
+      # leaves them. Nothing else keeps what the figures were last week.
+      # Generated data, never a source; docs/shape.md reads it for its table
+      # of how the counts moved. After every step that edits catalog.json and
+      # before the rebuild, so the snapshot is what this run commits. A crash
+      # costs this step, not the week's refresh (history/README.md keeps the
+      # path the commit stages).
+      - name: Keep a dated snapshot of the catalogue's counts
+        continue-on-error: true
+        run: python3 scripts/snapshot_stats.py
+
+      - name: Rebuild everything generated from those facts, and commit it here
+        id: commit
+        run: |
+          # The same generators, in the same order, as lint.yml runs, so one
+          # added to regenerate.py is never missed here.
+          python3 scripts/regenerate.py
+          git add -A catalog.json README.md README.zh-CN.md docs llms.txt examples/index.json examples/README.md skills/awesome-jev/SKILL.md .discover history
+          if git diff --cached --quiet; then
             echo "nothing changed"
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -q -m "chore: weekly refresh of link status and repository facts" \
+                        -m "$(head -1 /tmp/digest.md)"
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      # Lint's checks, on the commit about to be pushed: check.py's one list, so
+      # this cannot fall behind lint. --quick leaves out only the preview
+      # images, which pages renders at deploy. The event is a schedule or a
+      # dispatch, so generated files are judged strictly, and a file a
+      # generator wrote that the commit left out fails too.
+      - name: Run lint's checks on that commit before pushing it
+        if: steps.commit.outputs.changed == 'true'
+        run: python3 scripts/check.py --ci --quick
+
+      - name: Push to main, or fall back to a branch if main moved
+        id: land
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CHANGED: ${{ steps.commit.outputs.changed }}
+        run: |
+          if [ "$CHANGED" != "true" ]; then
             echo "landed=none" >> "$GITHUB_OUTPUT"
             exit 0
           fi
-
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A catalog.json README.md README.zh-CN.md docs llms.txt site/index.html
-          git commit -q -m "chore: weekly refresh of link status and repository facts" \
-                        -m "$(head -1 /tmp/digest.md)"
 
           # Someone may have pushed while this ran. Rebase onto them; if the
           # facts no longer apply cleanly, never force — hand it to a person.
@@ -136,7 +276,7 @@ jobs:
           repo="${GITHUB_REPOSITORY}"
           if [ "$LANDED" = "main" ]; then
             # Stars alone are not worth anyone's attention.
-            if ! grep -qE "Worth a look|did not resolve" /tmp/digest.md; then
+            if ! grep -qE "Worth a look|did not resolve|were not re-read" /tmp/digest.md; then
               echo "only star counts moved; landed silently"
               exit 0
             fi

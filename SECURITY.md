@@ -47,6 +47,33 @@ are worth copying; at least one gate deliberately fails closed.
 ## Workflows
 
 The GitHub Actions workflows in this repository interpolate no
-`github.event.*` value into any shell, hold read-only `contents` permission
-except where Pages requires otherwise, and never write to the catalog. If you
-find a path that breaks any of those, please report it.
+`github.event.*` value into any shell, and hold read-only `contents`
+permission except in two places: the weekly `metadata` refresh, which commits
+machine-checkable facts (link status, stars, licences, archive status,
+repository creation and last-push dates and commit counts, whether each
+summary is its repository's own description, which
+primitives' request shapes each cited file's text contains, and which sibling
+directories' READMEs link each repository) to
+`catalog.json` and the files generated from them, and the discovery verdicts
+in `.discover/seen.json` (`discover` reads strangers' repositories, so it holds
+no write permission and leaves them as an artifact; each entry is checked
+against a fixed shape before it is committed), plus a dated snapshot of the
+catalogue's counts in `history/`, derived from those files and never read back
+into them; and `lint`'s `regenerate`
+job, which commits only generated files and runs only for a push to `main`,
+never for a pull request. (The Pages deploy holds `pages: write` to publish the
+site, not `contents: write`.) No workflow writes a human
+judgement — a summary, a pattern, a retirement — into the catalog. On a pull
+request, `lint`'s `review` job runs the base branch's scripts, from a separate
+checkout of the base commit, against the pull request's `catalog.json` with the
+read-only token; the pull request's author login reaches that script as an
+environment variable, never through a shell line. If you find a path that
+breaks any of those, please report it.
+
+Actions are referenced by their major version tag (`actions/checkout@v7`), not
+pinned to a commit. The one exception is `pypa/gh-action-pypi-publish`, the
+step that uploads the MCP package: it is referenced by its moving `release/v1`
+branch, the form its README's examples use, so it follows that branch rather
+than waiting for a new major. `.github/dependabot.yml` proposes each new major
+as a weekly pull request, which a person reads and merges; nothing merges it
+automatically.

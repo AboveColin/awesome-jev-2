@@ -37,8 +37,9 @@ awesome-jev-mcp
 
 It speaks stdio, so any MCP client works. The catalogue it serves is fetched
 from the repository's `main`, not frozen into the release, so a release only
-needs upgrading for changes to the server itself. To run the server as it is on
-`main` rather than as released:
+needs upgrading for changes to the server itself. If pip finds no
+`awesome-jev-mcp` to install, or to run the server as it is on `main` rather
+than as released, install it from the repository:
 
 ```bash
 pip install git+https://github.com/kydlikebtc/awesome-jev
@@ -53,17 +54,47 @@ never starts.
 
 | Tool                 | What it answers                                                    |
 | -------------------- | ------------------------------------------------------------------ |
-| `search_examples`    | "Show me safety-gating examples in TypeScript that call `noul`."   |
+| `search_examples`    | "Show me safety-gating examples in TypeScript that call `noul`." Also "which benchmarks compared Jev with Cohere, or used LongMemEval?": a benchmark's `measurement` is its author's report, indexed, the direction author-stated and not reproduced here. `outcome="negative"`: the rows whose own author measured Jev and concluded against it. |
 | `get_example`        | One row in full, including its sources and its `evidence`.         |
-| `list_patterns`      | The decision taxonomy, with how many examples exist for each.      |
-| `compatibility`      | Model string, field names, request shape and env var per platform. |
+| `list_patterns`      | The decision taxonomy, with how many examples exist for each and what is recorded about them (reports counted, not a verdict). |
+| `compatibility`      | Model string, field names, request shape and env var per platform, and how many catalogued rows record it. |
 | `check_model_string` | "Is `typesafe/jev-1` real?" — it is not, and that matters.         |
+
+## Resources
+
+| Resource                          | What it holds                                                                     |
+| --------------------------------- | --------------------------------------------------------------------------------- |
+| `awesome-jev://flags`             | What each caveat flag means, in English and Chinese.                              |
+| `awesome-jev://collections`       | The curated entry points: a first call, projects to adapt, measurements.          |
+| `awesome-jev://collections/{id}`  | One curated path in order, each pick's reason and caution beside the row itself. |
+| `awesome-jev://patterns/{key}`    | Every row filed under one decision pattern, caveated rows included.               |
+
+Each is JSON with the same `data` line as a tool result. The pattern resource
+holds the same rows, in the same order, as the catalogue site's
+`api/v1/patterns/<key>.json`, plus a link to the pattern's section of
+`docs/patterns.md`, which holds its "when not to" where one is written.
+
+## Prompt
+
+`wire_pattern(pattern, language, surface)` puts what a coding agent needs to
+wire one decision into a single message: the pattern's description and a link
+to its section of `docs/patterns.md`; the surface's model strings, request
+envelope, answer field and key variable from `compat.json` (or the surfaces to
+choose from); up to five catalogued rows under the pattern that cite the file
+their code was read in, each linked with its caveats; and, when this
+repository ships one for that pattern and language, the example's code under a
+comment saying it was never executed. Without one it says so rather than
+guessing. The examples come from `examples/index.json`, generated from the
+catalogue rows that describe them, and reach the server by the same ladder as
+the catalogue, the first time the prompt is asked for.
 
 ## Three things it does on purpose
 
 **Caveats are never optional.** Every result carries its flags. An agent that
 got a recommendation without `not-jev` or `vendor-reported` attached would be
-worse informed than one that read the README.
+worse informed than one that read the README. Rows keep the bare flag keys, and
+every answer holding flagged rows ends with a `caveat_glossary` saying what
+those flags mean.
 
 **Reimplementations are excluded by default.** Rows flagged `not-jev` do not
 call the API and `shadow-mode-only` rows are deliberately inert; neither
@@ -80,13 +111,14 @@ source answered, and anything stale says so in capitals:
 
 ## Where the catalogue comes from
 
-Installed as a package there is no repository around this code, so the three JSON
-files have to be fetched. They are, in this order, and the first complete answer
-wins:
+Installed as a package there is no repository around this code, so the five JSON
+files — `catalog.json`, `compat.json`, `patterns.json`, `taxonomy.json` and
+`collections.json`, the five the catalogue's site loads too — have to be
+fetched. They are, in this order, and the first complete answer wins:
 
 |     | Source                                                          | Reported as           |
 | --- | --------------------------------------------------------------- | --------------------- |
-| 1   | `AWESOME_JEV_CATALOG`, a directory holding the three files      | `override`            |
+| 1   | `AWESOME_JEV_CATALOG`, a directory holding the five files       | `override`            |
 | 2   | A repository checkout above this file, when running from source | `checkout`            |
 | 3   | GitHub, conditional on the cached ETag                          | `network`             |
 | 4   | The cache, when the network fails                               | `cache` — **stale**   |
@@ -94,14 +126,19 @@ wins:
 
 Layer 3 is the normal case and costs almost nothing after the first run: GitHub
 answers a revalidated request with `304` and no body, so the steady state is
-three small round trips rather than a megabyte.
+five small round trips rather than megabytes.
 
 Layer 5 is the offline first run. It works, and it is the one source that can be
 arbitrarily old, so it is the loudest.
 
+`examples/index.json`, which only the `wire_pattern` prompt reads, climbs the
+same ladder on its own the first time the prompt is asked for: a source
+without it costs the prompt its skeleton, not the server its catalogue, and
+the prompt names the source that served it.
+
 Three properties worth stating plainly, because two of them are trade-offs:
 
-- **The three files always move together.** A source supplies all of them or it
+- **The five files always move together.** A source supplies all of them or it
   is skipped. A fresh `catalog.json` beside a cached `patterns.json` could use a
   pattern key the taxonomy does not have yet, and that is a correctness bug
   rather than untidiness.
@@ -122,3 +159,16 @@ CI stays `setup-python` with no install step, and nothing under `scripts/`
 imports anything declared in `pyproject.toml`. Hand-rolling stdio JSON-RPC would
 extend that streak to here too, but a subtly broken MCP server is worse than a
 dependency.
+
+The dependency stops at `server.py`, which only registers the tools, the
+resources and the prompt and adds the `data` line. What they answer — which
+rows count as examples, the caveats and what each means, the order, the
+model-string check, the prompt's text — is `query.py` and `prompts.py`, and
+where the data comes from is `data.py`. Every module but `server.py` is
+standard library only, so the repository's CI tests them on every pull request
+without installing
+`mcp` (`tests/test_mcp_query.py`, `tests/test_mcp_resources.py`,
+`tests/test_mcp_prompt.py`, `tests/test_mcp_data.py`). The package build in
+`publish.yml`, which runs on every change to the package, is the one place the
+SDK itself is installed, and it checks there that every tool, resource and
+prompt is registered.

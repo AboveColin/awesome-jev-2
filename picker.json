@@ -1,0 +1,201 @@
+{
+  "_comment": [
+    "Which primitive fits a decision: TypeSafe's own guidance on docs.typesafe.ai, arranged as a decision list. Start at `start`; answer each node's question yes or no. Yes ends at a leaf; no moves to the next node, and the last node's no ends at a leaf. The README figure (scripts/build_assets.py) and the site's primitives view draw this file and nothing else.",
+    "Every node and every leaf cites, in source_url, the docs.typesafe.ai page and heading it follows. The list is design guidance with its sources, not a recommendation of any catalogue row.",
+    "A leaf with a primitive names a pattern (a patterns.json key) whose Shape uses it. Beside it the figure and the site print, from scripts/_stats.py, how many rows filed under that pattern a person read using the primitive (question_types) and how many more only the cited file's text shows (primitives_seen).",
+    "No number, no limit and no answer field is written here: those live in compat.json and the primitives figure. lint.py (scripts/picker.py) refuses a digit or an answer field's name in any text, a step without a docs.typesafe.ai source, an unknown pattern or primitive, and any shape the figure cannot draw.",
+    "The order is this repository's, and follows the vendor where it states one: a yes or no, and a position on a spectrum, are also one of a known set of options, and the Choice page opens with \"If the answer is a position on a spectrum, use a Score. If it's a yes or no, use a Noul\" (https://docs.typesafe.ai/primitives/choice), so the Score and Noul questions come before the Choice question.",
+    "A model wrote the Chinese (zh_machine). A person who reviews it sets zh_machine to false."
+  ],
+  "zh_machine": true,
+  "start": "generate",
+  "nodes": [
+    {
+      "id": "generate",
+      "question_en": "Is the answer text to be written: a reply, a summary, an explanation?",
+      "question_zh": "要的答案是一段待写出的文字吗：回复、摘要、解释？",
+      "source_url": "https://docs.typesafe.ai/model-jaggedness/jev-1.13#generation",
+      "branches": [
+        {
+          "answer": "yes",
+          "leaf": "generative"
+        },
+        {
+          "answer": "no",
+          "node": "code"
+        }
+      ]
+    },
+    {
+      "id": "code",
+      "question_en": "Can code work it out exactly: a rule, arithmetic, a date comparison?",
+      "question_zh": "代码能精确算出来吗：规则、算术、日期比较？",
+      "source_url": "https://docs.typesafe.ai/concepts/how-to-build-with-system-one#use-code-when-you-can",
+      "branches": [
+        {
+          "answer": "yes",
+          "leaf": "code"
+        },
+        {
+          "answer": "no",
+          "node": "split"
+        }
+      ]
+    },
+    {
+      "id": "split",
+      "question_en": "Does the judgment rest on several independent things?",
+      "question_zh": "这个判断取决于几件彼此独立的事吗？",
+      "source_url": "https://docs.typesafe.ai/primitives#split-a-complex-judgment-into-several-questions",
+      "branches": [
+        {
+          "answer": "yes",
+          "leaf": "split"
+        },
+        {
+          "answer": "no",
+          "node": "checklist"
+        }
+      ]
+    },
+    {
+      "id": "checklist",
+      "question_en": "Is it a checklist: does each condition or option need its own yes or no?",
+      "question_zh": "这是一份清单吗：每个条件或选项都需要各自的是或否？",
+      "source_url": "https://docs.typesafe.ai/primitives/noul#good-practice-ask-more-than-one-question-per-call",
+      "branches": [
+        {
+          "answer": "yes",
+          "leaf": "noul-each"
+        },
+        {
+          "answer": "no",
+          "node": "score"
+        }
+      ]
+    },
+    {
+      "id": "score",
+      "question_en": "Does the answer fall on a spectrum whose points you can describe?",
+      "question_zh": "答案落在一条你能逐点描述的尺度上吗？",
+      "source_url": "https://docs.typesafe.ai/primitives#choose-a-question-type",
+      "branches": [
+        {
+          "answer": "yes",
+          "leaf": "score"
+        },
+        {
+          "answer": "no",
+          "node": "noul"
+        }
+      ]
+    },
+    {
+      "id": "noul",
+      "question_en": "Is it a clean yes or no, where the probability itself is the useful signal?",
+      "question_zh": "这是一个干净的是非问题、概率本身就是有用的信号吗？",
+      "source_url": "https://docs.typesafe.ai/primitives#choose-a-question-type",
+      "branches": [
+        {
+          "answer": "yes",
+          "leaf": "noul"
+        },
+        {
+          "answer": "no",
+          "node": "choice"
+        }
+      ]
+    },
+    {
+      "id": "choice",
+      "question_en": "Is the answer one of a known set of options, with no order between them?",
+      "question_zh": "答案是一组已知选项中的一个、选项之间没有顺序吗？",
+      "source_url": "https://docs.typesafe.ai/primitives#choose-a-question-type",
+      "branches": [
+        {
+          "answer": "yes",
+          "leaf": "choice"
+        },
+        {
+          "answer": "no",
+          "leaf": "sharpen"
+        }
+      ]
+    }
+  ],
+  "leaves": [
+    {
+      "id": "generative",
+      "label_en": "a generative model, not Jev",
+      "label_zh": "生成式模型，不用 Jev",
+      "note_en": "Jev is not trained to write text. To extract a value, let code or another model list candidates and ask Jev to pick one.",
+      "note_zh": "Jev 没有为写文字而训练。要抽取一个值，先由代码或别的模型列出候选，再让 Jev 选一个。",
+      "source_url": "https://docs.typesafe.ai/model-jaggedness/jev-1.13#generation"
+    },
+    {
+      "id": "code",
+      "label_en": "code, not Jev",
+      "label_zh": "用代码，不用 Jev",
+      "note_en": "Keep deterministic work in code, where it is reliable and cheap.",
+      "note_zh": "确定性的工作留在代码里，可靠又便宜。",
+      "source_url": "https://docs.typesafe.ai/concepts/how-to-build-with-system-one#use-code-when-you-can"
+    },
+    {
+      "id": "split",
+      "label_en": "one question per thing",
+      "label_zh": "每件事各问一个问题",
+      "note_en": "Ask them in one request, weigh the answers in code, and take each question through this list again.",
+      "note_zh": "在一个请求里一起问，在代码里给答案加权，再让每个问题从头走一遍这张清单。",
+      "pattern_key": "fan-out",
+      "source_url": "https://docs.typesafe.ai/primitives#split-a-complex-judgment-into-several-questions"
+    },
+    {
+      "id": "noul-each",
+      "label_en": "one noul per item",
+      "label_zh": "每个条目一个 noul",
+      "note_en": "Each noul is absolute and can be low for every item; a choice is relative and picks the best of them.",
+      "note_zh": "每个 noul 是绝对判断，可以对所有条目都偏低；choice 是相对判断，只挑其中最合适的一个。",
+      "primitive": "noul",
+      "pattern_key": "context-compaction",
+      "source_url": "https://docs.typesafe.ai/model-jaggedness/jev-1.13#common-sense-structural-invariants"
+    },
+    {
+      "id": "score",
+      "label_en": "score",
+      "label_zh": "score",
+      "note_en": "Keep each question to one dimension, and describe each level as a situation, not a degree.",
+      "note_zh": "每个问题只量一个维度；每一级写成一种情形，而不是一个程度。",
+      "primitive": "score",
+      "pattern_key": "content-scoring",
+      "source_url": "https://docs.typesafe.ai/primitives/score#writing-good-levels"
+    },
+    {
+      "id": "noul",
+      "label_en": "noul",
+      "label_zh": "noul",
+      "note_en": "Ask one condition per question, phrased so that a high value means yes.",
+      "note_zh": "每个问题只问一个条件，并让高值表示「是」。",
+      "primitive": "noul",
+      "pattern_key": "safety-gating",
+      "source_url": "https://docs.typesafe.ai/primitives/noul#writing-a-noul-question"
+    },
+    {
+      "id": "choice",
+      "label_en": "choice",
+      "label_zh": "choice",
+      "note_en": "Give the full list, with an other or none option if it may not cover every input.",
+      "note_zh": "给出完整的选项列表；若它可能覆盖不了所有输入，加一个 other 或 none 选项。",
+      "primitive": "choice",
+      "pattern_key": "tool-selection",
+      "source_url": "https://docs.typesafe.ai/primitives#choose-a-question-type"
+    },
+    {
+      "id": "sharpen",
+      "label_en": "not yet one snap judgment",
+      "label_zh": "还不是一个即时判断",
+      "note_en": "Break it into narrower questions, or state the exact condition, and start again.",
+      "note_zh": "把它拆成更窄的问题，或写明确切的条件，再从头走一遍。",
+      "source_url": "https://docs.typesafe.ai/primitives#ask-for-one-snap-judgment-per-question"
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 {
-  "_comment": "Kind and flag labels, one copy. Read by scripts/build_readme.py and by the site at runtime; lint.py asserts the keys match schema/entry.schema.json. Decision patterns live in patterns.json.",
+  "_comment": "Kind, flag, summary-source and measurement labels, one copy. Read by scripts/build_readme.py and by the site at runtime; lint.py asserts the keys match schema/entry.schema.json. Decision patterns live in patterns.json. platforms_without_surface lists the values a row may record in `platforms` that no compat.json surface claims in its catalog_platforms: hosts and tools an example runs in (self-hosted, claude-code, github, mcp, ...), frameworks, and routes compat.json does not describe (opencode-zen's hosted gateway, jevai-org's separate API). lint.py requires every value a row records to be claimed by a surface or listed here.",
   "kinds": [
     {
       "key": "official-docs",
@@ -126,8 +126,9 @@
       "key": "single-commit",
       "en": "one commit",
       "zh": "仅一次提交",
-      "blurb_en": "One commit, so maintenance is unlikely.",
-      "blurb_zh": "只有一次提交，基本不会有维护。"
+      "blurb_en": "The default branch had one commit when the weekly refresh last asked GitHub; the refresh adds and removes this flag.",
+      "blurb_zh": "每周刷新上次询问 GitHub 时，默认分支只有一次提交；此标记由每周刷新自动添加和移除。",
+      "zh_machine": true
     },
     {
       "key": "no-license",
@@ -184,6 +185,192 @@
       "zh": "已归档",
       "blurb_en": "Development has visibly stopped.",
       "blurb_zh": "开发明显已经停止。"
+    },
+    {
+      "key": "self-submitted",
+      "en": "self-submitted",
+      "zh": "作者自荐",
+      "blurb_en": "Proposed by the project's own author or maintainer. Discloses a relationship; it is not a judgement of quality.",
+      "blurb_zh": "由项目作者或维护者本人提交。这是对关系的披露，不是质量评判。",
+      "zh_machine": true
+    },
+    {
+      "key": "negative-result",
+      "en": "measured, not adopted",
+      "zh": "实测后未采用",
+      "blurb_en": "The project's own author measured Jev for this use and concluded against it: they did not adopt it, or removed it. The author's conclusion, not reproduced here; read it before the positive examples. A benchmark row records the same in measurement.direction (unfavourable) instead.",
+      "blurb_zh": "项目作者本人针对这一用途测量过 Jev，结论是不采用或已将其移除。这是作者的结论，未经本仓库复现；请先读它，再看正面例子。基准测试行改用 measurement.direction（不利）记录同一件事。",
+      "zh_machine": true
     }
+  ],
+  "summary_sources": [
+    {
+      "key": "curated",
+      "en": "written for this list",
+      "zh": "本目录撰写",
+      "blurb_en": "A person wrote this summary for the catalogue after reading the project.",
+      "blurb_zh": "由人阅读项目后为本目录撰写的摘要。",
+      "zh_machine": true
+    },
+    {
+      "key": "upstream-description",
+      "en": "upstream description",
+      "zh": "项目自述",
+      "blurb_en": "The project's own GitHub description, word for word when the weekly refresh last compared them. The words are the project author's.",
+      "blurb_zh": "项目自己在 GitHub 上的描述，每周刷新最近一次比对时逐字相同。文字出自项目作者。",
+      "zh_machine": true
+    },
+    {
+      "key": "upstream-description-stale",
+      "en": "earlier upstream description",
+      "zh": "项目旧自述",
+      "blurb_en": "Taken from the project's own GitHub description, which no longer reads the same (the project changed it, or the summary kept only part of it). The words are still the project author's.",
+      "blurb_zh": "取自项目自己在 GitHub 上的描述，但两者已不再相同（项目改了描述，或摘要只保留了其中一部分）。文字仍出自项目作者。",
+      "zh_machine": true
+    }
+  ],
+  "measurement_directions": [
+    {
+      "key": "favourable",
+      "en": "favourable",
+      "zh": "有利",
+      "blurb_en": "The author concludes that Jev does this task well enough to use, or better than what it was compared with.",
+      "blurb_zh": "作者的结论是：Jev 做这件事足以投入使用，或优于对比对象。",
+      "zh_machine": true
+    },
+    {
+      "key": "mixed",
+      "en": "mixed",
+      "zh": "好坏参半",
+      "blurb_en": "The author reports Jev ahead on some measures or tasks and behind on others, and says so.",
+      "blurb_zh": "作者报告 Jev 在一些指标或任务上领先、在另一些上落后，并明确这样说。",
+      "zh_machine": true
+    },
+    {
+      "key": "unfavourable",
+      "en": "unfavourable",
+      "zh": "不利",
+      "blurb_en": "The author concludes against using Jev for this task: it did worse than, or no better than, what they had, and they did not adopt it. This makes the row a negative result.",
+      "blurb_zh": "作者的结论是不在这件事上使用 Jev：它比现有方案差，或并不更好，作者没有采用。这使该行成为负面结果。",
+      "zh_machine": true
+    },
+    {
+      "key": "inconclusive",
+      "en": "inconclusive",
+      "zh": "无定论",
+      "blurb_en": "The author says the measurement cannot decide: too small, too noisy, or a single trial.",
+      "blurb_zh": "作者表示这次测量无法下结论：样本太小、噪声太大，或只有一次试验。",
+      "zh_machine": true
+    }
+  ],
+  "measurement_metrics": [
+    {
+      "key": "accuracy",
+      "en": "accuracy",
+      "zh": "准确率",
+      "blurb_en": "Share of answers that were right.",
+      "blurb_zh": "答对的比例。",
+      "zh_machine": true
+    },
+    {
+      "key": "precision",
+      "en": "precision",
+      "zh": "精确率",
+      "blurb_en": "Of what was flagged or returned, the share that was right.",
+      "blurb_zh": "被标记或返回的结果中正确的比例。",
+      "zh_machine": true
+    },
+    {
+      "key": "recall",
+      "en": "recall",
+      "zh": "召回率",
+      "blurb_en": "Of what should have been found or kept, the share that was.",
+      "blurb_zh": "应被找到或保留的内容中实际做到的比例。",
+      "zh_machine": true
+    },
+    {
+      "key": "f1",
+      "en": "F1",
+      "zh": "F1",
+      "blurb_en": "The harmonic mean of precision and recall, or a token-overlap F1 on answers.",
+      "blurb_zh": "精确率与召回率的调和平均，或答案的词元重叠 F1。",
+      "zh_machine": true
+    },
+    {
+      "key": "ranking",
+      "en": "ranking quality",
+      "zh": "排序质量",
+      "blurb_en": "How well an ordered list puts the useful items first: nDCG, MRR, hit@k and the like.",
+      "blurb_zh": "有序列表把有用条目排在前面的程度：nDCG、MRR、hit@k 等。",
+      "zh_machine": true
+    },
+    {
+      "key": "calibration",
+      "en": "calibration",
+      "zh": "校准",
+      "blurb_en": "Whether stated probabilities match how often answers are right: ECE, Brier score, log loss.",
+      "blurb_zh": "给出的概率是否与实际正确率相符：ECE、Brier 分数、对数损失。",
+      "zh_machine": true
+    },
+    {
+      "key": "task-success",
+      "en": "task success",
+      "zh": "任务成功率",
+      "blurb_en": "Whether an agent finished the task it was set.",
+      "blurb_zh": "智能体是否完成了给定任务。",
+      "zh_machine": true
+    },
+    {
+      "key": "robustness",
+      "en": "robustness",
+      "zh": "稳健性",
+      "blurb_en": "Whether answers change when the options are reordered or the same request is repeated.",
+      "blurb_zh": "选项换序或同一请求重复发送时答案是否改变。",
+      "zh_machine": true
+    },
+    {
+      "key": "latency",
+      "en": "latency",
+      "zh": "延迟",
+      "blurb_en": "Time to an answer.",
+      "blurb_zh": "得到答案所需的时间。",
+      "zh_machine": true
+    },
+    {
+      "key": "cost",
+      "en": "cost",
+      "zh": "成本",
+      "blurb_en": "Money spent, as billed or estimated from list prices.",
+      "blurb_zh": "花费的金额，按账单或按公开价格估算。",
+      "zh_machine": true
+    },
+    {
+      "key": "tokens",
+      "en": "tokens",
+      "zh": "token 用量",
+      "blurb_en": "Tokens sent, kept or billed.",
+      "blurb_zh": "发送、保留或计费的 token 数量。",
+      "zh_machine": true
+    }
+  ],
+  "platforms_without_surface": [
+    "airflow",
+    "autogpt",
+    "claude-code",
+    "composio",
+    "discord",
+    "effect",
+    "github",
+    "jevai-org",
+    "kiln",
+    "lancedb",
+    "langfuse",
+    "mcp",
+    "opencode-zen",
+    "opik",
+    "postgresql",
+    "ruby-llm",
+    "self-hosted",
+    "spring-ai"
   ]
 }

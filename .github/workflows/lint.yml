@@ -1,6 +1,53 @@
-# Injection review: no `github.event.*` value (issue/PR title, body, branch
-# name) is interpolated into any `run:` block in this workflow, so there is no
-# attacker-controlled string reaching a shell. Permissions are read-only.
+# Validates every pull request and every push to main, and keeps the generated
+# files on main in step with their sources.
+#
+# Since 2026-09-27 a pull request only has to change the sources (catalog.json
+# and the other root JSON files). Every run regenerates every generated file
+# with scripts/regenerate.py, validates the result, and then
+# scripts/check_generated.py decides what the regenerated tree means:
+#   pull_request       each generated file must be untouched by the pull
+#                      request, or byte-identical to what the generators
+#                      produce; every file's verdict goes to the step summary.
+#   push to main       drift is expected after a merge and is not a failure:
+#                      the regenerate job below commits it.
+#   workflow_dispatch  strict, any drift fails. metadata.yml dispatches one
+#                      after it lands.
+# One path per event, so a merge never turns main red and then green again.
+#
+# The checks, and their order, live in one place: STEPS in scripts/check.py.
+# This file sets up the tools and runs it; `python3 scripts/check.py` runs the
+# same checks locally, and `--list` prints them.
+#
+# Permissions: read-only, except the regenerate job, which holds
+# `contents: write` for itself alone and runs only for a push to main, never
+# for a pull request, so code from a fork never runs with a write token. It
+# commits as github-actions[bot]. A push made with GITHUB_TOKEN triggers no
+# other workflow, and none needs to run: nothing Pages builds from is
+# generated (the link-preview tags are written at deploy, and the llms.txt it
+# publishes has its values refilled there), and the push that
+# changed a source already triggered pages and description. So, unlike
+# metadata.yml, it holds no `actions: write` and dispatches nothing.
+#
+# The release job asks PyPI whether pyproject.toml's version of the MCP package
+# has been published (scripts/check_release.py). Only for a push to main: on a
+# pull request a version bump is expected to be unreleased, and the network
+# must not decide whether a pull request passes. The half that needs no
+# network — every file declaring the version agrees — runs in the catalog
+# job's unit tests on every event.
+#
+# On a pull request, the review job writes a card for each row it adds or
+# changes (scripts/review_pr.py): cited strings, licence, archive status,
+# stars, the link and the author's relationship to the project, checked
+# against GitHub. It runs the base branch's copy of the scripts, so a pull
+# request cannot soften the checks that judge it. Advisory for now.
+#
+# Injection review: no `github.event.*` value is interpolated into any `run:`
+# block, so no attacker-controlled string (issue/PR title, body, branch name)
+# reaches a shell. The event name and ref appear only in `if:` expressions and
+# in the runner's own GITHUB_EVENT_NAME, never spliced into a script. The one
+# event value used anywhere, the pull request author's login in the review
+# job, is set in that step's `env:` as PR_AUTHOR and read by review_pr.py from
+# its environment, which checks it is a GitHub login; no `run:` line names it.
 name: lint
 
 on:
@@ -16,99 +63,185 @@ jobs:
   catalog:
     name: Validate catalog and generated READMEs
     runs-on: ubuntu-latest
+    outputs:
+      drift: ${{ steps.generated.outputs.drift }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
+        with:
+          # The pull-request check compares the pull request's head with its
+          # merge base, so it needs the history behind the merge commit.
+          fetch-depth: 0
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
 
-      - name: JSON is parseable
-        run: |
-          python3 -c "
-          import json
-          for path in ('catalog.json', 'retired.json', 'compat.json', 'patterns.json', 'taxonomy.json', 'collections.json', 'schema/entry.schema.json'):
-              json.load(open(path))
-              print(f'  ok {path}')
-          "
-
-      - name: Validate entries against the schema
-        run: python3 scripts/lint.py
-
-      - name: Validate curated entry points and their regression checks
-        run: |
-          python3 scripts/check_collections.py
-          python3 -m unittest discover -s scripts/tests
-          python3 -m unittest discover -s tests
-
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: "22"
 
-      - name: Catalog filtering and sorting regression checks
-        run: node --test scripts/test_catalog_core.mjs
+      # Every check lint runs, one collapsed log group each, in check.py's
+      # order: it regenerates every generated file before validating, so each
+      # event validates the regenerated tree, and its check_generated step
+      # judges generated files by $GITHUB_EVENT_NAME as described above and
+      # writes `drift` to this step's outputs. A failure is an annotation
+      # naming the check, and the run's summary has a table of them all. With
+      # --ci, a missing node or Chrome fails instead of being skipped.
+      #
+      # The published repository description is checked by description.yml,
+      # not here: no workflow token can edit it, so its drift is an issue for a
+      # person rather than a red build. check.py's counts step prints what it
+      # should say once the tree is on main, so a pull request shows the change
+      # before merge.
+      - name: Every check, in the order scripts/check.py lists them
+        id: generated
+        run: python3 scripts/check.py --ci
 
-      - name: Assembled site data is complete and current
+  # Commits what the catalog job found out of date on main. Rebuilds from the
+  # tip of main rather than the pushed commit: when several merges land close
+  # together, commits regenerated from each pushed commit would conflict with
+  # one another, while the tip includes them all. The whole lint chain passes
+  # before anything is committed. If main moves during the run and the commit
+  # no longer rebases cleanly, it never forces: the result goes to a branch. A
+  # newer push by a person starts its own run, which regenerates main; a push
+  # by a bot (metadata.yml) starts none, so the warning says to re-run this one.
+  regenerate:
+    name: Commit regenerated files to main
+    needs: catalog
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.catalog.outputs.drift == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    # One at a time and never cancelled. A run queued behind another finds
+    # main already regenerated and commits nothing.
+    concurrency:
+      group: regenerate
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+
+      # The catalog job's checks again, on the tip of main, whose regenerated
+      # files are what gets committed. --quick leaves out only the preview
+      # images, which pages renders at deploy. The event is a push, so the
+      # drift is reported rather than failed; the next step commits it.
+      - name: Regenerate on the tip of main, then run the checks again
+        run: python3 scripts/check.py --ci --quick
+
+      - name: Commit to main, or fall back to a branch if main moved
+        id: land
         run: |
-          python3 scripts/assemble_site.py
-          python3 scripts/check_site_data.py
-
-      - name: Preview images render with the current catalogue
-        run: python3 scripts/render_images.py
-
-      # `git status --porcelain`, not `git diff --quiet`: the pattern pages are
-      # created and deleted as patterns gain or lose entries, and git diff cannot
-      # see an untracked file. The first example of an empty pattern would make
-      # the README link to a page nobody committed, with this step still green.
-      - name: READMEs and pattern pages are in sync with catalog.json
-        run: |
-          python3 scripts/build_readme.py
-          drift=$(git status --porcelain -- README.md README.zh-CN.md docs/by-pattern)
-          if [ -n "$drift" ]; then
-            echo "::error::README.md / README.zh-CN.md / docs/by-pattern are out of sync with catalog.json."
-            echo "Run 'python3 scripts/build_readme.py' and commit the result, including new or deleted pages."
-            echo "$drift"
-            exit 1
+          # Only what the generators write; nothing else is ever staged. The
+          # list is read before it is piped: the default shell has no pipefail,
+          # and `git add -A` given an empty list stages the whole tree.
+          outputs=$(python3 scripts/regenerate.py --list)
+          printf '%s\n' "$outputs" | git add -A --pathspec-from-file=-
+          if git diff --cached --quiet; then
+            echo "nothing to commit: main is already regenerated"
+            echo "landed=none" >> "$GITHUB_OUTPUT"
+            exit 0
           fi
-          echo "READMEs and pattern pages in sync"
 
-      - name: compatibility.md is in sync with compat.json
-        run: python3 scripts/build_compat.py --check
+          base=$(git rev-parse --short HEAD)
+          files=$(git diff --cached --name-only)
+          count=$(printf '%s\n' "$files" | wc -l | tr -d ' ')
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -q -m "chore: regenerate from catalog.json" \
+            -m "Rebuilt by the lint workflow's regenerate job from the sources at $base ($count files):" \
+            -m "$files"
 
-      # status.md, sources.md, llms.txt and the site's meta tags all froze at
-      # the first build's 148 entries because nothing regenerated them.
-      - name: Generated numbers in the docs are current
-        run: python3 scripts/build_docs.py --check
-
-      # And no new hand-written count can creep back in beside them; and every
-      # model string or limit stated anywhere agrees with compat.json.
-      - name: Docs carry no stale numbers and agree with compat.json
-        run: python3 scripts/lint_docs.py
-
-      - name: README figures are in sync with catalog.json
-        run: |
-          python3 scripts/build_readme_cover.py --check
-          python3 scripts/build_assets.py
-          drift=$(git status --porcelain -- docs/assets)
-          if [ -n "$drift" ]; then
-            echo "::error::docs/assets/*.svg are out of sync with catalog.json."
-            echo "Run 'python3 scripts/build_readme.py' and 'python3 scripts/build_assets.py', then commit the result."
-            echo "$drift"
-            exit 1
+          # Someone may have pushed while this ran. Rebase onto them; if that
+          # no longer applies cleanly, never force: leave it on a branch.
+          # --autostash: anything else a run left behind was not staged above,
+          # and must not stop the rebase either.
+          if git pull -q --rebase --autostash origin main && git push -q origin HEAD:main; then
+            echo "landed=main" >> "$GITHUB_OUTPUT"
+            echo "regenerated $count files; landed on main as $(git rev-parse --short HEAD)"
+            printf '## Regenerated on main\n\n%s files rebuilt from the sources at `%s`.\n' \
+              "$count" "$base" >> "$GITHUB_STEP_SUMMARY"
+          else
+            git rebase --abort 2>/dev/null || true
+            branch="regenerate/$base"
+            git push -q origin "HEAD:refs/heads/$branch" --force
+            echo "landed=$branch" >> "$GITHUB_OUTPUT"
+            echo "::warning title=Regenerated files are not on main::main moved during the run and the commit no longer rebased cleanly, so it is on branch $branch. A push to main by a person starts a lint run that regenerates main itself. A push by a bot (the weekly metadata refresh) starts none: if main is still behind, re-run this workflow run, which regenerates from the tip of main. Then delete the branch."
+            printf '## Regenerated files are on a branch\n\n`main` moved during the run, so the commit is on `%s`. A push to `main` by a person starts a lint run that regenerates `main` itself. A push by a bot (the weekly `metadata` refresh) starts none: if `main` is still behind, re-run this workflow run, which regenerates from the tip of `main`. Then delete the branch.\n' \
+              "$branch" >> "$GITHUB_STEP_SUMMARY"
           fi
-          echo "figures in sync"
 
-      # The description is the only published claim that does not live in git,
-      # so nothing here could ever catch it drifting. It sat at "148 verified
-      # examples" while the catalogue grew to 805. Checked on the same push
-      # that changes the count, because that is when it goes stale.
-      - name: Published description still matches the catalogue
-        # A PR may intentionally revise the public pitch; its branch should
-        # not require changing the live repository description before review.
-        if: github.event_name != 'pull_request'
+  # Its own job, so PyPI being unreachable, or a release still pending its tag,
+  # never holds up the regenerate job. Pending is a warning; a version older
+  # than PyPI's newest, or files that disagree on it, fail.
+  release:
+    name: MCP package version is released on PyPI
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: pyproject.toml, plugin.json and PyPI agree
+        run: python3 scripts/check_release.py
+
+  # The review card. Its checks read the pull request's catalog.json and ask
+  # GitHub about each added or changed row, but the code asking is the base
+  # branch's: HEAD^1, the merge commit's first parent, is checked out into a
+  # directory of its own and its scripts/ run with --tree pointing here, so
+  # nothing imported comes from the pull request, which cannot soften the
+  # checks by editing them. (It can edit this workflow, as any pull request
+  # can; a person sees that in its diff.) Until the base branch has
+  # review_pr.py there is no card: the first pull request after it lands is
+  # the first reviewed.
+  #
+  # The card goes to the run's summary, which a fork's pull request shows too,
+  # and each finding is an annotation on its row's line in catalog.json.
+  # Advisory while it is new: the script exits 0 whatever the card says, and
+  # the step cannot fail the job even if the script breaks. Once a fortnight
+  # of cards has shown no systematic false alarm, add --blocking and drop
+  # continue-on-error; see docs/method.md.
+  review:
+    name: Review card for added and changed rows
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # The base commit is the merge commit's first parent.
+          fetch-depth: 0
+          # Nothing here pushes, and no code from the pull request runs.
+          persist-credentials: false
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Review the rows with the base branch's scripts
+        continue-on-error: true
         env:
+          # Read by review_pr.py from its environment; never part of a command
+          # line. See the injection review at the top.
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+          # Read-only on a pull request, a fork's included.
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: python3 scripts/check_description.py
-
-      - name: Catalog stats
-        run: python3 scripts/counts.py
+        run: |
+          base="$RUNNER_TEMP/base"
+          git worktree add --detach --quiet "$base" HEAD^1
+          if [ ! -f "$base/scripts/review_pr.py" ]; then
+            echo "The base branch has no scripts/review_pr.py yet, so there is no review card to run."
+            exit 0
+          fi
+          python3 "$base/scripts/review_pr.py" --ci --tree "$GITHUB_WORKSPACE" --base HEAD^1

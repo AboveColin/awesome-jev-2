@@ -75,7 +75,7 @@ COPY = {
         "answers": ("类别", "等级", "概率"),
     },
 }
-METRICS = ("entries", "link_ok", "evidence_rows")
+METRICS = ("entries", "link_ok", "call_site_rows")
 PRIMITIVES = ("choice", "score", "noul")
 # Advance widths in em. Measured against SF, Helvetica, Arial and Menlo, and
 # against Verdana standing in for DejaVu Sans, the widest common Linux
@@ -122,13 +122,13 @@ def description(lang: str, stats: dict) -> str:
         return (
             f"Jev 决策图谱：{stats['entries']:,} 条公开资源、"
             f"{stats['link_ok']:,} 条带日期的 HTTP 2xx 链接记录、"
-            f"{stats['evidence_rows']:,} 条调用点引用记录。"
+            f"{stats['call_site_rows']:,} 条调用点引用记录。"
             "数字来自保存的记录，不代表当前链接可用或运行与性能测试通过。"
         )
     return (
         f"Jev Decision Atlas: {stats['entries']:,} public resources, "
         f"{stats['link_ok']:,} dated HTTP 2xx link records, and "
-        f"{stats['evidence_rows']:,} call-site citation records. "
+        f"{stats['call_site_rows']:,} call-site citation records. "
         "Counts describe saved records, not current link availability or passed runtime and performance tests."
     )
 

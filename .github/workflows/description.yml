@@ -1,0 +1,89 @@
+# The GitHub repository description is the one published claim that lives
+# outside git, and no workflow token can edit it: that needs admin rights. So
+# drift is reported, not failed — a warning, a step summary, and one open issue
+# labelled `description` carrying the exact `gh repo edit` command, which later
+# runs comment on only when that command changes and the first matching run
+# closes. This used to be a lint.yml step that turned `main` red after every
+# merged row until someone fixed the description by hand; lint.yml stays
+# read-only and its badge now reflects only drift CI can fix itself. Pull
+# requests see the would-be description in the counts step of lint.yml instead.
+#
+# Injection review: no `github.event.*` value reaches a `run:` block. The issue
+# body is read from a file the script wrote, never interpolated into a shell.
+name: description
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+# Two pushes in quick succession must not both find no open issue and file two.
+concurrency:
+  group: description
+  cancel-in-progress: false
+
+jobs:
+  description:
+    name: Published description matches the catalogue
+    # Only main's sentence is the one to publish. A dispatch from another
+    # branch would otherwise open or close the issue on that branch's say-so.
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      # Exits 0 on drift (with --report) and on a skipped read; a non-zero exit
+      # is the script itself failing, which is CI's to fix.
+      - name: Compare the repository description with the catalogue
+        id: compare
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python3 scripts/check_description.py --report /tmp/description.md
+
+      - name: Open or update the description issue
+        if: steps.compare.outputs.status == 'drift'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh label create description --color d29922 \
+            --description "The published repository description is out of date" 2>/dev/null || true
+
+          existing=$(gh issue list --state open --label description --json number --jq '.[0].number')
+          if [ -n "$existing" ]; then
+            # Every push to main lands here while the drift lasts, so comment
+            # only when the fix itself changed (a new hundred, or new wording);
+            # the same command again on every merge is noise, not news.
+            fix=$(grep -m1 '^gh repo edit ' /tmp/description.md || true)
+            seen=$(gh issue view "$existing" --json body,comments \
+              --jq '.body, .comments[].body' | tr -d '\r') || seen=""
+            if [ -n "$fix" ] && grep -qxF -- "$fix" <<<"$seen"; then
+              echo "issue #$existing already carries this command; not commenting again"
+            else
+              gh issue comment "$existing" --body-file /tmp/description.md
+            fi
+          else
+            gh issue create --title "Repository description is out of date" \
+              --label description --body-file /tmp/description.md \
+              || gh issue create --title "Repository description is out of date" \
+                   --body-file /tmp/description.md
+          fi
+
+      # Only on a positive match: a skipped read proves nothing either way.
+      - name: Close the description issue once it matches
+        if: steps.compare.outputs.status == 'match'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          existing=$(gh issue list --state open --label description --json number --jq '.[0].number')
+          if [ -n "$existing" ]; then
+            gh issue close "$existing" \
+              --comment "The published description matches the catalogue again."
+          fi

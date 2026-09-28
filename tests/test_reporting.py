@@ -11,9 +11,11 @@ from unittest.mock import patch
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "scripts"))
 
 import _stats
+import assemble_site
 import build_docs
 import build_readme
 import lint_docs
+from readme import sections
 
 
 class CoverageReportingTests(unittest.TestCase):
@@ -60,6 +62,30 @@ class VerificationReportingTests(unittest.TestCase):
         self.assertFalse(_stats.link_ok({"checked": "2026-09-24", "link_status": 403}))
         self.assertTrue(_stats.link_ok({"checked": "2026-09-22", "link_status": 200}))
 
+    def test_sweep_coverage_counts_the_rows_that_share_the_newest_date(self):
+        # max(checked) alone said 2026-09-24 while 67 rows still carried the
+        # 23rd; how many rows share the newest date is the other half of it.
+        def row(slug, checked, status):
+            return {"slug": slug, "kind": "project", "patterns": [], "checked": checked, "link_status": status}
+
+        rows = [
+            row("a", "2026-09-24", 200),
+            row("b", "2026-09-24", 200),
+            row("c", "2026-09-23", 200),
+            row("d", "2026-09-25", 403),  # a date without a 2xx is not a successful check
+            row("e", None, None),
+            row("f", "2026-09-24", 404),  # nor on the newest date
+        ]
+        schema = {"properties": {"kind": {"enum": ["project"]}}}
+        with patch.object(_stats, "load", return_value=(rows, [], [], {"platforms": []}, schema)):
+            stats = _stats.compute()
+        self.assertEqual((stats["last_sweep"], stats["sweep_coverage"]), ("2026-09-24", 2))
+        self.assertIn("| Rows whose latest successful check is on that date | 2 of 6 |", build_docs.shape_block(stats))
+        self.assertEqual(build_docs.inline_values(stats)["sweep_coverage"], 2)
+        with patch.object(_stats, "load", return_value=([row("e", None, None)], [], [], {"platforms": []}, schema)):
+            never = _stats.compute()
+        self.assertEqual((never["last_sweep"], never["sweep_coverage"]), ("never", 0))
+
     def test_citation_without_check_result_is_reported_only_as_a_record(self):
         entry = {
             "slug": "example",
@@ -77,21 +103,24 @@ class VerificationReportingTests(unittest.TestCase):
         # There is deliberately no CI result or runtime record in this fixture.
         with patch.object(_stats, "load", return_value=([entry], [], patterns, {"platforms": []}, schema)):
             stats = _stats.compute()
-        self.assertEqual(stats["evidence_rows"], 1)
+        # One count per evidence.kind (I18); a record without kind is a call site.
+        self.assertEqual(stats["call_site_rows"], 1)
+        self.assertEqual(stats["wire_shape_rows"], 0)
+        self.assertEqual(stats["example_only_rows"], 0)
         self.assertEqual(stats["link_ok"], 0)
         self.assertEqual(stats["last_sweep"], "never")
 
-        with patch.object(_stats, "compute", return_value=stats), patch.object(build_readme, "START_HERE", []):
-            english = build_readme.render([entry], [], build_readme.EN, "2026-09-24")
-            chinese = build_readme.render([entry], [], build_readme.ZH, "2026-09-24")
+        with patch.object(_stats, "compute", return_value=stats), patch.object(sections, "START_HERE", []):
+            english = build_readme.render([entry], [], build_readme.EN)
+            chinese = build_readme.render([entry], [], build_readme.ZH)
         self.assertIn("1 call-site citation records", english)
         self.assertIn("**not latest CI passes**", english)
         self.assertIn("including entries without `code-untested`", english)
         self.assertIn("不是最新 CI 通过数", chinese)
         self.assertIn("没有 `code-untested` 标签也不代表已测试", chinese)
         self.assertIn("`recommendation`", english)
-        self.assertNotIn("verified examples", _stats.pitch(stats))
-        self.assertNotIn("verified examples", build_docs.meta_block(stats))
+        self.assertNotIn("verified examples", _stats.pitch_public(stats))
+        self.assertNotIn("verified examples", assemble_site.meta_block(stats))
 
 
 class ReadmePreviewTests(unittest.TestCase):
@@ -107,7 +136,7 @@ class ReadmePreviewTests(unittest.TestCase):
                 target = root / path
                 target.parent.mkdir(parents=True, exist_ok=True)
                 target.write_text("unchanged")
-            with patch.object(build_readme, "ROOT", root):
+            with patch.object(sections, "ROOT", root):
                 before = build_readme.preview_version()
                 self.assertEqual(before, build_readme.preview_version())
                 (root / "site/catalog.css").write_text("new layout")

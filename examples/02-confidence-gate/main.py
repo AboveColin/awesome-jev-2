@@ -89,8 +89,10 @@ def decide_action(decision: Decision) -> tuple[Action, str]:
 
     * **Should the threshold depend on the queue?** Misrouting a `howto` costs
       a few minutes. Misrouting a `refund` touches money. The Inbox Zero entry
-      in this catalog uses per-decision thresholds from roughly 0.3 to 0.9 for
-      exactly this reason.
+      in this catalog chooses a separate threshold for each decision for
+      exactly this reason. examples/README.md gives the range of the constants
+      catalogued projects compare Jev's answers with: what they chose, not
+      what you should.
 
     * **Is `confidence` enough, or do you want the runner-up?** Two options at
       0.45/0.44 and one at 0.89 can report similar confidence in some shapes.

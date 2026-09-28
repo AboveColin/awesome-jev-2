@@ -1,5 +1,8 @@
 # Weekly link sweep. Reports only — it never edits the catalog or moves a row
 # to retired.json, because retiring an entry needs a human-written reason.
+# Red means a dead link (exit 1) or, exit 3, so many refusals from GitHub or
+# from other hosts that the sweep was rate limited or blocked rather than quiet;
+# the job summary carries every count, split by host, and the API budget spent.
 #
 # Injection review: no `github.event.*` value reaches a `run:` block.
 # Permissions are read-only; a failure surfaces as a red run, not a commit.
@@ -19,11 +22,16 @@ jobs:
     name: Check every catalog URL still resolves
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
 
       - name: Sweep links
+        env:
+          # Bare repository URLs are asked of the API with this token. Without
+          # it they went to github.com's HTML, which answers 429 after a few
+          # dozen requests, and most GitHub rows came back refused.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python3 scripts/check_links.py

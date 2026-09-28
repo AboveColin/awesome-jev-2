@@ -1,0 +1,69 @@
+{
+  "_comment": "The questions docs/status.md's \"What to watch\" follows, and how each is tracked. scripts/watch.py counts a signal from catalog.json for an item that has one (signal independent-reports or alternatives-matching), lists the rows an item names (listed-rows, kept by hand), and shows a status someone read at its source for the rest (manual), each status with the date it was checked (as_of) and whether a person or a model checked it (checked_by). scripts/build_watch.py writes the table between the watch markers. A recent change is counted from the snapshot before the newest in history/ or, until there are two, over the newest week of first_seen dates, and always states its dates. question_zh, definition_zh and status_zh were written by a model (zh_machine).",
+  "items": [
+    {
+      "id": "independent-benchmarks",
+      "question_en": "Whether independent benchmarks accumulate, and whether they keep landing on \"cheap but comparable\" rather than \"better\".",
+      "question_zh": "独立基准测试是否在累积，以及它们是否继续落在「便宜但相当」而不是「更好」。",
+      "signal": "independent-reports",
+      "definition_en": "Benchmark rows not flagged vendor-reported, and the directions their authors state in the rows' measurement: author-stated, not reproduced here. A row without a measurement, or whose measurement states none, counts as none recorded.",
+      "definition_zh": "未标 vendor-reported 的基准测试行，以及作者在该行 measurement 中说明的结论方向：作者自述，未经本仓库复现。没有 measurement 或 measurement 未说明方向的行计为「未记录」。",
+      "zh_machine": true
+    },
+    {
+      "id": "option-order",
+      "question_en": "Whether the option-ordering sensitivity reproduces. If it does, option order becomes part of everyone's prompt-freezing discipline.",
+      "question_zh": "选项顺序敏感性是否能被复现。如果能，选项顺序就会成为每个人冻结提示词时都要管住的一部分。",
+      "signal": "listed-rows",
+      "rows": [
+        "ahastudio-til-jev-probing",
+        "pijev-typellm"
+      ],
+      "definition_en": "Rows listed in watch.json as reporting or addressing option-order sensitivity; no field in the catalogue records it, so a new such row counts only once someone adds it there.",
+      "definition_zh": "在 watch.json 中列出的、报告或应对选项顺序敏感性的行；目录没有字段记录这一点，所以新的此类行要等有人把它加进去才会计入。",
+      "status_en": "No independent reproduction is recorded: one listed row reports the effect, the other averages answers over option orderings to guard against it.",
+      "status_zh": "尚未记录到独立复现：列出的一行报告了这一现象，另一行通过对多种选项顺序的答案取平均来防范它。",
+      "as_of": "2026-09-28",
+      "checked_by": "model",
+      "zh_machine": true
+    },
+    {
+      "id": "training-paper",
+      "question_en": "Whether a paper appears.",
+      "question_zh": "是否会有论文发表。",
+      "signal": "manual",
+      "definition_en": "A reading at the source: whether the vendor's documentation links a paper on the training method.",
+      "definition_zh": "在来源处核读：厂商文档是否链接了关于训练方法的论文。",
+      "status_en": "None linked: the documentation's index links no paper, and its AI primer names the training path (RLCD) without linking one.",
+      "status_zh": "没有链接：文档索引没有链接任何论文，其 AI 入门页提到了训练路径（RLCD），但没有链接论文。",
+      "url": "https://docs.typesafe.ai/introduction/machine-learning-primer",
+      "as_of": "2026-09-28",
+      "checked_by": "model",
+      "zh_machine": true
+    },
+    {
+      "id": "wire-convergence",
+      "question_en": "Whether the alternatives converge on the wire format well enough that patterns really do become portable, calibration aside.",
+      "question_zh": "替代实现是否会在请求格式上收敛到足以让模式真正可移植的程度（校准除外）。",
+      "signal": "alternatives-matching",
+      "matched_contains": "/v1/systemone",
+      "definition_en": "A proxy: of the kind: alternative rows citing a file, those whose evidence.matched strings include /v1/systemone. It says the endpoint path is the same, not that the request or answer shapes match, and nothing about calibration.",
+      "definition_zh": "代理指标：引用了文件的 kind: alternative 行中，evidence.matched 含 /v1/systemone 的行。它只说明端点路径相同，不说明请求或答案结构一致，也与校准无关。",
+      "zh_machine": true
+    },
+    {
+      "id": "rate-limits-pricing",
+      "question_en": "Whether rate limits and pricing settle.",
+      "question_zh": "限流和定价是否会稳定下来。",
+      "signal": "manual",
+      "definition_en": "A reading at the source: whether the vendor's models page still says its limits can change without notice.",
+      "definition_zh": "在来源处核读：厂商的模型页是否仍然说明其限额可能随时变更。",
+      "status_en": "Not yet: the models page still warns that rate limits are adjusting dynamically and can change without notice.",
+      "status_zh": "尚未稳定：模型页仍然提示限流正在动态调整，可能随时变更，恕不另行通知。",
+      "url": "https://docs.typesafe.ai/models",
+      "as_of": "2026-09-28",
+      "checked_by": "model",
+      "zh_machine": true
+    }
+  ]
+}

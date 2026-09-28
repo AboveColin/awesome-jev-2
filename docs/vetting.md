@@ -42,15 +42,31 @@ deliberately fails closed. Copy that shape, not the shape that trusts the score.
 - [ ] **What does the citation establish?** `evidence.read_on` is the reported
       date a person read the cited file. The scheduled claims job only checks
       that recorded strings remain in it. A stored citation is not a latest-CI
-      result, and a string match does not prove the call runs.
+      result, and a string match does not prove the call runs. `evidence.kind`
+      says what the file is: a call site (the default), a file that only
+      speaks Jev's request shape (`wire-shape`, every `alternative`), or an
+      example the project ships (`example-only`).
 - [ ] **Is it maintained?** `single-commit` and `archived` exist because this
       ecosystem is days old and a four-figure star count can sit on top of one
-      commit. Check the last push date yourself.
+      commit. Both follow GitHub at every weekly refresh, and so do three
+      facts the site's entry details and the MCP server show: when the
+      repository was created, when anything was last pushed to it
+      (`repo_created_at`, `repo_pushed_at`, UTC) and how many commits its
+      default branch has (`repo_commits`). They are GitHub's figures as of
+      that refresh, not a verdict: an old push is not abandonment and a recent
+      one is not upkeep, so read the history yourself before you depend on
+      it. The READMEs and pattern pages show stars only as a band such as
+      ★1k+: a popularity signal, not a quality verdict, and silent on upkeep.
+      The exact count is in `catalog.json` and on the site.
 - [ ] **Can you legally use it?** `no-license` means no `LICENSE` file, whatever
       a README badge claims. `repo_license` records what the repository actually
       declares. Several otherwise good projects ship none.
 - [ ] **What will it cost you?** `third-party-api-key` means a service other than
       TypeSafe. `early-access-required` means a waitlist.
+- [ ] **Who proposed the row?** `self-submitted` means the project's own author
+      or maintainer did, so the description started from their side. It is a
+      disclosure, not a mark against the project. Its absence proves nothing:
+      only rows whose source says `author submission` carry it.
 - [ ] **Does it send your data somewhere?** Some catalogued projects read screen
       contents, mailbox contents or source trees. That is inherent to what they
       do; decide whether you are comfortable before running one.
@@ -93,6 +109,17 @@ the newest date shown for the catalogue is not the check date for every entry.
 A row without a dated success record is not counted as link-checked. A past
 response does not guarantee availability today or prove that protected content
 was read. Do not present any row here as runtime-tested, recommended, or safe.
+
+The *call site* (or *cited file*) link printed on a row in the READMEs, on the
+pattern pages and on the site opens the file `evidence.path` names at `HEAD` of
+the repository's default branch, not at the commit a person read. Like the
+weekly text check, it is deliberately not pinned (see
+[method.md](method.md#call-site-text-is-re-checked-separately-from-human-review)):
+the file may have changed since the `read_on` date shown with it, and the link
+can return 404 once the file moves or the repository goes. A 404 there says
+only that the file is no longer at that path: it may have moved, or the
+integration may have been removed, and the weekly claims check reports it for
+a person to re-read.
 
 ## Reporting a problem
 

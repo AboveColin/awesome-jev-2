@@ -7,6 +7,13 @@ site/compat.json
 site/patterns.json
 site/taxonomy.json
 site/collections.json
+site/picker.json
+site/retired.json
+site/schema/
+site/llms.txt
+# Written by scripts/assemble_site.py from the files above: one JSON file per
+# decision pattern, for agents (scripts/site_api.py).
+site/api/
 # Rendered at deploy by scripts/render_images.py, from the data above.
 site/stats.json
 site/img/
@@ -20,6 +27,11 @@ dist/
 build/
 *.egg-info/
 src/awesome_jev_mcp/_bundled/
+
+# Draft catalog rows from `discover_candidates.py --drafts drafts`: a person's
+# work in progress, which lint.py refuses until it is completed and moved into
+# catalog.json. Never committed as they are.
+/drafts/
 
 __pycache__/
 *.py[cod]
