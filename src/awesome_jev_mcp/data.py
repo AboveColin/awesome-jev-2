@@ -1,6 +1,6 @@
 """Where the catalogue comes from, and how honest that answer is.
 
-Installed as a package, this has no repository around it, so the three JSON
+Installed as a package, this has no repository around it, so the five JSON
 files it serves have to come from somewhere. It fetches them, and every result
 the server returns says which layer answered.
 
@@ -11,7 +11,7 @@ making exactly the mistake it catalogues other people making.
 
 The ladder, in order:
 
-1. ``AWESOME_JEV_CATALOG`` — a directory holding the three files. For anyone
+1. ``AWESOME_JEV_CATALOG`` — a directory holding the five files. For anyone
    testing an edit, and the escape hatch when the rest of this is in the way.
 2. **A repository checkout above this file** — that is, running from source or
    an editable install, not merely being launched from inside a checkout.
@@ -23,8 +23,8 @@ The ladder, in order:
    changed depending on where it happened to be started would be far worse than
    one that simply never reads the tree.
 3. **The network**, conditional on the cached ETag. GitHub answers a revalidated
-   request with 304 and no body, so the steady state costs three small
-   round trips rather than a megabyte.
+   request with 304 and no body, so the steady state costs five small
+   round trips rather than megabytes.
 4. **The cache**, when the network fails but we have fetched before. Degraded,
    and says so.
 5. **The snapshot bundled in the wheel**, when there is no cache either. This is
@@ -34,12 +34,17 @@ The ladder, in order:
 Nothing below layer 3 is silent. A stale answer presented as fresh is worse than
 a failure.
 
-## All three files move together
+## All five files move together
 
 A mixed load is a correctness bug, not just untidiness: catalog.json may use a
-pattern key that only exists in a newer patterns.json, and lint enforces that
-relationship inside a commit. So a source either supplies all three or it is
-skipped entirely, and the ladder moves on.
+pattern key that only exists in a newer patterns.json, or a flag that only a
+newer taxonomy.json explains, and collections.json names catalogue rows; lint
+enforces those relationships inside a commit. So a source either supplies all
+five or it is skipped entirely, and the ladder moves on.
+
+They are the five files the catalogue's site fetches at runtime
+(scripts/assemble_site.py PAGE_FILES; a test holds the two lists equal), so an
+agent asking this server and a person reading the site are served one data set.
 """
 
 from __future__ import annotations
@@ -51,9 +56,9 @@ import sys
 import urllib.error
 import urllib.request
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, NamedTuple
 
-FILES = ("catalog.json", "compat.json", "patterns.json")
+FILES = ("catalog.json", "compat.json", "patterns.json", "taxonomy.json", "collections.json")
 RAW = "https://raw.githubusercontent.com/kydlikebtc/awesome-jev/main/"
 
 # Long enough for a megabyte on a slow line, short enough that a hung GitHub
@@ -84,6 +89,17 @@ class Provenance:
         )
 
 
+class Loaded(NamedTuple):
+    """The five files, as the server reads them, and which layer answered."""
+
+    catalog: list[dict]
+    compat: dict[str, Any]
+    patterns: list[dict]
+    taxonomy: dict[str, Any]
+    collections: list[dict]
+    provenance: Provenance
+
+
 def cache_dir() -> pathlib.Path:
     """Per-user cache, following whatever the platform calls that."""
     if sys.platform == "darwin":
@@ -98,7 +114,7 @@ def cache_dir() -> pathlib.Path:
 
 
 def _read_dir(path: pathlib.Path) -> dict[str, Any] | None:
-    """All three files from one directory, or nothing. See the module docstring."""
+    """Every file in FILES from one directory, or nothing. See the module docstring."""
     try:
         return {name: json.loads((path / name).read_text()) for name in FILES}
     except (OSError, json.JSONDecodeError):
@@ -116,7 +132,7 @@ def _find_checkout(start: pathlib.Path | str | None = None) -> pathlib.Path | No
 
 
 def _fetch() -> tuple[dict[str, Any], bool] | None:
-    """Fetch all three, revalidating against the cached ETags.
+    """Fetch every file in FILES, revalidating against the cached ETags.
 
     Returns the payload and whether anything actually changed, or None if any
     file could not be had — a partial fetch is discarded rather than mixed with
@@ -179,9 +195,7 @@ def _as_of(catalog: list[dict]) -> str:
     return max(dates) if dates else "unknown"
 
 
-def load(
-    checkout_from: pathlib.Path | str | None = None,
-) -> tuple[list[dict], dict[str, Any], list[dict], Provenance]:
+def load(checkout_from: pathlib.Path | str | None = None) -> Loaded:
     """Walk the ladder and return the first complete answer, with its provenance.
 
     `checkout_from` is where the search for a checkout (layer 2) starts: this
@@ -231,18 +245,18 @@ def load(
     raise RuntimeError(
         "awesome-jev: no catalogue available. The network is unreachable, nothing "
         "is cached, and this build carries no bundled snapshot. Set "
-        "AWESOME_JEV_CATALOG to a directory holding catalog.json, compat.json and "
-        "patterns.json, or run the server from a repository checkout."
+        f"AWESOME_JEV_CATALOG to a directory holding {', '.join(FILES[:-1])} and "
+        f"{FILES[-1]}, or run the server from a repository checkout."
     )
 
 
-def _unpack(
-    payload: dict[str, Any], source: str, detail: str
-) -> tuple[list[dict], dict[str, Any], list[dict], Provenance]:
+def _unpack(payload: dict[str, Any], source: str, detail: str) -> Loaded:
     catalog = payload["catalog.json"]
-    return (
+    return Loaded(
         catalog,
         payload["compat.json"],
         payload["patterns.json"]["patterns"],
+        payload["taxonomy.json"],
+        payload["collections.json"]["collections"],
         Provenance(source, detail, _as_of(catalog), len(catalog)),
     )

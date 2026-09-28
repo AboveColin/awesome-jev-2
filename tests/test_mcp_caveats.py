@@ -20,11 +20,34 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 
 
 class _StubServer:
+    """Stands in for mcp.server.MCPServer: registers nothing, but remembers what
+    server.py asked to register, so tests can compare it with what they expect."""
+
     def __init__(self, *args, **kwargs):
-        pass
+        self.tools: list[str] = []
+        self.resources: dict[str, dict] = {}
+        self.prompts: dict[str, dict] = {}
 
     def tool(self):
-        return lambda fn: fn
+        def register(fn):
+            self.tools.append(fn.__name__)
+            return fn
+
+        return register
+
+    def resource(self, uri, **kwargs):
+        def register(fn):
+            self.resources[uri] = {"fn": fn, **kwargs}
+            return fn
+
+        return register
+
+    def prompt(self, *args, **kwargs):
+        def register(fn):
+            self.prompts[fn.__name__] = {"fn": fn, **kwargs}
+            return fn
+
+        return register
 
 
 def load_server():

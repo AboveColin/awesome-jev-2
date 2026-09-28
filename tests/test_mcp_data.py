@@ -29,7 +29,7 @@ from awesome_jev_mcp import data  # noqa: E402
 
 
 def payload(*slugs: str, checked: tuple[str, ...] = ()) -> dict[str, object]:
-    """Three files' contents; `slugs` tells which rung answered."""
+    """The five files' contents; `slugs` tells which rung answered."""
     rows = [{"slug": s} for s in slugs]
     for row, date in zip(rows, checked):
         row["checked"] = date
@@ -37,6 +37,8 @@ def payload(*slugs: str, checked: tuple[str, ...] = ()) -> dict[str, object]:
         "catalog.json": rows,
         "compat.json": {"platforms": [], "tag": slugs[0] if slugs else ""},
         "patterns.json": {"patterns": [{"key": "overview"}]},
+        "taxonomy.json": {"flags": [{"key": "not-jev", "blurb_en": "Never calls it."}]},
+        "collections.json": {"collections": [{"id": "first-call", "entries": []}]},
     }
 
 
@@ -66,7 +68,7 @@ class _Response:
 
 
 class FakeGitHub:
-    """raw.githubusercontent.com for the three files. `files` maps a name to
+    """raw.githubusercontent.com for the files data.py fetches. `files` maps a name to
     its current body; `fail` maps a name to the exception raised instead."""
 
     def __init__(self, files: dict[str, object], fail: dict[str, BaseException] | None = None, raw: dict | None = None):
@@ -129,8 +131,8 @@ class LadderTest(unittest.TestCase):
         self.addCleanup(net.stop)
 
     def load(self, start: pathlib.Path | None = None):
-        catalog, compat, patterns, provenance = data.load(checkout_from=start or self.outside)
-        return [row["slug"] for row in catalog], provenance
+        loaded = data.load(checkout_from=start or self.outside)
+        return [row["slug"] for row in loaded.catalog], loaded.provenance
 
     def checkout(self, slugs=("co",), *, skip: str = "") -> pathlib.Path:
         repo = self.tmp / "repo"
@@ -156,6 +158,18 @@ class LadderTest(unittest.TestCase):
                 override = write(self.tmp / broken, payload("ov"), skip="patterns.json" if broken == "missing" else "")
                 if broken == "corrupt":
                     (override / "compat.json").write_text("{not json")
+                os.environ["AWESOME_JEV_CATALOG"] = str(override)
+                self.assertEqual(self.load(repo / "src")[1].source, "checkout")
+
+    def test_a_source_missing_any_one_of_the_five_files_is_skipped_whole(self):
+        # taxonomy.json and collections.json joined the ladder on 2026-09-28
+        # (I35): a source without either is as incomplete as one without the
+        # catalogue.
+        repo = self.checkout()
+        self.assertEqual(len(data.FILES), 5)
+        for name in data.FILES:
+            with self.subTest(missing=name):
+                override = write(self.tmp / f"no-{name}", payload("ov"), skip=name)
                 os.environ["AWESOME_JEV_CATALOG"] = str(override)
                 self.assertEqual(self.load(repo / "src")[1].source, "checkout")
 
@@ -293,6 +307,8 @@ class LadderTest(unittest.TestCase):
         with self.assertRaises(RuntimeError) as caught:
             data.load(checkout_from=self.outside)
         self.assertIn("AWESOME_JEV_CATALOG", str(caught.exception))
+        for name in data.FILES:
+            self.assertIn(name, str(caught.exception))
 
 
 class ProvenanceTest(unittest.TestCase):
@@ -306,10 +322,43 @@ class ProvenanceTest(unittest.TestCase):
 
     def test_the_date_is_the_catalogues_newest_check(self):
         # Newest, not last: the rows are in slug order, not date order.
-        catalog, _, patterns, provenance = data._unpack(payload("a", "b", "c", checked=("2026-09-20", "2026-09-01")),
-                                                        "network", "d")
-        self.assertEqual((provenance.as_of, provenance.rows, patterns), ("2026-09-20", 3, [{"key": "overview"}]))
-        self.assertEqual(data._unpack(payload("a"), "network", "d")[3].as_of, "unknown")
+        loaded = data._unpack(payload("a", "b", "c", checked=("2026-09-20", "2026-09-01")), "network", "d")
+        provenance = loaded.provenance
+        self.assertEqual((provenance.as_of, provenance.rows, loaded.patterns), ("2026-09-20", 3, [{"key": "overview"}]))
+        self.assertEqual(data._unpack(payload("a"), "network", "d").provenance.as_of, "unknown")
+
+    def test_every_file_is_handed_over(self):
+        files = payload("a")
+        loaded = data._unpack(files, "network", "d")
+        self.assertEqual(loaded.catalog, files["catalog.json"])
+        self.assertEqual(loaded.compat, files["compat.json"])
+        self.assertEqual(loaded.taxonomy, files["taxonomy.json"])
+        self.assertEqual(loaded.collections, files["collections.json"]["collections"])
+        self.assertEqual(loaded._fields, ("catalog", "compat", "patterns", "taxonomy", "collections", "provenance"))
+
+
+class PackagingTest(unittest.TestCase):
+    """The five files are the site's five, and the package carries each."""
+
+    def test_the_server_serves_what_the_site_fetches(self):
+        sys.path.insert(0, str(ROOT / "scripts"))
+        import assemble_site  # noqa: PLC0415
+
+        self.assertEqual(data.FILES, assemble_site.PAGE_FILES)
+        self.assertEqual(assemble_site.RUNTIME_FILES[: len(data.FILES)], data.FILES)
+
+    def test_the_sdist_and_the_wheels_snapshot_carry_every_file(self):
+        import tomllib  # noqa: PLC0415 - Python 3.11+, like the rest of the tests
+
+        hatch = tomllib.loads((ROOT / "pyproject.toml").read_text())["tool"]["hatch"]["build"]["targets"]
+        for name in data.FILES:
+            with self.subTest(name=name):
+                self.assertIn(f"/{name}", hatch["sdist"]["include"])
+                self.assertEqual(hatch["wheel"]["force-include"][name], f"awesome_jev_mcp/_bundled/{name}")
+
+    def test_the_release_smoke_test_compares_every_file(self):
+        workflow = (ROOT / ".github" / "workflows" / "publish.yml").read_text()
+        self.assertIn("for name in data.FILES:", workflow)
 
 
 class CacheDirTest(unittest.TestCase):

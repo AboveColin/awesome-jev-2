@@ -60,11 +60,27 @@ never starts.
 | `compatibility`      | Model string, field names, request shape and env var per platform. |
 | `check_model_string` | "Is `typesafe/jev-1` real?" — it is not, and that matters.         |
 
+## Resources
+
+| Resource                          | What it holds                                                                     |
+| --------------------------------- | --------------------------------------------------------------------------------- |
+| `awesome-jev://flags`             | What each caveat flag means, in English and Chinese.                              |
+| `awesome-jev://collections`       | The curated entry points: a first call, projects to adapt, measurements.          |
+| `awesome-jev://collections/{id}`  | One curated path in order, each pick's reason and caution beside the row itself. |
+| `awesome-jev://patterns/{key}`    | Every row filed under one decision pattern, caveated rows included.               |
+
+Each is JSON with the same `data` line as a tool result. The pattern resource
+holds the same rows, in the same order, as the catalogue site's
+`api/v1/patterns/<key>.json`, plus a link to the pattern's "when not to"
+section in `docs/patterns.md`.
+
 ## Three things it does on purpose
 
 **Caveats are never optional.** Every result carries its flags. An agent that
 got a recommendation without `not-jev` or `vendor-reported` attached would be
-worse informed than one that read the README.
+worse informed than one that read the README. Rows keep the bare flag keys, and
+every answer holding flagged rows ends with a `caveat_glossary` saying what
+those flags mean.
 
 **Reimplementations are excluded by default.** Rows flagged `not-jev` do not
 call the API and `shadow-mode-only` rows are deliberately inert; neither
@@ -81,13 +97,14 @@ source answered, and anything stale says so in capitals:
 
 ## Where the catalogue comes from
 
-Installed as a package there is no repository around this code, so the three JSON
-files have to be fetched. They are, in this order, and the first complete answer
-wins:
+Installed as a package there is no repository around this code, so the five JSON
+files — `catalog.json`, `compat.json`, `patterns.json`, `taxonomy.json` and
+`collections.json`, the five the catalogue's site loads too — have to be
+fetched. They are, in this order, and the first complete answer wins:
 
 |     | Source                                                          | Reported as           |
 | --- | --------------------------------------------------------------- | --------------------- |
-| 1   | `AWESOME_JEV_CATALOG`, a directory holding the three files      | `override`            |
+| 1   | `AWESOME_JEV_CATALOG`, a directory holding the five files       | `override`            |
 | 2   | A repository checkout above this file, when running from source | `checkout`            |
 | 3   | GitHub, conditional on the cached ETag                          | `network`             |
 | 4   | The cache, when the network fails                               | `cache` — **stale**   |
@@ -95,14 +112,14 @@ wins:
 
 Layer 3 is the normal case and costs almost nothing after the first run: GitHub
 answers a revalidated request with `304` and no body, so the steady state is
-three small round trips rather than a megabyte.
+five small round trips rather than megabytes.
 
 Layer 5 is the offline first run. It works, and it is the one source that can be
 arbitrarily old, so it is the loudest.
 
 Three properties worth stating plainly, because two of them are trade-offs:
 
-- **The three files always move together.** A source supplies all of them or it
+- **The five files always move together.** A source supplies all of them or it
   is skipped. A fresh `catalog.json` beside a cached `patterns.json` could use a
   pattern key the taxonomy does not have yet, and that is a correctness bug
   rather than untidiness.
@@ -124,11 +141,13 @@ imports anything declared in `pyproject.toml`. Hand-rolling stdio JSON-RPC would
 extend that streak to here too, but a subtly broken MCP server is worse than a
 dependency.
 
-The dependency stops at `server.py`, which only registers the tools and adds the
-`data` line. What the tools answer — which rows count as examples, the caveats,
-the order, the model-string check — is `query.py`, and where the data comes from
+The dependency stops at `server.py`, which only registers the tools and
+resources and adds the `data` line. What they answer — which rows count as
+examples, the caveats and what each means, the order, the model-string check —
+is `query.py`, and where the data comes from
 is `data.py`. Both are standard library only, so the repository's CI tests them
 on every pull request without installing `mcp` (`tests/test_mcp_query.py`,
-`tests/test_mcp_data.py`). The package build in `publish.yml`, which runs on
-every change to the package, is the one place the SDK itself is installed, and
-it checks there that every tool is registered.
+`tests/test_mcp_resources.py`, `tests/test_mcp_data.py`). The package build in
+`publish.yml`, which runs on every change to the package, is the one place the
+SDK itself is installed, and it checks there that every tool and resource is
+registered.

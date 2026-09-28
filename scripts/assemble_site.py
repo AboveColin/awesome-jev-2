@@ -53,12 +53,13 @@ SITE = ROOT / "site"
 SITE_URL = "https://kydlikebtc.github.io/awesome-jev/"
 OG_IMAGE = f"{SITE_URL}img/og.png"
 
-# Every source file the site publishes: the five the page fetches at runtime,
-# then the three agents read. Copied verbatim, except llms.txt (see above).
-RUNTIME_FILES = (
-    "catalog.json", "compat.json", "patterns.json", "taxonomy.json", "collections.json",
-    "retired.json", "schema/entry.schema.json", "llms.txt",
-)
+# The five files the page fetches at runtime. The MCP server serves the same
+# five (src/awesome_jev_mcp/data.py FILES, which cannot import this module; a
+# test holds the two equal), so a site reader and an agent see one data set.
+PAGE_FILES = ("catalog.json", "compat.json", "patterns.json", "taxonomy.json", "collections.json")
+# Every source file the site publishes: those five, then the three agents read.
+# Copied verbatim, except llms.txt (see above).
+RUNTIME_FILES = (*PAGE_FILES, "retired.json", "schema/entry.schema.json", "llms.txt")
 # Every file under site/ the API index links, stats.json being derived.
 PUBLISHED = (*RUNTIME_FILES, "stats.json")
 

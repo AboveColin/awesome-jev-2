@@ -34,10 +34,11 @@
 # the one data-dependent assertion here too, that the fabricated
 # `typesafe/jev-1` is still rejected against compat.json
 # (tests/test_repository_policy.py), on the source tree rather than a wheel.
-# lint also tests what the tools answer (query.py, tests/test_mcp_query.py) and
-# where their data comes from (data.py, tests/test_mcp_data.py), with `mcp`
-# stubbed out, since lint installs nothing. What only this job can check is
-# that the real SDK registers the tools, which the smoke step below asks it.
+# lint also tests what the tools and resources answer (query.py,
+# tests/test_mcp_query.py, tests/test_mcp_resources.py) and where their data
+# comes from (data.py, tests/test_mcp_data.py), with `mcp` stubbed out, since
+# lint installs nothing. What only this job can check is that the real SDK
+# registers the tools and resources, which the smoke step below asks it.
 #
 # The bundled snapshot inside the wheel is the catalogue as of the tagged
 # commit — the offline last resort. The server fetches the live catalogue from
@@ -109,19 +110,25 @@ jobs:
           got = importlib.metadata.version("awesome-jev-mcp")
           assert got == want, f"installed {got}, pyproject says {want}"
 
-          # The offline fallback must be this commit's catalogue, all three
-          # files, or it is not the fallback it claims to be.
+          # The offline fallback must be this commit's catalogue, every file
+          # data.FILES names, or it is not the fallback it claims to be.
           snapshot = data._read_dir(data.BUNDLED)
           assert snapshot, f"no complete bundled snapshot at {data.BUNDLED}"
           for name in data.FILES:
               assert snapshot[name] == json.loads((repo / name).read_text()), f"bundled {name} differs from the repository's"
 
-          # And the server itself imports, registers its tools with the real
-          # MCP SDK, which no other check installs, and answers.
+          # And the server itself imports, registers its tools and resources
+          # with the real MCP SDK, which no other check installs, and answers.
           import asyncio
           from awesome_jev_mcp import server
           tools = sorted(tool.name for tool in asyncio.run(server.mcp.list_tools()))
           assert tools == ["check_model_string", "compatibility", "get_example", "list_patterns", "search_examples"], tools
+          resources = sorted(str(r.uri) for r in asyncio.run(server.mcp.list_resources()))
+          assert resources == ["awesome-jev://collections", "awesome-jev://flags"], resources
+          templates = sorted(t.uri_template for t in asyncio.run(server.mcp.list_resource_templates()))
+          assert templates == ["awesome-jev://collections/{id}", "awesome-jev://patterns/{key}"], templates
+          [read] = asyncio.run(server.mcp.read_resource("awesome-jev://patterns/safety-gating"))
+          assert json.loads(read.content)["entries"] and read.mime_type == "application/json", read
           assert server.check_model_string(model="typesafe/jev-1")["valid"] is False
           print(f"ok: {got}, {server.PROVENANCE.line()}")
           PY

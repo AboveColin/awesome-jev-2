@@ -34,8 +34,9 @@ awesome-jev-mcp = "awesome_jev_mcp.__main__:main"
 # What the sdist carries: exactly what building the wheel needs, and nothing
 # else. Left to its default, hatchling packed the whole repository — CI
 # workflows, docs, screenshots, the site, the plugin manifests — into a Python
-# package, 115 files where eleven will do. The three JSON files must be here
-# because the wheel snapshots them from the sdist when pip builds from source.
+# package, 115 files where eleven will do. The data files must be here
+# because the wheel snapshots them from the sdist when pip builds from source:
+# the five data.py FILES names (a test holds these lists to it).
 [tool.hatch.build.targets.sdist]
 include = [
   "/src/awesome_jev_mcp",
@@ -43,6 +44,8 @@ include = [
   "/catalog.json",
   "/compat.json",
   "/patterns.json",
+  "/taxonomy.json",
+  "/collections.json",
   "/LICENSE",
   "/LICENSE-MIT",
   "/LICENSE-CC0",
@@ -53,7 +56,7 @@ packages = ["src/awesome_jev_mcp"]
 
 # The offline last resort, and the reason it is built rather than committed.
 #
-# These three files live at the repository root and are the single source of
+# These files live at the repository root and are the single source of
 # truth. Copying them into src/ to make them packageable would put two copies in
 # git, which is precisely the drift this repository spends its CI preventing.
 # force-include takes the snapshot at build time instead, so the wheel carries a
@@ -65,3 +68,5 @@ packages = ["src/awesome_jev_mcp"]
 "catalog.json" = "awesome_jev_mcp/_bundled/catalog.json"
 "compat.json" = "awesome_jev_mcp/_bundled/compat.json"
 "patterns.json" = "awesome_jev_mcp/_bundled/patterns.json"
+"taxonomy.json" = "awesome_jev_mcp/_bundled/taxonomy.json"
+"collections.json" = "awesome_jev_mcp/_bundled/collections.json"

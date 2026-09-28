@@ -928,6 +928,23 @@ addresses first and the raw ones as the fallback; the files under `api/` exist
 only on Pages. A file missing there answers with the site's HTML 404 page, not
 JSON: Pages has one 404 page per site.
 
+Since 2026-09-28, the MCP server loads the same five files the site's page
+does: `taxonomy.json` and `collections.json` joined `catalog.json`,
+`compat.json` and `patterns.json` in `data.py`'s ladder, in the sdist and in
+the wheel's bundled snapshot, and a test holds the server's list equal to
+`assemble_site.py`'s. Until then a caveat reached an agent as a bare key such
+as `code-untested`, whose meaning lived in `taxonomy.json`, which the server
+never loaded, and the curated collections, each pick with an editorial
+reason and caution, were invisible to it. Rows still carry the bare keys;
+`search_examples` and `get_example` now end any answer holding flagged rows
+with `caveat_glossary`, the English description of each flag among those rows
+and of no other. Four resources serve the rest: `awesome-jev://flags`,
+`awesome-jev://collections`, `awesome-jev://collections/{id}` and
+`awesome-jev://patterns/{key}`, the last holding the same rows in the same
+order as the site's `api/v1/patterns/<key>.json` (one function in
+`query.py` builds both). The first fetch of a fresh install now asks GitHub
+for five files rather than three, and a revalidation costs five 304s.
+
 Since 2026-09-27, a pull request no longer has to carry generated files, and
 `lint` no longer fails a pull request because one is stale. Every pull request
 that added a row used to change twenty-odd generated files, so any two open at

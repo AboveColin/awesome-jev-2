@@ -70,10 +70,23 @@ If the MCP server is available, prefer it over guessing:
 
 - `search_examples(pattern=…, language=…, question_type=…)` — worked examples of
   a specific decision
+- `get_example(slug)` — one row in full: its sources, the file its claim was
+  read in (`evidence`) and every caveat flag
 - `check_model_string(model)` — before writing any model string
 - `compatibility(surface=…)` — before porting between gateways
 - `list_patterns()` — the taxonomy, including which decisions nobody has
   published an example of
+
+It also serves resources, for a client that reads them:
+
+- `awesome-jev://flags` — what each caveat flag means. Rows carry bare flag
+  keys; every answer holding flagged rows ends with a `caveat_glossary` for
+  those flags
+- `awesome-jev://collections`, then `awesome-jev://collections/{id}` — short
+  editorial paths through the catalogue (a first call, projects to adapt,
+  measurements), each pick with a reason and a caution
+- `awesome-jev://patterns/{key}` — every row filed under one decision pattern,
+  caveated rows included, with a link to that pattern's "when not to" section
 
 Every result carries a `data` line saying where the catalogue came from and how
 current it is. If it begins `STALE`, the server could not reach GitHub and is

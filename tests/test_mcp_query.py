@@ -378,10 +378,11 @@ class ServerWiringTest(unittest.TestCase):
         changed = {"pattern": "safety-gating", "kind": "project", "language": "python", "question_type": "choice",
                    "platform": "langchain", "query": "router", "official_only": True, "with_code_only": True,
                    "include_non_jev": True, "limit": 3}
-        default = query.search(self.server.CATALOG, self.server.PATTERNS)
+        s = self.server
+        default = query.search(s.CATALOG, s.PATTERNS, s.FLAGS)
         for name, value in changed.items():
             with self.subTest(argument=name):
-                expected = query.search(self.server.CATALOG, self.server.PATTERNS, **{name: value})
+                expected = query.search(s.CATALOG, s.PATTERNS, s.FLAGS, **{name: value})
                 self.assertNotEqual(expected, default, "this value does not exercise the argument")
                 self.assertEqual(self.server.search_examples(**{name: value}), self.stamped(expected))
 
@@ -392,7 +393,7 @@ class ServerWiringTest(unittest.TestCase):
         # before handing them over would answer differently from query.py.
         for asked in (slug, "zzz-none", f" {slug.upper()} "):
             with self.subTest(slug=asked):
-                self.assertEqual(s.get_example(asked), self.stamped(query.find_example(s.CATALOG, asked)))
+                self.assertEqual(s.get_example(asked), self.stamped(query.find_example(s.CATALOG, asked, s.FLAGS)))
         self.assertEqual(s.list_patterns(), self.stamped(query.pattern_counts(s.CATALOG, s.PATTERNS)))
         for surface in ("", "cloudflare", "zzz", " Cloudflare "):
             with self.subTest(surface=surface):

@@ -11,7 +11,10 @@ Three design choices worth knowing:
 * **Caveats are never optional.** Every result carries its flags. The point of
   this catalogue is that `not-jev`, `shadow-mode-only` and `vendor-reported`
   travel with the row; an agent that got a recommendation without them would be
-  worse informed than one that read the README.
+  worse informed than one that read the README. Rows keep the bare keys, and
+  every answer holding flagged rows ends with `caveat_glossary`: what each flag
+  among them means, from taxonomy.json (the whole list is the
+  `awesome-jev://flags` resource).
 * **Results are trimmed by default.** An agent pays for every token of a tool
   result, so `search_examples` returns compact rows and `get_example` returns
   the whole thing when one row actually matters.
@@ -23,13 +26,20 @@ Three design choices worth knowing:
   beats the cache, and the snapshot in the wheel is the last resort rather than
   the default.
 
+Beside the tools, four resources hand an agent what it would otherwise piece
+together from several calls: `awesome-jev://flags` (what each caveat means),
+`awesome-jev://collections` and `awesome-jev://collections/{id}` (the curated
+editorial entry points, each pick with a reason and a caution), and
+`awesome-jev://patterns/{key}` (every row filed under one decision pattern, as
+the site's api/v1 file for it holds them).
+
 Unlike the rest of this repository, this file has a dependency. Hand-rolling
 stdio JSON-RPC would keep the zero-dependency streak, but a subtly broken MCP
 server is worse than a dependency. The dependency stops at this file: it
-registers the tools and stamps where the data came from, and what each tool
-answers is `query.py`, standard library only like `data.py`. The catalogue's
-own CI tests those two directly and imports this module only in tests that
-stub `mcp` out — the dependency-free build pipeline is untouched.
+registers the tools and resources and stamps where the data came from, and what
+each one answers is `query.py`, standard library only like `data.py`. The
+catalogue's own CI tests those two directly and imports this module only in
+tests that stub `mcp` out — the dependency-free build pipeline is untouched.
 
 Run:
     pip install awesome-jev-mcp
@@ -46,6 +56,7 @@ from __future__ import annotations
 
 import functools
 import importlib.metadata
+import json
 
 from typing import Any, Literal
 
@@ -53,10 +64,14 @@ from mcp.server import MCPServer
 
 from .data import load
 from .query import (
+    collection_detail,
+    collection_list,
     compat_lookup,
     find_example,
+    flag_list,
     model_string_check,
     pattern_counts,
+    pattern_listing,
     search,
 )
 
@@ -64,7 +79,9 @@ from .query import (
 # here before they moved to query.py).
 from .query import DISQUALIFYING, accepted as _accepted, compact as _compact  # noqa: F401
 
-CATALOG, COMPAT, PATTERNS, PROVENANCE = load()
+CATALOG, COMPAT, PATTERNS, TAXONOMY, COLLECTIONS, PROVENANCE = load()
+# What each caveat key means, for caveat_glossary and awesome-jev://flags.
+FLAGS = TAXONOMY["flags"]
 
 
 def _version() -> str:
@@ -112,6 +129,25 @@ def tool(fn):
     return mcp.tool()(wrapper)
 
 
+def resource(uri: str):
+    """Register an MCP resource at `uri`: the function's answer as JSON text,
+    stamped with the same `data` line as every tool result (see `tool`).
+
+    Compact separators, as on the site's api/v1 files: an agent pays for every
+    byte, and a pattern's rows run to hundreds.
+    """
+
+    def register(fn):
+        @functools.wraps(fn)
+        def wrapper(*args: Any, **kwargs: Any) -> str:
+            answer = {**fn(*args, **kwargs), "data": PROVENANCE.line()}
+            return json.dumps(answer, ensure_ascii=False, separators=(",", ":"))
+
+        return mcp.resource(uri, mime_type="application/json")(wrapper)
+
+    return register
+
+
 @tool
 def search_examples(
     pattern: str = "",
@@ -133,7 +169,8 @@ def search_examples(
     By default this excludes rows flagged `not-jev` (independent
     reimplementations that never call the API) and `shadow-mode-only` (wired in
     but deliberately inert), because neither answers "how do I do this". Pass
-    include_non_jev=True to see them.
+    include_non_jev=True to see them. Each row's `caveats` are bare flag keys;
+    `caveat_glossary` at the end says what the ones in this answer mean.
 
     Args:
         pattern: a decision pattern key, e.g. "safety-gating"
@@ -152,6 +189,7 @@ def search_examples(
     return search(
         CATALOG,
         PATTERNS,
+        FLAGS,
         pattern=pattern,
         kind=kind,
         language=language,
@@ -214,10 +252,13 @@ def get_example(slug: str) -> dict[str, Any]:
     call, nobody read it, and search_examples(question_type=...) never matches
     on it.
 
+    `caveat_glossary`, after the row's own fields, says in English what each
+    of its `flags` means (awesome-jev://flags lists them all).
+
     Args:
         slug: the row's stable id, as returned by search_examples
     """
-    return find_example(CATALOG, slug)
+    return find_example(CATALOG, slug, FLAGS)
 
 
 @tool
@@ -256,6 +297,53 @@ def check_model_string(model: str) -> dict[str, Any]:
         model: the string you are about to send, e.g. "typesafe-ai/jev"
     """
     return model_string_check(COMPAT, model)
+
+
+@resource("awesome-jev://flags")
+def flags() -> dict[str, Any]:
+    """What each caveat flag on a row means, in English and Chinese.
+
+    Rows carry the bare keys (`caveats` in search results, `flags` in
+    get_example). `not_examples` names the two that mean a row is not an
+    example of deciding with Jev; search_examples leaves those rows out unless
+    asked. `zh_machine` marks Chinese a model wrote.
+    """
+    return flag_list(TAXONOMY)
+
+
+@resource("awesome-jev://collections")
+def collections() -> dict[str, Any]:
+    """The curated entry points: first call, projects to adapt, measurements.
+
+    Each is a short editorial path through the catalogue, with how many rows
+    it holds and the awesome-jev://collections/{id} resource that lists them.
+    A pick is editorial relevance, not a runtime certification.
+    """
+    return collection_list(COLLECTIONS)
+
+
+@resource("awesome-jev://collections/{id}")
+def collection(id: str) -> dict[str, Any]:
+    """One curated path, in its own order: each pick's reason and caution
+    (English and Chinese) beside the row itself, caveats included, then
+    `caveat_glossary`. `id` is one listed by awesome-jev://collections, e.g.
+    "first-call".
+    """
+    return collection_detail(COLLECTIONS, CATALOG, FLAGS, id)
+
+
+@resource("awesome-jev://patterns/{key}")
+def pattern(key: str) -> dict[str, Any]:
+    """Every row filed under one decision pattern, shaped and ordered as
+    search_examples returns rows, then `caveat_glossary`.
+
+    Nothing is filtered: rows whose caveats include one of `not_examples` are
+    there too, so the count is the catalogue's. `when_not_to_use` links the
+    pattern's section of docs/patterns.md. `key` is a key from list_patterns(),
+    e.g. "safety-gating"; `overview` is by far the largest, hundreds of rows,
+    so search_examples with filters is the cheaper way in there.
+    """
+    return pattern_listing(CATALOG, PATTERNS, FLAGS, key)
 
 
 if __name__ == "__main__":

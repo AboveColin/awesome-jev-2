@@ -1,13 +1,15 @@
-"""What the MCP server's tools answer, as plain functions over the data they
-are handed.
+"""What the MCP server's tools and resources answer, as plain functions over
+the data they are handed.
 
-server.py registers the tools and stamps every result with where the data came
-from; everything a tool decides is here — which rows count as examples, which
-caveats travel with a row, the order results come in, whether a model string is
-real. Standard library only and no module state: each function takes the
-catalogue, the taxonomy or compat.json as an argument. That is what lets the
+server.py registers the tools and resources and stamps every result with where
+the data came from; everything they decide is here — which rows count as
+examples, which caveats travel with a row and what each one means, the order
+results come in, whether a model string is real. Standard library only and no
+module state: each function takes the catalogue, the taxonomy, the curated
+collections or compat.json as an argument. That is what lets the
 repository's CI, which installs nothing, test the answers on a handful of rows
-(tests/test_mcp_query.py) without `mcp` and without the network.
+(tests/test_mcp_query.py, tests/test_mcp_resources.py) without `mcp` and
+without the network.
 """
 
 from __future__ import annotations
@@ -36,6 +38,25 @@ PATTERNS_NOTE = (
     "For safety-gating in particular: a probabilistic gate is defence in depth, "
     "never a security boundary."
 )
+
+FLAGS_NOTE = (
+    "What each caveat flag means. A row carries the keys (`caveats` in search results and "
+    "resources, `flags` in get_example), and every answer holding flagged rows adds "
+    "caveat_glossary: the English description of each flag among them. A row flagged with "
+    "one of not_examples is not an example of deciding with Jev, and search_examples leaves "
+    "it out by default. zh_machine marks Chinese a model wrote."
+)
+
+COLLECTIONS_NOTE = (
+    "Curated entry points: editorial paths through the catalogue, each pick with why it is "
+    "there (reason) and what to watch for (caution). A pick is editorial relevance, not a "
+    "runtime certification; nothing here was executed."
+)
+
+# Where each pattern's "when NOT to use this" lives: docs/patterns.md, one
+# `## <key>` section per pattern (scripts/lint_docs.py makes sure of it), so
+# `#<key>` is the section's anchor on GitHub.
+PATTERNS_DOC = "https://github.com/kydlikebtc/awesome-jev/blob/main/docs/patterns.md"
 
 NOUL_WARNING = (
     "`noul` answers carry no confidence field on any surface — the probability "
@@ -81,6 +102,25 @@ def compact(entry: dict) -> dict[str, Any]:
     return out
 
 
+def caveat_glossary(flags: list[dict], seen) -> dict[str, str]:
+    """{flag: its English description} for each flag in `seen` (an iterable of
+    rows' flag lists), in taxonomy.json's order. `flags` is taxonomy.json's
+    `flags`. The rows keep their bare keys; this says once what they mean."""
+    present = {flag for group in seen for flag in group}
+    return {f["key"]: f["blurb_en"] for f in flags if f["key"] in present}
+
+
+def _with_glossary(answer: dict, flags: list[dict], seen) -> dict:
+    """`answer` with caveat_glossary last, or unchanged when no flag is present."""
+    glossary = caveat_glossary(flags, seen)
+    return {**answer, "caveat_glossary": glossary} if glossary else answer
+
+
+def when_not_to_use(key: str) -> str:
+    """The docs/patterns.md section for pattern `key`, with its "when NOT to use"."""
+    return f"{PATTERNS_DOC}#{key}"
+
+
 def _haystack(entry: dict) -> str:
     """What a free-text query is matched against."""
     return " ".join(
@@ -114,6 +154,7 @@ def sort_key(entry: dict) -> tuple:
 def search(
     rows: list[dict],
     patterns: list[dict],
+    flags: list[dict] = (),
     *,
     pattern: str = "",
     kind: str = "",
@@ -127,8 +168,9 @@ def search(
     limit: int = 10,
 ) -> dict[str, Any]:
     """search_examples' answer: `rows` filtered, ordered by sort_key() and cut
-    to `limit` (clamped to 1..MAX_LIMIT), each as compact() shapes it. An
-    unknown `pattern` answers with the valid keys instead."""
+    to `limit` (clamped to 1..MAX_LIMIT), each as compact() shapes it, then the
+    caveat_glossary of the flags those rows carry (`flags` is taxonomy.json's).
+    An unknown `pattern` answers with the valid keys instead."""
     limit = max(1, min(int(limit), MAX_LIMIT))
 
     if pattern:
@@ -165,20 +207,23 @@ def search(
         rows = [e for e in rows if all(t in _haystack(e) for t in terms)]
 
     rows = sorted(rows, key=sort_key)
-    return {
+    shown = rows[:limit]
+    answer = {
         "total_matching": len(rows),
-        "returned": min(len(rows), limit),
-        "results": [compact(e) for e in rows[:limit]],
+        "returned": len(shown),
+        "results": [compact(e) for e in shown],
         "note": SEARCH_NOTE,
     }
+    return _with_glossary(answer, flags, (e.get("flags") or [] for e in shown))
 
 
-def find_example(rows: list[dict], slug: str) -> dict[str, Any]:
-    """get_example's answer: the row itself, or up to five slugs containing
-    the one asked for."""
+def find_example(rows: list[dict], slug: str, flags: list[dict] = ()) -> dict[str, Any]:
+    """get_example's answer: the row itself, with the caveat_glossary of its
+    flags after its own fields, or up to five slugs containing the one asked
+    for."""
     for entry in rows:
         if entry["slug"] == slug:
-            return entry
+            return _with_glossary(entry, flags, [entry.get("flags") or []])
     # Sorted rather than taken in file order: the copy that answered may be a
     # checkout mid-edit or an AWESOME_JEV_CATALOG directory, not the sorted file.
     close = sorted(e["slug"] for e in rows if slug.lower() in e["slug"].lower())[:5]
@@ -207,6 +252,91 @@ def pattern_counts(rows: list[dict], patterns: list[dict]) -> dict[str, Any]:
             for p in patterns
         ],
         "note": PATTERNS_NOTE,
+    }
+
+
+def flag_list(taxonomy: dict) -> dict[str, Any]:
+    """The awesome-jev://flags resource: taxonomy.json's flags as written there
+    (key, English and Chinese label and description), in its order."""
+    return {"flags": taxonomy["flags"], "not_examples": sorted(DISQUALIFYING), "note": FLAGS_NOTE}
+
+
+def collection_uri(collection_id: str) -> str:
+    return f"awesome-jev://collections/{collection_id}"
+
+
+def collection_list(collections: list[dict]) -> dict[str, Any]:
+    """The awesome-jev://collections resource: each curated path, how many rows
+    it picks and the resource that lists them."""
+    return {
+        "collections": [
+            {
+                **{k: v for k, v in c.items() if k != "entries"},
+                "entries": len(c["entries"]),
+                "uri": collection_uri(c["id"]),
+            }
+            for c in collections
+        ],
+        "note": COLLECTIONS_NOTE,
+    }
+
+
+def collection_detail(
+    collections: list[dict], rows: list[dict], flags: list[dict], collection_id: str
+) -> dict[str, Any]:
+    """The awesome-jev://collections/{id} resource: one curated path in its own
+    order, each pick's reason and caution beside its row as compact() shapes
+    it (None if the catalogue served lacks the row), then the caveat_glossary."""
+    for c in collections:
+        if c["id"] == collection_id:
+            by_slug = {e["slug"]: e for e in rows}
+            picked = [by_slug.get(item["slug"]) for item in c["entries"]]
+            answer = {
+                **{k: v for k, v in c.items() if k != "entries"},
+                "entries": [
+                    {**item, "row": compact(row) if row else None} for item, row in zip(c["entries"], picked)
+                ],
+                "note": COLLECTIONS_NOTE,
+            }
+            return _with_glossary(answer, flags, (row.get("flags") or [] for row in picked if row))
+    return {
+        "error": f"no collection {collection_id!r}",
+        "valid_collections": [c["id"] for c in collections],
+        "hint": "read awesome-jev://collections",
+    }
+
+
+def pattern_rows(rows: list[dict], key: str) -> list[dict]:
+    """Every row filed under pattern `key`, caveated ones included, in sort_key()
+    order and shaped by compact(): the rows of awesome-jev://patterns/{key} and
+    of the site's api/v1/patterns/<key>.json alike."""
+    return [compact(e) for e in sorted((e for e in rows if key in e["patterns"]), key=sort_key)]
+
+
+def pattern_listing(rows: list[dict], patterns: list[dict], flags: list[dict], key: str) -> dict[str, Any]:
+    """The awesome-jev://patterns/{key} resource: the pattern, where its "when
+    NOT to use" is, and every row filed under it (pattern_rows()), then the
+    caveat_glossary. Nothing is filtered, so the count is the catalogue's; rows
+    whose caveats include one of not_examples are not examples of deciding
+    with Jev. An unknown key answers with the valid ones."""
+    for p in patterns:
+        if p["key"] == key:
+            entries = pattern_rows(rows, key)
+            answer = {
+                "pattern": key,
+                "name": p["en"],
+                "description": p["blurb_en"],
+                "when_not_to_use": when_not_to_use(key),
+                "examples": len(entries),
+                "not_examples": sorted(DISQUALIFYING),
+                "note": SEARCH_NOTE,
+                "entries": entries,
+            }
+            return _with_glossary(answer, flags, (e.get("caveats") or [] for e in entries))
+    return {
+        "error": f"unknown pattern {key!r}",
+        "valid_patterns": sorted(p["key"] for p in patterns),
+        "hint": "call list_patterns() for what each one means",
     }
 
 

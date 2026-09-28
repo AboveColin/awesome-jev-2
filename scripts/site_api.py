@@ -99,8 +99,8 @@ def dump(payload: dict, *, pretty: bool = False) -> str:
 
 
 def pattern_rows(catalog: list[dict], key: str) -> list[dict]:
-    rows = sorted((e for e in catalog if key in e["patterns"]), key=query.sort_key)
-    return [query.compact(e) for e in rows]
+    """The MCP server's awesome-jev://patterns/{key} rows, one definition."""
+    return query.pattern_rows(catalog, key)
 
 
 def api_files(
