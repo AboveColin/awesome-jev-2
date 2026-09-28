@@ -113,6 +113,12 @@ class ShapeTest(unittest.TestCase):
 
     def test_it_links_the_patterns_when_not_to_use_section(self):
         self.assertIn("https://github.com/kydlikebtc/awesome-jev/blob/main/docs/patterns.md#tool-selection", text())
+        # Not every section of docs/patterns.md has a "When not to" paragraph
+        # (human-escalation, the triage patterns and content-scoring have a
+        # note instead), so the prompt sends the agent to the section, not to a
+        # paragraph it may not find.
+        self.assertIn("where the section has one", text())
+        self.assertIn("Read the pattern's section of docs/patterns.md first", text())
 
     def test_an_unknown_pattern_names_the_valid_ones_and_nothing_else(self):
         body = text("nope")
@@ -142,6 +148,15 @@ class SurfaceTest(unittest.TestCase):
         self.assertIn("`noul` answers carry no confidence field", part)
         self.assertNotIn("Gate Router", part)
         self.assertIn(" on Cloud Workers from the material above", text(surface="cloud"))
+
+    def test_chinese_fields_are_left_to_compatibility(self):
+        compat = {**COMPAT, "platforms": [{**COMPAT["platforms"][2], "notes": "Wrapped.", "notes_zh": "包在里面。"}]}
+        body = prompts.wire_pattern_text(ROWS, PATTERNS, compat, TAXONOMY, EXAMPLES, pattern="tool-selection",
+                                         surface="cloud")
+        part = section(body, "The surface")
+        self.assertIn("- notes: Wrapped.", part)
+        self.assertNotIn("notes_zh", part)
+        self.assertNotIn("包在里面", body)
 
     def test_a_fragment_can_name_several(self):
         part = section(text(surface="r"), "The surface")
@@ -230,6 +245,21 @@ class SkeletonTest(unittest.TestCase):
         code = "\n".join(lines[opening + 1 + len(header):]).split("\n`````", 1)[0]
         self.assertEqual(code, EXAMPLES["examples"][1]["code"].rstrip("\n"))
         self.assertIn("Also for `tool-selection`: examples/01-many/main.py.", part)
+
+    def test_the_rows_other_caveats_travel_with_its_code(self):
+        flagged = {"examples": [{**EXAMPLES["examples"][1], "flags": ["code-untested", "single-commit", "made-up"]}]}
+        part = section(text(examples=flagged), "Skeleton")
+        said = " ".join(line[2:] for line in part.splitlines() if line.startswith("# "))
+        self.assertIn("carries code-untested: Read, not run.", said)
+        self.assertIn("It also carries single-commit: One commit.", said)
+        self.assertIn("It also carries made-up.", said, "a flag the taxonomy lacks still travels as its key")
+        plain = section(text(), "Skeleton")
+        self.assertNotIn("also carries", plain)
+
+    def test_without_a_language_the_examples_own_sets_the_fence_and_the_comment(self):
+        only_ts = {"examples": [EXAMPLES["examples"][2]]}
+        part = section(text("fan-out", examples=only_ts), "Skeleton")
+        self.assertIn("```typescript\n// awesome-jev: the catalogue records no run of this file.", part)
 
     def test_another_language_gets_its_own_comment_and_what_the_index_records(self):
         part = section(text("fan-out", language="typescript"), "Skeleton")

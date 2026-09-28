@@ -71,14 +71,14 @@ never starts.
 
 Each is JSON with the same `data` line as a tool result. The pattern resource
 holds the same rows, in the same order, as the catalogue site's
-`api/v1/patterns/<key>.json`, plus a link to the pattern's "when not to"
-section in `docs/patterns.md`.
+`api/v1/patterns/<key>.json`, plus a link to the pattern's section of
+`docs/patterns.md`, which holds its "when not to" where one is written.
 
 ## Prompt
 
 `wire_pattern(pattern, language, surface)` puts what a coding agent needs to
 wire one decision into a single message: the pattern's description and a link
-to its "when not to use" section; the surface's model strings, request
+to its section of `docs/patterns.md`; the surface's model strings, request
 envelope, answer field and key variable from `compat.json` (or the surfaces to
 choose from); up to five catalogued rows under the pattern that cite the file
 their code was read in, each linked with its caveats; and, when this

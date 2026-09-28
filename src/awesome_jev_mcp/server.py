@@ -33,8 +33,8 @@ editorial entry points, each pick with a reason and a caution), and
 `awesome-jev://patterns/{key}` (every row filed under one decision pattern, as
 the site's api/v1 file for it holds them). One prompt, `wire_pattern`, puts
 what a coding agent needs to wire one decision into a single message: the
-pattern, where its "when not to" is, one surface's compat.json fields, cited
-rows and the repository's own skeleton for it (`prompts.py`).
+pattern and its section of docs/patterns.md, one surface's compat.json fields,
+cited rows and the repository's own skeleton for it (`prompts.py`).
 
 Unlike the rest of this repository, this file has a dependency. Hand-rolling
 stdio JSON-RPC would keep the zero-dependency streak, but a subtly broken MCP
@@ -361,7 +361,7 @@ def _examples() -> tuple[dict[str, Any] | None, str]:
 def wire_pattern(pattern: str, language: str = "", surface: str = "") -> str:
     """Everything needed to wire one decision pattern with Jev, in one message.
 
-    The pattern's description and a link to its "when not to use" section;
+    The pattern's description and a link to its section of docs/patterns.md;
     compat.json's model strings, request envelope, answer field and key
     variable for the surface; up to five catalogued rows under the pattern
     that cite the file their code was read in, linked, with their caveats; and

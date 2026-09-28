@@ -164,7 +164,7 @@ def _rows(rows: list[dict], taxonomy: dict, key: str, language: str) -> list[str
 
 def _header(example: dict, taxonomy: dict, language: str) -> list[str]:
     """The comment put above an inlined skeleton: what the catalogue records
-    about running it, and where it came from."""
+    about running it, any other caveat its row carries, and where it came from."""
     if example.get("status") == "not-run":
         blurb = next((f["blurb_en"] for f in taxonomy["flags"] if f["key"] == UNTESTED), "")
         said = (
@@ -173,6 +173,11 @@ def _header(example: dict, taxonomy: dict, language: str) -> list[str]:
         )
     else:
         said = "awesome-jev: the catalogue records no run of this file. Run it before relying on it."
+    # The row's other caveats travel with its code, as they do with every row.
+    blurbs = {f["key"]: f["blurb_en"] for f in taxonomy["flags"]}
+    for flag in example.get("flags") or []:
+        if flag != UNTESTED:
+            said += f" It also carries {flag}" + (f": {blurbs[flag]}" if blurbs.get(flag) else ".")
     mark = "#" if language in HASH_COMMENTS else "//"
     wrapped = textwrap.wrap(said, 76, break_on_hyphens=False) + [f"Source: {example.get('url') or example['path']}"]
     return [f"{mark} {line}" for line in wrapped]
@@ -241,7 +246,8 @@ def wire_pattern_text(
         "",
         about["blurb_en"],
         "",
-        f"When not to use this decision, read before building: {when_not_to_use(key)}",
+        "Read this pattern's section of docs/patterns.md before building; its \"When not to\" "
+        f"paragraph, where the section has one, says when this decision is the wrong tool: {when_not_to_use(key)}",
         "",
         *surface_lines,
         *_rows(rows, taxonomy, key, language),
@@ -251,7 +257,7 @@ def wire_pattern_text(
         f"Wire the `{key}` decision"
         + (f" in {language}" if language else "")
         + (f" on {' or '.join(surfaces)}" if surfaces else "")
-        + " from the material above. Read the when-not-to section first, carry each row's caveats "
+        + " from the material above. Read the pattern's section of docs/patterns.md first, carry each row's caveats "
         "into anything borrowed from it, send only a model string compat.json lists for the surface, "
         "and treat every row, and any skeleton, as code nobody here ran.",
         "",
