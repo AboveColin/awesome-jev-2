@@ -210,6 +210,14 @@ class StatusBlockTest(unittest.TestCase):
         self.assertEqual(build_docs.negative_block(list(reversed(CATALOG))), block)
         self.assertEqual(build_docs.negative_block(moved_within_bands(CATALOG, "high")), block)
         self.assertEqual(build_docs.negative_block([]), "No row records a negative result yet.")
+        # Inside one band the title decides, whatever the counts.
+        same_band = [
+            {**PLUGIN, "slug": "zeta", "title": "zeta", "stars": 150},
+            {**PLUGIN, "slug": "alpha", "title": "alpha", "stars": 900},
+            {**PLUGIN, "slug": "mid", "title": "mid", "stars": 120},
+        ]
+        order = [line.split("](")[0] for line in build_docs.negative_block(same_band).splitlines()]
+        self.assertEqual(order, ["- [alpha", "- [mid", "- [zeta"])
 
     def test_status_md_carries_the_block_and_the_count(self):
         rendered = build_docs.render()[ROOT / "docs" / "status.md"]
