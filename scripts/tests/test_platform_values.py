@@ -178,6 +178,28 @@ class OneDefinitionTest(unittest.TestCase):
                 self.assertEqual(found["total_matching"], n)
 
 
+class SharedCasesTest(unittest.TestCase):
+    """The site's rule (site/catalog-core.mjs resolvePlatform, run by
+    scripts/test_catalog_core.mjs) and the server's must match the same rows."""
+
+    def test_the_mcp_rule_passes_the_cases_the_site_passes(self):
+        cases = json.loads((ROOT / "scripts" / "tests" / "platform_cases.json").read_text())
+        query, compat, data = pv.load_query(), cases["compat"], cases["rows"]
+        self.assertGreaterEqual(len(cases["cases"]), 12)
+        for case in cases["cases"]:
+            with self.subTest(asked=case["asked"]):
+                found = query.resolve_platform(compat, data, case["asked"])
+                if case.get("unknown"):
+                    self.assertIsNone(found)
+                    continue
+                values, about = found
+                surface = next((p["id"] for p in compat["platforms"] if p["name"] == about.get("surface")), None)
+                self.assertEqual(surface, case["surface"])
+                self.assertEqual(values, case["values"])
+                self.assertEqual(about.get("granularity") == "coarse", case["coarse"])
+                self.assertEqual([e["slug"] for e in query.platform_rows(data, values)], case["slugs"])
+
+
 class LintWiringTest(unittest.TestCase):
     def test_check_all_holds_the_real_files_to_the_rules(self):
         schema = json.loads((ROOT / "schema" / "entry.schema.json").read_text())

@@ -954,6 +954,7 @@
           <div class="filter-row">
             <select id="kind" aria-label="Filter by resource kind"></select>
             <select id="langf" aria-label="Filter by programming language"></select>
+            <select id="platf" aria-label="Filter by platform"></select>
             <select id="sort" aria-label="Sort entries"></select>
             <div class="r2" id="tgs"></div>
             <button type="button" class="reset" id="reset" data-i="reset" hidden></button>
@@ -998,7 +999,7 @@
     </footer>
 
     <script type="module">
-      import { SORTS, verification, evidenceKind, evidenceUrl, isIndependentReport, compareEntries, matchesEntry, queryFromState, shareUrl, stateFromQuery, summaryMarks, notIndexedByPattern, primitiveLayers, repositoryFacts, siblingCitations } from "./catalog-core.mjs";
+      import { SORTS, verification, evidenceKind, evidenceUrl, isIndependentReport, compareEntries, matchesEntry, queryFromState, shareUrl, stateFromQuery, summaryMarks, notIndexedByPattern, primitiveLayers, repositoryFacts, siblingCitations, platformRows, resolvePlatform, platformChoices } from "./catalog-core.mjs";
       const STR = {
         en: {
           eyebrow: "Jev Decision Atlas · community index",
@@ -1082,6 +1083,15 @@
           c_asof: "Verified on",
           c_open: "Open the linked doc before you ship.",
           c_full: "Full page with the corrections table",
+          c_examples: "Catalogued examples",
+          c_examples_about: "Rows whose platforms record a value compat.json lists for this surface (catalog_platforms). Coarse: that value also stands for another route, so a row counted here may use it.",
+          c_coarse: "coarse",
+          platform: "All platforms",
+          platform_surfaces: "Surfaces in the compatibility table",
+          platform_other: "Other values rows record",
+          platform_coarse: "Coarse match: these rows record {values}, which does not say which route to the API a row takes, so some may use another route.",
+          platform_shared: "The same value also stands for {names}.",
+          platform_listed: "compat.json lists it for {names}.",
         },
         zh: {
           eyebrow: "Jev Decision Atlas · 社区目录",
@@ -1171,6 +1181,16 @@
           c_asof: "核实于",
           c_open: "上线前请先打开对应文档核对。",
           c_full: "含纠错对照表的完整页面",
+          // The Chinese of the platform-filter and catalogued-example strings below is model-written; a person who revises it drops this note.
+          c_examples: "目录中的示例",
+          c_examples_about: "platforms 中记录了 compat.json 为此接入面所列取值（catalog_platforms）的行。粗粒度：该取值也代表另一条路径，因此这里计入的行可能走的是那条路径。",
+          c_coarse: "粗粒度",
+          platform: "全部平台",
+          platform_surfaces: "兼容性表中的接入面",
+          platform_other: "行记录的其他取值",
+          platform_coarse: "粗粒度匹配：这些行记录的是 {values}，从中看不出一行经哪条路径调用 API，其中一些可能走的是别的路径。",
+          platform_shared: "同一取值也对应 {names}。",
+          platform_listed: "compat.json 为 {names} 列出了这个取值。",
         },
       };
 
@@ -1268,6 +1288,7 @@
         pattern: "",
         kind: "",
         lang: "",
+        platform: "",
         code: false,
         off: false,
         noflag: false,
@@ -1298,6 +1319,7 @@
           .forEach((e) => (e.placeholder = S()[e.dataset.ip]));
         document.getElementById("kind").setAttribute("aria-label", S().resource);
         document.getElementById("langf").setAttribute("aria-label", S().language);
+        document.getElementById("platf").setAttribute("aria-label", S().platform);
         document.getElementById("sort").setAttribute("aria-label", L === "zh" ? "排序方式" : "Sort entries");
         document.getElementById("journeys").setAttribute("aria-label", L === "zh" ? "精选入口" : "Curated starting points");
         document.getElementById("lang").textContent =
@@ -1392,6 +1414,21 @@
           ]),
           S().language,
         );
+        // compat.json's surfaces first (each standing for the values it lists),
+        // then the values rows record that no surface lists. A value reached
+        // only by a link (?platform=vercel-ai-gateway) is added so the select
+        // can show it.
+        const choices = platformChoices(COMPAT, DATA);
+        const known = [...choices.surfaces.map(c => c.id), ...choices.other.map(c => c.value)];
+        const linked = st.platform && !known.includes(st.platform) ? platformFilter() : null;
+        const extra = st.platform && !known.includes(st.platform)
+          ? [{ value: st.platform, n: linked ? platformRows(DATA, linked.values).length : 0 }] : [];
+        const option = (value, text, n) => `<option value="${esc(value)}">${esc(text)} · ${n}</option>`;
+        const pf = document.getElementById("platf");
+        pf.innerHTML = `<option value="">${S().platform}</option>`
+          + (choices.surfaces.length ? `<optgroup label="${esc(S().platform_surfaces)}">${choices.surfaces.map(c => option(c.id, c.name, c.n)).join("")}</optgroup>` : "")
+          + `<optgroup label="${esc(S().platform_other)}">${[...choices.other, ...extra].map(c => option(c.value, c.value, c.n)).join("")}</optgroup>`;
+        pf.value = st.platform;
 
         document.getElementById("tgs").innerHTML = [
           ["code", "t_code", ""],
@@ -1417,11 +1454,26 @@
         );
       }
 
-      function ok(e) {
+      // What the platform filter resolved to (catalog-core resolvePlatform), or null.
+      const platformFilter = () => st.platform ? resolvePlatform(COMPAT, DATA, st.platform) : null;
+
+      function ok(e, platform = platformFilter()) {
         const selected = collection();
         const slugs = selected ? new Set(selected.entries.map(x => x.slug)) : null;
         const labels = e.patterns.map(k => (PAT[k] || []).join(" ")).join(" ");
-        return matchesEntry(e, st, slugs, labels);
+        return matchesEntry(e, st, slugs, labels, platform ? platform.values : null);
+      }
+
+      // Under the results heading when the platform filter matches coarsely:
+      // what the rows record, and which other surfaces the value stands for.
+      function platformNote(platform) {
+        if (!platform || !platform.coarse) return "";
+        const sep = L === "zh" ? "、" : ", ";
+        const values = platform.values.map(v => `<code>${esc(v)}</code>`).join(sep);
+        const shared = platform.others.length
+          ? (L === "zh" ? "" : " ") + S()[platform.surface ? "platform_shared" : "platform_listed"].replace("{names}", esc(platform.others.map(p => p.name).join(sep)))
+          : "";
+        return `<p class="platform-note">${S().platform_coarse.replace("{values}", values)}${shared}</p>`;
       }
 
       const seenIds = new Set();
@@ -1526,7 +1578,8 @@
         document.querySelectorAll("[data-collection]").forEach(b => {
           b.setAttribute("aria-pressed", b.dataset.collection ? st.collection === b.dataset.collection : !st.collection && !st.entry);
         });
-        const hits = DATA.filter(ok);
+        const platform = platformFilter();
+        const hits = DATA.filter(e => ok(e, platform));
         const selected = collection();
         const out = document.getElementById("out");
         document.getElementById("hits").innerHTML = `<b>${hits.length}</b> / ${DATA.length} ${S().shown}`;
@@ -1534,8 +1587,8 @@
         // since they can sit several "show more" pages down.
         const unindexed = st.pattern === "overview" && !st.entry ? hits.filter(notIndexedByPattern).length : 0;
         const headingNote = selected ? local(selected, "description") : st.pattern ? pdesc(st.pattern) + (unindexed ? (L === "zh" ? "" : " ") + S().unindexed_last.replace("{n}", unindexed) : "") : "";
-        document.getElementById("results-heading").innerHTML = `<h2>${esc(st.entry ? S().entry_view : selected ? local(selected, "title") : st.pattern ? lbl(PAT, st.pattern) : S().browse)}</h2>${selected || st.pattern ? `<p>${esc(headingNote)}</p>` : ""}`;
-        const active = Boolean(st.entry || st.q || st.pattern || st.kind || st.lang || st.collection || st.code || st.off || st.noflag || st.indep);
+        document.getElementById("results-heading").innerHTML = `<h2>${esc(st.entry ? S().entry_view : selected ? local(selected, "title") : st.pattern ? lbl(PAT, st.pattern) : S().browse)}</h2>${selected || st.pattern ? `<p>${esc(headingNote)}</p>` : ""}${st.entry ? "" : platformNote(platform)}`;
+        const active = Boolean(st.entry || st.q || st.pattern || st.kind || st.lang || st.platform || st.collection || st.code || st.off || st.noflag || st.indep);
         document.getElementById("reset").hidden = !active;
         if (!hits.length) {
           out.innerHTML = `<div class="empty"><p>${S().empty}</p><p>${S().empty_help}</p><button class="more" id="empty-reset">${S().reset}</button></div>`;
@@ -1575,7 +1628,7 @@
       }
 
       function resetFilters() {
-        for (const key of ["q", "entry", "pattern", "kind", "lang", "collection"]) st[key] = "";
+        for (const key of ["q", "entry", "pattern", "kind", "lang", "platform", "collection"]) st[key] = "";
         for (const key of ["code", "off", "noflag", "indep"]) st[key] = false;
         document.getElementById("q").value = "";
       }
@@ -1603,7 +1656,7 @@
         render();
         syncUrl();
       };
-      for (const [id, key] of [["kind", "kind"], ["langf", "lang"], ["sort", "sort"]]) {
+      for (const [id, key] of [["kind", "kind"], ["langf", "lang"], ["platf", "platform"], ["sort", "sort"]]) {
         document.getElementById(id).onchange = e => { st.entry = ""; st[key] = e.target.value; limit = 24; render(); syncUrl(); };
       }
       document.getElementById("clr").onclick = () => { st.pattern = ""; refresh(); };
@@ -1808,13 +1861,33 @@
               .join("")}</tbody>
           </table>
           <h2>${S().c_note}</h2>
-          <table class="tbl"><tbody>${COMPAT.platforms
+          <table class="tbl">
+            <thead><tr><th>${S().c_surface}</th><th>${S().c_note}</th><th title="${esc(S().c_examples_about)}">${S().c_examples}</th></tr></thead>
+            <tbody>${COMPAT.platforms
             .map(
               (p) =>
-                `<tr><td class="k">${esc(p.name)}</td><td class="wrap">${esc(i ? p.notes_zh || p.notes : p.notes)}</td></tr>`,
+                `<tr><td class="k">${esc(p.name)}</td><td class="wrap">${esc(i ? p.notes_zh || p.notes : p.notes)}</td><td class="k">${examplesCell(p)}</td></tr>`,
             )
             .join("")}</tbody></table>
           <p><a href="${REPO}/blob/main/docs/compatibility.md">${S().c_full} ↗</a></p>`;
+        el.querySelectorAll("a[data-platform]").forEach(a => a.onclick = e => {
+          e.preventDefault();
+          resetFilters();
+          st.platform = a.dataset.platform;
+          setView("catalog");
+          refresh();
+        });
+      }
+
+      // The notes table's last column: how many rows record a value the surface
+      // lists (catalog_platforms), linking them in the catalogue, as the
+      // generated column in docs/compatibility.md does.
+      function examplesCell(p) {
+        const values = p.catalog_platforms || [];
+        if (!values.length) return '<span class="dash">—</span>';
+        const n = platformRows(DATA, values).length;
+        const coarse = p.granularity === "coarse" ? ` <span class="dash" title="${esc(S().c_examples_about)}">(${S().c_coarse})</span>` : "";
+        return `<a href="?platform=${encodeURIComponent(p.id)}&lang=${L}" data-platform="${esc(p.id)}">${n}</a> · ${values.map(v => `<code>${esc(v)}</code>`).join(", ")}${coarse}`;
       }
 
       function loadCompat() {
@@ -1863,8 +1936,11 @@
         getJson("taxonomy.json"),
         getJson("stats.json"),
         getJson("collections.json"),
+        // The platform filter reads compat.json's surfaces; the page works without it.
+        getJson("compat.json").catch(() => null),
       ])
-        .then(([d, patterns, taxonomy, stats, collections]) => {
+        .then(([d, patterns, taxonomy, stats, collections, compat]) => {
+          if (compat) COMPAT = compat;
           COLLECTIONS = collections.collections;
           STATS = stats;
           PAT = labelsFrom(patterns.patterns, true);

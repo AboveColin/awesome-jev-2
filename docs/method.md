@@ -996,7 +996,10 @@ does not show. The last table of `docs/compatibility.md` gained a generated
 `search_examples(platform=…)` takes a surface id or a recorded value, matched
 whole, says what it matched and whether coarsely, and answers anything else
 with the valid ones. One function, in the MCP package's `query.py`, decides
-what a platform matches for all three. `check_model_string` also gives, for a
+what a platform matches for all three. The site's catalogue gained a platform
+filter, `?platform=` in its address, taking a surface id or a recorded value by
+the same rule in `site/catalog-core.mjs`, which both test suites hold to the
+server's on one set of cases; its Compatibility view gained the same column. `check_model_string` also gives, for a
 string `compat.json` records as wrong, that entry's own reason.
 
 Since 2026-09-27, a pull request no longer has to carry generated files, and

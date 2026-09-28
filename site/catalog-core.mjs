@@ -110,6 +110,55 @@ export function evidenceUrl(entry) {
   return null;
 }
 
+// How compat.json's surfaces meet the catalogue: each surface lists in
+// `catalog_platforms` the values rows record in `platforms` for it, and says
+// `granularity: "coarse"` when such a value does not tell it apart from
+// another route. A platform filter is a surface id, standing for the values it
+// lists, or a value rows record, standing for itself; matched whole, ignoring
+// case, never as a fragment. src/awesome_jev_mcp/query.py resolve_platform()
+// is the same rule for the MCP server and docs/compatibility.md.
+export const COARSE = "coarse";
+
+const surfaceValues = surface => surface.catalog_platforms || [];
+
+export function platformRows(entries, values) {
+  const wanted = new Set(values);
+  return entries.filter(e => (e.platforms || []).some(p => wanted.has(p)));
+}
+
+// {surface: the compat.json surface or null, values: what it matches,
+// coarse, others: the other surfaces a coarse match may stand for}, or null
+// when `asked` names neither a surface nor a value.
+export function resolvePlatform(compat, entries, asked) {
+  const key = String(asked || "").trim().toLowerCase();
+  if (!key) return null;
+  const surfaces = compat?.platforms || [];
+  const surface = surfaces.find(p => String(p.id || "").toLowerCase() === key);
+  if (surface) {
+    const values = surfaceValues(surface);
+    const others = surfaces.filter(p => p !== surface && surfaceValues(p).some(v => values.includes(v)));
+    return { surface, values, coarse: surface.granularity === COARSE, others };
+  }
+  const known = new Set([...entries.flatMap(e => e.platforms || []), ...surfaces.flatMap(surfaceValues)]);
+  const value = [...known].sort().find(v => v.toLowerCase() === key);
+  if (!value) return null;
+  const listing = surfaces.filter(p => surfaceValues(p).includes(value));
+  return { surface: null, values: [value], coarse: listing.some(p => p.granularity === COARSE), others: listing };
+}
+
+// The platform filter's choices: compat.json's surfaces in its order with how
+// many rows each stands for (those with none left out), then every value rows
+// record that no surface lists, alphabetically, with its count.
+export function platformChoices(compat, entries) {
+  const surfaces = (compat?.platforms || [])
+    .map(p => ({ id: p.id, name: p.name, coarse: p.granularity === COARSE, n: platformRows(entries, surfaceValues(p)).length }))
+    .filter(s => s.n);
+  const claimed = new Set((compat?.platforms || []).flatMap(surfaceValues));
+  const other = [...new Set(entries.flatMap(e => e.platforms || []))].filter(v => !claimed.has(v)).sort()
+    .map(value => ({ value, n: platformRows(entries, [value]).length }));
+  return { surfaces, other };
+}
+
 export function isIndependentReport(entry) {
   return entry.kind === "benchmark" && !(entry.flags || []).includes("vendor-reported");
 }
@@ -139,12 +188,15 @@ export function compareEntries(sort, ranks = new Map()) {
   };
 }
 
-export function matchesEntry(entry, state, collectionSlugs = null, labels = "") {
+// `platformValues` is what state.platform resolved to (resolvePlatform()); without
+// it the filter matches the value itself, whole.
+export function matchesEntry(entry, state, collectionSlugs = null, labels = "", platformValues = null) {
   if (state.entry && entry.slug !== state.entry) return false;
   if (collectionSlugs && !collectionSlugs.has(entry.slug)) return false;
   if (state.pattern && !entry.patterns.includes(state.pattern)) return false;
   if (state.kind && entry.kind !== state.kind) return false;
   if (state.lang && !(entry.languages || []).includes(state.lang)) return false;
+  if (state.platform && !(entry.platforms || []).some(p => (platformValues || [state.platform]).includes(p))) return false;
   if (state.code && !entry.has_code) return false;
   if (state.off && !entry.official) return false;
   if (state.noflag && (entry.flags || []).length) return false;
@@ -174,6 +226,7 @@ export function queryFromState(state, view, lang) {
   if (state.pattern) q.set("p", state.pattern);
   if (state.kind) q.set("k", state.kind);
   if (state.lang) q.set("lang_f", state.lang);
+  if (state.platform) q.set("platform", state.platform);
   if (state.q) q.set("q", state.q);
   for (const t of TOGGLES) if (state[t]) q.set(t, "1");
   q.set("lang", lang);
@@ -203,6 +256,7 @@ export function stateFromQuery(search, hash, { languages, collections }) {
       pattern: q.get("p") || "",
       kind: q.get("k") || "",
       lang: q.get("lang_f") || "",
+      platform: q.get("platform") || "",
       q: q.get("q") || "",
       ...Object.fromEntries(TOGGLES.map(t => [t, q.get(t) === "1"])),
     },

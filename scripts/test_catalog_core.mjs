@@ -4,6 +4,7 @@ import {
   compareEntries, evidenceKind, evidenceUrl, matchesEntry, verification, isIndependentReport, EVIDENCE_KINDS,
   queryFromState, shareUrl, stateFromQuery, TOGGLES, VIEWS, SUMMARY_SOURCES, MARKED_SOURCES, summaryMarks,
   UNINDEXED_KINDS, notIndexedByPattern, PRIMITIVES, primitiveLayers, repositoryFacts, siblingCitations,
+  COARSE, platformRows, resolvePlatform, platformChoices,
 } from "../site/catalog-core.mjs";
 import { readFileSync } from "node:fs";
 
@@ -142,8 +143,76 @@ test("short entry permalinks resolve exactly without changing ordinary text sear
   assert.ok(entries.filter(e => matchesEntry(e, {q: "jev"})).length > 1);
 });
 
+// ─── Platforms: compat.json's surfaces joined to the values rows record ─────
+const PLATFORMS = JSON.parse(readFileSync(new URL("./tests/platform_cases.json", import.meta.url)));
+
+test("a platform filter matches what the MCP server's rule matches, on the cases both suites read", () => {
+  // scripts/tests/test_platform_values.py runs the same cases through query.py.
+  const {compat, rows, cases} = PLATFORMS;
+  assert.ok(cases.length >= 12);
+  for (const c of cases) {
+    const found = resolvePlatform(compat, rows, c.asked);
+    if (c.unknown) {
+      assert.equal(found, null, c.asked);
+      continue;
+    }
+    assert.equal(found.surface ? found.surface.id : null, c.surface, c.asked);
+    assert.deepEqual(found.values, c.values, c.asked);
+    assert.equal(found.coarse, c.coarse, c.asked);
+    assert.deepEqual(platformRows(rows, found.values).map(e => e.slug), c.slugs, c.asked);
+    const entries = rows.map(e => row(e.slug, e));
+    assert.deepEqual(entries.filter(e => matchesEntry(e, {platform: c.asked}, null, "", found.values)).map(e => e.slug), c.slugs, c.asked);
+  }
+  assert.equal(resolvePlatform(compat, rows, ""), null);
+  assert.equal(resolvePlatform(null, rows, "github").values[0], "github", "no compat.json: a recorded value still resolves");
+});
+
+test("a coarse match names the other surfaces it may stand for", () => {
+  const {compat, rows} = PLATFORMS;
+  assert.equal(COARSE, "coarse");
+  assert.deepEqual(resolvePlatform(compat, rows, "gw-a").others.map(p => p.id), ["gw-b"]);
+  assert.deepEqual(resolvePlatform(compat, rows, "native").others, []);
+  assert.deepEqual(resolvePlatform(compat, rows, "gw").others.map(p => p.id), ["gw-a", "gw-b"]);
+  assert.deepEqual(resolvePlatform(compat, rows, "github").others, []);
+});
+
+test("without a resolved platform the filter matches the value itself, whole", () => {
+  const entry = row("r", {platforms: ["vercel-ai-gateway"]});
+  assert.equal(matchesEntry(entry, {platform: "vercel-ai-gateway"}), true);
+  assert.equal(matchesEntry(entry, {platform: "vercel"}), false, "a fragment never matches");
+  assert.equal(matchesEntry(row("none"), {platform: "vercel-ai-gateway"}), false);
+  assert.equal(matchesEntry(entry, {platform: "vercel-compat"}, null, "", ["vercel-ai-gateway"]), true);
+  // The platform names stay searchable as text, as before.
+  assert.equal(matchesEntry(entry, {q: "gateway"}), true);
+});
+
+test("the platform choices are the surfaces with rows, then the values no surface lists", () => {
+  const {compat, rows} = PLATFORMS;
+  assert.deepEqual(platformChoices(compat, rows), {
+    surfaces: [
+      {id: "native", name: "Native", coarse: true, n: 2},
+      {id: "gw-a", name: "Gateway A", coarse: true, n: 2},
+      {id: "gw-b", name: "Gateway B", coarse: true, n: 1},
+      {id: "edge", name: "Edge", coarse: false, n: 1},
+      {id: "self", name: "Self", coarse: false, n: 1},
+    ],
+    other: [{value: "github", n: 2}],
+  });
+  assert.deepEqual(platformChoices(null, rows).surfaces, []);
+});
+
+test("every surface in the real compat.json lists its values, and every value rows record is joined", () => {
+  const compat = JSON.parse(readFileSync(new URL("../compat.json", import.meta.url)));
+  const taxonomy = JSON.parse(readFileSync(new URL("../taxonomy.json", import.meta.url)));
+  const catalog = JSON.parse(readFileSync(new URL("../catalog.json", import.meta.url)));
+  for (const p of compat.platforms) assert.ok(Array.isArray(p.catalog_platforms), p.id);
+  const {surfaces, other} = platformChoices(compat, catalog);
+  assert.ok(surfaces.length > 0);
+  assert.deepEqual(other.map(o => o.value).filter(v => !taxonomy.platforms_without_surface.includes(v)), []);
+});
+
 // ─── URL state: every view and filter is a shareable link ─────────────────
-const DEFAULTS = {entry: "", collection: "", sort: "curated", pattern: "", kind: "", lang: "", q: "", code: false, off: false, indep: false, noflag: false};
+const DEFAULTS = {entry: "", collection: "", sort: "curated", pattern: "", kind: "", lang: "", platform: "", q: "", code: false, off: false, indep: false, noflag: false};
 const OPTIONS = {languages: ["en", "zh"], collections: ["first-call", "build", "measured"]};
 const read = (search, hash = "") => stateFromQuery(search, hash, OPTIONS);
 
@@ -158,13 +227,20 @@ test("parameter names and order stay what already-shared links use", () => {
     queryFromState(state, "prims", "zh").toString(),
     "view=prims&collection=build&sort=stars&p=tool-selection&k=project&lang_f=python&q=retry+budget&code=1&off=1&indep=1&noflag=1&lang=zh",
   );
+  // `platform` joined the list on 2026-09-28, after lang_f; a link without it reads as before.
+  // docs/compatibility.md links each surface as ?platform=<id>&lang=en.
+  assert.equal(
+    queryFromState({...state, platform: "cloudflare"}, "catalog", "en").toString(),
+    "collection=build&sort=stars&p=tool-selection&k=project&lang_f=python&platform=cloudflare&q=retry+budget&code=1&off=1&indep=1&noflag=1&lang=en",
+  );
+  assert.deepEqual(read("?platform=vercel-compat&lang=en").state, {...DEFAULTS, platform: "vercel-compat"});
 });
 
 test("every view, sort, toggle and filter survives a round trip", () => {
   for (const view of VIEWS) {
     for (const sort of ["curated", "newest", "checked", "stars", "pattern"]) {
       for (const toggle of TOGGLES) {
-        const state = {...DEFAULTS, sort, collection: "measured", pattern: "safety-gating", kind: "benchmark", lang: "go", q: "上下文 压缩", [toggle]: true};
+        const state = {...DEFAULTS, sort, collection: "measured", pattern: "safety-gating", kind: "benchmark", lang: "go", platform: "typesafe-native", q: "上下文 压缩", [toggle]: true};
         const back = read("?" + queryFromState(state, view, "zh").toString());
         assert.deepEqual(back, {lang: "zh", view, state});
       }

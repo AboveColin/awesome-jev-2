@@ -1,0 +1,238 @@
+{
+  "about": "What a platform filter matches, read by scripts/test_catalog_core.mjs (site/catalog-core.mjs resolvePlatform) and scripts/tests/test_platform_values.py (src/awesome_jev_mcp/query.py resolve_platform): the two rules must agree. Ids and values are made up.",
+  "compat": {
+    "platforms": [
+      {
+        "id": "native",
+        "name": "Native",
+        "catalog_platforms": [
+          "api"
+        ],
+        "granularity": "coarse"
+      },
+      {
+        "id": "gw-a",
+        "name": "Gateway A",
+        "catalog_platforms": [
+          "gw",
+          "sdk"
+        ],
+        "granularity": "coarse"
+      },
+      {
+        "id": "gw-b",
+        "name": "Gateway B",
+        "catalog_platforms": [
+          "gw"
+        ],
+        "granularity": "coarse"
+      },
+      {
+        "id": "edge",
+        "name": "Edge",
+        "catalog_platforms": [
+          "edge-ai"
+        ]
+      },
+      {
+        "id": "self",
+        "name": "Self",
+        "catalog_platforms": [
+          "self"
+        ]
+      },
+      {
+        "id": "docs",
+        "name": "Docs",
+        "catalog_platforms": []
+      }
+    ]
+  },
+  "rows": [
+    {
+      "slug": "a",
+      "platforms": [
+        "api"
+      ]
+    },
+    {
+      "slug": "b",
+      "platforms": [
+        "gw",
+        "api"
+      ]
+    },
+    {
+      "slug": "c",
+      "platforms": [
+        "sdk"
+      ]
+    },
+    {
+      "slug": "d",
+      "platforms": [
+        "edge-ai"
+      ]
+    },
+    {
+      "slug": "e",
+      "platforms": [
+        "self",
+        "github"
+      ]
+    },
+    {
+      "slug": "f",
+      "platforms": [
+        "github"
+      ]
+    },
+    {
+      "slug": "g"
+    }
+  ],
+  "cases": [
+    {
+      "asked": "native",
+      "surface": "native",
+      "values": [
+        "api"
+      ],
+      "coarse": true,
+      "slugs": [
+        "a",
+        "b"
+      ]
+    },
+    {
+      "asked": "gw-a",
+      "surface": "gw-a",
+      "values": [
+        "gw",
+        "sdk"
+      ],
+      "coarse": true,
+      "slugs": [
+        "b",
+        "c"
+      ]
+    },
+    {
+      "asked": "gw-b",
+      "surface": "gw-b",
+      "values": [
+        "gw"
+      ],
+      "coarse": true,
+      "slugs": [
+        "b"
+      ]
+    },
+    {
+      "asked": " EDGE ",
+      "surface": "edge",
+      "values": [
+        "edge-ai"
+      ],
+      "coarse": false,
+      "slugs": [
+        "d"
+      ]
+    },
+    {
+      "asked": "self",
+      "surface": "self",
+      "values": [
+        "self"
+      ],
+      "coarse": false,
+      "slugs": [
+        "e"
+      ]
+    },
+    {
+      "asked": "docs",
+      "surface": "docs",
+      "values": [],
+      "coarse": false,
+      "slugs": []
+    },
+    {
+      "asked": "gw",
+      "surface": null,
+      "values": [
+        "gw"
+      ],
+      "coarse": true,
+      "slugs": [
+        "b"
+      ]
+    },
+    {
+      "asked": "API",
+      "surface": null,
+      "values": [
+        "api"
+      ],
+      "coarse": true,
+      "slugs": [
+        "a",
+        "b"
+      ]
+    },
+    {
+      "asked": "sdk",
+      "surface": null,
+      "values": [
+        "sdk"
+      ],
+      "coarse": true,
+      "slugs": [
+        "c"
+      ]
+    },
+    {
+      "asked": "edge-ai",
+      "surface": null,
+      "values": [
+        "edge-ai"
+      ],
+      "coarse": false,
+      "slugs": [
+        "d"
+      ]
+    },
+    {
+      "asked": "github",
+      "surface": null,
+      "values": [
+        "github"
+      ],
+      "coarse": false,
+      "slugs": [
+        "e",
+        "f"
+      ]
+    },
+    {
+      "asked": "gw-",
+      "unknown": true
+    },
+    {
+      "asked": "edge-a",
+      "unknown": true
+    },
+    {
+      "asked": "Gateway A",
+      "unknown": true
+    },
+    {
+      "asked": "g",
+      "unknown": true
+    },
+    {
+      "asked": "hub",
+      "unknown": true
+    }
+  ]
+}
