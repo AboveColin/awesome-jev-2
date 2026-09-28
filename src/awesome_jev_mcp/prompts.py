@@ -46,6 +46,9 @@ UNTESTED = "code-untested"
 HASH_COMMENTS = frozenset({"python", "ruby", "shell", "bash", "r", "perl", "elixir"})
 # The two summary sources a surface marks: the project's own words.
 UPSTREAM = frozenset({"upstream-description", "upstream-description-stale"})
+# compat.json fields about which catalogue rows stand for a surface, not about
+# wiring it; compatibility() and search_examples(platform=...) carry them.
+CATALOGUE_FIELDS = frozenset({"catalog_platforms", "granularity"})
 
 
 def _kind(entry: dict) -> str:
@@ -104,7 +107,7 @@ def _surface(compat: dict, surface: str) -> tuple[list[str], list[str]]:
     for platform in answer["surfaces"]:
         lines += [f"### {platform['name']}", ""]
         for field, value in platform.items():
-            if field == "name" or field.endswith("_zh"):
+            if field == "name" or field.endswith("_zh") or field in CATALOGUE_FIELDS:
                 continue
             shown = ", ".join(map(str, value)) if isinstance(value, list) else value
             lines.append(f"- {field}: {shown}")

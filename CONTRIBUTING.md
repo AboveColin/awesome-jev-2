@@ -225,6 +225,21 @@ turn red, and writes nothing (the runbook is in
   filter, count or lint rule reads it as a primitive claim, and a shape in a
   file (a type definition, a test double) is not a call. Lint allows it only on
   a row with `evidence`.
+- **`platforms`** — how the code reaches Jev, in the values the catalogue
+  already uses: one that a surface in [`compat.json`](compat.json) lists in its
+  `catalog_platforms` (`typesafe-api`, `vercel-ai-gateway`,
+  `cloudflare-workers-ai`, …), or one that [`taxonomy.json`](taxonomy.json)
+  lists in `platforms_without_surface` (a host, tool or framework the example
+  runs in, such as `self-hosted`, `claude-code` or `mcp`, or a route
+  `compat.json` does not describe). Record what the cited file shows and no
+  more: a project on Vercel's gateway is `vercel-ai-gateway` whichever of the
+  gateway's routes it takes, and that is why those surfaces are marked
+  `granularity: "coarse"`. `lint.py` fails any other value; a new one goes, in
+  the same pull request, into the `catalog_platforms` of the surface
+  `compat.json` describes for that route, or into the list. The *Catalogued
+  examples* column of [`docs/compatibility.md`](docs/compatibility.md), the
+  site's platform filter and the MCP server's
+  `search_examples(platform=…)` all read this join.
 - **`evidence`** — the file you read the row's code in (for a row with
   `question_types`, the file you read that claim in), and strings from it that
   substantiate it. This is what makes the claim re-checkable rather than

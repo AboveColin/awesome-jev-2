@@ -158,6 +158,13 @@ class SurfaceTest(unittest.TestCase):
         self.assertNotIn("notes_zh", part)
         self.assertNotIn("包在里面", body)
 
+    def test_which_rows_stand_for_the_surface_is_left_to_compatibility(self):
+        part = section(text(surface="gate"), "The surface")
+        self.assertIn("### Gate Router", part)
+        self.assertIn("- id: gate-router", part)
+        self.assertNotIn("catalog_platforms", part)
+        self.assertNotIn("granularity", part)
+
     def test_a_fragment_can_name_several(self):
         part = section(text(surface="r"), "The surface")
         self.assertIn("### Vendor API", part)

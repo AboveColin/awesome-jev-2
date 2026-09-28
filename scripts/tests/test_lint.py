@@ -62,7 +62,7 @@ FULL = {
     "has_code": True,
     "languages": ["python"],
     "question_types": ["choice"],
-    "platforms": ["direct"],
+    "platforms": ["typesafe-api"],
     "author": {"name": "Someone", "handle": "someone", "url": "https://github.com/someone"},
     "repo": "https://github.com/someone/demo-row",
     "stars": 3,
@@ -887,7 +887,7 @@ class MainOutputTest(unittest.TestCase):
         tmp = tempfile.TemporaryDirectory()
         self.addCleanup(tmp.cleanup)
         self.dir = pathlib.Path(tmp.name)
-        for name in ("ROOT", "CATALOG", "RETIRED", "SCHEMA", "PATTERNS_FILE", "TAXONOMY_FILE"):
+        for name in ("ROOT", "CATALOG", "RETIRED", "SCHEMA", "PATTERNS_FILE", "TAXONOMY_FILE", "COMPAT_FILE"):
             self.addCleanup(setattr, lint, name, getattr(lint, name))
         lint.CATALOG = self.dir / "catalog.json"
         lint.RETIRED = self.dir / "retired.json"
@@ -944,6 +944,26 @@ class MainOutputTest(unittest.TestCase):
             f"error: catalog.json[0].kind: 'blog' is not one of: {kinds}\n"
             "\n4 error(s)\n",
         )
+
+    def test_platform_values_are_checked_against_compat_json_and_the_taxonomy(self):
+        # check_all() reads compat.json and taxonomy.json for the platforms rule (I30).
+        recorded = row(MINIMAL, platforms=["typesafe-api", "self-hosted", "vercel"])
+        status, out, err = self.run_main([recorded], [])
+        self.assertEqual((status, out), (1, "checked 1 catalog entry and 0 retired\n"))
+        self.assertEqual(err, (
+            "error: catalog.json[0]: demo-row: platforms value 'vercel' is in no compat.json surface's "
+            "catalog_platforms and not in taxonomy.json platforms_without_surface: fix the spelling, add it to "
+            "the catalog_platforms of the surface it reaches Jev through, or list it there\n\n1 error(s)\n"))
+        lint.COMPAT_FILE = self.dir / "compat.json"
+        lint.COMPAT_FILE.write_text(json.dumps({"platforms": [
+            {"id": "native", "catalog_platforms": ["typesafe-api", "vercel"]},
+            {"id": "other", "catalog_platforms": ["vercel"]},
+        ]}), encoding="utf-8")
+        status, _, err = self.run_main([recorded], [])
+        self.assertEqual(status, 1)
+        self.assertEqual(err, (
+            "error: compat.json: 'vercel' is in the catalog_platforms of 'native', 'other', so it does not tell "
+            "them apart: set granularity 'coarse' on 'native', 'other'\n\n1 error(s)\n"))
 
     def test_a_file_that_is_not_an_array_stops_the_run(self):
         for catalog, retired, name in (

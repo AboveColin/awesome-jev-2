@@ -42,6 +42,7 @@ from typing import Any, NamedTuple
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 
 from _stats import shadow_path_unflagged  # noqa: E402
+from platform_values import problems as platform_problems  # noqa: E402
 from sibling_lists import FIX as CITATION_FIX  # noqa: E402
 from sibling_lists import citation_problems, listed_urls, read_lists, unlisted_citations  # noqa: E402
 from zh_audit import new_rows_since  # noqa: E402
@@ -52,6 +53,7 @@ RETIRED = ROOT / "retired.json"
 SCHEMA = ROOT / "schema" / "entry.schema.json"
 PATTERNS_FILE = ROOT / "patterns.json"
 TAXONOMY_FILE = ROOT / "taxonomy.json"
+COMPAT_FILE = ROOT / "compat.json"
 SIBLINGS = ROOT / "docs" / "sibling-lists.txt"
 
 # Places we accept as TypeSafe AI speaking for itself. `official: true` anywhere
@@ -748,6 +750,20 @@ def check_all(schema: dict, catalog: Any, retired: Any) -> Findings:
     report.add(check_entries(schema, catalog, retired))
     listed = listed_urls(read_lists(SIBLINGS)) if SIBLINGS.exists() else []
     report.add(check_citation_lists(catalog, listed))
+    if COMPAT_FILE.exists() and TAXONOMY_FILE.exists():
+        compat, taxonomy = json.loads(COMPAT_FILE.read_text()), json.loads(TAXONOMY_FILE.read_text())
+        report.add(check_platform_values(catalog, retired, compat, taxonomy))
+    return report.findings()
+
+
+def check_platform_values(catalog: list, retired: list, compat: dict, taxonomy: dict) -> Findings:
+    """Every value a row records in `platforms` is claimed by a compat.json
+    surface (its catalog_platforms) or listed in taxonomy.json's
+    platforms_without_surface, and those two lists keep their own rules. The
+    rules live in scripts/platform_values.py."""
+    report = Report()
+    for where, message in platform_problems(catalog, retired, compat, taxonomy):
+        report.err(where, message)
     return report.findings()
 
 

@@ -1,6 +1,6 @@
 {
   "as_of": "2026-09-22",
-  "note": "The platform surface matrix. Single source of truth for both docs/compatibility.md (generated between markers by scripts/build_compat.py) and the Compatibility view on the site, so the two can never disagree. A dash means the surface does not expose that concept. A platform's docs_url is a page of its documentation whose address names a model version (the vendor's known limitations of the current model): hand-written docs may link only the versioned pages recorded here, so a release that moves the page turns every stale link red.",
+  "note": "The platform surface matrix. Single source of truth for both docs/compatibility.md (generated between markers by scripts/build_compat.py) and the Compatibility view on the site, so the two can never disagree. A dash means the surface does not expose that concept. A platform's docs_url is a page of its documentation whose address names a model version (the vendor's known limitations of the current model): hand-written docs may link only the versioned pages recorded here, so a release that moves the page turns every stale link red. A platform's catalog_platforms lists the values a catalogue row records in `platforms` for that surface; scripts/lint.py holds every value a row records to these lists and to taxonomy.json's platforms_without_surface. granularity \"coarse\" marks a surface whose value does not tell it apart from another route: a row records vercel-ai-gateway, not which of the gateway's two routes it takes, and typesafe-api, not whether it reaches the native API directly or through a pass-through beside it; so a row counted under a coarse surface may use another. No row's value is guessed finer than its evidence shows.",
   "platforms": [
     {
       "id": "typesafe-native",
@@ -17,7 +17,11 @@
       "notes": "The reference surface. Everything else is measured against this.",
       "notes_zh": "基准面。其他所有平台都以它为参照。",
       "model_source": "https://docs.typesafe.ai/models",
-      "docs_url": "https://docs.typesafe.ai/model-jaggedness/jev-1.13"
+      "docs_url": "https://docs.typesafe.ai/model-jaggedness/jev-1.13",
+      "catalog_platforms": [
+        "typesafe-api"
+      ],
+      "granularity": "coarse"
     },
     {
       "id": "vercel-eval",
@@ -31,7 +35,12 @@
       "endpoint": "—",
       "env": "AI_GATEWAY_API_KEY",
       "notes": "The one surface that renames the primitive. Needs AI SDK 7.0.105 or newer.",
-      "notes_zh": "唯一给原语改了名字的平台。需要 AI SDK 7.0.105 及以上。"
+      "notes_zh": "唯一给原语改了名字的平台。需要 AI SDK 7.0.105 及以上。",
+      "catalog_platforms": [
+        "vercel-ai-gateway",
+        "vercel-ai-sdk"
+      ],
+      "granularity": "coarse"
     },
     {
       "id": "vercel-compat",
@@ -45,7 +54,11 @@
       "endpoint": "POST /typesafe/v1/systemone",
       "env": "AI_GATEWAY_API_KEY",
       "notes": "Same gateway as the row above, different route, different spelling. Pick one and stay on it.",
-      "notes_zh": "和上一行是同一个网关，但路径不同、拼法也不同。选一条走，别混用。"
+      "notes_zh": "和上一行是同一个网关，但路径不同、拼法也不同。选一条走，别混用。",
+      "catalog_platforms": [
+        "vercel-ai-gateway"
+      ],
+      "granularity": "coarse"
     },
     {
       "id": "ai-sdk-direct",
@@ -59,7 +72,11 @@
       "endpoint": "—",
       "env": "TYPESAFE_AI_API_KEY",
       "notes": "Note the env var: TYPESAFE_AI_API_KEY, not TYPESAFE_API_KEY.",
-      "notes_zh": "注意环境变量是 TYPESAFE_AI_API_KEY，不是 TYPESAFE_API_KEY。"
+      "notes_zh": "注意环境变量是 TYPESAFE_AI_API_KEY，不是 TYPESAFE_API_KEY。",
+      "catalog_platforms": [
+        "vercel-ai-sdk"
+      ],
+      "granularity": "coarse"
     },
     {
       "id": "cloudflare",
@@ -73,7 +90,10 @@
       "endpoint": "env.AI.run()",
       "env": "Workers AI binding",
       "notes": "The envelope differs: state and questions sit inside an `input` object. A native client cannot be ported by swapping the URL.",
-      "notes_zh": "请求结构不同：state 和 questions 被包在 `input` 对象里。原生客户端不能只换 URL 就移植。"
+      "notes_zh": "请求结构不同：state 和 questions 被包在 `input` 对象里。原生客户端不能只换 URL 就移植。",
+      "catalog_platforms": [
+        "cloudflare-workers-ai"
+      ]
     },
     {
       "id": "openrouter",
@@ -87,7 +107,10 @@
       "endpoint": "a decisions endpoint, separate from chat",
       "env": "OPENROUTER_API_KEY",
       "notes": "Note the tilde on the alias. The listing page carries no code sample, so the request shape was left unrecorded rather than guessed.",
-      "notes_zh": "注意别名前面那个波浪号。该页没有代码示例，所以请求结构此处留空而非猜测。"
+      "notes_zh": "注意别名前面那个波浪号。该页没有代码示例，所以请求结构此处留空而非猜测。",
+      "catalog_platforms": [
+        "openrouter"
+      ]
     },
     {
       "id": "litellm",
@@ -101,7 +124,10 @@
       "endpoint": "POST /typesafe/v1/systemone",
       "env": "TYPESAFE_API_KEY",
       "notes": "Exposes the native path, so the official SDK works by changing only the base URL.",
-      "notes_zh": "暴露的是原生路径，官方 SDK 只需改 base URL 即可使用。"
+      "notes_zh": "暴露的是原生路径，官方 SDK 只需改 base URL 即可使用。",
+      "catalog_platforms": [
+        "litellm"
+      ]
     },
     {
       "id": "bifrost",
@@ -116,7 +142,10 @@
       "env": "TYPESAFE_BASE_URL",
       "notes": "One-to-one pass-through of the native API.",
       "notes_zh": "对原生 API 做一比一透传。",
-      "model_source": "https://raw.githubusercontent.com/maximhq/bifrost/dev/docs/providers/supported-providers/typesafe.mdx"
+      "model_source": "https://raw.githubusercontent.com/maximhq/bifrost/dev/docs/providers/supported-providers/typesafe.mdx",
+      "catalog_platforms": [
+        "bifrost"
+      ]
     },
     {
       "id": "aimlapi",
@@ -130,7 +159,10 @@
       "endpoint": "POST /v1/decisions",
       "env": "AIMLAPI key",
       "notes": "A third endpoint path. Top-level envelope like native, but not at the native path.",
-      "notes_zh": "第三种端点路径。请求结构与原生一致，但路径不同。"
+      "notes_zh": "第三种端点路径。请求结构与原生一致，但路径不同。",
+      "catalog_platforms": [
+        "aimlapi"
+      ]
     },
     {
       "id": "netlify",
@@ -144,7 +176,10 @@
       "endpoint": "official SDK, zero config",
       "env": "none",
       "notes": "The lowest-friction route if you already deploy there: no key, no base URL, billed through the platform. Node.js 20+.",
-      "notes_zh": "如果你本来就部署在 Netlify，这是门槛最低的路径：不需要密钥、不需要 baseURL，按平台计费。需 Node.js 20+。"
+      "notes_zh": "如果你本来就部署在 Netlify，这是门槛最低的路径：不需要密钥、不需要 baseURL，按平台计费。需 Node.js 20+。",
+      "catalog_platforms": [
+        "netlify"
+      ]
     },
     {
       "id": "pydantic-ai",
@@ -158,7 +193,10 @@
       "endpoint": "—",
       "env": "TYPESAFE_API_KEY",
       "notes": "Maps Python types onto primitives: bool becomes a noul, Literal becomes a choice, an ordered IntEnum becomes a score.",
-      "notes_zh": "把 Python 类型映射到原语：bool 变成 noul，Literal 变成 choice，有序 IntEnum 变成 score。"
+      "notes_zh": "把 Python 类型映射到原语：bool 变成 noul，Literal 变成 choice，有序 IntEnum 变成 score。",
+      "catalog_platforms": [
+        "pydantic-ai"
+      ]
     },
     {
       "id": "langchain",
@@ -172,7 +210,10 @@
       "endpoint": "—",
       "env": "TYPESAFE_API_KEY",
       "notes": "Accessor differs from the quickstart's: .nouls[key] rather than .answers[key]. Follow whichever your SDK version documents.",
-      "notes_zh": "取值方式与官方 quickstart 不同：用 .nouls[key] 而非 .answers[key]。按你自己 SDK 版本的文档来。"
+      "notes_zh": "取值方式与官方 quickstart 不同：用 .nouls[key] 而非 .answers[key]。按你自己 SDK 版本的文档来。",
+      "catalog_platforms": [
+        "langchain"
+      ]
     },
     {
       "id": "rig",
@@ -186,7 +227,10 @@
       "endpoint": "—",
       "env": "JEV_TOKEN",
       "notes": "A third env var name, and the 255-option cap is enforced at compile time.",
-      "notes_zh": "第三种环境变量名；而且 255 选项上限是在编译期强制的。"
+      "notes_zh": "第三种环境变量名；而且 255 选项上限是在编译期强制的。",
+      "catalog_platforms": [
+        "rig"
+      ]
     }
   ],
   "limits": [

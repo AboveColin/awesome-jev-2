@@ -57,7 +57,7 @@ never starts.
 | `search_examples`    | "Show me safety-gating examples in TypeScript that call `noul`."   |
 | `get_example`        | One row in full, including its sources and its `evidence`.         |
 | `list_patterns`      | The decision taxonomy, with how many examples exist for each.      |
-| `compatibility`      | Model string, field names, request shape and env var per platform. |
+| `compatibility`      | Model string, field names, request shape and env var per platform, and how many catalogued rows record it. |
 | `check_model_string` | "Is `typesafe/jev-1` real?" — it is not, and that matters.         |
 
 ## Resources

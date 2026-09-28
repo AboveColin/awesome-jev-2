@@ -183,7 +183,13 @@ def search_examples(
         question_type: restrict to examples a person read calling this
             primitive (question_types); a script's text signal
             (primitives_seen) never matches
-        platform: e.g. "cloudflare-workers-ai", "langchain", "typesafe-api"
+        platform: a surface id from compatibility(), e.g. "cloudflare",
+            "vercel-compat", "typesafe-native", standing for the values
+            compat.json lists for it (catalog_platforms); or a value rows
+            record, e.g. "cloudflare-workers-ai", "self-hosted". Matched
+            whole, never as a fragment; `platform` in the answer says what
+            matched, and "coarse" when the value does not tell the surface
+            apart from another route. An unknown one lists the valid ones.
         query: free text matched against title, summary, notes and platforms
         official_only: only material published by TypeSafe AI
         with_code_only: only rows whose link contains adaptable code
@@ -194,6 +200,7 @@ def search_examples(
         CATALOG,
         PATTERNS,
         FLAGS,
+        COMPAT,
         pattern=pattern,
         kind=kind,
         language=language,
@@ -283,10 +290,18 @@ def compatibility(surface: str = "") -> dict[str, Any]:
     `noul` everywhere except one SDK that calls it `boolean`. Check this before
     porting code between gateways — it is not a URL swap.
 
+    Each surface also carries `catalogued_examples`: how many catalogue rows
+    record one of its `catalog_platforms` in `platforms`, and the
+    search_examples(platform=...) call that lists them. A surface marked
+    `granularity: "coarse"` shares its value with another route (a row
+    records vercel-ai-gateway, not which of the gateway's two routes it
+    takes), and its note says so.
+
     Args:
-        surface: filter to one platform by name fragment, e.g. "cloudflare"
+        surface: filter to one platform by name fragment, e.g. "cloudflare",
+            or by its id, e.g. "vercel-compat"
     """
-    return compat_lookup(COMPAT, surface)
+    return compat_lookup(COMPAT, surface, CATALOG)
 
 
 @tool

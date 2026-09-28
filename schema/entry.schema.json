@@ -158,7 +158,7 @@
       }
     },
     "platforms": {
-      "description": "How the example reaches Jev: directly, or through a gateway or framework.",
+      "description": "How the example reaches Jev: directly, or through a gateway or framework. Each value is one a compat.json surface lists in its catalog_platforms (typesafe-api, vercel-ai-gateway, cloudflare-workers-ai, ...) or one taxonomy.json lists in platforms_without_surface (a host, tool or framework the example runs in, or a route compat.json does not describe); lint.py checks it. Record what the cited file shows, no finer: a row on Vercel's gateway records vercel-ai-gateway whichever of its routes it takes.",
       "type": "array",
       "maxItems": 6,
       "uniqueItems": true,

@@ -1,5 +1,5 @@
 {
-  "_comment": "Kind, flag and summary-source labels, one copy. Read by scripts/build_readme.py and by the site at runtime; lint.py asserts the keys match schema/entry.schema.json. Decision patterns live in patterns.json.",
+  "_comment": "Kind, flag and summary-source labels, one copy. Read by scripts/build_readme.py and by the site at runtime; lint.py asserts the keys match schema/entry.schema.json. Decision patterns live in patterns.json. platforms_without_surface lists the values a row may record in `platforms` that no compat.json surface claims in its catalog_platforms: hosts and tools an example runs in (self-hosted, claude-code, github, mcp, ...), frameworks, and routes compat.json does not describe (opencode-zen's hosted gateway, jevai-org's separate API). lint.py requires every value a row records to be claimed by a surface or listed here.",
   "kinds": [
     {
       "key": "official-docs",
@@ -220,5 +220,25 @@
       "blurb_zh": "取自项目自己在 GitHub 上的描述，但两者已不再相同（项目改了描述，或摘要只保留了其中一部分）。文字仍出自项目作者。",
       "zh_machine": true
     }
+  ],
+  "platforms_without_surface": [
+    "airflow",
+    "autogpt",
+    "claude-code",
+    "composio",
+    "discord",
+    "effect",
+    "github",
+    "jevai-org",
+    "kiln",
+    "lancedb",
+    "langfuse",
+    "mcp",
+    "opencode-zen",
+    "opik",
+    "postgresql",
+    "ruby-llm",
+    "self-hosted",
+    "spring-ai"
   ]
 }

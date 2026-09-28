@@ -12,6 +12,13 @@ compat.json's `as_of`: the day a person last read every platform's page. It is
 written as that date, never as an age, which would be wrong a day later; the
 weekly claims run reports how old it is.
 
+The last table's "Catalogued examples" column is the one part read from
+catalog.json: how many rows record in `platforms` one of the values the
+surface lists in its `catalog_platforms`, linked to those rows on the site,
+and "coarse" where that value does not tell the surface apart from another
+route. The count follows the rule the MCP server and lint use
+(scripts/platform_values.py), so the page, the site and search_examples agree.
+
 Run: python3 scripts/build_compat.py
      python3 scripts/build_compat.py --check    # CI: fail if out of date
 """
@@ -25,10 +32,15 @@ import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 from _markers import normalise, replace_block, replace_inline  # noqa: E402
+from platform_values import load_query, surface_counts  # noqa: E402
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 COMPAT = ROOT / "compat.json"
+CATALOG = ROOT / "catalog.json"
 DOC = ROOT / "docs" / "compatibility.md"
+SITE = "https://kydlikebtc.github.io/awesome-jev/"
+# The table that also says how many catalogue rows stand for each surface.
+EXAMPLES = ("notes", "Catalogued examples")
 
 # Each block is (marker-name, header row, row builder). A dash in the data
 # means the surface does not expose that concept, and is printed as-is.
@@ -91,21 +103,39 @@ def table(header: list[str], rows: list[list[str]]) -> list[str]:
     return out
 
 
+def examples_cell(platform: dict, counts: dict[str, int]) -> str:
+    """How many rows record one of the surface's catalog_platforms, linked to
+    them on the site, then those values, and "coarse" when a value does not
+    tell this surface apart from another route. A dash when none is listed."""
+    values = platform.get("catalog_platforms") or []
+    if not values:
+        return "—"
+    coarse = " (coarse)" if platform.get("granularity") == load_query().COARSE else ""
+    link = f"[{counts[platform['id']]}]({SITE}?platform={platform['id']}&lang=en)"
+    return f"{link} · {', '.join(f'`{v}`' for v in values)}{coarse}"
+
+
 def limits_table(limits: list[dict]) -> list[str]:
     rows = [[f"**{item['k']}**", item["v"], item["why"]] for item in limits]
     return table(["", "Limit", "Why it matters"], rows)
 
 
-def build(data: dict | None = None, text: str | None = None) -> str:
+def build(data: dict | None = None, text: str | None = None, catalog: list | None = None) -> str:
     """docs/compatibility.md regenerated from compat.json (or from `data`,
     applied to `text`: lint_docs.py's release rehearsal renders a compat.json
-    that does not exist yet)."""
+    that does not exist yet) and catalog.json (or `catalog`)."""
     data = json.loads(COMPAT.read_text()) if data is None else data
     platforms = data["platforms"]
     text = DOC.read_text() if text is None else text
+    catalog = json.loads(CATALOG.read_text()) if catalog is None else catalog
+    counts = surface_counts(data, catalog)
 
     for name, (header, row_of) in BLOCKS.items():
-        body = "\n".join(table(header, [row_of(p) for p in platforms]))
+        rows = [row_of(p) for p in platforms]
+        if name == EXAMPLES[0]:
+            header = [*header, EXAMPLES[1]]
+            rows = [[*row, examples_cell(p, counts)] for row, p in zip(rows, platforms)]
+        body = "\n".join(table(header, rows))
         text = replace_block(text, name, body, where="docs/compatibility.md")
 
     if "<!-- limits:start -->" in text:
@@ -140,9 +170,11 @@ def main() -> int:
 
     DOC.write_text(rendered)
     data = json.loads(COMPAT.read_text())
+    counts = surface_counts(data, json.loads(CATALOG.read_text()))
     print(
         f"wrote docs/compatibility.md from {len(data['platforms'])} platforms "
-        f"and {len(data['limits'])} limits"
+        f"and {len(data['limits'])} limits; catalogued examples per surface: "
+        + ", ".join(f"{key} {n}" for key, n in counts.items())
     )
     return 0
 

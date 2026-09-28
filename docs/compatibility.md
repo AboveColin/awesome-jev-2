@@ -12,8 +12,10 @@ debugging.
 > [`../compat.json`](../compat.json) by
 > [`../scripts/build_compat.py`](../scripts/build_compat.py), which is the same
 > source the [Compatibility view on the site](https://kydlikebtc.github.io/awesome-jev/?view=compat)
-> reads. CI rejects a hand edit to them, and regenerates them on `main` after
-> every change to `compat.json`. The prose between the tables is hand-written.
+> reads. The last table's *Catalogued examples* column also reads
+> [`../catalog.json`](../catalog.json). CI rejects a hand edit to them, and
+> regenerates them on `main` after every change to `compat.json` or
+> `catalog.json`. The prose between the tables is hand-written.
 >
 > **Provenance.** The native row was read directly from the official raw
 > Markdown docs. Every other row was read from that platform's own
@@ -176,22 +178,33 @@ but not in CI".
 ## 6. Per-surface notes
 
 <!-- notes:start -->
-| Surface | Worth knowing |
-| --- | --- |
-| [TypeSafe API (direct) ⭐](https://docs.typesafe.ai/api) | The reference surface. Everything else is measured against this. |
-| [Vercel AI SDK evaluation API](https://vercel.com/kb/guide/typesafe-jev-and-ai-sdk) | The one surface that renames the primitive. Needs AI SDK 7.0.105 or newer. |
-| [Vercel AI Gateway (TypeSafe-compatible)](https://vercel.com/docs/ai-gateway/sdks-and-apis/typesafe) | Same gateway as the row above, different route, different spelling. Pick one and stay on it. |
-| [@ai-sdk/typesafe-ai](https://ai-sdk.dev/providers/ai-sdk-providers/typesafe-ai) | Note the env var: TYPESAFE_AI_API_KEY, not TYPESAFE_API_KEY. |
-| [Cloudflare Workers AI](https://developers.cloudflare.com/ai/models/typesafe/jev/) | The envelope differs: state and questions sit inside an `input` object. A native client cannot be ported by swapping the URL. |
-| [OpenRouter](https://openrouter.ai/typesafe) | Note the tilde on the alias. The listing page carries no code sample, so the request shape was left unrecorded rather than guessed. |
-| [LiteLLM pass-through](https://docs.litellm.ai/docs/pass_through/typesafe) | Exposes the native path, so the official SDK works by changing only the base URL. |
-| [Bifrost](https://github.com/maximhq/bifrost/tree/dev/core/providers/typesafe) | One-to-one pass-through of the native API. |
-| [AI/ML API](https://docs.aimlapi.com/api-references/decision-models/typesafe/jev) | A third endpoint path. Top-level envelope like native, but not at the native path. |
-| [Netlify AI Gateway](https://www.netlify.com/changelog/typesafe-jev-ai-gateway/) | The lowest-friction route if you already deploy there: no key, no base URL, billed through the platform. Node.js 20+. |
-| [Pydantic AI](https://pydantic.dev/docs/ai/models/typesafe/) | Maps Python types onto primitives: bool becomes a noul, Literal becomes a choice, an ordered IntEnum becomes a score. |
-| [LangChain](https://docs.langchain.com/oss/python/integrations/providers/typesafe) | Accessor differs from the quickstart's: .nouls[key] rather than .answers[key]. Follow whichever your SDK version documents. |
-| [rig (Rust)](https://github.com/0xPlaygrounds/rig) | A third env var name, and the 255-option cap is enforced at compile time. |
+| Surface | Worth knowing | Catalogued examples |
+| --- | --- | --- |
+| [TypeSafe API (direct) ⭐](https://docs.typesafe.ai/api) | The reference surface. Everything else is measured against this. | [1116](https://kydlikebtc.github.io/awesome-jev/?platform=typesafe-native&lang=en) · `typesafe-api` (coarse) |
+| [Vercel AI SDK evaluation API](https://vercel.com/kb/guide/typesafe-jev-and-ai-sdk) | The one surface that renames the primitive. Needs AI SDK 7.0.105 or newer. | [17](https://kydlikebtc.github.io/awesome-jev/?platform=vercel-eval&lang=en) · `vercel-ai-gateway`, `vercel-ai-sdk` (coarse) |
+| [Vercel AI Gateway (TypeSafe-compatible)](https://vercel.com/docs/ai-gateway/sdks-and-apis/typesafe) | Same gateway as the row above, different route, different spelling. Pick one and stay on it. | [15](https://kydlikebtc.github.io/awesome-jev/?platform=vercel-compat&lang=en) · `vercel-ai-gateway` (coarse) |
+| [@ai-sdk/typesafe-ai](https://ai-sdk.dev/providers/ai-sdk-providers/typesafe-ai) | Note the env var: TYPESAFE_AI_API_KEY, not TYPESAFE_API_KEY. | [2](https://kydlikebtc.github.io/awesome-jev/?platform=ai-sdk-direct&lang=en) · `vercel-ai-sdk` (coarse) |
+| [Cloudflare Workers AI](https://developers.cloudflare.com/ai/models/typesafe/jev/) | The envelope differs: state and questions sit inside an `input` object. A native client cannot be ported by swapping the URL. | [1](https://kydlikebtc.github.io/awesome-jev/?platform=cloudflare&lang=en) · `cloudflare-workers-ai` |
+| [OpenRouter](https://openrouter.ai/typesafe) | Note the tilde on the alias. The listing page carries no code sample, so the request shape was left unrecorded rather than guessed. | [5](https://kydlikebtc.github.io/awesome-jev/?platform=openrouter&lang=en) · `openrouter` |
+| [LiteLLM pass-through](https://docs.litellm.ai/docs/pass_through/typesafe) | Exposes the native path, so the official SDK works by changing only the base URL. | [1](https://kydlikebtc.github.io/awesome-jev/?platform=litellm&lang=en) · `litellm` |
+| [Bifrost](https://github.com/maximhq/bifrost/tree/dev/core/providers/typesafe) | One-to-one pass-through of the native API. | [1](https://kydlikebtc.github.io/awesome-jev/?platform=bifrost&lang=en) · `bifrost` |
+| [AI/ML API](https://docs.aimlapi.com/api-references/decision-models/typesafe/jev) | A third endpoint path. Top-level envelope like native, but not at the native path. | [1](https://kydlikebtc.github.io/awesome-jev/?platform=aimlapi&lang=en) · `aimlapi` |
+| [Netlify AI Gateway](https://www.netlify.com/changelog/typesafe-jev-ai-gateway/) | The lowest-friction route if you already deploy there: no key, no base URL, billed through the platform. Node.js 20+. | [1](https://kydlikebtc.github.io/awesome-jev/?platform=netlify&lang=en) · `netlify` |
+| [Pydantic AI](https://pydantic.dev/docs/ai/models/typesafe/) | Maps Python types onto primitives: bool becomes a noul, Literal becomes a choice, an ordered IntEnum becomes a score. | [2](https://kydlikebtc.github.io/awesome-jev/?platform=pydantic-ai&lang=en) · `pydantic-ai` |
+| [LangChain](https://docs.langchain.com/oss/python/integrations/providers/typesafe) | Accessor differs from the quickstart's: .nouls[key] rather than .answers[key]. Follow whichever your SDK version documents. | [4](https://kydlikebtc.github.io/awesome-jev/?platform=langchain&lang=en) · `langchain` |
+| [rig (Rust)](https://github.com/0xPlaygrounds/rig) | A third env var name, and the 255-option cap is enforced at compile time. | [1](https://kydlikebtc.github.io/awesome-jev/?platform=rig&lang=en) · `rig` |
 <!-- notes:end -->
+
+The *Catalogued examples* column counts the catalogue rows whose `platforms`
+record a value the surface lists in compat.json's `catalog_platforms`, and
+links them on the site. A row records how it reaches Jev in the catalogue's own
+words, and some of those words cover more than one surface: a row on Vercel's
+gateway records `vercel-ai-gateway`, not which of the gateway's two routes it
+takes, and `typesafe-api` is recorded both by rows that call the native API
+directly and by rows that reach it through a pass-through recorded beside it.
+Those surfaces are marked *coarse*: a row counted under one may use another. No
+row's value is made finer than the file it cites shows. The MCP server's
+`search_examples(platform=…)` and `compatibility()` count the same rows.
 
 ---
 

@@ -73,7 +73,11 @@ If the MCP server is available, prefer it over guessing:
 - `get_example(slug)` — one row in full: its sources, the file its claim was
   read in (`evidence`) and every caveat flag
 - `check_model_string(model)` — before writing any model string
-- `compatibility(surface=…)` — before porting between gateways
+- `compatibility(surface=…)` — before porting between gateways; each surface
+  also says how many catalogued rows record it, and
+  `search_examples(platform=<its id>)` lists them. A surface marked `coarse`
+  shares its catalogue value with another route, so a row listed there may use
+  that other route
 - `list_patterns()` — the taxonomy, including which decisions nobody has
   published an example of
 

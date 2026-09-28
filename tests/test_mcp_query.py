@@ -52,21 +52,26 @@ ROWS = [
     row("router", title="Router", has_code=True, stars=40, languages=["python"], question_types=["choice"],
         platforms=["typesafe-api"], flags=["vendor-reported", "single-commit"], notes="Routes by cost."),
     row("gate", title="gate", has_code=True, stars=400, patterns=["tool-selection", "safety-gating"],
-        languages=["typescript"], platforms=["Cloudflare Workers AI"]),
+        languages=["typescript"], platforms=["cloudflare-workers-ai"]),
     row("vendor-docs", title="Vendor docs", kind="official-docs", official=True, patterns=["overview"]),
     row("clone", title="Clone", kind="alternative", has_code=True, stars=4000, flags=["not-jev"]),
     row("dry-run", title="Dry run", has_code=True, stars=90, flags=["shadow-mode-only"], primitives_seen=["noul"]),
 ]
 
 # A made-up compat.json: its strings are fixtures, not claims about any vendor.
+# Vendor API and Gate Router both stand for rows recording typesafe-api, so
+# both are coarse; Cloud Workers alone for cloudflare-workers-ai.
 COMPAT = {
     "as_of": "2031-01-01",
     "platforms": [
-        {"name": "Vendor API", "official": True, "model": "acme-latest (default) · jev-9.1.0",
-         "endpoint": "POST /v1/decide", "env": "ACME_KEY"},
-        {"name": "Gate Router", "model": "acme/jev-9.1 · ~acme/jev", "endpoint": "POST /gate/v1", "env": "GATE_KEY"},
-        {"name": "Cloud Workers", "model": "@cf/acme/jev-9.1", "endpoint": "env.AI.run()", "env": "binding"},
-        {"name": "Docs only", "model": "—", "endpoint": "—", "env": "—"},
+        {"id": "vendor-api", "name": "Vendor API", "official": True, "model": "acme-latest (default) · jev-9.1.0",
+         "endpoint": "POST /v1/decide", "env": "ACME_KEY", "catalog_platforms": ["typesafe-api"],
+         "granularity": "coarse"},
+        {"id": "gate-router", "name": "Gate Router", "model": "acme/jev-9.1 · ~acme/jev", "endpoint": "POST /gate/v1",
+         "env": "GATE_KEY", "catalog_platforms": ["gate-router", "typesafe-api"], "granularity": "coarse"},
+        {"id": "cloud-workers", "name": "Cloud Workers", "model": "@cf/acme/jev-9.1", "endpoint": "env.AI.run()",
+         "env": "binding", "catalog_platforms": ["cloudflare-workers-ai"]},
+        {"id": "docs-only", "name": "Docs only", "model": "—", "endpoint": "—", "env": "—", "catalog_platforms": []},
     ],
     "limits": [{"k": "choice options", "n": {"max": 3}}],
     "not_model_strings": [{"s": "acme/jev-9", "why": "Nobody documents it."}],
@@ -135,8 +140,9 @@ class SearchTest(unittest.TestCase):
             ({"question_type": "choice"}, ["router"]),
             # primitives_seen is a script's text signal, never a person's reading.
             ({"question_type": "noul", "include_non_jev": True}, []),
-            ({"platform": "cloudflare"}, ["gate"]),
-            ({"platform": "TYPESAFE"}, ["router"]),
+            # A value rows record, whole; PlatformTest covers surfaces and fragments.
+            ({"platform": "cloudflare-workers-ai"}, ["gate"]),
+            ({"platform": " TYPESAFE-API "}, ["router"]),
             ({"official_only": True}, ["vendor-docs"]),
             ({"with_code_only": True}, ["gate", "router"]),
             ({"query": "routes COST"}, ["router"]),
@@ -150,7 +156,7 @@ class SearchTest(unittest.TestCase):
 
     def test_a_query_reads_the_title_summary_notes_slug_and_platforms(self):
         rows = [
-            row("a1", title="Alpha", summary="beta", notes="gamma", platforms=["Delta Cloud"]),
+            row("a1", title="Alpha", summary="beta", notes="gamma", platforms=["delta-cloud"]),
             row("zz-epsilon", title="Other", summary="other"),
         ]
         for words, expected in (("alpha", ["a1"]), ("BETA", ["a1"]), ("gamma", ["a1"]), ("delta", ["a1"]),
@@ -185,6 +191,105 @@ class SearchTest(unittest.TestCase):
         query.find_example(rows, "router")
         query.pattern_counts(rows, patterns)
         self.assertEqual((rows, patterns), (ROWS, PATTERNS))
+
+
+class PlatformTest(unittest.TestCase):
+    """`platform` is a compat.json surface id or a value rows record, matched
+    whole (I30). Until 2026-09-28 it was a fragment of a row's value, so
+    `vercel` matched two different Vercel routes and a surface id matched
+    nothing."""
+
+    def search(self, rows=ROWS, compat=COMPAT, **filters) -> dict:
+        return query.search(rows, PATTERNS, (), compat, **filters)
+
+    def test_a_surface_id_stands_for_the_values_it_lists(self):
+        answer = self.search(platform="cloud-workers")
+        self.assertEqual(slugs(answer), ["gate"])
+        self.assertEqual(answer["platform"], {"asked": "cloud-workers", "surface": "Cloud Workers",
+                                              "matched_values": ["cloudflare-workers-ai"]})
+        self.assertEqual(slugs(self.search(platform="  CLOUD-Workers ")), ["gate"])
+        self.assertEqual(self.search(platform="docs-only")["total_matching"], 0)
+
+    def test_a_coarse_surface_says_so_and_names_the_surfaces_sharing_its_value(self):
+        answer = self.search(platform="gate-router", include_non_jev=True)
+        self.assertEqual(slugs(answer), ["router"])
+        about = answer["platform"]
+        self.assertEqual((about["surface"], about["matched_values"], about["granularity"]),
+                         ("Gate Router", ["gate-router", "typesafe-api"], "coarse"))
+        self.assertEqual(
+            about["note"],
+            "Coarse: a row records gate-router and typesafe-api here, which does not say which route to the API "
+            "it takes, so a row matched here may use another route; Vendor API also matches rows recording "
+            "typesafe-api.",
+        )
+        alone = {**COMPAT, "platforms": [COMPAT["platforms"][0]]}
+        self.assertEqual(
+            self.search(compat=alone, platform="vendor-api")["platform"]["note"],
+            "Coarse: a row records typesafe-api here, which does not say which route to the API it takes, "
+            "so a row matched here may use another route.",
+        )
+
+    def test_a_recorded_value_names_the_surfaces_listing_it(self):
+        about = self.search(platform="typesafe-api")["platform"]
+        self.assertEqual(about["matched_values"], ["typesafe-api"])
+        self.assertEqual(about["surfaces"], ["vendor-api", "gate-router"])
+        self.assertEqual(about["granularity"], "coarse")
+        self.assertIn("compat.json lists typesafe-api for Vendor API and Gate Router", about["note"])
+        exact = self.search(platform="cloudflare-workers-ai")["platform"]
+        self.assertEqual(exact, {"asked": "cloudflare-workers-ai", "matched_values": ["cloudflare-workers-ai"],
+                                 "surfaces": ["cloud-workers"]})
+        self.assertEqual(self.search(platform="gate-router")["platform"]["surface"], "Gate Router",
+                         "an id that is also a value means the surface")
+
+    def test_a_fragment_is_refused_with_what_would_match(self):
+        for asked in ("cloud", "TYPESAFE", "workers-ai", "Cloud Workers"):
+            with self.subTest(platform=asked):
+                self.assertEqual(
+                    self.search(platform=asked),
+                    {
+                        "error": f"unknown platform {asked!r}",
+                        "surfaces": ["vendor-api", "gate-router", "cloud-workers", "docs-only"],
+                        "recorded_values": ["cloudflare-workers-ai", "typesafe-api"],
+                        "hint": "a surface id from compatibility(), or a value rows record in `platforms`, "
+                        "matched whole",
+                    },
+                )
+
+    def test_a_value_is_known_whatever_the_other_filters_keep(self):
+        answer = self.search(platform="cloudflare-workers-ai", language="python")
+        self.assertEqual((answer["total_matching"], answer["platform"]["matched_values"]),
+                         (0, ["cloudflare-workers-ai"]))
+        # A value a surface lists is known before any row records it.
+        self.assertEqual(self.search(platform="gate-router", kind="benchmark")["total_matching"], 0)
+
+    def test_a_row_recording_two_of_a_surfaces_values_is_matched_once(self):
+        rows = [row("both", has_code=True, platforms=["typesafe-api", "gate-router"])]
+        self.assertEqual(slugs(self.search(rows, platform="gate-router")), ["both"])
+        self.assertEqual(query.platform_rows(rows * 1, ["typesafe-api", "gate-router"]), rows)
+
+    def test_without_compat_json_a_recorded_value_still_matches(self):
+        self.assertEqual(slugs(query.search(ROWS, PATTERNS, platform="typesafe-api")), ["router"])
+        self.assertIn("error", query.search(ROWS, PATTERNS, platform="cloud-workers"))
+
+    def test_the_answer_puts_platform_after_the_note_and_before_the_glossary(self):
+        flags = [{"key": "vendor-reported", "blurb_en": "v"}, {"key": "single-commit", "blurb_en": "s"}]
+        answer = query.search(ROWS, PATTERNS, flags, COMPAT, platform="typesafe-api")
+        self.assertEqual(list(answer), ["total_matching", "returned", "results", "note", "platform", "caveat_glossary"])
+        self.assertNotIn("platform", self.search())
+
+    def test_the_real_compat_json_resolves_every_surface_and_refuses_a_fragment(self):
+        compat = json.loads((ROOT / "compat.json").read_text())
+        rows = json.loads((ROOT / "catalog.json").read_text())
+        for platform in compat["platforms"]:
+            with self.subTest(surface=platform["id"]):
+                answer = query.search(rows, PATTERNS, (), compat, platform=platform["id"], include_non_jev=True)
+                self.assertNotIn("error", answer)
+                self.assertEqual(answer["total_matching"],
+                                 len(query.platform_rows(rows, platform["catalog_platforms"])))
+                self.assertEqual("granularity" in answer["platform"], platform.get("granularity") == "coarse")
+        refused = query.search(rows, PATTERNS, (), compat, platform="vercel")
+        self.assertIn("vercel-ai-gateway", refused["recorded_values"])
+        self.assertIn("vercel-compat", refused["surfaces"])
 
 
 class CompactTest(unittest.TestCase):
@@ -257,6 +362,29 @@ class CompatLookupTest(unittest.TestCase):
             {"error": "no surface matching 'zzz'", "known_surfaces": [p["name"] for p in COMPAT["platforms"]]},
         )
 
+    def test_an_id_matches_whole(self):
+        self.assertEqual([p["name"] for p in query.compat_lookup(COMPAT, " Gate-Router ")["surfaces"]], ["Gate Router"])
+        self.assertIn("error", query.compat_lookup(COMPAT, "gate-rou"))
+
+    def test_handed_the_rows_each_surface_counts_its_catalogued_examples(self):
+        rows = ROWS + [row("both", platforms=["typesafe-api", "gate-router"])]
+        answer = query.compat_lookup(COMPAT, "", rows)
+        self.assertEqual(list(answer), ["as_of", "surfaces", "limits", "warning", "catalogued_examples_note"])
+        examples = {p["id"]: p["catalogued_examples"] for p in answer["surfaces"]}
+        self.assertEqual({k: v["rows"] for k, v in examples.items()},
+                         {"vendor-api": 2, "gate-router": 2, "cloud-workers": 1, "docs-only": 0})
+        self.assertEqual(examples["cloud-workers"], {"rows": 1, "search": {"platform": "cloud-workers"}})
+        self.assertEqual(examples["vendor-api"]["note"], query.coarse_note(COMPAT, COMPAT["platforms"][0]))
+        # Every other field is compat.json's, untouched.
+        self.assertEqual([{k: v for k, v in p.items() if k != "catalogued_examples"} for p in answer["surfaces"]],
+                         COMPAT["platforms"])
+        self.assertIn("caveated rows included", answer["catalogued_examples_note"])
+        # The count is what search_examples(platform=<id>) finds, not_examples included.
+        for platform in COMPAT["platforms"]:
+            with self.subTest(surface=platform["id"]):
+                found = query.search(rows, PATTERNS, (), COMPAT, platform=platform["id"], include_non_jev=True)
+                self.assertEqual(found["total_matching"], examples[platform["id"]]["rows"])
+
 
 class ModelStringTest(unittest.TestCase):
     EVERY = ["@cf/acme/jev-9.1", "acme-latest", "acme/jev-9.1", "jev-9.1.0", "~acme/jev"]
@@ -285,7 +413,10 @@ class ModelStringTest(unittest.TestCase):
                 self.assertIs(answer["valid"], False)
                 self.assertEqual(answer["close_but_wrong"], near)
                 self.assertEqual(answer["valid_strings"], self.EVERY)
-                self.assertEqual(answer["reason"], "matches no model string on any documented surface")
+                # A string compat.json refutes gives its own reason (I30).
+                reason = "Nobody documents it." if needle == "acme/jev-9" else (
+                    "matches no model string on any documented surface")
+                self.assertEqual(answer["reason"], reason)
 
     def test_the_hint_is_built_from_compat_json_alone(self):
         self.assertEqual(
@@ -379,10 +510,10 @@ class ServerWiringTest(unittest.TestCase):
                    "platform": "langchain", "query": "router", "official_only": True, "with_code_only": True,
                    "include_non_jev": True, "limit": 3}
         s = self.server
-        default = query.search(s.CATALOG, s.PATTERNS, s.FLAGS)
+        default = query.search(s.CATALOG, s.PATTERNS, s.FLAGS, s.COMPAT)
         for name, value in changed.items():
             with self.subTest(argument=name):
-                expected = query.search(s.CATALOG, s.PATTERNS, s.FLAGS, **{name: value})
+                expected = query.search(s.CATALOG, s.PATTERNS, s.FLAGS, s.COMPAT, **{name: value})
                 self.assertNotEqual(expected, default, "this value does not exercise the argument")
                 self.assertEqual(self.server.search_examples(**{name: value}), self.stamped(expected))
 
@@ -395,9 +526,10 @@ class ServerWiringTest(unittest.TestCase):
             with self.subTest(slug=asked):
                 self.assertEqual(s.get_example(asked), self.stamped(query.find_example(s.CATALOG, asked, s.FLAGS)))
         self.assertEqual(s.list_patterns(), self.stamped(query.pattern_counts(s.CATALOG, s.PATTERNS)))
-        for surface in ("", "cloudflare", "zzz", " Cloudflare "):
+        for surface in ("", "cloudflare", "zzz", " Cloudflare ", "vercel-compat"):
             with self.subTest(surface=surface):
-                self.assertEqual(s.compatibility(surface), self.stamped(query.compat_lookup(s.COMPAT, surface)))
+                self.assertEqual(s.compatibility(surface),
+                                 self.stamped(query.compat_lookup(s.COMPAT, surface, s.CATALOG)))
         for model in ("typesafe/jev-1", "jev-latest", "", "  JEV-Latest  "):
             with self.subTest(model=model):
                 self.assertEqual(s.check_model_string(model), self.stamped(query.model_string_check(s.COMPAT, model)))

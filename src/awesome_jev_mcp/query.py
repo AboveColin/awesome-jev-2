@@ -152,10 +152,103 @@ def sort_key(entry: dict) -> tuple:
     )
 
 
+# How compat.json's surfaces meet the catalogue. A row records in `platforms`
+# how it reaches Jev, in the catalogue's own words (typesafe-api,
+# vercel-ai-gateway, self-hosted, ...); a compat.json surface lists in
+# `catalog_platforms` the values that stand for it. Several surfaces may list
+# one value, and a value may not tell a surface apart from other routes to the
+# API (a row records vercel-ai-gateway, not which of the gateway's two routes
+# it takes): such a surface says `granularity: "coarse"`, and every answer that
+# matches rows through it says so. scripts/platform_values.py holds
+# compat.json, taxonomy.json and every row to these lists, and
+# site/catalog-core.mjs applies the same rule on the site.
+COARSE = "coarse"
+
+EXAMPLES_NOTE = (
+    "catalogued_examples.rows counts every catalogue row whose `platforms` records one of the "
+    "surface's catalog_platforms, caveated rows included; search_examples(platform=<id>) lists "
+    "them, leaving out not_examples unless include_non_jev=True."
+)
+
+
+def surface_values(platform: dict) -> list[str]:
+    """The values catalogue rows record in `platforms` for a compat.json surface."""
+    return list(platform.get("catalog_platforms") or [])
+
+
+def claimed_by(compat: dict) -> dict[str, list[dict]]:
+    """{a value rows record: the compat.json surfaces listing it, in compat.json's order}."""
+    out: dict[str, list[dict]] = {}
+    for platform in compat.get("platforms") or []:
+        for value in surface_values(platform):
+            out.setdefault(value, []).append(platform)
+    return out
+
+
+def platform_rows(rows: list[dict], values) -> list[dict]:
+    """The rows recording any of `values` in `platforms`, each once, in the order given."""
+    wanted = set(values)
+    return [e for e in rows if wanted & set(e.get("platforms") or [])]
+
+
+def _names(items: list[str]) -> str:
+    return items[0] if len(items) == 1 else ", ".join(items[:-1]) + " and " + items[-1]
+
+
+def coarse_note(compat: dict, platform: dict) -> str | None:
+    """What a coarse surface's matches are, in one sentence, or None for a
+    surface whose values stand for it alone."""
+    if platform.get("granularity") != COARSE:
+        return None
+    values = surface_values(platform)
+    shared = []
+    for other in compat.get("platforms") or []:
+        common = [v for v in surface_values(other) if v in values]
+        if other is not platform and common:
+            shared.append(f"{other['name']} also matches rows recording {_names(common)}")
+    return (
+        f"Coarse: a row records {_names(values) if values else 'no value'} here, which does not say "
+        "which route to the API it takes, so a row matched here may use another route"
+        + (f"; {'; '.join(shared)}." if shared else ".")
+    )
+
+
+def resolve_platform(compat: dict, rows: list[dict], asked: str) -> tuple[list[str], dict] | None:
+    """(the values `asked` matches, what the answer says about it), or None.
+
+    `asked` is a compat.json surface id, standing for its catalog_platforms,
+    or a value rows record (or a surface lists), standing for itself; either
+    matched whole, ignoring case and surrounding space, never as a fragment:
+    `vercel` would have matched two different Vercel routes."""
+    key = asked.strip().lower()
+    for platform in compat.get("platforms") or []:
+        if str(platform.get("id", "")).lower() == key:
+            about = {"asked": asked.strip(), "surface": platform["name"], "matched_values": surface_values(platform)}
+            note = coarse_note(compat, platform)
+            if note:
+                about.update(granularity=COARSE, note=note)
+            return surface_values(platform), about
+    claims = claimed_by(compat)
+    known = {v for e in rows for v in e.get("platforms") or []} | set(claims)
+    for value in sorted(known):
+        if value.lower() == key:
+            surfaces = claims.get(value, [])
+            about = {"asked": asked.strip(), "matched_values": [value], "surfaces": [p.get("id") for p in surfaces]}
+            if any(p.get("granularity") == COARSE for p in surfaces):
+                about["granularity"] = COARSE
+                about["note"] = (
+                    f"Coarse: compat.json lists {value} for {_names([p['name'] for p in surfaces])}, and a row "
+                    "recording it does not say which route to the API it takes."
+                )
+            return [value], about
+    return None
+
+
 def search(
     rows: list[dict],
     patterns: list[dict],
     flags: list[dict] = (),
+    compat: dict | None = None,
     *,
     pattern: str = "",
     kind: str = "",
@@ -171,8 +264,27 @@ def search(
     """search_examples' answer: `rows` filtered, ordered by sort_key() and cut
     to `limit` (clamped to 1..MAX_LIMIT), each as compact() shapes it, then the
     caveat_glossary of the flags those rows carry (`flags` is taxonomy.json's).
-    An unknown `pattern` answers with the valid keys instead."""
+    `platform` is resolved against `compat` (resolve_platform()), and the
+    answer then says in `platform` what it matched and whether coarsely. An
+    unknown `pattern` or `platform` answers with the valid ones instead."""
     limit = max(1, min(int(limit), MAX_LIMIT))
+
+    # Resolved against every row, before any other filter narrows them: a
+    # value is known whether or not this search's other filters keep a row
+    # recording it.
+    about = None
+    if platform:
+        compat = compat or {"platforms": []}
+        resolved = resolve_platform(compat, rows, platform)
+        if resolved is None:
+            return {
+                "error": f"unknown platform {platform!r}",
+                "surfaces": [p.get("id") for p in compat["platforms"]],
+                "recorded_values": sorted({v for e in rows for v in e.get("platforms") or []}),
+                "hint": "a surface id from compatibility(), or a value rows record in `platforms`, "
+                "matched whole",
+            }
+        values, about = resolved
 
     if pattern:
         keys = {p["key"] for p in patterns}
@@ -192,11 +304,7 @@ def search(
         # script's text signal (primitives_seen) never matches here.
         rows = [e for e in rows if question_type in (e.get("question_types") or [])]
     if platform:
-        rows = [
-            e
-            for e in rows
-            if any(platform.lower() in p.lower() for p in (e.get("platforms") or []))
-        ]
+        rows = platform_rows(rows, values)
     if official_only:
         rows = [e for e in rows if e.get("official")]
     if with_code_only:
@@ -215,6 +323,8 @@ def search(
         "results": [compact(e) for e in shown],
         "note": SEARCH_NOTE,
     }
+    if about:
+        answer["platform"] = about
     return _with_glossary(answer, flags, (e.get("flags") or [] for e in shown))
 
 
@@ -341,23 +451,43 @@ def pattern_listing(rows: list[dict], patterns: list[dict], flags: list[dict], k
     }
 
 
-def compat_lookup(compat: dict, surface: str = "") -> dict[str, Any]:
+def surface_examples(compat: dict, rows: list[dict], platform: dict) -> dict[str, Any]:
+    """How many catalogue rows record one of a surface's values, how to list
+    them, and, for a coarse surface, what that count is (coarse_note())."""
+    out: dict[str, Any] = {
+        "rows": len(platform_rows(rows, surface_values(platform))),
+        "search": {"platform": platform.get("id")},
+    }
+    note = coarse_note(compat, platform)
+    if note:
+        out["note"] = note
+    return out
+
+
+def compat_lookup(compat: dict, surface: str = "", rows: list[dict] | None = None) -> dict[str, Any]:
     """compatibility's answer: compat.json's platforms, or those whose name
-    contains `surface` (ignoring case)."""
-    rows = compat["platforms"]
+    contains `surface` or whose id is `surface` (ignoring case). Handed the
+    catalogue's `rows`, each surface also says how many rows record one of
+    its catalog_platforms (surface_examples())."""
+    found = compat["platforms"]
     if surface:
-        rows = [p for p in rows if surface.lower() in p["name"].lower()]
-        if not rows:
+        key = surface.strip().lower()
+        found = [p for p in found if surface.lower() in p["name"].lower() or str(p.get("id", "")).lower() == key]
+        if not found:
             return {
                 "error": f"no surface matching {surface!r}",
                 "known_surfaces": [p["name"] for p in compat["platforms"]],
             }
-    return {
+    answer = {
         "as_of": compat["as_of"],
-        "surfaces": rows,
+        "surfaces": found,
         "limits": compat["limits"],
         "warning": NOUL_WARNING,
     }
+    if rows is not None:
+        answer["surfaces"] = [{**p, "catalogued_examples": surface_examples(compat, rows, p)} for p in found]
+        answer["catalogued_examples_note"] = EXAMPLES_NOTE
+    return answer
 
 
 def accepted(platform: dict) -> list[str]:
@@ -426,10 +556,12 @@ def model_string_check(compat: dict, model: str) -> dict[str, Any]:
     near = [
         m for m in every if needle and (m.startswith(needle) or needle.startswith(m))
     ]
+    # A string compat.json records as wrong says why in its own words.
+    refuted = [item["why"] for item in compat.get("not_model_strings", []) if item["s"] == needle]
     return {
         "model": needle,
         "valid": False,
-        "reason": "matches no model string on any documented surface",
+        "reason": refuted[0] if refuted else "matches no model string on any documented surface",
         "close_but_wrong": near or None,
         "valid_strings": every,
         "hint": model_hint(compat),
