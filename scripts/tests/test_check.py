@@ -205,7 +205,7 @@ class MetadataStepsTest(unittest.TestCase):
         files = {
             "catalog.json": "v1\n", "README.md": "generated from v1\n", "README.zh-CN.md": "zh\n",
             "docs/status.md": "status\n", "llms.txt": "llms\n", "scripts/regenerate.py": self.REGENERATE,
-            ".discover/seen.json": "{}\n", "examples/index.json": "{}\n",
+            ".discover/seen.json": "{}\n", "examples/index.json": "{}\n", "history/README.md": "# history/\n",
         }
         for rel, body in files.items():
             (seed / rel).parent.mkdir(parents=True, exist_ok=True)
@@ -271,6 +271,15 @@ class MetadataStepsTest(unittest.TestCase):
         self.assertEqual(self.outputs(), {"changed": "true"})
         files = self.git(self.work, "show", "--name-only", "--format=", "HEAD").split()
         self.assertEqual(files, [".discover/seen.json"])
+
+    def test_commits_the_snapshot_the_step_before_it_wrote(self):
+        # "Keep a dated snapshot of the catalogue's counts" wrote it (I46).
+        (self.work / "history" / "2026-10-07.json").write_text("{}\n")
+        done = self.bash(self.commit_step)
+        self.assertEqual(done.returncode, 0, done.stderr)
+        self.assertEqual(self.outputs(), {"changed": "true"})
+        files = self.git(self.work, "show", "--name-only", "--format=", "HEAD").split()
+        self.assertEqual(files, ["history/2026-10-07.json"])
 
     def test_falls_back_to_a_branch_rather_than_forcing(self):
         (self.work / "catalog.json").write_text("v2\n")

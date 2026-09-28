@@ -41,7 +41,10 @@ regenerate them. CI regenerates everything on every run, and after your pull
 request is merged, `github-actions[bot]`
 commits the regenerated files to `main` as `chore: regenerate from
 catalog.json`. Leaving them out also keeps two pull requests that add
-different rows from conflicting over the generated files.
+different rows from conflicting over the generated files. `history/` is
+different again: dated snapshots of the counts that only the weekly refresh
+writes (`scripts/snapshot_stats.py`), never edited or added by hand, so leave
+it out of a pull request.
 
 If you do include a generated file, it must be exactly what the generators
 write. CI checks each generated file your pull request changes, and lists the

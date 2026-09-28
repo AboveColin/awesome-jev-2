@@ -465,6 +465,10 @@ def compute() -> dict:
         # reproduced here), and how many no person has read against the report
         # yet (docs/review-queue.md#measurement-unread).
         "measured_rows": len(measured(catalog)),
+        # Benchmarks their vendor did not publish (query.is_independent_report,
+        # the README's "Measured, not claimed" and the site's toggle): the
+        # count docs/shape.md's trend table follows from snapshot to snapshot.
+        "independent_reports": sum(1 for e in catalog if load_query().is_independent_report(e)),
         "measurement_directions": measurement_directions(catalog),
         "review_measurement_unread": len(unread(catalog)),
         # Rows whose own author measured Jev for the use and concluded

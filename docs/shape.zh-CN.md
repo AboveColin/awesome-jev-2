@@ -1,4 +1,4 @@
-<!-- Written by scripts/build_shape.py from catalog.json, compat.json, patterns.json and the entry schema. Edit those, not this file. -->
+<!-- Written by scripts/build_shape.py from catalog.json, compat.json, patterns.json, the entry schema and history/. Edit those, not this file. -->
 
 # 目录的形状
 
@@ -175,6 +175,10 @@
 
 有 1089 行写明了作者，共 982 位不同的作者（按显示名比较，不区分大小写）。其中 907 位在本目录只有一行，60 位有两行，15 位有三行或更多；单个作者最多有 11 行。本页不列出任何作者的名字：它显示的是目录的集中程度，而不是谁在贡献。
 
+## 随时间的变化
+
+还没有快照。每次每周刷新（`.github/workflows/metadata.yml`）都会把目录的计数写入 `history/<日期>.json`，从第三份快照起，这里会出现一张计数变化表。
+
 ---
 
-由 `scripts/build_shape.py` 根据 `catalog.json`、`compat.json`、`patterns.json` 与条目 schema 生成；请修改这些文件，不要改本页。
+由 `scripts/build_shape.py` 根据 `catalog.json`、`compat.json`、`patterns.json`、条目 schema 与 `history/` 中的快照生成；请修改这些文件，不要改本页。

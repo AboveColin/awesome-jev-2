@@ -39,7 +39,9 @@
 # discover.yml reads strangers' repositories and holds no write permission, so
 # it leaves them as an artifact, and this run merges the newest one in. Every
 # entry is checked against a fixed shape on the way (scripts/discover_seen.py),
-# and a missing or broken artifact costs only a warning.
+# and a missing or broken artifact costs only a warning. And it keeps a dated
+# snapshot of the catalogue's counts in history/ (scripts/snapshot_stats.py):
+# derived from catalog.json, never read back into it.
 #
 # A push made with GITHUB_TOKEN does not trigger other workflows, so the run
 # dispatches pages (and lint, for a visible check) itself; workflow_dispatch is
@@ -195,13 +197,26 @@ jobs:
           echo "discovery run $run"
           python3 scripts/discover_seen.py .discover/seen.json "$src"
 
+      # A dated copy of the catalogue's counts, history/<UTC date>.json: every
+      # number compute() publishes, rows per kind, pattern, flag, language and
+      # licence, and each row's stars, licence and flags, as this refresh
+      # leaves them. Nothing else keeps what the figures were last week.
+      # Generated data, never a source; docs/shape.md reads it for its table
+      # of how the counts moved. After every step that edits catalog.json and
+      # before the rebuild, so the snapshot is what this run commits. A crash
+      # costs this step, not the week's refresh (history/README.md keeps the
+      # path the commit stages).
+      - name: Keep a dated snapshot of the catalogue's counts
+        continue-on-error: true
+        run: python3 scripts/snapshot_stats.py
+
       - name: Rebuild everything generated from those facts, and commit it here
         id: commit
         run: |
           # The same generators, in the same order, as lint.yml runs, so one
           # added to regenerate.py is never missed here.
           python3 scripts/regenerate.py
-          git add -A catalog.json README.md README.zh-CN.md docs llms.txt examples/index.json .discover
+          git add -A catalog.json README.md README.zh-CN.md docs llms.txt examples/index.json .discover history
           if git diff --cached --quiet; then
             echo "nothing changed"
             echo "changed=false" >> "$GITHUB_OUTPUT"

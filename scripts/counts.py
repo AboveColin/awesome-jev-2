@@ -113,7 +113,8 @@ def main() -> int:
     directions = ", ".join(f"{key} {count}" for key, count in stats["measurement_directions"].items())
     print(
         f"measurements   {stats['measured_rows']} benchmark rows index their author's measurement "
-        f"(author-stated directions: {directions}), {stats['review_measurement_unread']} not read by a person"
+        f"(author-stated directions: {directions}), {stats['review_measurement_unread']} not read by a person; "
+        f"{stats['independent_reports']} independent reports (benchmarks not flagged vendor-reported)"
     )
     print(
         f"citations      {stats['cited_rows']} of {stats['citable_rows']} rows with a GitHub repository "

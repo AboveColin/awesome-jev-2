@@ -57,7 +57,9 @@ directories' READMEs link each repository) to
 `catalog.json` and the files generated from them, and the discovery verdicts
 in `.discover/seen.json` (`discover` reads strangers' repositories, so it holds
 no write permission and leaves them as an artifact; each entry is checked
-against a fixed shape before it is committed); and `lint`'s `regenerate`
+against a fixed shape before it is committed), plus a dated snapshot of the
+catalogue's counts in `history/`, derived from those files and never read back
+into them; and `lint`'s `regenerate`
 job, which commits only generated files and runs only for a push to `main`,
 never for a pull request. (The Pages deploy holds `pages: write` to publish the
 site, not `contents: write`.) No workflow writes a human

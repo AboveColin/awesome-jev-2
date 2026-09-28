@@ -4,6 +4,9 @@
 # twenty regenerated files. Never edit them by hand: change the source and the
 # generator, and lint.yml regenerates them (see CONTRIBUTING.md).
 #
+# history/*.json are the weekly refresh's snapshots (scripts/snapshot_stats.py),
+# written whole like the rest; history/README.md is hand-written.
+#
 # Deliberately not listed: docs/status.md, docs/sources.md,
 # docs/compatibility.md, llms.txt and site/index.html. Those are hand-written
 # prose that carries generated marker blocks, and their prose is reviewed like
@@ -22,3 +25,4 @@
 /docs/shape.md linguist-generated
 /docs/shape.zh-CN.md linguist-generated
 /examples/index.json linguist-generated
+/history/*.json linguist-generated

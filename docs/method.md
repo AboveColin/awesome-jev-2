@@ -867,6 +867,27 @@ that 23 independent reports were filed under `overview` alone, so no pattern
 counts them for the decision they measured; the page says so, and re-filing
 them is a person's reading.
 
+Since 2026-09-28, the weekly `metadata` run also keeps a dated snapshot of the
+catalogue's counts, `history/<UTC date>.json` (`scripts/snapshot_stats.py`),
+written after every step that edits `catalog.json` and before the commit, so
+each file is what that refresh committed: every number `_stats.compute()`
+publishes, rows per kind, pattern, flag, language and declared licence, and
+each row's slug, stars, licence and flags. Until then nothing kept what the
+figures were a week earlier: each regeneration overwrote them, the week's
+digest went with the runner, and `site/stats.json` is rebuilt at every deploy
+and never committed. The files are generated data under a header that says
+so, never read back into `catalog.json`; one is about 90 KB, a year of them
+under 5 MB. There is no backfill: git's history of `catalog.json` before the
+first snapshot is three days of bulk edits, and running today's definitions
+over those commits would put numbers in `history/` that nobody published, so
+the script also refuses a date before the newest snapshot. `docs/shape.md`
+says since when it has been collecting and how many snapshots there are until
+there are three, and shows a table of how the counts moved after that. The
+proposal to count, in the same files, how many cited claims survive each week
+was left for later: that result is `claims`' (a read-only workflow), and
+carrying it here would need a second artifact hand-over like the discovery
+verdicts'.
+
 Since 2026-09-27, `scripts/check.py` holds the one list of the checks `lint`
 runs, in its order. The list used to be written out four times — in
 `lint.yml`, in `CONTRIBUTING.md`, in the pull-request template and in the
@@ -969,6 +990,7 @@ catalogue passed 800, and no build ever went red.
 | Link status, stars, licences, archive status, whether a summary is the repository's own description, creation date, last push and commit count (with `single-commit`), which sibling directories link each repository | Continuously, upstream | `metadata` weekly: stamps every link that answers, re-reads the GitHub API and every sibling directory's README, rebuilds everything generated, commits it, runs `lint`'s checks on that commit (`check.py --ci --quick`: all but the preview images, which `pages` renders), pushes to `main`, and redeploys the site. It opens an issue only for a change that is more than a star count, a last push, a commit count or a sibling-list citation, and falls back to a branch if `main` moved underneath it. `links` weekly is the separate alarm for a dead link, which only a person may retire, and for a sweep so refused by GitHub or by other hosts that it checked little. Both jobs, and `claims`, write their counts and the GitHub budget they spent to the run's summary. The site shows the date of the sweep its figure comes from, and the status page how many rows share it. |
 | Whether cited text is still present | Continuously, upstream | `claims` is scheduled weekly to fetch each `evidence` file and report missing strings or files. Counts show citations recorded, not CI passes, and the job does not update the human `read_on` date. A claim that lost only its pinned model version, from a file that names another, is `version-moved`: the issue counts those rows per version instead of listing each, and `verify_claims.py --propose-version-rewrite` prints each one's `evidence.matched` rewritten, for a person to apply without touching `read_on`. |
 | What the catalogue is missing | Continuously, upstream | `discover` weekly: harvests every sibling directory, reads the code of the most-cited uncatalogued repositories, searches for sibling directories not yet harvested, and keeps one issue: its description is the queue of every candidate, ticked or struck through from `catalog.json`, `retired.json` and `docs/declined.txt` (`queue_sync.py`), and each week's new candidates are a comment, a box per candidate to claim with the command that re-reads it. It never adds a row. Its verdicts are kept in `.discover/seen.json`, which `metadata` commits from `discover`'s artifact. |
+| What the published counts were on each weekly refresh | Weekly, from the first refresh after 2026-09-28 | `metadata` writes `history/<UTC date>.json` with `snapshot_stats.py` after the refresh and before its commit: generated data, never read back into `catalog.json`, never backfilled, never dated before the newest snapshot. `docs/shape.md` reads it for its trend table once there are three. |
 | The MCP package on PyPI | When `pyproject.toml`'s version changes | A release is a tag a maintainer pushes, so PyPI can lag `main`. `check_release.py` compares the two on every push to `main`, in `lint`'s `release` job: a version not yet on PyPI is a warning carrying the tag command; a version older than PyPI's newest, or `pyproject.toml` and `.claude-plugin/plugin.json` disagreeing, fails. The file comparison also runs on every pull request, as a unit test. After an upload, `publish` installs the release back from PyPI. |
 | Dated history | Never | This page's log sections are append-only and exempt from the number rules: what the first build found is true forever. |
 
