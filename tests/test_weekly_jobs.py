@@ -116,7 +116,7 @@ class MetadataLogsTest(unittest.TestCase):
         body = "\n".join(lines)
         self.assertIn("        if: always()", lines)
         self.assertIn("        uses: actions/upload-artifact@v7", lines)
-        for path in ("/tmp/links.log", "/tmp/refresh.log", "/tmp/signals.log", "/tmp/digest.md"):
+        for path in ("/tmp/links.log", "/tmp/refresh.log", "/tmp/signals.log", "/tmp/sources.log", "/tmp/digest.md"):
             self.assertIn(f"            {path}", lines, path)
         self.assertIn("if-no-files-found: ignore", body)
         order = [text.index(f"      - name: {name}") for name in (
@@ -202,6 +202,63 @@ class MetadataSignalsTest(unittest.TestCase):
         self.assertIn("  contents: read\n", claims)
         self.assertNotIn("contents: write", claims)
         self.assertNotIn("--write-signals", claims)
+
+
+SOURCES_STUB = """#!/bin/bash
+# Plays attribute_sources.py --write --digest FILE: STUB_EXIT is its exit code.
+[ "$1 $2 $3" = "scripts/attribute_sources.py --write --digest" ] || { echo "unexpected: $*" >&2; exit 9; }
+[ -n "$4" ] || { echo "no digest file" >&2; exit 9; }
+echo "  ~ some-row: +someone/awesome-jev"
+echo "sibling-list citations: 1 of 2 row(s) changed (1 added, 0 removed); read 52 of 52 list(s)"
+exit "$STUB_EXIT"
+"""
+
+
+class MetadataSourcesTest(unittest.TestCase):
+    """I16: the weekly run records which sibling directories link each row's
+    repository after the refresh (whose digest it appends to) and before the
+    commit, needs no token, and a crash there never costs the week's refresh."""
+
+    NAME = "Record which sibling directories link each repository"
+
+    def setUp(self):
+        self.text = (WORKFLOWS / "metadata.yml").read_text()
+        self.lines = step_lines(self.text, self.NAME)
+
+    def test_it_runs_after_the_digest_is_written_and_before_the_commit(self):
+        order = [self.text.index(f"      - name: {name}") for name in (
+            "Refresh stars, licences and archive status",
+            "Record the primitive text signals in each cited file",
+            self.NAME,
+            "Keep the sweep and refresh logs",
+            "Rebuild everything generated from those facts, and commit it here",
+        )]
+        self.assertEqual(order, sorted(order))
+        self.assertIn("        continue-on-error: true", self.lines)
+        self.assertNotIn("GITHUB_TOKEN", "\n".join(self.lines), "the raw host needs no token")
+        self.assertIn("--digest /tmp/digest.md", run_block(self.lines))
+
+    def run_step(self, exit_code: int) -> subprocess.CompletedProcess:
+        tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(tmp.cleanup)
+        folder = pathlib.Path(tmp.name)
+        stub = folder / "bin" / "python3"
+        stub.parent.mkdir()
+        stub.write_text(SOURCES_STUB)
+        stub.chmod(stub.stat().st_mode | stat.S_IXUSR)
+        script = run_block(self.lines).replace("/tmp/", f"{folder}/")
+        env = {**os.environ, "PATH": f"{folder / 'bin'}{os.pathsep}{os.environ['PATH']}", "STUB_EXIT": str(exit_code)}
+        return subprocess.run(
+            ["bash", "--noprofile", "--norc", "-e", "-c", script],
+            cwd=folder, env=env, capture_output=True, text=True,
+        )
+
+    def test_the_counts_end_the_log_and_the_exit_code_is_kept(self):
+        for code in (0, 1):
+            with self.subTest(exit=code):
+                done = self.run_step(code)
+                self.assertEqual(done.returncode, code, done.stderr)
+                self.assertTrue(done.stdout.strip().splitlines()[-1].startswith("sibling-list citations: "))
 
 
 class ClaimsWorkflowTest(unittest.TestCase):

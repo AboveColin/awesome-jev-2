@@ -17,6 +17,7 @@ import re
 from collections import Counter
 
 from classify import classify_broad, suggest
+from sibling_lists import citations_of, own_repository
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 
@@ -145,6 +146,16 @@ def pushed_by_month(catalog: list[dict]) -> dict[str, int]:
     return dict(sorted(months.items(), reverse=True))
 
 
+def cited_by(catalog: list[dict]) -> dict[str, int]:
+    """Rows per number of sibling directories whose README links their
+    repository, fewest first, over the rows that have such a repository (a
+    row nobody links counts under "0"). A count of mentions, not of reviews:
+    the lists copy from each other. Keys are strings, as JSON keeps them, so
+    site/stats.json reads back equal to this."""
+    counts = Counter(len(citations_of(e)) for e in catalog if own_repository(e))
+    return {str(n): rows for n, rows in sorted(counts.items())}
+
+
 def not_indexed_by_pattern(entry: dict) -> bool:
     """A project or plugin with code filed only under overview, and no record
     of anyone reading it against the patterns. Derived, never stored."""
@@ -242,6 +253,12 @@ def compute() -> dict:
         "repo_facts_rows": sum(1 for e in catalog if all(key in e for key in REPO_FACTS)),
         "single_commit_rows": sum(1 for e in catalog if "single-commit" in (e.get("flags") or [])),
         "pushed_by_month": pushed_by_month(catalog),
+        # Which sibling directories link each row's repository, as the weekly
+        # run last read their READMEs: rows with a GitHub repository, how many
+        # of them at least one list links, and rows per number of lists.
+        "citable_rows": sum(1 for e in catalog if own_repository(e)),
+        "cited_rows": sum(1 for e in catalog if citations_of(e)),
+        "cited_by": cited_by(catalog),
         # summary_source: the project's own description word for word; taken
         # from it and no longer matching; written for this catalogue; not
         # recorded. The refresh writes the first two, only a person the third.

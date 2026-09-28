@@ -8,11 +8,15 @@ array and states the licence position.
 
 Regenerated from every row's `sources[]` on each build, so the order is what is
 true now rather than what was true at launch. A row can cite more than one
-source.
+source. The sources a person wrote say where a row was found; after them, a
+row with a GitHub repository lists the sibling directories whose README links
+it, one item per list, and those are counted together on one line here and
+list by list below.
 
 <!-- sources:start -->
 | Source | URL | Rows |
 | --- | --- | --- |
+| Sibling directories linking the row's repository (one `owner/name` item per list, read weekly) | [each list, below](#sibling-directories-linking-catalogued-repositories) | 1129 |
 | sibling-list aggregate (docs/sibling-lists.txt) | <https://github.com/kydlikebtc/awesome-jev/blob/main/docs/sibling-lists.txt> | 1053 |
 | GitHub code search | <https://github.com/search> | 51 |
 | TypeSafe AI docs index | <https://docs.typesafe.ai/llms.txt> | 36 |
@@ -48,6 +52,73 @@ that several other Jev directories cite gets its code read, and only enters here
 if that reading finds a call site. By usefulness per row, though, the official
 cookbooks and pattern pages remain the best material in the catalogue — they are
 primary sources, written by the people who built the model.
+
+### Sibling directories linking catalogued repositories
+
+Which of the directories in [`docs/sibling-lists.txt`](sibling-lists.txt)
+link how many catalogued rows' repositories in their README. The weekly refresh
+reads each README (`scripts/attribute_sources.py`) and records every link it
+finds on the row as a `sources` item: the list's `owner/name` and its URL.
+Nothing else is taken from a list — many ship no licence, and a URL is a fact
+where a description is someone's writing. A list that could not be read keeps
+the citations it had when last read.
+
+<!-- citations:start -->
+| Sibling directory | Catalogued rows whose repository its README links |
+| --- | --- |
+| [Omrigotlieb/awesome-jev](https://github.com/Omrigotlieb/awesome-jev) | 758 |
+| [hellogumbo/awesome-jev](https://github.com/hellogumbo/awesome-jev) | 731 |
+| [heyjunpenn/awesome-jev](https://github.com/heyjunpenn/awesome-jev) | 656 |
+| [daftAI2026/awesome-jev](https://github.com/daftAI2026/awesome-jev) | 621 |
+| [RadRebelSam/awesome-jev](https://github.com/RadRebelSam/awesome-jev) | 496 |
+| [logicrw/awesome-jev-projects](https://github.com/logicrw/awesome-jev-projects) | 479 |
+| [AppitStudio/awesome-jev](https://github.com/AppitStudio/awesome-jev) | 325 |
+| [yibie/awesome-jev](https://github.com/yibie/awesome-jev) | 277 |
+| [MrJev/awesome-jev](https://github.com/MrJev/awesome-jev) | 267 |
+| [valentynkit/awesome-jev-typesafe](https://github.com/valentynkit/awesome-jev-typesafe) | 259 |
+| [wh000wh000/awesome-jev-live](https://github.com/wh000wh000/awesome-jev-live) | 235 |
+| [jqueryscript/awesome-jev](https://github.com/jqueryscript/awesome-jev) | 205 |
+| [JohnDotOwl/awesome-jev](https://github.com/JohnDotOwl/awesome-jev) | 189 |
+| [cobanov/awesome-jev](https://github.com/cobanov/awesome-jev) | 179 |
+| [AbdelStark/awesome-typesafe](https://github.com/AbdelStark/awesome-typesafe) | 178 |
+| [AbdelStark/awesome-typesafe-jev](https://github.com/AbdelStark/awesome-typesafe-jev) | 178 |
+| [walidboulanouar/awesome-jev-use-cases](https://github.com/walidboulanouar/awesome-jev-use-cases) | 152 |
+| [robokrunch/awesome-jev](https://github.com/robokrunch/awesome-jev) | 146 |
+| [BeatAPI/awesome-jev](https://github.com/BeatAPI/awesome-jev) | 142 |
+| [AnotiaWang/awesome-jev](https://github.com/AnotiaWang/awesome-jev) | 139 |
+| [fatwang2/awesome-jev](https://github.com/fatwang2/awesome-jev) | 137 |
+| [kraayenjon/awesome-jev](https://github.com/kraayenjon/awesome-jev) | 128 |
+| [yzfly/awesome-jev-zh](https://github.com/yzfly/awesome-jev-zh) | 125 |
+| [Gerry9000/awesome-jev](https://github.com/Gerry9000/awesome-jev) | 122 |
+| [tanxarx/awesome-jev](https://github.com/tanxarx/awesome-jev) | 108 |
+| [jtnkminimal/awesome-jev](https://github.com/jtnkminimal/awesome-jev) | 88 |
+| [sontakey/awesome-jev](https://github.com/sontakey/awesome-jev) | 80 |
+| [Anil-matcha/awesome-jev-by-typesafe](https://github.com/Anil-matcha/awesome-jev-by-typesafe) | 78 |
+| [charetterat/awesome-jev-essentials](https://github.com/charetterat/awesome-jev-essentials) | 75 |
+| [OmniJev/awesome-jev](https://github.com/OmniJev/awesome-jev) | 72 |
+| [OmniJev/awesome-jev-gallery](https://github.com/OmniJev/awesome-jev-gallery) | 72 |
+| [rhc98/awesome-jev](https://github.com/rhc98/awesome-jev) | 64 |
+| [seeapi/awesome-jev-use-cases](https://github.com/seeapi/awesome-jev-use-cases) | 64 |
+| [anandi1989/awesome-jev-usecases](https://github.com/anandi1989/awesome-jev-usecases) | 58 |
+| [Li-Evan/awesome-jev](https://github.com/Li-Evan/awesome-jev) | 54 |
+| [Ai-trainee/awesome-jev](https://github.com/Ai-trainee/awesome-jev) | 48 |
+| [Amal-David/awesome-jev](https://github.com/Amal-David/awesome-jev) | 40 |
+| [wuyoscar/jev-skill](https://github.com/wuyoscar/jev-skill) | 40 |
+| [Yifan-Lan/awesome-jev-robustness](https://github.com/Yifan-Lan/awesome-jev-robustness) | 37 |
+| [JingHao-Leon/awesome-jev-apps](https://github.com/JingHao-Leon/awesome-jev-apps) | 34 |
+| [onlyoasis/awesome-jev-cases](https://github.com/onlyoasis/awesome-jev-cases) | 27 |
+| [majiayu000/awesome-jev](https://github.com/majiayu000/awesome-jev) | 25 |
+| [Eurekaleo/awesome-jev-survey](https://github.com/Eurekaleo/awesome-jev-survey) | 24 |
+| [Promethe-us/awesome-jev](https://github.com/Promethe-us/awesome-jev) | 24 |
+| [aliaihub/awesome-jev-usecases](https://github.com/aliaihub/awesome-jev-usecases) | 14 |
+| [yangzhou-chaofan/awesome-jev-prompt](https://github.com/yangzhou-chaofan/awesome-jev-prompt) | 11 |
+| [everyinfra/jev-radar](https://github.com/everyinfra/jev-radar) | 3 |
+| [visitworld123/Awesome-Robot-Use-Agent](https://github.com/visitworld123/Awesome-Robot-Use-Agent) | 3 |
+| [nexibeo/jev-cookbook](https://github.com/nexibeo/jev-cookbook) | 2 |
+| [Hiwoniu/Jev-Case](https://github.com/Hiwoniu/Jev-Case) | 0 |
+| [mizzlelover/jev-hub](https://github.com/mizzlelover/jev-hub) | 0 |
+| [theSekyi/jevusecases](https://github.com/theSekyi/jevusecases) | 0 |
+<!-- citations:end -->
 
 ## Licences
 

@@ -31,12 +31,18 @@ import re
 import sys
 from typing import Any, NamedTuple
 
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+
+from sibling_lists import FIX as CITATION_FIX  # noqa: E402
+from sibling_lists import citation_problems, listed_urls, read_lists, unlisted_citations  # noqa: E402
+
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 CATALOG = ROOT / "catalog.json"
 RETIRED = ROOT / "retired.json"
 SCHEMA = ROOT / "schema" / "entry.schema.json"
 PATTERNS_FILE = ROOT / "patterns.json"
 TAXONOMY_FILE = ROOT / "taxonomy.json"
+SIBLINGS = ROOT / "docs" / "sibling-lists.txt"
 
 # Places we accept as TypeSafe AI speaking for itself. `official: true` anywhere
 # else is a mistake: the community site at jevai.org is not the vendor, and a
@@ -94,6 +100,16 @@ PRIMITIVES_SEEN = "primitives_seen"
 REPO_TIMESTAMPS = ("repo_created_at", "repo_pushed_at")
 REPO_COMMITS = "repo_commits"
 SINGLE_COMMIT_FLAG = "single-commit"
+
+# A `sources` item shaped `{"catalog": "owner/name", "url":
+# "https://github.com/owner/name"}` records that the sibling directory at that
+# URL links the row's repository (sibling_lists.is_citation). The weekly run
+# writes them (scripts/attribute_sources.py): after every source a person
+# wrote, sorted by URL ignoring case, only for a list docs/sibling-lists.txt
+# names and only on a row with a GitHub repository of its own. A row keeps at
+# least one other source, since a citation says who else links a project, not
+# where the row was found. The rules live beside the shape in sibling_lists.py;
+# CITATION_FIX (imported from there) puts a hand-edited row right.
 
 # `summary_source: curated` says a person wrote the summary for this catalogue,
 # so CONTRIBUTING's "no marketing copy" is theirs to keep, and lint warns when a
@@ -427,6 +443,29 @@ def check_entry_invariants(
                 f"{slug}: flagged no-license but repo_license is {entry['repo_license']!r}",
             )
     report.add(check_repository_facts(entry, path, flags, today))
+    report.add(check_sibling_citations(entry, path))
+    return report.findings()
+
+
+def check_sibling_citations(entry: dict, path: str) -> Findings:
+    """Sibling-list citations in `sources` (sibling_lists.citation_problems)."""
+    report = Report()
+    for problem in citation_problems(entry):
+        report.err(path, f"{entry.get('slug', '?')}: {problem}")
+    return report.findings()
+
+
+def check_citation_lists(catalog: list, listed: list[str]) -> Findings:
+    """Every sibling-list citation in catalog.json names a list
+    docs/sibling-lists.txt names. One error per list, however many rows cite it.
+    retired.json keeps what its rows had when they were retired."""
+    report = Report()
+    for url, rows in unlisted_citations(catalog, listed).items():
+        report.err(
+            "catalog.json",
+            f"{rows} row(s) cite {url} in sources, a list docs/sibling-lists.txt does not name; "
+            f"run {CITATION_FIX} to drop them",
+        )
     return report.findings()
 
 
@@ -691,6 +730,8 @@ def check_all(schema: dict, catalog: Any, retired: Any) -> Findings:
             return report.findings()
 
     report.add(check_entries(schema, catalog, retired))
+    listed = listed_urls(read_lists(SIBLINGS)) if SIBLINGS.exists() else []
+    report.add(check_citation_lists(catalog, listed))
     return report.findings()
 
 

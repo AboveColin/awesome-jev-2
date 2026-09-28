@@ -384,7 +384,7 @@
       "maxLength": 500
     },
     "sources": {
-      "description": "Where this row came from. At least one is required so every row is attributable.",
+      "description": "Where this row came from, then which sibling directories link its repository. At least one source is required so every row is attributable, and at least one must say where the row was found. An item shaped {\"catalog\": \"owner/name\", \"url\": \"https://github.com/owner/name\"} is a sibling-list citation: the directory at that URL, a line of docs/sibling-lists.txt, linked the row's repository in its README when scripts/attribute_sources.py last read it (weekly). A citation records a link, not a review of the project, and these lists copy from each other. Citations come after every other source, sorted by url ignoring case; only a row with a GitHub repository has them. Do not add or edit them by hand: lint checks their order and that each names a listed directory, and the weekly run rewrites them from the lists.",
       "type": "array",
       "minItems": 1,
       "items": {
@@ -396,7 +396,7 @@
         ],
         "properties": {
           "catalog": {
-            "description": "Human name of the upstream index, site or search that surfaced this entry. Two fixed strings name submissions to this repository: 'author submission' when the project's own author or maintainer proposed the row (the row then also carries the self-submitted flag; lint enforces both directions), and 'maintainer submission' when this list's maintainer added it on their own initiative.",
+            "description": "Human name of the upstream index, site or search that surfaced this entry, or, in a sibling-list citation, that list's owner/name. Two fixed strings name submissions to this repository: 'author submission' when the project's own author or maintainer proposed the row (the row then also carries the self-submitted flag; lint enforces both directions), and 'maintainer submission' when this list's maintainer added it on their own initiative.",
             "type": "string",
             "minLength": 1
           },

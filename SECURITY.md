@@ -51,8 +51,9 @@ The GitHub Actions workflows in this repository interpolate no
 permission except in two places: the weekly `metadata` refresh, which commits
 machine-checkable facts (link status, stars, licences, archive status,
 repository creation and last-push dates and commit counts, whether each
-summary is its repository's own description, and which
-primitives' request shapes each cited file's text contains) to
+summary is its repository's own description, which
+primitives' request shapes each cited file's text contains, and which sibling
+directories' READMEs link each repository) to
 `catalog.json` and the files generated from them, and the discovery verdicts
 in `.discover/seen.json` (`discover` reads strangers' repositories, so it holds
 no write permission and leaves them as an artifact; each entry is checked

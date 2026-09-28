@@ -6,6 +6,12 @@
 # them, then reads the candidate's code before anything reaches the catalog —
 # crowd agreement finds things, it does not verify them.
 #
+# The weekly refresh (scripts/attribute_sources.py) also reads every list here
+# and records, on each catalogued row, which of them link its repository: the
+# list's owner/name and URL in the row's `sources`, nothing of its text. A list
+# removed from this file loses those citations; run
+# `python3 scripts/attribute_sources.py --offline --write` when you remove one.
+#
 # One line per list. Seeded 2026-09-22 from the "Other lists" section of
 # heyjunpenn/awesome-jev, which had done this collection already.
 https://github.com/AbdelStark/awesome-typesafe

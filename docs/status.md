@@ -37,6 +37,7 @@ is the point of dating it.
 | Chinese summaries hand-written | 196 of 1207 |
 | Rows recording GitHub's creation date, last push and default-branch commit count for their repository (`repo_created_at`, `repo_pushed_at`, `repo_commits`; GitHub's facts at the last weekly refresh, not a judgement of upkeep) | 1134 of 1207 |
 | Rows flagged `single-commit`: one commit on the default branch (the refresh sets and clears it from `repo_commits`) | 91 |
+| Rows with a GitHub repository that at least one sibling directory links (`sources` citations, from the lists' READMEs at the last weekly read; a count of mentions, not a review) | 1129 of 1136 |
 | Retired links | 2 |
 <!-- shape:end -->
 
@@ -53,6 +54,27 @@ counts behind the same refresh are on the site and in the MCP server's rows.
 | --- | --- |
 | 2026-09 | 1134 |
 <!-- pushed:end -->
+
+### How many sibling directories link each repository
+
+Every row with a GitHub repository, by how many of the sibling directories in
+[`docs/sibling-lists.txt`](sibling-lists.txt) link that repository in their
+README, as the weekly refresh last read them (`scripts/attribute_sources.py`
+records each one in the row's `sources`). The lists copy from each other, so
+this counts how widely a project is mentioned. It is not a review of the
+project, and a repository no list links is not thereby worse.
+
+<!-- cited-by:start -->
+| Sibling directories linking the repository | Rows |
+| --- | --- |
+| 0 | 7 |
+| 1 | 18 |
+| 2 | 89 |
+| 3–5 | 496 |
+| 6–10 | 319 |
+| 11–20 | 148 |
+| 21 or more | 59 |
+<!-- cited-by:end -->
 
 ### Coverage gaps
 

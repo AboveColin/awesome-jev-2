@@ -68,6 +68,6 @@ Runtime and performance: treat all catalogue code as untested by this repository
 
 6. **There is no portable model string.** `jev-latest` on the native API, `typesafe-ai/jev` on Vercel, `typesafe/jev` on Cloudflare, `typesafe/jev-1.13` on OpenRouter. `typesafe/jev-1` does not exist anywhere and is a common fabrication.
 
-7. **Star counts are a popularity signal, not a quality verdict.** Many entries were created within days of the model's launch; some carry `single-commit`, `no-license`, `archived` or `shadow-mode-only` flags precisely because popularity and substance diverge sharply here.
+7. **Star counts are a popularity signal, not a quality verdict.** Many entries were created within days of the model's launch; some carry `single-commit`, `no-license`, `archived` or `shadow-mode-only` flags precisely because popularity and substance diverge sharply here. The same holds for sibling-directory citations: after the sources that say where a row was found, `sources` lists each sibling directory whose README links the row's repository, as `{"catalog": "owner/name", "url": "https://github.com/owner/name"}`, re-read weekly (<!--n:cited_rows-->1129<!--/n--> rows carry at least one). These lists copy from each other, so the number says how widely a project is mentioned, not that anyone checked it.
 
 8. **English is the model's primary training language.** The official docs state CJK scripts are handled but not equally well. Test on your own content before relying on it for non-English workloads.

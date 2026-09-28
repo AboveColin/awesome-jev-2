@@ -77,6 +77,24 @@ export function repositoryFacts(entry) {
   return { created: day(entry.repo_created_at), pushed: day(entry.repo_pushed_at), commits };
 }
 
+// The sibling directories whose README links a row's repository, as the
+// weekly run records them at the end of `sources` (scripts/attribute_sources.py):
+// an item whose `catalog` is the list's owner/name and whose `url` is
+// https://github.com/owner/name, and nothing else. scripts/sibling_lists.py
+// is_citation() is the same rule. The lists copy from each other, so the
+// number is how widely a project is mentioned, never a check of it.
+const LIST_URL = /^https:\/\/github\.com\/([A-Za-z0-9][\w.-]*)\/([\w.-]+)$/;
+
+export function siblingCitations(entry) {
+  return (entry.sources || []).filter(source => {
+    if (!source || typeof source !== "object" || Object.keys(source).length !== 2) return false;
+    const { catalog, url } = source;
+    const match = typeof url === "string" && LIST_URL.exec(url);
+    return Boolean(match) && ![".", ".."].includes(match[2]) && typeof catalog === "string"
+      && url === `https://github.com/${catalog}`;
+  }).map(({ catalog, url }) => ({ name: catalog, url }));
+}
+
 export function evidenceUrl(entry) {
   if (!entry.evidence?.path) return null;
   for (const candidate of [entry.repo, entry.url]) {

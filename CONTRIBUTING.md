@@ -266,6 +266,16 @@ turns red.
     self-submission, unless the maintainer is also that project's author, in
     which case it is an `author submission` like any other.
 
+  After the sources you write, the weekly refresh
+  (`scripts/attribute_sources.py`) appends one item per sibling directory in
+  `docs/sibling-lists.txt` whose README links the row's repository:
+  `{"catalog": "owner/name", "url": "https://github.com/owner/name"}`, the
+  list's name and URL, sorted by URL. Leave those to it: do not add, edit or
+  copy them into a new row. `lint.py` fails a row whose citations are out of
+  order, come before a source you wrote, are all it has, or name a list the
+  file does not; `python3 scripts/attribute_sources.py --offline --write` puts
+  them right without reading anything.
+
 ## Flags are the point
 
 Use them generously. A flagged row is more useful than an unflagged one.
@@ -391,7 +401,10 @@ verdicts, not anyone's decision: yours goes in `catalog.json` or
 `docs/declined.txt`.
 
 Know a directory we are not harvesting? Add it to `docs/sibling-lists.txt`.
-That is a useful contribution on its own.
+That is a useful contribution on its own: the weekly refresh then also records
+which catalogued rows it links. Removing a line? Run
+`python3 scripts/attribute_sources.py --offline --write` in the same pull
+request, or lint fails on the citations of the list you removed.
 
 ## Reporting a dead link
 

@@ -154,6 +154,21 @@ class RepositoryFactsTest(unittest.TestCase):
         self.assertIn("`single-commit`", doc)
 
 
+class SiblingCitationTest(unittest.TestCase):
+    """Which sibling directories cite a row reaches an agent with what it is (I16)."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.server = load_server()
+
+    def test_the_row_keeps_its_citations_and_the_description_says_what_they_are(self):
+        cited = next(e for e in self.server.CATALOG if len(e["sources"]) > 1)
+        self.assertEqual(self.server.get_example(cited["slug"])["sources"], cited["sources"])
+        doc = self.server.get_example.__doc__
+        self.assertIn('`{"catalog": "owner/name", "url":', doc)
+        self.assertIn("not that anyone checked it", doc)
+
+
 class PrimitiveSignalTest(unittest.TestCase):
     """A text signal about a primitive is not a primitive claim (I14)."""
 

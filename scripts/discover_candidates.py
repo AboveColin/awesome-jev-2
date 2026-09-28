@@ -36,7 +36,6 @@ import pathlib
 import re
 import sys
 import urllib.parse
-import urllib.request
 from concurrent.futures import ThreadPoolExecutor
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
@@ -56,6 +55,17 @@ from discover_seen import (  # noqa: E402
     write as write_seen,
 )
 import discover_drafts  # noqa: E402
+# Reading the sibling lists and counting their citations lives in
+# sibling_lists.py, shared with attribute_sources.py; re-exported here.
+from sibling_lists import (  # noqa: E402,F401
+    GH,
+    SIBLINGS,
+    SKIP_OWNERS,
+    fetch_readme,
+    harvest,
+    read_lists,
+    slug_of,
+)
 
 # The weekly issue: at most this many new boxes (the rest are saved with their
 # verdict and listed among the earlier candidates from the next run on), and at
@@ -95,37 +105,12 @@ CLAIM_ZH = (
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 CATALOG = ROOT / "catalog.json"
-SIBLINGS = ROOT / "docs" / "sibling-lists.txt"
 # Candidates a person read and chose not to add, one `owner/name  # reason` per
 # line. Without it the weekly run would re-propose the same rejects forever.
 DECLINED = ROOT / "docs" / "declined.txt"
 # RECHECK_DAYS and VERDICTS live in discover_seen.py, beside the verdict file
 # they describe.
 WORKERS = 8
-
-GH = re.compile(r"https://github\.com/([A-Za-z0-9][\w.-]*)/([\w.-]+)")
-
-# GitHub's own paths, not repositories.
-SKIP_OWNERS = {
-    "sponsors",
-    "topics",
-    "features",
-    "about",
-    "pricing",
-    "login",
-    "apps",
-    "marketplace",
-    "orgs",
-    "settings",
-    "notifications",
-    "explore",
-    "collections",
-    "readme",
-    "search",
-    "users",
-    "site",
-    "github",
-}
 
 # Same signals verify_claims.py uses: an import or an endpoint is proof, a bare
 # primitive name is not, because "choice" and "score" are ordinary words.
@@ -148,11 +133,6 @@ STRONG = [
 ]
 
 
-def slug_of(owner: str, name: str) -> str:
-    name = re.sub(r"\.git$", "", name)
-    return f"{owner.lower()}/{name.lower()}"
-
-
 def only_slug(text: str) -> str | None:
     """owner/name, or a github.com URL of one, as a slug; None otherwise."""
     match = re.fullmatch(
@@ -161,25 +141,6 @@ def only_slug(text: str) -> str | None:
     if not match or match.group(2) in (".", ".."):
         return None
     return slug_of(*match.groups())
-
-
-def fetch_readme(repo_url: str) -> tuple[str, str]:
-    match = GH.match(repo_url)
-    if not match:
-        return repo_url, ""
-    slug = f"{match.group(1)}/{match.group(2)}"
-    for branch in ("main", "master"):
-        for name in ("README.md", "readme.md"):
-            try:
-                req = urllib.request.Request(
-                    f"https://raw.githubusercontent.com/{slug}/{branch}/{name}",
-                    headers={"User-Agent": "awesome-jev"},
-                )
-                with urllib.request.urlopen(req, timeout=20) as response:
-                    return repo_url, response.read().decode("utf-8", "replace")
-            except Exception:  # noqa: BLE001
-                continue
-    return repo_url, ""
 
 
 def inspect(slug: str) -> dict:
@@ -555,26 +516,13 @@ def main(argv: list[str] | None = None) -> int:
     if not SIBLINGS.exists():
         print(f"error: {SIBLINGS.relative_to(ROOT)} is missing", file=sys.stderr)
         return 1
-    lists = [
-        line.strip()
-        for line in SIBLINGS.read_text().splitlines()
-        if line.strip() and not line.startswith("#")
-    ]
+    lists = read_lists(SIBLINGS)
 
     print(f"harvesting {len(lists)} sibling list(s)", file=sys.stderr)
-    with ThreadPoolExecutor(max_workers=WORKERS) as pool:
-        fetched = list(pool.map(fetch_readme, lists))
-
-    cites: collections.Counter[str] = collections.Counter()
-    reached = 0
-    for _, body in fetched:
-        if not body:
-            continue
-        reached += 1
-        for owner, name in set(GH.findall(body)):
-            if owner.lower() in SKIP_OWNERS:
-                continue
-            cites[slug_of(owner, name)] += 1
+    # fetch_readme is looked up here, so a test can patch it on this module.
+    found = harvest(lists, fetch=fetch_readme, workers=WORKERS)
+    cites = found.counts()
+    reached = len(found.reached)
 
     catalog = json.loads(CATALOG.read_text())
     have = catalogued(catalog)
@@ -610,6 +558,8 @@ def main(argv: list[str] | None = None) -> int:
         results = list(pool.map(inspect, shortlist))
     for result, (slug, n) in zip(results, candidates[: args.top]):
         result["cited_by"] = n
+        # Which lists, not only how many: the URLs, never their descriptions.
+        result["cited_lists"] = sorted(found.cited[slug])
 
     # GitHub redirects a renamed repository, so two cited names can resolve to
     # one canonical html_url. Without this the same project is proposed twice

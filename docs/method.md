@@ -287,6 +287,35 @@ someone with write access could tick. One gap remains: a candidate catalogued
 under a newer name than the one the sibling lists cite shows as still to read,
 because the verdict file keeps the cited name.
 
+Since 2026-09-27, which sibling directories cite a row is recorded on the row.
+Until then 1,053 rows named one and the same source, the sibling-list
+aggregate, while the harvest that knew which lists cited each repository kept
+only the count, for the weekly issue, and dropped it. `scripts/sibling_lists.py`
+now does the harvest for both scripts, and `scripts/attribute_sources.py`, run
+weekly by `metadata` after the refresh, appends to every row with a GitHub
+repository one `sources` item per list whose README links it:
+`{"catalog": "owner/name", "url": "https://github.com/owner/name"}`, the list's
+name and URL and nothing of its text, after the sources a person wrote and
+sorted by URL. Those stay as they were and still say where the row was found;
+`lint.py` holds the citations to that shape, that order and the lists
+`docs/sibling-lists.txt` names. A list that does not answer keeps its
+citations as last read, a list removed from the file loses them, a list never
+cites its own row, and this repository's examples are cited by none. The
+first read, on 2026-09-28, reached all 52 lists and recorded 8,269 citations
+on 1,129 of the 1,136 rows whose repository is not this one; no list links the
+other seven, and three of the lists link no catalogued repository. It is a
+fact about the lists, and like a star count it measures attention: they copy
+from each other, so the number says how widely a project is mentioned, not
+that anyone checked it, and nothing here ranks, filters or flags a row by it.
+`docs/status.md` counts rows by how many lists link them, `docs/sources.md`
+gives the citations one line and each list a line of its own, the site shows
+the count on each card and the lists in its details, and the weekly digest
+counts the changes without naming a row, so they open no notice. A link is
+matched on the repository name the list writes, so a list still linking a
+renamed repository by its old name is not counted. The cost is size:
+`catalog.json` grew from 1.78 MB to 2.81 MB and by 33,076 lines, about a sixth
+once compressed.
+
 ### The bulk pass, and what it cost
 
 A second aggregation run verified the 320 most-cited repositories missing here
@@ -709,7 +738,7 @@ catalogue passed 800, and no build ever went red.
 | The repository description | When the count crosses a hundred, or the wording changes | Only an admin can edit it, so it states the count floored to the hundred: `_stats.pitch_public()`, the same sentence as the site's `description` and `og:description`. The `description` workflow compares the whole sentence on every push to `main`; on drift it warns and keeps one open issue, labelled `description`, holding the exact `gh repo edit` command, instead of failing a build nobody but an admin can fix. `lint` prints the would-be sentence on every run, pull requests included. Every other surface — the READMEs, `status.md`, `llms.txt`, the figures — carries the exact count. |
 | Labels for patterns, kinds and flags | When the taxonomy changes | One copy each, in `patterns.json` and `taxonomy.json`, read by the README generators and by the site at runtime. `lint` checks both against the schema; `lint_docs` checks `docs/patterns.md` has a section for each pattern. |
 | Model strings and limits | When the vendor or a gateway ships | One source, `compat.json`. `lint_docs` checks every copy — in docs, examples, and the generated README and figures — against it. `claims` re-reads each platform's documentation weekly and opens an issue if a recorded string disappears. |
-| Link status, stars, licences, archive status, whether a summary is the repository's own description, creation date, last push and commit count (with `single-commit`) | Continuously, upstream | `metadata` weekly: stamps every link that answers, re-reads the GitHub API, rebuilds everything generated, commits it, runs `lint`'s checks on that commit (`check.py --ci --quick`: all but the preview images, which `pages` renders), pushes to `main`, and redeploys the site. It opens an issue only for a change that is more than a star count, a last push or a commit count, and falls back to a branch if `main` moved underneath it. `links` weekly is the separate alarm for a dead link, which only a person may retire, and for a sweep so refused by GitHub or by other hosts that it checked little. Both jobs, and `claims`, write their counts and the GitHub budget they spent to the run's summary. The site shows the date of the sweep its figure comes from, and the status page how many rows share it. |
+| Link status, stars, licences, archive status, whether a summary is the repository's own description, creation date, last push and commit count (with `single-commit`), which sibling directories link each repository | Continuously, upstream | `metadata` weekly: stamps every link that answers, re-reads the GitHub API and every sibling directory's README, rebuilds everything generated, commits it, runs `lint`'s checks on that commit (`check.py --ci --quick`: all but the preview images, which `pages` renders), pushes to `main`, and redeploys the site. It opens an issue only for a change that is more than a star count, a last push, a commit count or a sibling-list citation, and falls back to a branch if `main` moved underneath it. `links` weekly is the separate alarm for a dead link, which only a person may retire, and for a sweep so refused by GitHub or by other hosts that it checked little. Both jobs, and `claims`, write their counts and the GitHub budget they spent to the run's summary. The site shows the date of the sweep its figure comes from, and the status page how many rows share it. |
 | Whether cited text is still present | Continuously, upstream | `claims` is scheduled weekly to fetch each `evidence` file and report missing strings or files. Counts show citations recorded, not CI passes, and the job does not update the human `read_on` date. |
 | What the catalogue is missing | Continuously, upstream | `discover` weekly: harvests every sibling directory, reads the code of the most-cited uncatalogued repositories, searches for sibling directories not yet harvested, and keeps one issue: its description is the queue of every candidate, ticked or struck through from `catalog.json`, `retired.json` and `docs/declined.txt` (`queue_sync.py`), and each week's new candidates are a comment, a box per candidate to claim with the command that re-reads it. It never adds a row. Its verdicts are kept in `.discover/seen.json`, which `metadata` commits from `discover`'s artifact. |
 | The MCP package on PyPI | When `pyproject.toml`'s version changes | A release is a tag a maintainer pushes, so PyPI can lag `main`. `check_release.py` compares the two on every push to `main`, in `lint`'s `release` job: a version not yet on PyPI is a warning carrying the tag command; a version older than PyPI's newest, or `pyproject.toml` and `.claude-plugin/plugin.json` disagreeing, fails. The file comparison also runs on every pull request, as a unit test. After an upload, `publish` installs the release back from PyPI. |

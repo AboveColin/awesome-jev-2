@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import {
   compareEntries, evidenceKind, evidenceUrl, matchesEntry, verification, isIndependentReport, EVIDENCE_KINDS,
   queryFromState, shareUrl, stateFromQuery, TOGGLES, VIEWS, SUMMARY_SOURCES, MARKED_SOURCES, summaryMarks,
-  UNINDEXED_KINDS, notIndexedByPattern, PRIMITIVES, primitiveLayers, repositoryFacts,
+  UNINDEXED_KINDS, notIndexedByPattern, PRIMITIVES, primitiveLayers, repositoryFacts, siblingCitations,
 } from "../site/catalog-core.mjs";
 import { readFileSync } from "node:fs";
 
@@ -189,4 +189,36 @@ test("a shared URL keeps the hash only while following its permalink", () => {
   assert.equal(shareUrl(query, {pathname: "/awesome-jev/", hash: "#jev-router"}), "?q=gate&lang=en");
   assert.equal(shareUrl(query, {pathname: "/awesome-jev/", hash: "#jev-router", keepHash: true}), "?q=gate&lang=en#jev-router");
   assert.equal(shareUrl(new URLSearchParams(), {pathname: "/awesome-jev/", hash: "#x", keepHash: true}), "/awesome-jev/#x");
+});
+
+test("a sibling-list citation is one fixed shape, and nothing else in sources counts as one", () => {
+  // The same cases as scripts/tests/test_sibling_citations.py SHAPES: the two rules must agree.
+  const shapes = [
+    [{catalog: "heyjunpenn/awesome-jev", url: "https://github.com/heyjunpenn/awesome-jev"}, true],
+    [{catalog: "Omrigotlieb/awesome-jev", url: "https://github.com/Omrigotlieb/awesome-jev"}, true],
+    [{catalog: "a.b/c-d_e.f", url: "https://github.com/a.b/c-d_e.f"}, true],
+    [{catalog: "heyjunpenn/awesome-jev", url: "https://github.com/heyjunpenn/awesome-jev/"}, false],
+    [{catalog: "heyjunpenn/Awesome-Jev", url: "https://github.com/heyjunpenn/awesome-jev"}, false],
+    [{catalog: "heyjunpenn's list", url: "https://github.com/heyjunpenn/awesome-jev"}, false],
+    [{catalog: "maintainer submission", url: "https://github.com/kydlikebtc/awesome-jev"}, false],
+    [{catalog: "sibling-list aggregate (docs/sibling-lists.txt)", url: "https://github.com/kydlikebtc/awesome-jev/blob/main/docs/sibling-lists.txt"}, false],
+    [{catalog: "a/b/c", url: "https://github.com/a/b/c"}, false],
+    [{catalog: "a/..", url: "https://github.com/a/.."}, false],
+    [{catalog: "a/b", url: "http://github.com/a/b"}, false],
+    [{catalog: "a/b", url: "https://github.com/a/b", note: "x"}, false],
+    [{catalog: "a/b"}, false],
+  ];
+  for (const [source, cited] of shapes) {
+    assert.equal(siblingCitations({sources: [source]}).length, cited ? 1 : 0, JSON.stringify(source));
+  }
+  const entry = row("r", {sources: [
+    {catalog: "GitHub code search", url: "https://github.com/search"},
+    {catalog: "a/list", url: "https://github.com/a/list"},
+    {catalog: "b/list", url: "https://github.com/b/list"},
+  ]});
+  assert.deepEqual(siblingCitations(entry), [
+    {name: "a/list", url: "https://github.com/a/list"},
+    {name: "b/list", url: "https://github.com/b/list"},
+  ]);
+  assert.deepEqual(siblingCitations(row("none")), []);
 });

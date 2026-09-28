@@ -40,6 +40,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 
 import _stats  # noqa: E402
 from _markers import normalise, replace_block, replace_inline  # noqa: E402
+from sibling_lists import SIBLINGS, citations_of, is_citation, listed_urls, read_lists  # noqa: E402
 
 ROOT = _stats.ROOT
 
@@ -94,9 +95,29 @@ def shape_block(s: dict) -> str:
             ["Chinese summaries hand-written", f"{s['zh_hand']} of {s['entries']}"],
             ["Rows recording GitHub's creation date, last push and default-branch commit count for their repository (`repo_created_at`, `repo_pushed_at`, `repo_commits`; GitHub's facts at the last weekly refresh, not a judgement of upkeep)", f"{s['repo_facts_rows']} of {s['entries']}"],
             ["Rows flagged `single-commit`: one commit on the default branch (the refresh sets and clears it from `repo_commits`)", s["single_commit_rows"]],
+            ["Rows with a GitHub repository that at least one sibling directory links (`sources` citations, from the lists' READMEs at the last weekly read; a count of mentions, not a review)", f"{s['cited_rows']} of {s['citable_rows']}"],
             ["Retired links", s["retired"]],
         ],
     )
+
+
+# How the cited-by table groups the number of sibling directories linking a
+# row: exact while small, then in ranges, so a row gaining one more list moves
+# the table only when it crosses a range. (lower, upper); None = no upper bound.
+CITED_BY_RANGES = ((0, 0), (1, 1), (2, 2), (3, 5), (6, 10), (11, 20), (21, None))
+
+
+def cited_by_block(s: dict) -> str:
+    """Rows with a GitHub repository, by how many sibling directories link it."""
+    counts = s["cited_by"]
+    if not counts:
+        return "No row names a GitHub repository."
+    rows = []
+    for low, high in CITED_BY_RANGES:
+        n = sum(rows_ for cited, rows_ in counts.items() if int(cited) >= low and (high is None or int(cited) <= high))
+        label = str(low) if low == high else f"{low} or more" if high is None else f"{low}–{high}"
+        rows.append([label, n])
+    return table(["Sibling directories linking the repository", "Rows"], rows)
 
 
 def pushed_block(s: dict) -> str:
@@ -179,19 +200,40 @@ def gaps_block(s: dict, patterns: list[dict]) -> str:
 # ---- sources.md ------------------------------------------------------------
 
 
+# The one line docs/sources.md's table gives every sibling-list citation
+# together; the table under it names each list. Separate rows for the
+# fifty-odd lists would bury every other source.
+CITATIONS_ROW = "Sibling directories linking the row's repository (one `owner/name` item per list, read weekly)"
+CITATIONS_ANCHOR = "[each list, below](#sibling-directories-linking-catalogued-repositories)"
+
+
 def sources_block(catalog: list[dict]) -> str:
     counts: Counter = Counter()
     urls: dict[str, set] = {}
     for entry in catalog:
         # A row citing one source twice still counts once for that source.
-        for source in {s["catalog"]: s for s in entry["sources"]}.values():
+        for source in {s["catalog"]: s for s in entry["sources"] if not is_citation(s)}.values():
             counts[source["catalog"]] += 1
             urls.setdefault(source["catalog"], set()).add(source["url"])
     rows = [
         [name, f"<{next(iter(urls[name]))}>" if len(urls[name]) == 1 else "various", n]
-        for name, n in sorted(counts.items(), key=lambda kv: (-kv[1], kv[0].lower()))
+        for name, n in counts.items()
     ]
+    cited_rows = sum(1 for entry in catalog if citations_of(entry))
+    if cited_rows:
+        rows.append([CITATIONS_ROW, CITATIONS_ANCHOR, cited_rows])
+    rows.sort(key=lambda row: (-row[2], row[0].lower()))
     return table(["Source", "URL", "Rows"], rows)
+
+
+def citations_block(catalog: list[dict], listed: list[str]) -> str:
+    """Every list docs/sibling-lists.txt names, with how many catalogued rows'
+    repositories it links: the lists' names and URLs, nothing of their text."""
+    counts = Counter(url for entry in catalog for url in citations_of(entry))
+    urls = [*listed, *(url for url in counts if url not in listed)]
+    urls.sort(key=lambda url: (-counts.get(url, 0), url.lower()))
+    rows = [[f"[{url.removeprefix('https://github.com/')}]({url})", counts.get(url, 0)] for url in urls]
+    return table(["Sibling directory", "Catalogued rows whose repository its README links"], rows)
 
 
 def licences_block(catalog: list[dict]) -> str:
@@ -276,6 +318,7 @@ def inline_values(s: dict) -> dict[str, object]:
         "no_licence": s["no_licence"],
         "platforms": s["platforms"],
         "sibling_lists": s["sibling_lists"],
+        "cited_rows": s["cited_rows"],
         "patterns_total": s["patterns_total"],
         "patterns_rule_identical": s["patterns_rule_identical"],
         "patterns_reviewed": s["patterns_reviewed"],
@@ -292,9 +335,15 @@ def render() -> dict[pathlib.Path, str]:
     values = inline_values(s)
 
     blocks = {
-        "docs/status.md": {"shape": shape_block(s), "pushed": pushed_block(s), "gaps": gaps_block(s, patterns)},
+        "docs/status.md": {
+            "shape": shape_block(s),
+            "pushed": pushed_block(s),
+            "cited-by": cited_by_block(s),
+            "gaps": gaps_block(s, patterns),
+        },
         "docs/sources.md": {
             "sources": sources_block(catalog),
+            "citations": citations_block(catalog, listed_urls(read_lists(SIBLINGS))),
             "licences": licences_block(catalog),
             "row-licences": row_licences_block(s, catalog),
         },

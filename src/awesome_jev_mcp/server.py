@@ -274,6 +274,13 @@ def get_example(slug: str) -> dict[str, Any]:
     and no longer matches; `curated` was written for this catalogue. Absent
     means it is not recorded. search_examples() carries it too.
 
+    `sources` says where the row came from. After the sources a person wrote,
+    each item shaped `{"catalog": "owner/name", "url":
+    "https://github.com/owner/name"}` is a sibling-list citation: that other
+    Jev directory's README linked the row's repository when the weekly refresh
+    last read it. The directories copy from each other, so how many cite a row
+    says how widely it is mentioned, not that anyone checked it.
+
     `patterns_reviewed` is the date a person read the row against the decision
     patterns; search_examples() carries it too. Absent means no such reading
     is recorded: many rows' patterns are what keyword rules suggested from the

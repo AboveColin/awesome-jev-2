@@ -24,6 +24,7 @@ on:
       - "scripts/check_site_data.py"
       - "scripts/classify.py"
       - "scripts/render_images.py"
+      - "scripts/sibling_lists.py"
       - ".github/workflows/pages.yml"
   workflow_dispatch:
 

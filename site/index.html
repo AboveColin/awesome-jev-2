@@ -998,7 +998,7 @@
     </footer>
 
     <script type="module">
-      import { SORTS, verification, evidenceKind, evidenceUrl, isIndependentReport, compareEntries, matchesEntry, queryFromState, shareUrl, stateFromQuery, summaryMarks, notIndexedByPattern, primitiveLayers, repositoryFacts } from "./catalog-core.mjs";
+      import { SORTS, verification, evidenceKind, evidenceUrl, isIndependentReport, compareEntries, matchesEntry, queryFromState, shareUrl, stateFromQuery, summaryMarks, notIndexedByPattern, primitiveLayers, repositoryFacts, siblingCitations } from "./catalog-core.mjs";
       const STR = {
         en: {
           eyebrow: "Jev Decision Atlas · community index",
@@ -1021,6 +1021,8 @@
           prims_read: "Primitives read by a person", prims_signal: "Text signal only",
           repo_created: "Repository created", repo_pushed: "Last push", repo_commits: "Commits on the default branch",
           repo_facts_about: "As GitHub stated them at the last weekly refresh (days in UTC). A date says when someone last pushed, not whether the project is maintained.",
+          cited_one: "Cited by 1 other directory", cited_n: "Cited by {n} other directories", cited_h: "Other directories citing it",
+          cited_about: "Sibling Jev directories whose README links this repository, as the weekly refresh last read them. They copy from each other: this counts mentions and is not a check of the project.",
           prims_signal_about: "The cited file contains this primitive’s request or answer shape (primitives_seen). A script found the text; nobody recorded reading the code call it.",
           reason: "Why this pick", caution: "Before you use it", notes: "Editor’s note", empty_help: "Try a broader phrase or reset the filters.",
           trust_short: "Source checks ≠ runtime tests.", trust_link: "What we check ↗", patterns_count: "patterns",
@@ -1107,6 +1109,9 @@
           // The Chinese of the four repository-fact strings below is model-written; a person who revises it drops this note.
           repo_created: "仓库创建", repo_pushed: "最近推送", repo_commits: "默认分支提交数",
           repo_facts_about: "上次每周刷新时 GitHub 给出的数据（UTC 日期）。日期只说明最近何时有人推送，不代表项目是否仍在维护。",
+          // The Chinese of the four sibling-citation strings below is model-written; a person who revises it drops this note.
+          cited_one: "被 1 个其他目录引用", cited_n: "被 {n} 个其他目录引用", cited_h: "引用它的其他目录",
+          cited_about: "README 中链接了这个仓库的其他 Jev 目录，按上次每周刷新时读取的结果。这些目录相互转载：这里只统计被提及的次数，不是对项目的核查。",
           prims_signal_about: "所引文件含有这个原语的请求或回答结构（primitives_seen）。这是脚本找到的文本，没有人记录读过代码确认调用。",
           reason: "精选理由", caution: "使用前留意", notes: "编辑备注", empty_help: "试试更宽泛的关键词，或重置筛选条件。",
           trust_short: "来源核查 ≠ 运行验证。", trust_link: "了解核验范围 ↗", patterns_count: "类场景",
@@ -1456,6 +1461,14 @@
         ].filter(([, value]) => value);
         const repoFacts = rfRows.map(([name, value], i) =>
           `<dt>${name}</dt><dd>${value}${i === rfRows.length - 1 ? `<p class="sig-about">${S().repo_facts_about}</p>` : ""}</dd>`).join("");
+        // Other directories linking the repository: a count on the card, the lists in the details.
+        const cited = siblingCitations(e);
+        const citedFace = cited.length
+          ? `<span class="cited-count" title="${esc(S().cited_about)}">${esc(cited.length === 1 ? S().cited_one : S().cited_n.replace("{n}", cited.length))}</span><span aria-hidden="true"> · </span>`
+          : "";
+        const citedList = cited.length
+          ? `<dt>${S().cited_h}</dt><dd>${cited.map(c => `<a href="${esc(c.url)}" rel="noopener">${esc(c.name)}</a>`).join(", ")}<p class="sig-about">${S().cited_about}</p></dd>`
+          : "";
         const permalink = `?lang=${L}#${encodeURIComponent(e.slug)}`;
         return `<article class="card ${flags.length ? "flagged" : ""}"${first ? ` id="${esc(e.slug)}"` : ""}>
           <div class="ct-row">
@@ -1475,7 +1488,7 @@
           </div>
           <div class="card-bottom">
             <div class="card-actions"><a href="${esc(e.url)}">${S().source}</a>${evidence ? `<a href="${esc(evidence)}">${cite === "call-site" ? S().evidence : S().evidence_file}</a>` : ""}</div>
-            <span class="resource-kind">${esc(lbl(KIND, e.kind))}</span>
+            <span class="resource-kind">${citedFace}${esc(lbl(KIND, e.kind))}</span>
           </div>
           <details class="evidence-details">
             <summary>${S().details}</summary>
@@ -1486,6 +1499,7 @@
                 <dt>${S().added}</dt><dd>${esc(e.first_seen || "—")}</dd>
                 ${e.stars != null ? `<dt>${S().stars}</dt><dd>${Number(e.stars).toLocaleString()}</dd>` : ""}
                 ${repoFacts}
+                ${citedList}
                 ${e.author ? `<dt>${S().author}</dt><dd>${esc(e.author.name)}</dd>` : ""}
                 <dt>${citeLabel}</dt><dd>${e.evidence ? `${esc(e.evidence.path)}${v.codeRead ? ` · ${esc(v.codeRead)}` : ""}` : S().code_missing}</dd>
                 ${e.evidence ? `<dt>${S().signals}</dt><dd>${e.evidence.matched.map(x => `<code>${esc(x)}</code>`).join(" ")}</dd>` : ""}

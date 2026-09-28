@@ -14,6 +14,7 @@
 - [ ] `patterns_reviewed` is set only on rows whose `patterns` I read against `docs/patterns.md`, to the day I read them
 - [ ] `evidence.kind` says what the cited file shows when it is not a call site: `wire-shape` for an `alternative` (lint requires it), `example-only` for an example
 - [ ] `stars` / `repo_license` came from the GitHub API, not a badge, and I left `repo_created_at`, `repo_pushed_at` and `repo_commits` to the weekly refresh
+- [ ] `sources` names where I found the row; I left the sibling-list citations (`{"catalog": "owner/name", …}` items) to the weekly refresh
 - [ ] Caveats are flagged, and any flag needing an explanation has a `notes` line
 - [ ] `summary_zh` is hand-written, or `zh_machine: true` is set
 - [ ] `summary_source` is `curated` if I wrote or rewrote the summary, and left out if I pasted the repository's own GitHub description (the weekly refresh labels that)
