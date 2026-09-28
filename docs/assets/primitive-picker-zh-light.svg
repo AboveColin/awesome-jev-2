@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="720" height="1089" viewBox="0 0 720 1089" role="img" aria-label="选哪个原语？一份依据 TypeSafe 官方文档整理的判断顺序。每个「是」依次通向：生成式模型，不用 Jev；用代码，不用 Jev；每件事各问一个问题；每个条目一个 noul；choice；score；noul。全部为「否」时：还不是一个即时判断。">
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="1089" viewBox="0 0 720 1089" role="img" aria-label="选哪个原语？一份依据 TypeSafe 官方文档整理的判断顺序。每个「是」依次通向：生成式模型，不用 Jev；用代码，不用 Jev；每件事各问一个问题；每个条目一个 noul；score；noul；choice。全部为「否」时：还不是一个即时判断。">
 <style>.t{font:600 15px ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,monospace;fill:#1f2328}.k{font:10.5px ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,monospace;fill:#818b98}.q{font:12.5px -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;fill:#1f2328}.n{font:600 13px -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;fill:#1f2328}.g{fill:#1a7f37}.d{font:11.5px -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;fill:#59636e}.c{font:600 11px ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,monospace;fill:#1f2328}.a{font:italic 11px -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;fill:#59636e}.l{font:11px -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;fill:#818b98}</style>
 <text x="12" y="22" class="t">选哪个原语？</text>
 <text x="12" y="40" class="k">按 TypeSafe 官方文档整理的判断顺序：自上而下，遇到第一个「是」即停</text>
@@ -78,59 +78,59 @@
 <rect x="12" y="467" width="296" height="94" rx="3" fill="none" stroke="#d1d9e0"/>
 <rect x="12" y="467" width="296" height="2" fill="#0969da"/>
 <text x="26" y="489" class="c">5</text>
-<text x="46" y="489" class="q">答案是一组已知选项中的一个、选项之</text>
-<text x="46" y="505" class="q">间没有顺序吗？</text>
+<text x="46" y="489" class="q">答案落在一条你能逐点描述的尺度上</text>
+<text x="46" y="505" class="q">吗？</text>
 <text x="296" y="488" class="k" text-anchor="end">[6]</text>
 <line x1="308" y1="485" x2="346" y2="485" stroke="#59636e"/>
 <path d="M346 481l6 4-6 4z" fill="#59636e"/>
 <text x="330.0" y="480" class="a" text-anchor="middle">是</text>
 <rect x="352" y="467" width="356" height="94" rx="3" fill="none" stroke="#d1d9e0"/>
 <rect x="352" y="467" width="356" height="2" fill="#1a7f37"/>
-<text x="366" y="489" class="n"><tspan class="g">◆</tspan> choice</text>
-<text x="696" y="488" class="k" text-anchor="end">[6]</text>
-<text x="366" y="504" class="d">给出完整的选项列表；若它可能覆盖不了所有输入，加一个</text>
-<text x="366" y="519" class="d">other 或 none 选项。</text>
-<text x="366" y="534" class="k">模式：工具选择</text>
-<text x="366" y="549" class="c">人读确认 25 条 · 仅文本信号 110 条</text>
+<text x="366" y="489" class="n"><tspan class="g">▮</tspan> score</text>
+<text x="696" y="488" class="k" text-anchor="end">[7]</text>
+<text x="366" y="504" class="d">每个问题只量一个维度；每一级写成一种情形，而不是一个程</text>
+<text x="366" y="519" class="d">度。</text>
+<text x="366" y="534" class="k">模式：内容评分</text>
+<text x="366" y="549" class="c">人读确认 11 条 · 仅文本信号 45 条</text>
 <line x1="36" y1="561" x2="36" y2="581" stroke="#59636e"/>
 <path d="M32 581l4 6 4-6z" fill="#59636e"/>
 <text x="44" y="578.0" class="a">否</text>
-<rect x="12" y="587" width="296" height="94" rx="3" fill="none" stroke="#d1d9e0"/>
+<rect x="12" y="587" width="296" height="79" rx="3" fill="none" stroke="#d1d9e0"/>
 <rect x="12" y="587" width="296" height="2" fill="#0969da"/>
 <text x="26" y="609" class="c">6</text>
-<text x="46" y="609" class="q">答案落在一条你能逐点描述的尺度上</text>
-<text x="46" y="625" class="q">吗？</text>
+<text x="46" y="609" class="q">这是一个干净的是非问题、概率本身就</text>
+<text x="46" y="625" class="q">是有用的信号吗？</text>
 <text x="296" y="608" class="k" text-anchor="end">[6]</text>
 <line x1="308" y1="605" x2="346" y2="605" stroke="#59636e"/>
 <path d="M346 601l6 4-6 4z" fill="#59636e"/>
 <text x="330.0" y="600" class="a" text-anchor="middle">是</text>
-<rect x="352" y="587" width="356" height="94" rx="3" fill="none" stroke="#d1d9e0"/>
+<rect x="352" y="587" width="356" height="79" rx="3" fill="none" stroke="#d1d9e0"/>
 <rect x="352" y="587" width="356" height="2" fill="#1a7f37"/>
-<text x="366" y="609" class="n"><tspan class="g">▮</tspan> score</text>
-<text x="696" y="608" class="k" text-anchor="end">[7]</text>
-<text x="366" y="624" class="d">每个问题只量一个维度；每一级写成一种情形，而不是一个程</text>
-<text x="366" y="639" class="d">度。</text>
-<text x="366" y="654" class="k">模式：内容评分</text>
-<text x="366" y="669" class="c">人读确认 11 条 · 仅文本信号 45 条</text>
-<line x1="36" y1="681" x2="36" y2="701" stroke="#59636e"/>
-<path d="M32 701l4 6 4-6z" fill="#59636e"/>
-<text x="44" y="698.0" class="a">否</text>
-<rect x="12" y="707" width="296" height="79" rx="3" fill="none" stroke="#d1d9e0"/>
-<rect x="12" y="707" width="296" height="2" fill="#0969da"/>
-<text x="26" y="729" class="c">7</text>
-<text x="46" y="729" class="q">这是一个干净的是非问题、概率本身就</text>
-<text x="46" y="745" class="q">是有用的信号吗？</text>
-<text x="296" y="728" class="k" text-anchor="end">[6]</text>
-<line x1="308" y1="725" x2="346" y2="725" stroke="#59636e"/>
-<path d="M346 721l6 4-6 4z" fill="#59636e"/>
-<text x="330.0" y="720" class="a" text-anchor="middle">是</text>
-<rect x="352" y="707" width="356" height="79" rx="3" fill="none" stroke="#d1d9e0"/>
-<rect x="352" y="707" width="356" height="2" fill="#1a7f37"/>
-<text x="366" y="729" class="n"><tspan class="g">◐</tspan> noul</text>
-<text x="696" y="728" class="k" text-anchor="end">[8]</text>
-<text x="366" y="744" class="d">每个问题只问一个条件，并让高值表示「是」。</text>
-<text x="366" y="759" class="k">模式：安全闸门</text>
-<text x="366" y="774" class="c">人读确认 11 条 · 仅文本信号 66 条</text>
+<text x="366" y="609" class="n"><tspan class="g">◐</tspan> noul</text>
+<text x="696" y="608" class="k" text-anchor="end">[8]</text>
+<text x="366" y="624" class="d">每个问题只问一个条件，并让高值表示「是」。</text>
+<text x="366" y="639" class="k">模式：安全闸门</text>
+<text x="366" y="654" class="c">人读确认 11 条 · 仅文本信号 66 条</text>
+<line x1="36" y1="666" x2="36" y2="686" stroke="#59636e"/>
+<path d="M32 686l4 6 4-6z" fill="#59636e"/>
+<text x="44" y="683.0" class="a">否</text>
+<rect x="12" y="692" width="296" height="94" rx="3" fill="none" stroke="#d1d9e0"/>
+<rect x="12" y="692" width="296" height="2" fill="#0969da"/>
+<text x="26" y="714" class="c">7</text>
+<text x="46" y="714" class="q">答案是一组已知选项中的一个、选项之</text>
+<text x="46" y="730" class="q">间没有顺序吗？</text>
+<text x="296" y="713" class="k" text-anchor="end">[6]</text>
+<line x1="308" y1="710" x2="346" y2="710" stroke="#59636e"/>
+<path d="M346 706l6 4-6 4z" fill="#59636e"/>
+<text x="330.0" y="705" class="a" text-anchor="middle">是</text>
+<rect x="352" y="692" width="356" height="94" rx="3" fill="none" stroke="#d1d9e0"/>
+<rect x="352" y="692" width="356" height="2" fill="#1a7f37"/>
+<text x="366" y="714" class="n"><tspan class="g">◆</tspan> choice</text>
+<text x="696" y="713" class="k" text-anchor="end">[6]</text>
+<text x="366" y="729" class="d">给出完整的选项列表；若它可能覆盖不了所有输入，加一个</text>
+<text x="366" y="744" class="d">other 或 none 选项。</text>
+<text x="366" y="759" class="k">模式：工具选择</text>
+<text x="366" y="774" class="c">人读确认 25 条 · 仅文本信号 110 条</text>
 <line x1="36" y1="786" x2="36" y2="806" stroke="#59636e"/>
 <path d="M32 806l4 6 4-6z" fill="#59636e"/>
 <text x="44" y="803.0" class="a">否</text>

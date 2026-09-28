@@ -113,6 +113,18 @@ class RealFileTest(unittest.TestCase):
                 shape = re.search(r"\*\*Shape:\*\*(.+?)\n\n", section, re.S).group(1)
                 self.assertIn(f"`{l['primitive']}`", shape)
 
+    def test_score_and_noul_are_asked_before_choice(self):
+        # A yes or no, and a position on a spectrum, are also "one of a known
+        # set of options": asked first, the Choice question would stop a clean
+        # yes/no there. The vendor's Choice page opens "If the answer is a
+        # position on a spectrum, use a Score. If it's a yes or no, use a Noul."
+        steps, _ = picker.walk(REAL)
+        order = [leaf.get("primitive") for _, leaf in steps]
+        choice = order.index("choice")
+        for name in ("score", "noul"):
+            with self.subTest(primitive=name):
+                self.assertLess(max(i for i, p in enumerate(order) if p == name), choice)
+
     def test_the_chinese_is_disclosed_as_a_models(self):
         self.assertIs(REAL["zh_machine"], True)
 

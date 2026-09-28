@@ -1302,11 +1302,14 @@ fits a decision: TypeSafe's own guidance arranged as a decision list, kept in
 `picker.json`. Each question is answered yes or no, and the first yes ends it:
 an answer that is text to be written goes to a generative model, work code can
 do exactly stays in code, a judgment resting on several independent things
-becomes one question per thing, a checklist becomes one noul per item, one of a
-known set of options is a choice (with an other or none option when the list
-may not cover every input), a spectrum whose points can be described is a
-score, and a clean yes or no is a noul; no to all means it is not yet one snap
-judgment. Every question and every answer cites the docs.typesafe.ai page and
+becomes one question per thing, a checklist becomes one noul per item, a
+spectrum whose points can be described is a score, a clean yes or no is a noul,
+and one of a known set of options is a choice (with an other or none option
+when the list may not cover every input); no to all means it is not yet one
+snap judgment. Score and Noul are asked before Choice because a yes or no, and
+a position on a spectrum, are also one of a known set of options, and the
+vendor's Choice page opens by sending those to a Score and a Noul. Every
+question and every answer cites the docs.typesafe.ai page and
 heading it follows: the primitives page's "Choose a question type" and its
 advice on splitting a complex judgment and on one snap judgment per question,
 the Noul page's checklist advice and its advice on writing a question, the

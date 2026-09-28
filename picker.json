@@ -4,6 +4,7 @@
     "Every node and every leaf cites, in source_url, the docs.typesafe.ai page and heading it follows. The list is design guidance with its sources, not a recommendation of any catalogue row.",
     "A leaf with a primitive names a pattern (a patterns.json key) whose Shape uses it. Beside it the figure and the site print, from scripts/_stats.py, how many rows filed under that pattern a person read using the primitive (question_types) and how many more only the cited file's text shows (primitives_seen).",
     "No number, no limit and no answer field is written here: those live in compat.json and the primitives figure. lint.py (scripts/picker.py) refuses a digit or an answer field's name in any text, a step without a docs.typesafe.ai source, an unknown pattern or primitive, and any shape the figure cannot draw.",
+    "The order is this repository's, and follows the vendor where it states one: a yes or no, and a position on a spectrum, are also one of a known set of options, and the Choice page opens with \"If the answer is a position on a spectrum, use a Score. If it's a yes or no, use a Noul\" (https://docs.typesafe.ai/primitives/choice), so the Score and Noul questions come before the Choice question.",
     "A model wrote the Chinese (zh_machine). A person who reviews it sets zh_machine to false."
   ],
   "zh_machine": true,
@@ -69,22 +70,6 @@
         },
         {
           "answer": "no",
-          "node": "choice"
-        }
-      ]
-    },
-    {
-      "id": "choice",
-      "question_en": "Is the answer one of a known set of options, with no order between them?",
-      "question_zh": "答案是一组已知选项中的一个、选项之间没有顺序吗？",
-      "source_url": "https://docs.typesafe.ai/primitives#choose-a-question-type",
-      "branches": [
-        {
-          "answer": "yes",
-          "leaf": "choice"
-        },
-        {
-          "answer": "no",
           "node": "score"
         }
       ]
@@ -114,6 +99,22 @@
         {
           "answer": "yes",
           "leaf": "noul"
+        },
+        {
+          "answer": "no",
+          "node": "choice"
+        }
+      ]
+    },
+    {
+      "id": "choice",
+      "question_en": "Is the answer one of a known set of options, with no order between them?",
+      "question_zh": "答案是一组已知选项中的一个、选项之间没有顺序吗？",
+      "source_url": "https://docs.typesafe.ai/primitives#choose-a-question-type",
+      "branches": [
+        {
+          "answer": "yes",
+          "leaf": "choice"
         },
         {
           "answer": "no",
@@ -159,16 +160,6 @@
       "source_url": "https://docs.typesafe.ai/model-jaggedness/jev-1.13#common-sense-structural-invariants"
     },
     {
-      "id": "choice",
-      "label_en": "choice",
-      "label_zh": "choice",
-      "note_en": "Give the full list, with an other or none option if it may not cover every input.",
-      "note_zh": "给出完整的选项列表；若它可能覆盖不了所有输入，加一个 other 或 none 选项。",
-      "primitive": "choice",
-      "pattern_key": "tool-selection",
-      "source_url": "https://docs.typesafe.ai/primitives#choose-a-question-type"
-    },
-    {
       "id": "score",
       "label_en": "score",
       "label_zh": "score",
@@ -187,6 +178,16 @@
       "primitive": "noul",
       "pattern_key": "safety-gating",
       "source_url": "https://docs.typesafe.ai/primitives/noul#writing-a-noul-question"
+    },
+    {
+      "id": "choice",
+      "label_en": "choice",
+      "label_zh": "choice",
+      "note_en": "Give the full list, with an other or none option if it may not cover every input.",
+      "note_zh": "给出完整的选项列表；若它可能覆盖不了所有输入，加一个 other 或 none 选项。",
+      "primitive": "choice",
+      "pattern_key": "tool-selection",
+      "source_url": "https://docs.typesafe.ai/primitives#choose-a-question-type"
     },
     {
       "id": "sharpen",
