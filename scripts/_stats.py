@@ -191,6 +191,15 @@ def primitive_layers(catalog: list[dict]) -> dict[str, dict[str, int]]:
     }
 
 
+def primitive_layers_by_pattern(catalog: list[dict], patterns: list[dict]) -> dict[str, dict[str, dict[str, int]]]:
+    """primitive_layers over the rows filed under each pattern, in patterns.json
+    order: the counts the primitive picker (picker.json) prints beside a leaf
+    that names a primitive and a pattern, in the README figure and on the site."""
+    return {
+        p["key"]: primitive_layers([e for e in catalog if p["key"] in e["patterns"]]) for p in patterns
+    }
+
+
 def pushed_by_month(catalog: list[dict]) -> dict[str, int]:
     """Rows per calendar month (UTC, `YYYY-MM`) of their repository's last push,
     newest month first. Only rows that record one; a month nobody pushed in is
@@ -495,6 +504,7 @@ def compute() -> dict:
             1 for e in catalog if e.get("primitives_seen") and not e.get("question_types")
         ),
         "primitive_layers": primitive_layers(catalog),
+        "primitive_layers_by_pattern": primitive_layers_by_pattern(catalog, patterns),
         "no_licence": sum(1 for e in catalog if e.get("repo_license") == "unknown"),
         # GitHub's dates and commit count, as the weekly refresh last read
         # them: how many rows record them, how many default branches had a

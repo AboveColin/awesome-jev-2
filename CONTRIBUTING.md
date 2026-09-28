@@ -167,11 +167,11 @@ exempt: a log entry about the first build is true forever.
 Model strings and limits are held to `compat.json` the same way: write
 `jev-latest` or `max 255` anywhere and `lint_docs.py` checks it against that
 file — in the docs, the MCP server's source, the plugin manifests and the prose
-in `collections.json`, `patterns.json`, `taxonomy.json` and the schema alike. A
-link to a vendor page whose address names a model version (the known
-limitations page) must be the one `compat.json` records as that platform's
-`docs_url`. If the vendor changes one, change `compat.json` and every stale
-copy turns red. Before a release,
+in `collections.json`, `patterns.json`, `taxonomy.json`, `picker.json` and the
+schema alike. A link to a vendor page whose address names a model version (the
+known limitations page) must be the one `compat.json` records as that
+platform's `docs_url`. If the vendor changes one, change `compat.json` and
+every stale copy turns red. Before a release,
 `python3 scripts/lint_docs.py --simulate-model <version>` lists what would
 turn red, and writes nothing (the runbook is in
 [`docs/method.md`](docs/method.md#when-the-vendor-ships-a-model)).
@@ -579,6 +579,28 @@ it belongs, and the generator fails if a listed slug leaves `catalog.json`. A
 Keep the English and Chinese in step, and mark model-written Chinese with
 `zh_machine`. `scripts/build_watch.py` regenerates the table; like every
 generated file, it may be left to the bot.
+
+## Editing the primitive picker
+
+[`picker.json`](picker.json) is TypeSafe's own guidance on which primitive fits
+a decision, arranged as a decision list: the README draws it under "What Jev
+returns" (`scripts/build_assets.py`) and the site's primitives view reads it.
+It is the vendor's design guidance, not this catalogue's advice, so every node
+and every leaf names in `source_url` the docs.typesafe.ai page, and heading,
+it follows: change a step only when that page says so, and point it at the
+page you read. Each node asks one yes/no question; yes ends at a leaf, no
+moves to the next node, and the last node's no ends at a leaf. A leaf may name
+a `primitive` and the `pattern_key` of a pattern whose **Shape** in
+`docs/patterns.md` uses it; beside it the figure and the site print how many
+of that pattern's rows a person read using the primitive and how many only a
+text signal shows. Write no number, limit or answer field (`probabilities`,
+`confidence`, `legend`) in any text: those live in `compat.json` and the
+primitives figure. Keep the English and Chinese in step, and leave
+`zh_machine` true while a model's Chinese is unreviewed. `lint.py` fails on a
+step without a docs.typesafe.ai source, an unknown pattern or primitive, a
+number in the text or a shape the figure cannot draw, and `build_assets.py`
+fails when a text no longer fits its box. A link to the versioned limitations
+page must be the page `compat.json` records, a heading on it aside.
 
 ## Adding a pattern
 

@@ -265,7 +265,7 @@ class LintDocsTest(unittest.TestCase):
         files = set(lint_docs.fact_file_list(lint_docs.hand_written_files()))
         wanted = set(lint_docs.tracked("src/**/*.py", "skills/**/*.md", "examples/**/*.py", "site/*.mjs"))
         wanted |= {"collections.json", "patterns.json", "taxonomy.json", "schema/entry.schema.json",
-                   "site/index.html", "llms.txt", "watch.json"}
+                   "site/index.html", "llms.txt", "watch.json", "picker.json"}
         self.assertTrue({"skills/awesome-jev/SKILL.md", "src/awesome_jev_mcp/query.py"} <= wanted)
         self.assertEqual(wanted - files, set())
         # compat.json is the source, checked by its own rule (check_compat_prose);
@@ -281,6 +281,14 @@ class LintDocsTest(unittest.TestCase):
         self.assertEqual(len(found), 2, found)
         self.assertTrue(found[0].startswith("d.md:2: links 'https://docs.example/model-notes/jev-1.12'"))
         self.assertIn("'https://docs.example/jev-1.13/x'", found[1])
+
+    def test_a_heading_on_a_recorded_page_is_that_page(self):
+        # picker.json cites headings of the recorded limitations page.
+        text = ("[1] https://docs.example/model-notes/jev-1.13#generation\n"
+                "[2] https://docs.example/model-notes/jev-1.12#generation\n")
+        found = lint_docs.check_versioned_urls("picker.json", text, self.ALLOWED)
+        self.assertEqual(len(found), 1, found)
+        self.assertIn("jev-1.12#generation", found[0])
 
     def test_generated_pages_keep_their_catalogue_links(self):
         compat = {"platforms": [{"model": "jev-1.13.0", "docs_url": sorted(self.ALLOWED)}], "limits": [

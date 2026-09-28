@@ -29,6 +29,10 @@
 - [ ] Schema enum, `patterns.json` (both languages, long and short blurb) and a `## key` section in `docs/patterns.md` and in `docs/patterns.zh-CN.md`, each ending with its `catalogued-<key>` markers, all updated
 - [ ] There are at least two independent real examples of it
 
+## If you edited picker.json
+
+- [ ] Every step I changed cites, in `source_url`, the docs.typesafe.ai page and heading I read it on, and says no more than that page does (see CONTRIBUTING, *Editing the primitive picker*)
+
 ## If you touched any doc
 
 - [ ] No catalogue count typed by hand — reworded, or filled by `build_docs.py` (see CONTRIBUTING, *Numbers in prose*)

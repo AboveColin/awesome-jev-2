@@ -8,10 +8,13 @@ the ## headings they write are checked against each other by a test.
 from __future__ import annotations
 
 import hashlib
+import html
 from dataclasses import dataclass
 
 import _stats
+import build_assets
 import build_readme_cover
+import picker as picker_rules
 
 from .rows import (
     FLAG_LABELS,
@@ -316,7 +319,30 @@ def what_jev_returns(page: Page) -> list[str]:
     add("")
     add(strings["prims_after"])
     add("")
+    out += primitive_picker(page)
     return out
+
+
+def primitive_picker(page: Page) -> list[str]:
+    """picker.json as build_assets draws it, with its sources as links (an
+    image cannot carry them) and the figure described in its alt text."""
+    strings, lang = page.strings, page.lang
+    picker = picker_rules.load()
+    sources = " · ".join(
+        f"[{n}] [{build_assets.short_url(url)}]({url})" for n, url in enumerate(picker_rules.sources(picker), 1)
+    )
+    alt = html.escape(build_assets.picker_description(picker, lang), quote=False).replace('"', "&quot;")
+    return [
+        marked(strings, "picker_intro"),
+        "",
+        "<picture>",
+        f'  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/{build_assets.picker_file(lang, "dark")}">',
+        f'  <img src="docs/assets/{build_assets.picker_file(lang, "light")}" alt="{alt}" width="{build_assets.PICK_WIDTH}">',
+        "</picture>",
+        "",
+        marked(strings, "picker_sources", sources=sources),
+        "",
+    ]
 
 
 def start_here(page: Page) -> list[str]:

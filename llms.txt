@@ -13,6 +13,7 @@ One decision pattern's rows: https://kydlikebtc.github.io/awesome-jev/api/v1/pat
 Catalog (<!--n:entries-->1207<!--/n--> entries): https://kydlikebtc.github.io/awesome-jev/catalog.json
 Retired entries (dead links): https://kydlikebtc.github.io/awesome-jev/retired.json
 JSON Schema for one entry: https://kydlikebtc.github.io/awesome-jev/schema/entry.schema.json
+Which primitive fits a decision, as TypeSafe's own documentation guides it, arranged as a decision list whose every step cites the docs.typesafe.ai page it follows (design guidance, not a recommendation of any row; the README draws it under "What Jev returns"): https://kydlikebtc.github.io/awesome-jev/picker.json
 This file: https://kydlikebtc.github.io/awesome-jev/llms.txt
 
 If the site is unreachable, every file above except those under `api/` is also at the same path under https://raw.githubusercontent.com/kydlikebtc/awesome-jev/main/ (as committed on `main`), for example https://raw.githubusercontent.com/kydlikebtc/awesome-jev/main/catalog.json.

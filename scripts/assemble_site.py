@@ -57,9 +57,11 @@ OG_IMAGE = f"{SITE_URL}img/og.png"
 # five (src/awesome_jev_mcp/data.py FILES, which cannot import this module; a
 # test holds the two equal), so a site reader and an agent see one data set.
 PAGE_FILES = ("catalog.json", "compat.json", "patterns.json", "taxonomy.json", "collections.json")
-# Every source file the site publishes: those five, then the three agents read.
-# Copied verbatim, except llms.txt (see above).
-RUNTIME_FILES = (*PAGE_FILES, "retired.json", "schema/entry.schema.json", "llms.txt")
+# Every source file the site publishes: those five; picker.json, which the
+# primitives view fetches when it first opens (the primitive picker, also drawn
+# in the README by build_assets.py); then the three agents read. Copied
+# verbatim, except llms.txt (see above).
+RUNTIME_FILES = (*PAGE_FILES, "picker.json", "retired.json", "schema/entry.schema.json", "llms.txt")
 # Every file under site/ the API index links, stats.json being derived.
 PUBLISHED = (*RUNTIME_FILES, "stats.json")
 

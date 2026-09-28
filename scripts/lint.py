@@ -45,6 +45,7 @@ from _stats import shadow_path_unflagged  # noqa: E402
 from measurements import model_problems as measurement_model_problems  # noqa: E402
 from measurements import negative_flag_problems  # noqa: E402
 from measurements import row_problems as measurement_problems  # noqa: E402
+from picker import problems as picker_problems  # noqa: E402
 from platform_values import problems as platform_problems  # noqa: E402
 from sibling_lists import FIX as CITATION_FIX  # noqa: E402
 from sibling_lists import citation_problems, listed_urls, read_lists, unlisted_citations  # noqa: E402
@@ -58,6 +59,7 @@ SCHEMA = ROOT / "schema" / "entry.schema.json"
 PATTERNS_FILE = ROOT / "patterns.json"
 TAXONOMY_FILE = ROOT / "taxonomy.json"
 COMPAT_FILE = ROOT / "compat.json"
+PICKER_FILE = ROOT / "picker.json"
 SIBLINGS = ROOT / "docs" / "sibling-lists.txt"
 
 # Places we accept as TypeSafe AI speaking for itself. `official: true` anywhere
@@ -768,6 +770,10 @@ def check_all(schema: dict, catalog: Any, retired: Any) -> Findings:
     if TAXONOMY_FILE.exists():
         report.add(check_taxonomy(schema, json.loads(TAXONOMY_FILE.read_text())))
 
+    if PICKER_FILE.exists() and PATTERNS_FILE.exists():
+        patterns = json.loads(PATTERNS_FILE.read_text())["patterns"]
+        report.add(check_picker(schema, patterns, json.loads(PICKER_FILE.read_text())))
+
     for name, data in (("catalog.json", catalog), ("retired.json", retired)):
         if not isinstance(data, list):
             report.err(name, "top level must be an array of entries")
@@ -781,6 +787,18 @@ def check_all(schema: dict, catalog: Any, retired: Any) -> Findings:
         report.add(check_platform_values(catalog, retired, compat, taxonomy))
     if COMPAT_FILE.exists():
         report.add(check_measurement_models(catalog, retired, json.loads(COMPAT_FILE.read_text())))
+    return report.findings()
+
+
+def check_picker(schema: dict, patterns: list[dict], picker: Any) -> Findings:
+    """picker.json, the primitive picker: a decision list whose every step
+    cites docs.typesafe.ai, whose leaves name known patterns and primitives,
+    and whose text states no number or answer field. The rules live in
+    scripts/picker.py."""
+    report = Report()
+    primitives = schema["properties"]["question_types"]["items"]["enum"]
+    for where, message in picker_problems(picker, [p["key"] for p in patterns], primitives):
+        report.err(where, message)
     return report.findings()
 
 

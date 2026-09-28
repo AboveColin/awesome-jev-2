@@ -74,6 +74,17 @@ EN = {
         "There are no published weights, so it cannot be run locally. "
         "Full cross-platform differences: [`docs/compatibility.md`](docs/compatibility.md)."
     ),
+    "picker_intro": (
+        "Which primitive fits a decision? The figure below arranges TypeSafe's own guidance as a decision "
+        "list: read down and stop at the first yes. The order and the wording are this repository's; every "
+        "step cites the page it follows, listed under the figure. It is the vendor's design guidance with "
+        "its sources, not a recommendation of any row here."
+    ),
+    "picker_sources": (
+        "Beside each primitive, the rows filed under the pattern named there, counted as the figure above "
+        "counts them: read by a person, or text signal only. The steps live in [`picker.json`](picker.json), "
+        "which the site's primitives view reads too. Sources, numbered as in the figure: {sources}."
+    ),
     # ---- sections ----
     "l_patterns": "Patterns",
     "l_compat": "Compatibility",
@@ -375,6 +386,15 @@ ZH = {
         "权重未公开，因此无法本地运行。"
         "跨平台差异全表见 [`docs/compatibility.md`](docs/compatibility.md)。"
     ),
+    "picker_intro": (
+        "某个决策该用哪个原语？下图把 TypeSafe 官方的指引排成一张判断清单：自上而下，遇到第一个「是」即停。"
+        "顺序与措辞出自本仓库；每一步都注明所依据的页面，列在图下。"
+        "这是厂商附有来源的设计指引，不是对本目录任何条目的推荐。"
+    ),
+    "picker_sources": (
+        "每个原语旁是归入所列模式的行数，计法同上图：人读确认，或仅文本信号。"
+        "这些步骤存于 [`picker.json`](picker.json)，网站的原语页也读取它。来源（编号同图中）：{sources}。"
+    ),
     "l_patterns": "决策模式",
     "l_compat": "兼容性",
     "l_vetting": "核查指南",
@@ -603,7 +623,7 @@ ZH_MACHINE = frozenset(
         "unindexed_page", "prims_layers", "verified_primitives", "verified_translations",
         "call_site_note", "measured_more", "measured_page_intro", "repo_skill_division", "direction_note",
         "measured_more_negative", "negative_note", "pattern_evidence", "design_link", "design_link_overview",
-        "official_intro", "official_none", "examples_intro", "examples_none",
+        "official_intro", "official_none", "examples_intro", "examples_none", "picker_intro", "picker_sources",
     }
 )
 

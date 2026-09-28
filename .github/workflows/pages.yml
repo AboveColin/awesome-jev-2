@@ -19,6 +19,7 @@ on:
       - "patterns.json"
       - "taxonomy.json"
       - "collections.json"
+      - "picker.json"
       - "retired.json"
       - "schema/**"
       - "llms.txt"

@@ -7,6 +7,7 @@ import {
   COARSE, platformRows, resolvePlatform, platformChoices, DIRECTIONS, measurementOf,
   NEGATIVE_FLAG, NEGATIVE_DIRECTION, isNegativeResult,
   WIRE_KIND, WIRE_WEIGHTS, wireOf, wireSources, wirePersonRead, wireRows, wireRemainder, wireRepository,
+  pickerSteps, pickerCounts,
 } from "../site/catalog-core.mjs";
 import { readFileSync } from "node:fs";
 
@@ -367,4 +368,29 @@ test("every wire record in the real catalogue is on an alternative row the view 
   assert.deepEqual(wireRows(catalog).map(e => e.slug), withWire.map(e => e.slug));
   for (const e of withWire) assert.match(wireRepository(e), /^[^/]+\/[^/]+$/, e.slug);
   assert.equal(wireRemainder(catalog), catalog.filter(e => e.kind === "alternative").length - withWire.length);
+});
+
+test("the primitive picker walks picker.json as scripts/picker.py does", () => {
+  const { cases } = JSON.parse(readFileSync(new URL("./tests/picker_cases.json", import.meta.url)));
+  assert.ok(cases.length >= 12);
+  for (const c of cases) {
+    const walked = pickerSteps(c.picker);
+    if (c.walk === null) {
+      assert.equal(walked, null, c.name);
+      continue;
+    }
+    assert.deepEqual(walked.steps.map(s => [s.node.id, s.yes.id]), c.walk.steps, c.name);
+    assert.equal(walked.last.id, c.walk.last, c.name);
+  }
+  const real = pickerSteps(JSON.parse(readFileSync(new URL("../picker.json", import.meta.url))));
+  assert.ok(real && real.steps.length >= 5, "the committed picker is a decision list");
+  assert.equal(pickerSteps(null), null);
+});
+
+test("a picker leaf is counted from stats.json only when it names a primitive and a pattern", () => {
+  const stats = { primitive_layers_by_pattern: { "safety-gating": { noul: { read: 3, signal_only: 4 } } } };
+  assert.deepEqual(pickerCounts(stats, { primitive: "noul", pattern_key: "safety-gating" }), { read: 3, signal_only: 4 });
+  assert.deepEqual(pickerCounts(stats, { primitive: "choice", pattern_key: "fan-out" }), { read: 0, signal_only: 0 });
+  assert.equal(pickerCounts(stats, { pattern_key: "fan-out" }), null);
+  assert.equal(pickerCounts(stats, { primitive: "noul" }), null);
 });

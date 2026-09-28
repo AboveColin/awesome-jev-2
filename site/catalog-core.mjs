@@ -64,6 +64,45 @@ export function primitiveLayers(entry) {
   return { read, signalOnly };
 }
 
+// The primitive picker (picker.json), walked as the README's figure draws it:
+// from `start`, each node with the leaf its yes ends at, then the leaf the last
+// node's no ends at. null when the file is not that decision list (lint.py
+// refuses such a file; the page then leaves the picker out rather than guess).
+// scripts/picker.py walk() is the same walk; scripts/tests/picker_cases.json
+// holds the two to one answer.
+export function pickerSteps(picker) {
+  const byId = (items) => new Map((Array.isArray(items) ? items : []).filter(x => x && typeof x.id === "string").map(x => [x.id, x]));
+  const nodes = byId(picker?.nodes), leaves = byId(picker?.leaves);
+  const branch = (node, answer) => {
+    const found = (Array.isArray(node.branches) ? node.branches : []).filter(b => b && b.answer === answer);
+    return found.length === 1 ? found[0] : null;
+  };
+  const keys = (b) => Object.keys(b).sort().join(",");
+  const steps = [], seen = new Set();
+  let id = picker?.start;
+  if (!nodes.has(id)) return null;
+  // At most one pass per node, so a malformed file cannot spin.
+  for (let pass = 0; pass < nodes.size; pass++) {
+    const node = nodes.get(id);
+    seen.add(id);
+    const yes = branch(node, "yes"), no = branch(node, "no");
+    if (!Array.isArray(node.branches) || node.branches.length !== 2 || !yes || !no) return null;
+    if (keys(yes) !== "answer,leaf" || !leaves.has(yes.leaf)) return null;
+    steps.push({ node, yes: leaves.get(yes.leaf) });
+    if (keys(no) === "answer,leaf" && leaves.has(no.leaf)) return { steps, last: leaves.get(no.leaf) };
+    if (keys(no) !== "answer,node" || !nodes.has(no.node) || seen.has(no.node)) return null;
+    id = no.node;
+  }
+  return null;
+}
+
+// The counts printed beside a picker leaf that names a primitive and a pattern:
+// stats.json's primitive_layers_by_pattern (scripts/_stats.py), the figure's own.
+export function pickerCounts(stats, leaf) {
+  if (!leaf?.primitive || !leaf?.pattern_key) return null;
+  return stats?.primitive_layers_by_pattern?.[leaf.pattern_key]?.[leaf.primitive] || { read: 0, signal_only: 0 };
+}
+
 // GitHub's own facts about a row's repository, as the weekly refresh records
 // them (repo_created_at, repo_pushed_at, repo_commits; scripts/refresh_metadata.py):
 // the creation and last-push days in UTC and the default branch's commit count.

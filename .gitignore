@@ -7,6 +7,7 @@ site/compat.json
 site/patterns.json
 site/taxonomy.json
 site/collections.json
+site/picker.json
 site/retired.json
 site/schema/
 site/llms.txt

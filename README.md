@@ -69,6 +69,15 @@ Under each primitive, two counts that are never added together: rows whose `ques
 
 Input is **text only** — string, JSON object, or array of text. Context is **64k** tokens per request, **32k** for the state plus the longest question. Output tokens are free. There are no published weights, so it cannot be run locally. Full cross-platform differences: [`docs/compatibility.md`](docs/compatibility.md).
 
+Which primitive fits a decision? The figure below arranges TypeSafe's own guidance as a decision list: read down and stop at the first yes. The order and the wording are this repository's; every step cites the page it follows, listed under the figure. It is the vendor's design guidance with its sources, not a recommendation of any row here.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/primitive-picker-en-dark.svg">
+  <img src="docs/assets/primitive-picker-en-light.svg" alt="Which primitive? A decision list drawn from TypeSafe's documentation. Each yes ends at, in order: a generative model, not Jev; code, not Jev; one question per thing; one noul per item; choice; score; noul. If every answer is no: not yet one snap judgment." width="720">
+</picture>
+
+Beside each primitive, the rows filed under the pattern named there, counted as the figure above counts them: read by a person, or text signal only. The steps live in [`picker.json`](picker.json), which the site's primitives view reads too. Sources, numbered as in the figure: [1] [docs.typesafe.ai/model-jaggedness/jev-1.13#generation](https://docs.typesafe.ai/model-jaggedness/jev-1.13#generation) · [2] [docs.typesafe.ai/concepts/how-to-build-with-system-one#use-code-when-you-can](https://docs.typesafe.ai/concepts/how-to-build-with-system-one#use-code-when-you-can) · [3] [docs.typesafe.ai/primitives#split-a-complex-judgment-into-several-questions](https://docs.typesafe.ai/primitives#split-a-complex-judgment-into-several-questions) · [4] [docs.typesafe.ai/primitives/noul#good-practice-ask-more-than-one-question-per-call](https://docs.typesafe.ai/primitives/noul#good-practice-ask-more-than-one-question-per-call) · [5] [docs.typesafe.ai/model-jaggedness/jev-1.13#common-sense-structural-invariants](https://docs.typesafe.ai/model-jaggedness/jev-1.13#common-sense-structural-invariants) · [6] [docs.typesafe.ai/primitives#choose-a-question-type](https://docs.typesafe.ai/primitives#choose-a-question-type) · [7] [docs.typesafe.ai/primitives/score#writing-good-levels](https://docs.typesafe.ai/primitives/score#writing-good-levels) · [8] [docs.typesafe.ai/primitives/noul#writing-a-noul-question](https://docs.typesafe.ai/primitives/noul#writing-a-noul-question) · [9] [docs.typesafe.ai/primitives#ask-for-one-snap-judgment-per-question](https://docs.typesafe.ai/primitives#ask-for-one-snap-judgment-per-question).
+
 ## Start here
 
 Six things in reading order. Hand-picked, because "most starred" is not the same as "read this first".
@@ -1076,7 +1085,7 @@ The parts that are not the catalog.
 <details>
 <summary><b>Preview the searchable catalogue</b></summary>
 
-<a href="https://kydlikebtc.github.io/awesome-jev/?lang=en"><img src="https://kydlikebtc.github.io/awesome-jev/img/site-en.png?v=ac86fc9a7d03c77c" alt="Searchable Jev catalogue with curated paths, filters, dated source evidence and entry cards" width="760"></a>
+<a href="https://kydlikebtc.github.io/awesome-jev/?lang=en"><img src="https://kydlikebtc.github.io/awesome-jev/img/site-en.png?v=f22852f6f0980c06" alt="Searchable Jev catalogue with curated paths, filters, dated source evidence and entry cards" width="760"></a>
 
 <sub>Filter by clicking a bar. Two more views: <a href="https://kydlikebtc.github.io/awesome-jev/?view=prims">primitives</a> · <a href="https://kydlikebtc.github.io/awesome-jev/?view=compat">compatibility</a>. Every filter and entry is a shareable URL.</sub>
 

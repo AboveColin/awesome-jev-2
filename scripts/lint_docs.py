@@ -274,7 +274,8 @@ def check_versioned_urls(rel: str, text: str, allowed: set[str]) -> list[str]:
     text = without_catalogue_blocks(text)
     for m in VERSIONED_URL.finditer(text):
         url = m.group(0).rstrip(".,;:")
-        if url.rstrip("/") not in {u.rstrip("/") for u in allowed}:
+        # A heading on a recorded page (picker.json cites #generation) is that page.
+        if url.split("#", 1)[0].rstrip("/") not in {u.rstrip("/") for u in allowed}:
             found.append(
                 f"{rel}:{line_of(text, m.start())}: links {url!r}, a page for one model version "
                 "that no docs_url in compat.json records — link the current version's page, or "
@@ -413,6 +414,7 @@ def check_leading_markers(rel: str, text: str) -> list[str]:
 EXTRA_FACT_FILES = (
     "examples/*.py", "docs/assets/*.svg", "src/**/*.py", ".claude-plugin/**", ".github/ISSUE_TEMPLATE/*",
     "collections.json", "patterns.json", "taxonomy.json", "schema/*.json", "site/*.mjs", "watch.json",
+    "picker.json",
 )
 
 

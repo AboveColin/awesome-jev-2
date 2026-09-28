@@ -1,0 +1,724 @@
+{
+  "_comment": "The primitive picker's walk (scripts/picker.py walk and site/catalog-core.mjs pickerSteps) on made-up lists: each case's steps as [node id, the leaf its yes ends at], then the leaf the last no ends at; null when the list is not the shape the figure draws. Read by scripts/tests/test_picker.py and scripts/test_catalog_core.mjs.",
+  "cases": [
+    {
+      "name": "a chain of two questions",
+      "picker": {
+        "start": "a",
+        "nodes": [
+          {
+            "id": "b",
+            "branches": [
+              {
+                "answer": "yes",
+                "leaf": "y"
+              },
+              {
+                "answer": "no",
+                "leaf": "end"
+              }
+            ]
+          },
+          {
+            "id": "a",
+            "branches": [
+              {
+                "answer": "yes",
+                "leaf": "x"
+              },
+              {
+                "answer": "no",
+                "node": "b"
+              }
+            ]
+          }
+        ],
+        "leaves": [
+          {
+            "id": "x"
+          },
+          {
+            "id": "y"
+          },
+          {
+            "id": "z"
+          },
+          {
+            "id": "end"
+          }
+        ]
+      },
+      "walk": {
+        "steps": [
+          [
+            "a",
+            "x"
+          ],
+          [
+            "b",
+            "y"
+          ]
+        ],
+        "last": "end"
+      }
+    },
+    {
+      "name": "one question",
+      "picker": {
+        "start": "a",
+        "nodes": [
+          {
+            "id": "a",
+            "branches": [
+              {
+                "answer": "yes",
+                "leaf": "x"
+              },
+              {
+                "answer": "no",
+                "leaf": "end"
+              }
+            ]
+          }
+        ],
+        "leaves": [
+          {
+            "id": "x"
+          },
+          {
+            "id": "y"
+          },
+          {
+            "id": "z"
+          },
+          {
+            "id": "end"
+          }
+        ]
+      },
+      "walk": {
+        "steps": [
+          [
+            "a",
+            "x"
+          ]
+        ],
+        "last": "end"
+      }
+    },
+    {
+      "name": "branches in either order",
+      "picker": {
+        "start": "a",
+        "nodes": [
+          {
+            "id": "a",
+            "branches": [
+              {
+                "answer": "no",
+                "leaf": "end"
+              },
+              {
+                "answer": "yes",
+                "leaf": "x"
+              }
+            ]
+          }
+        ],
+        "leaves": [
+          {
+            "id": "x"
+          },
+          {
+            "id": "y"
+          },
+          {
+            "id": "z"
+          },
+          {
+            "id": "end"
+          }
+        ]
+      },
+      "walk": {
+        "steps": [
+          [
+            "a",
+            "x"
+          ]
+        ],
+        "last": "end"
+      }
+    },
+    {
+      "name": "start is not a node",
+      "picker": {
+        "start": "x",
+        "nodes": [
+          {
+            "id": "a",
+            "branches": [
+              {
+                "answer": "yes",
+                "leaf": "x"
+              },
+              {
+                "answer": "no",
+                "leaf": "end"
+              }
+            ]
+          }
+        ],
+        "leaves": [
+          {
+            "id": "x"
+          },
+          {
+            "id": "y"
+          },
+          {
+            "id": "z"
+          },
+          {
+            "id": "end"
+          }
+        ]
+      },
+      "walk": null
+    },
+    {
+      "name": "no start",
+      "picker": {
+        "nodes": [
+          {
+            "id": "a",
+            "branches": [
+              {
+                "answer": "yes",
+                "leaf": "x"
+              },
+              {
+                "answer": "no",
+                "leaf": "end"
+              }
+            ]
+          }
+        ],
+        "leaves": [
+          {
+            "id": "x"
+          },
+          {
+            "id": "y"
+          },
+          {
+            "id": "z"
+          },
+          {
+            "id": "end"
+          }
+        ]
+      },
+      "walk": null
+    },
+    {
+      "name": "yes moves to a node instead of ending",
+      "picker": {
+        "start": "a",
+        "nodes": [
+          {
+            "id": "a",
+            "branches": [
+              {
+                "answer": "yes",
+                "node": "b"
+              },
+              {
+                "answer": "no",
+                "leaf": "end"
+              }
+            ]
+          },
+          {
+            "id": "b",
+            "branches": [
+              {
+                "answer": "yes",
+                "leaf": "x"
+              },
+              {
+                "answer": "no",
+                "leaf": "end"
+              }
+            ]
+          }
+        ],
+        "leaves": [
+          {
+            "id": "x"
+          },
+          {
+            "id": "y"
+          },
+          {
+            "id": "z"
+          },
+          {
+            "id": "end"
+          }
+        ]
+      },
+      "walk": null
+    },
+    {
+      "name": "a third branch",
+      "picker": {
+        "start": "a",
+        "nodes": [
+          {
+            "id": "a",
+            "branches": [
+              {
+                "answer": "yes",
+                "leaf": "x"
+              },
+              {
+                "answer": "no",
+                "leaf": "end"
+              },
+              {
+                "answer": "maybe",
+                "leaf": "y"
+              }
+            ]
+          }
+        ],
+        "leaves": [
+          {
+            "id": "x"
+          },
+          {
+            "id": "y"
+          },
+          {
+            "id": "z"
+          },
+          {
+            "id": "end"
+          }
+        ]
+      },
+      "walk": null
+    },
+    {
+      "name": "two yes branches",
+      "picker": {
+        "start": "a",
+        "nodes": [
+          {
+            "id": "a",
+            "branches": [
+              {
+                "answer": "yes",
+                "leaf": "x"
+              },
+              {
+                "answer": "yes",
+                "leaf": "y"
+              }
+            ]
+          }
+        ],
+        "leaves": [
+          {
+            "id": "x"
+          },
+          {
+            "id": "y"
+          },
+          {
+            "id": "z"
+          },
+          {
+            "id": "end"
+          }
+        ]
+      },
+      "walk": null
+    },
+    {
+      "name": "a branch naming both a node and a leaf",
+      "picker": {
+        "start": "a",
+        "nodes": [
+          {
+            "id": "a",
+            "branches": [
+              {
+                "answer": "yes",
+                "leaf": "x"
+              },
+              {
+                "answer": "no",
+                "leaf": "end",
+                "node": "a"
+              }
+            ]
+          }
+        ],
+        "leaves": [
+          {
+            "id": "x"
+          },
+          {
+            "id": "y"
+          },
+          {
+            "id": "z"
+          },
+          {
+            "id": "end"
+          }
+        ]
+      },
+      "walk": null
+    },
+    {
+      "name": "no leads to an unknown id",
+      "picker": {
+        "start": "a",
+        "nodes": [
+          {
+            "id": "a",
+            "branches": [
+              {
+                "answer": "yes",
+                "leaf": "x"
+              },
+              {
+                "answer": "no",
+                "node": "nowhere"
+              }
+            ]
+          }
+        ],
+        "leaves": [
+          {
+            "id": "x"
+          },
+          {
+            "id": "y"
+          },
+          {
+            "id": "z"
+          },
+          {
+            "id": "end"
+          }
+        ]
+      },
+      "walk": null
+    },
+    {
+      "name": "yes ends at an unknown leaf",
+      "picker": {
+        "start": "a",
+        "nodes": [
+          {
+            "id": "a",
+            "branches": [
+              {
+                "answer": "yes",
+                "leaf": "nothing"
+              },
+              {
+                "answer": "no",
+                "leaf": "end"
+              }
+            ]
+          }
+        ],
+        "leaves": [
+          {
+            "id": "x"
+          },
+          {
+            "id": "y"
+          },
+          {
+            "id": "z"
+          },
+          {
+            "id": "end"
+          }
+        ]
+      },
+      "walk": null
+    },
+    {
+      "name": "a loop back to the start",
+      "picker": {
+        "start": "a",
+        "nodes": [
+          {
+            "id": "a",
+            "branches": [
+              {
+                "answer": "yes",
+                "leaf": "x"
+              },
+              {
+                "answer": "no",
+                "node": "b"
+              }
+            ]
+          },
+          {
+            "id": "b",
+            "branches": [
+              {
+                "answer": "yes",
+                "leaf": "y"
+              },
+              {
+                "answer": "no",
+                "node": "a"
+              }
+            ]
+          }
+        ],
+        "leaves": [
+          {
+            "id": "x"
+          },
+          {
+            "id": "y"
+          },
+          {
+            "id": "z"
+          },
+          {
+            "id": "end"
+          }
+        ]
+      },
+      "walk": null
+    },
+    {
+      "name": "a node that loops to itself",
+      "picker": {
+        "start": "a",
+        "nodes": [
+          {
+            "id": "a",
+            "branches": [
+              {
+                "answer": "yes",
+                "leaf": "x"
+              },
+              {
+                "answer": "no",
+                "node": "a"
+              }
+            ]
+          }
+        ],
+        "leaves": [
+          {
+            "id": "x"
+          },
+          {
+            "id": "y"
+          },
+          {
+            "id": "z"
+          },
+          {
+            "id": "end"
+          }
+        ]
+      },
+      "walk": null
+    },
+    {
+      "name": "branches not a list",
+      "picker": {
+        "start": "a",
+        "nodes": [
+          {
+            "id": "a",
+            "branches": {
+              "yes": "x",
+              "no": "end"
+            }
+          }
+        ],
+        "leaves": [
+          {
+            "id": "x"
+          },
+          {
+            "id": "y"
+          },
+          {
+            "id": "z"
+          },
+          {
+            "id": "end"
+          }
+        ]
+      },
+      "walk": null
+    },
+    {
+      "name": "nodes not a list",
+      "picker": {
+        "start": "a",
+        "nodes": {
+          "a": {
+            "id": "a",
+            "branches": [
+              {
+                "answer": "yes",
+                "leaf": "x"
+              },
+              {
+                "answer": "no",
+                "leaf": "end"
+              }
+            ]
+          }
+        },
+        "leaves": [
+          {
+            "id": "x"
+          },
+          {
+            "id": "y"
+          },
+          {
+            "id": "z"
+          },
+          {
+            "id": "end"
+          }
+        ]
+      },
+      "walk": null
+    },
+    {
+      "name": "start is not a string",
+      "picker": {
+        "start": [
+          "a"
+        ],
+        "nodes": [
+          {
+            "id": "a",
+            "branches": [
+              {
+                "answer": "yes",
+                "leaf": "x"
+              },
+              {
+                "answer": "no",
+                "leaf": "end"
+              }
+            ]
+          }
+        ],
+        "leaves": [
+          {
+            "id": "x"
+          },
+          {
+            "id": "y"
+          },
+          {
+            "id": "z"
+          },
+          {
+            "id": "end"
+          }
+        ]
+      },
+      "walk": null
+    },
+    {
+      "name": "a branch names its target with a list",
+      "picker": {
+        "start": "a",
+        "nodes": [
+          {
+            "id": "a",
+            "branches": [
+              {
+                "answer": "yes",
+                "leaf": [
+                  "x"
+                ]
+              },
+              {
+                "answer": "no",
+                "leaf": "end"
+              }
+            ]
+          }
+        ],
+        "leaves": [
+          {
+            "id": "x"
+          },
+          {
+            "id": "y"
+          },
+          {
+            "id": "z"
+          },
+          {
+            "id": "end"
+          }
+        ]
+      },
+      "walk": null
+    },
+    {
+      "name": "no names its target with an object",
+      "picker": {
+        "start": "a",
+        "nodes": [
+          {
+            "id": "a",
+            "branches": [
+              {
+                "answer": "yes",
+                "leaf": "x"
+              },
+              {
+                "answer": "no",
+                "node": {
+                  "id": "b"
+                }
+              }
+            ]
+          }
+        ],
+        "leaves": [
+          {
+            "id": "x"
+          },
+          {
+            "id": "y"
+          },
+          {
+            "id": "z"
+          },
+          {
+            "id": "end"
+          }
+        ]
+      },
+      "walk": null
+    }
+  ]
+}

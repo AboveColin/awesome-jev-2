@@ -844,6 +844,69 @@
         font-weight: 500;
       }
 
+      /* the primitive picker (picker.json) */
+      .picker {
+        margin: 0 0 12px;
+        padding-left: 1.6em;
+      }
+      .picker li {
+        margin: 0 0 14px;
+      }
+      .picker .pq {
+        margin: 0 0 6px;
+        color: var(--fg);
+      }
+      .pa {
+        display: flex;
+        gap: 10px;
+        align-items: baseline;
+        font-size: 13px;
+        color: var(--fg-2);
+      }
+      .pa.last {
+        margin: 0 0 12px 1.6em;
+      }
+      .pa .yn {
+        font-family: var(--mono);
+        font-size: 10.5px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--fg-3);
+        min-width: 4.5em;
+      }
+      .pa .leaf {
+        border-left: 2px solid var(--rule);
+        padding-left: 10px;
+      }
+      .pa .leaf.prim {
+        border-left-color: var(--signal);
+      }
+      .pa .leaf b {
+        color: var(--fg);
+        font-weight: 500;
+      }
+      .pa .leaf .gl {
+        color: var(--signal);
+      }
+      .pa .pk {
+        display: block;
+        font-family: var(--mono);
+        font-size: 11.5px;
+        color: var(--fg-3);
+        margin-top: 3px;
+      }
+      .picker .src,
+      .pa .src {
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--fg-3);
+        white-space: nowrap;
+      }
+      .pick-about {
+        font-size: 12.5px;
+        color: var(--fg-3);
+      }
+
       /* data tables */
       .tbl {
         width: 100%;
@@ -999,7 +1062,7 @@
     </footer>
 
     <script type="module">
-      import { SORTS, verification, evidenceKind, evidenceUrl, isIndependentReport, compareEntries, matchesEntry, queryFromState, shareUrl, stateFromQuery, summaryMarks, notIndexedByPattern, primitiveLayers, repositoryFacts, siblingCitations, platformRows, resolvePlatform, platformChoices, measurementOf, wireOf, wireSources, wirePersonRead, wireRows, wireRemainder, wireRepository, isNegativeResult } from "./catalog-core.mjs";
+      import { SORTS, verification, evidenceKind, evidenceUrl, isIndependentReport, compareEntries, matchesEntry, queryFromState, shareUrl, stateFromQuery, summaryMarks, notIndexedByPattern, primitiveLayers, repositoryFacts, siblingCitations, platformRows, resolvePlatform, platformChoices, measurementOf, wireOf, wireSources, wirePersonRead, wireRows, wireRemainder, wireRepository, pickerSteps, pickerCounts, isNegativeResult } from "./catalog-core.mjs";
       const STR = {
         en: {
           eyebrow: "Jev Decision Atlas · community index",
@@ -1075,6 +1138,15 @@
           p_shape_p:
             "One <b>state</b>, many <b>questions</b>. The state is read once and every question is evaluated against it in parallel, which is why asking five things costs roughly what asking one costs plus the question tokens — and why speculative fan-out is a real technique rather than a waste.",
           p_limits_h: "Limits that apply everywhere",
+          pick_h: "Which primitive?",
+          pick_p:
+            "TypeSafe’s own guidance on choosing a primitive, arranged as a decision list: read down and stop at the first yes. The order and the wording are this repository’s; each step links the docs.typesafe.ai page it follows. It is the vendor’s design guidance with its sources, not a recommendation of any row here. The same list, <code>picker.json</code>, draws the figure in the README.",
+          pick_yes: "yes",
+          pick_no: "no to all",
+          pick_source: "source",
+          pick_counts: "{read} read by a person · {signal} text signal only",
+          pick_counts_about:
+            "Beside a primitive: rows filed under that pattern whose <code>question_types</code> a person recorded, and rows where only the cited file’s text shows it (<code>primitives_seen</code>). Never added together.",
           c_h: "Cross-platform compatibility",
           c_lede:
             "One model, many front doors — and the front doors do not agree. Porting between gateways is <b>not</b> a URL swap. Generated from the same <code>compat.json</code> the docs use, so the two can never disagree.",
@@ -1212,6 +1284,16 @@
           p_shape_p:
             "一个 <b>state</b>，多个 <b>questions</b>。state 只被读一次，所有问题并行地对它求值 —— 这就是为什么问五件事的成本约等于问一件事加上问题本身的 token，也是为什么「推测性并行扇出」是一个真实可用的技巧而不是浪费。",
           p_limits_h: "所有平台通用的限制",
+          // The Chinese of the primitive picker's strings here (pick_*) and of picker.json is model-written; a person who revises it drops this note.
+          pick_h: "选哪个原语？",
+          pick_p:
+            "TypeSafe 官方关于如何选择原语的指引，排成一张判断清单：自上而下，遇到第一个「是」即停。顺序与措辞出自本仓库；每一步都链接到它所依据的 docs.typesafe.ai 页面。这是厂商附有来源的设计指引，不是对本目录任何条目的推荐。README 中的图读取的是同一份 <code>picker.json</code>。",
+          pick_yes: "是",
+          pick_no: "全部为否",
+          pick_source: "来源",
+          pick_counts: "人读确认 {read} 条 · 仅文本信号 {signal} 条",
+          pick_counts_about:
+            "原语旁的数字：归入该模式、<code>question_types</code> 中有人记录读到它的行，以及只有所引文件的文本显示它的行（<code>primitives_seen</code>）。两者从不相加。",
           c_h: "跨平台兼容性",
           c_lede:
             "一个模型，很多入口 —— 而这些入口互相不一致。在网关之间移植<b>不是</b>换个 URL 就行。本页与文档读取同一份 <code>compat.json</code>，因此两边永远不会不一致。",
@@ -1812,6 +1894,9 @@
       // ─── views ────────────────────────────────────────────────
       let VIEW = "catalog";
       let COMPAT = null;
+      // picker.json, fetched when the primitives view first opens; false when it
+      // could not be read or is not the decision list lint.py allows.
+      let PICKER = null;
       document.querySelector(".skip-link").onclick = e => {
         e.preventDefault();
         const target = document.getElementById(VIEW === "catalog" ? "catalogue-results" : "view-" + VIEW);
@@ -1901,6 +1986,7 @@
             (p) =>
               `<div class="callout warn"><p><code>${p.n}</code> — ${S().p_watch}: ${p.w[i]}</p></div>`,
           ).join("")}
+          ${renderPicker()}
           <h2>${S().p_shape_h}</h2>
           <p>${S().p_shape_p}</p>
           <h2>${S().p_limits_h}</h2>
@@ -1912,6 +1998,40 @@
             .join("")}</tbody></table>
           <p><a href="${REPO}/blob/main/docs/patterns.md">docs/patterns.md ↗</a></p>`;
         if (!COMPAT) loadCompat().then(() => VIEW === "prims" && renderPrims());
+        if (PICKER === null) loadPicker().then(() => VIEW === "prims" && renderPrims());
+      }
+
+      // picker.json as a decision list: each question, the leaf its yes ends at
+      // (with the rows counted beside a primitive, as the README figure counts
+      // them), then the leaf for no to all. Every step links its source.
+      function renderPicker() {
+        const walked = PICKER ? pickerSteps(PICKER) : null;
+        if (!walked) return "";
+        const lang = L === "zh" ? "zh" : "en";
+        const source = (url) =>
+          `<a class="src" href="${esc(url)}" target="_blank" rel="noopener">${S().pick_source} ↗</a>`;
+        const leaf = (x) => {
+          const counts = pickerCounts(STATS, x);
+          const pattern = x.pattern_key
+            ? `<span class="pk"><a href="?p=${encodeURIComponent(x.pattern_key)}&amp;lang=${L}">${esc(lbl(PAT, x.pattern_key))}</a>${
+                counts
+                  ? " · " + S().pick_counts.replace("{read}", Number(counts.read).toLocaleString()).replace("{signal}", Number(counts.signal_only).toLocaleString())
+                  : ""
+              }</span>`
+            : "";
+          const glyph = x.primitive ? `<span class="gl">${QGLYPH[x.primitive] || ""}</span> ` : "";
+          return `<div class="leaf${x.primitive ? " prim" : ""}"><b>${glyph}${esc(x["label_" + lang])}</b> ${esc(x["note_" + lang])} ${source(x.source_url)}${pattern}</div>`;
+        };
+        return `<h2>${S().pick_h}</h2>
+          <p>${S().pick_p}</p>
+          <ol class="picker">${walked.steps
+            .map(
+              (s) => `<li><p class="pq">${esc(s.node["question_" + lang])} ${source(s.node.source_url)}</p>
+              <div class="pa"><span class="yn">${S().pick_yes}</span>${leaf(s.yes)}</div></li>`,
+            )
+            .join("")}</ol>
+          <div class="pa last"><span class="yn">${S().pick_no}</span>${leaf(walked.last)}</div>
+          <p class="pick-about">${S().pick_counts_about}</p>`;
       }
 
       function renderCompat() {
@@ -2046,6 +2166,17 @@
         const n = platformRows(DATA, values).length;
         const coarse = p.granularity === "coarse" ? ` <span class="dash" title="${esc(S().c_examples_about)}">(${S().c_coarse})</span>` : "";
         return `<a href="?platform=${encodeURIComponent(p.id)}&lang=${L}" data-platform="${esc(p.id)}">${n}</a> · ${values.map(v => `<code>${esc(v)}</code>`).join(", ")}${coarse}`;
+      }
+
+      function loadPicker() {
+        return fetch("picker.json")
+          .then((r) => (r.ok ? r.json() : null))
+          .then((d) => {
+            PICKER = pickerSteps(d) ? d : false;
+          })
+          .catch(() => {
+            PICKER = false;
+          });
       }
 
       function loadCompat() {
