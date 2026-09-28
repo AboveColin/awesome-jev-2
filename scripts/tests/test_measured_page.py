@@ -19,6 +19,7 @@ import copy
 import json
 import pathlib
 import re
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -33,7 +34,7 @@ import lint_docs  # noqa: E402
 import regenerate  # noqa: E402
 from evidence_url import evidence_url  # noqa: E402
 from readme import pages, rows, sections, strings  # noqa: E402
-from test_star_bands import moved_within_bands  # noqa: E402
+from test_star_bands import copy_tree, moved_within_bands  # noqa: E402
 
 CATALOG = json.loads((ROOT / "catalog.json").read_text(encoding="utf-8"))
 RETIRED = json.loads((ROOT / "retired.json").read_text(encoding="utf-8"))
@@ -201,6 +202,21 @@ class ReadmeSectionTest(unittest.TestCase):
             text,
         )
 
+    # START_HERE names a report (hermes-agent-jev-evaluation), which this catalogue may drop.
+    @mock.patch.object(sections, "START_HERE", [])
+    def test_one_report_past_the_limit_is_not_called_all(self):
+        n = sections.INLINE_MEASURED + 1
+        catalog = [e for e in CATALOG if not rows.is_measured(e)] + MEASURED[:n]
+        with mock.patch.object(sections, "collection_slugs", return_value=[]):
+            text = section(build_readme.render(catalog, RETIRED, strings.EN), strings.EN)
+        self.assertEqual(len(titles(text)), sections.INLINE_MEASURED)
+        self.assertIn(
+            strings.EN["pattern_more"].format(
+                shown=sections.INLINE_MEASURED, n=n, page="docs/measured.md", site=rows.reports_link("en")
+            ),
+            text,
+        )
+
     @mock.patch.object(sections, "START_HERE", [])
     def test_no_reports_no_section(self):
         catalog = [e for e in CATALOG if not rows.is_measured(e)]
@@ -299,6 +315,25 @@ class RegistrationTest(unittest.TestCase):
     def test_the_command_writes_them(self):
         self.assertIn("write_measured_pages", build_readme.__all__)
         self.assertIs(build_readme.write_measured_pages, pages.write_measured_pages)
+
+    def test_build_readme_writes_both_pages_from_the_catalogue(self):
+        # On a scratch copy with the committed pages gone: build_readme.py itself
+        # must write them, or a new report never reaches the page and nothing
+        # drifts for the generated-files check to see.
+        with tempfile.TemporaryDirectory() as tmp:
+            tree = pathlib.Path(tmp)
+            copy_tree(tree)
+            for path in self.PATHS:
+                (tree / path).unlink(missing_ok=True)
+            run = subprocess.run(
+                [sys.executable, "scripts/build_readme.py"], cwd=tree, check=True, capture_output=True, text=True
+            )
+            catalog = json.loads((tree / "catalog.json").read_text(encoding="utf-8"))
+            measured = [e for e in catalog if rows.is_measured(e)]
+            for path, pack in zip(self.PATHS, PACKS):
+                with self.subTest(path=path):
+                    self.assertEqual((tree / path).read_text(encoding="utf-8"), pages.render_measured_page(measured, pack))
+        self.assertIn(f"{len(measured)} independent measurement reports", run.stdout)
 
 
 if __name__ == "__main__":
