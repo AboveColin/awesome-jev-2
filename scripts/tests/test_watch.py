@@ -69,7 +69,9 @@ def snap(date: str, values: dict) -> tuple[str, dict]:
 
 class ProblemsTest(unittest.TestCase):
     def test_the_committed_file_renders(self):
-        self.assertEqual(watch.problems(SPEC, CATALOG, TODAY + dt.timedelta(days=1)), [])
+        # The committed file against the real clock, as build_watch.py checks it:
+        # a maintainer re-reading a source sets a later as_of than TODAY.
+        self.assertEqual(watch.problems(SPEC, CATALOG), [])
         self.assertEqual(watch.problems(MINI, ROWS, TODAY), [])
 
     def test_each_rule(self):
@@ -98,7 +100,7 @@ class ProblemsTest(unittest.TestCase):
         broken = copy.deepcopy(SPEC)
         listed = next(i for i in broken["items"] if i["signal"] == "listed-rows")
         listed["rows"].append("no-such-row")
-        found = watch.problems(broken, CATALOG, TODAY + dt.timedelta(days=1))
+        found = watch.problems(broken, CATALOG)
         self.assertEqual(found, [f"watch.json: {listed['id']!r}: lists 'no-such-row', which is not in catalog.json"])
 
 
