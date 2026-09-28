@@ -12,10 +12,11 @@ debugging.
 > [`../compat.json`](../compat.json) by
 > [`../scripts/build_compat.py`](../scripts/build_compat.py), which is the same
 > source the [Compatibility view on the site](https://kydlikebtc.github.io/awesome-jev/?view=compat)
-> reads. The last table's *Catalogued examples* column also reads
-> [`../catalog.json`](../catalog.json). CI rejects a hand edit to them, and
-> regenerates them on `main` after every change to `compat.json` or
-> `catalog.json`. The prose between the tables is hand-written.
+> reads. §6's *Catalogued examples* column also reads
+> [`../catalog.json`](../catalog.json), and §7's table is read from it alone.
+> CI rejects a hand edit to them, and regenerates them on `main` after every
+> change to `compat.json` or `catalog.json`. The prose between the tables is
+> hand-written.
 >
 > **Provenance.** The native row was read directly from the official raw
 > Markdown docs. Every other row was read from that platform's own
@@ -212,6 +213,53 @@ leaving out those flagged as not calling Jev or only in shadow mode unless
 
 ---
 
+## 7. Compatible interfaces that are not Jev
+
+Some projects answer Jev-shaped requests without being Jev: a reimplementation
+of the interface, a server that puts another model behind the same route, or a
+harness that sends Jev the same requests to compare. They are the catalogue's
+`alternative` rows. Pointing an SDK at one may work; the thresholds you tuned
+on Jev will not transfer, because a compatible interface says nothing about
+calibration.
+
+The table records, from each project's own files, what its interface looks
+like: the route, how it spells the yes/no type and where it puts the answer,
+and where its answers come from in the default configuration. *Weights* is
+always shown, because an open-weights model you can run (*open*), a model only
+the project runs (*closed*) and another provider's hosted model called behind
+the route (*proxy*) are different things that look the same from the outside.
+*Calls Jev to compare* means one of the cited files sends Jev the same requests;
+a published comparison is the project's own numbers, not reproduced here.
+
+Each value is backed by a string in a file the row's `wire.source` cites. Lint
+holds every value copied out of a file to one of those strings, and the weekly
+`claims` run re-reads them. A dash means the cited files do not show it: nothing
+is inferred. *Read in* says whether a person has read the files yet; until one
+has, the row is also listed in [review-queue.md](review-queue.md#wire-unread).
+
+<!-- alternatives:start -->
+| Row | Weights | Answering model | Endpoint | Envelope | Yes/no type | Yes/no answer key | Confidence key | Calls Jev to compare | Published comparison | Read in | Caveats |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| [laya](https://kydlikebtc.github.io/awesome-jev/?lang=en#laya-nandhakishorm) <sub>NandhaKishorM/laya</sub> ★10k+ | open weights | `convaiinnovations/laya` | `POST /v1/systemone` | top level | `noul` | `noul` | `confidence` | yes | [link](https://github.com/NandhaKishorM/laya/blob/HEAD/research/benchmarks/feishu_zh/README.md) | [`laya/serve.py`](https://github.com/NandhaKishorM/laya/blob/HEAD/laya/serve.py) · [`laya/agent.py`](https://github.com/NandhaKishorM/laya/blob/HEAD/laya/agent.py) · [`laya/router.py`](https://github.com/NandhaKishorM/laya/blob/HEAD/laya/router.py) · [`research/benchmarks/feishu_zh/run.py`](https://github.com/NandhaKishorM/laya/blob/HEAD/research/benchmarks/feishu_zh/run.py) (not yet read by a person) | **not Jev itself**: A compatible API does not imply compatible calibration, so thresholds do not transfer. |
+| [kev](https://kydlikebtc.github.io/awesome-jev/?lang=en#jaredpalmer-kev) <sub>jaredpalmer/kev</sub> ★1k+ | open weights | — | `POST /v1/systemone` | top level | `noul` | `noul` | `confidence` | yes | [link](https://github.com/jaredpalmer/kev#what-to-expect) | [`kev/serve.py`](https://github.com/jaredpalmer/kev/blob/HEAD/kev/serve.py) · [`kev/api.py`](https://github.com/jaredpalmer/kev/blob/HEAD/kev/api.py) · [`playground/scripts/jev-evaluate.mjs`](https://github.com/jaredpalmer/kev/blob/HEAD/playground/scripts/jev-evaluate.mjs) (not yet read by a person) | **not Jev itself**: A compatible API does not imply compatible calibration, so thresholds do not transfer. |
+| [NanoJev](https://kydlikebtc.github.io/awesome-jev/?lang=en#nanojev) <sub>TianyuCodings/NanoJev</sub> ★1k+ | open weights | — | `POST /api/evaluate` | wrapped in another field | `boolean` | `p_true` | — | yes | [link](https://github.com/TianyuCodings/NanoJev/blob/HEAD/README.en.md) | [`scripts/serve_decisions.py`](https://github.com/TianyuCodings/NanoJev/blob/HEAD/scripts/serve_decisions.py) · [`scripts/predict_toy_decisions.py`](https://github.com/TianyuCodings/NanoJev/blob/HEAD/scripts/predict_toy_decisions.py) · [`scripts/jev_probe.mjs`](https://github.com/TianyuCodings/NanoJev/blob/HEAD/scripts/jev_probe.mjs) (not yet read by a person) | **not Jev itself**: A compatible API does not imply compatible calibration, so thresholds do not transfer. |
+| [decider](https://kydlikebtc.github.io/awesome-jev/?lang=en#decider) <sub>Mapika/decider</sub> ★100+ | open weights | — | `POST /v1/systemone` | top level | `noul` | `noul` | `confidence` | — | [link](https://github.com/Mapika/decider/blob/HEAD/docs/RESULTS.md) | [`decider/serve.py`](https://github.com/Mapika/decider/blob/HEAD/decider/serve.py) · [`decider/systemone.py`](https://github.com/Mapika/decider/blob/HEAD/decider/systemone.py) · [`README.md`](https://github.com/Mapika/decider/blob/HEAD/README.md) (not yet read by a person) | **not Jev itself**: A compatible API does not imply compatible calibration, so thresholds do not transfer. |
+| [jeff](https://kydlikebtc.github.io/awesome-jev/?lang=en#jeff) <sub>logan-markewich/jeff</sub> ★100+ | open weights | `gliformer-large-v1` | `POST /v1/systemone` | top level | `noul` | `noul` | `confidence` | yes | [link](https://github.com/logan-markewich/jeff/blob/HEAD/bench/RESULTS.md) | [`src/jeff/server/app.py`](https://github.com/logan-markewich/jeff/blob/HEAD/src/jeff/server/app.py) · [`src/jeff/core/schemas.py`](https://github.com/logan-markewich/jeff/blob/HEAD/src/jeff/core/schemas.py) · [`src/jeff/server/config.py`](https://github.com/logan-markewich/jeff/blob/HEAD/src/jeff/server/config.py) · [`bench/jevbench.py`](https://github.com/logan-markewich/jeff/blob/HEAD/bench/jevbench.py) (not yet read by a person) | **not Jev itself**: A compatible API does not imply compatible calibration, so thresholds do not transfer. |
+| [localjev](https://kydlikebtc.github.io/awesome-jev/?lang=en#localjev) <sub>githubnext/localjev</sub> ★100+ | open weights | `diffusiongemma-26B-A4B-it-4bit` | `POST /v1/systemone` | top level | `noul` | `noul` | `confidence` | — | — | [`src/server.ts`](https://github.com/githubnext/localjev/blob/HEAD/src/server.ts) · [`src/types.ts`](https://github.com/githubnext/localjev/blob/HEAD/src/types.ts) · [`src/config.ts`](https://github.com/githubnext/localjev/blob/HEAD/src/config.ts) (not yet read by a person) | **not Jev itself**: A compatible API does not imply compatible calibration, so thresholds do not transfer. |
+| [open-jev](https://kydlikebtc.github.io/awesome-jev/?lang=en#open-jev) <sub>daseinlabs/open-jev</sub> ★100+ | open weights | `gemma-3-4b-it` | `POST /v1/systemone` | top level | `noul` | `noul` | `confidence` | — | [link](https://github.com/daseinlabs/open-jev#typesafe-system-one-contract) | [`openjev/server.py`](https://github.com/daseinlabs/open-jev/blob/HEAD/openjev/server.py) · [`openjev/systemone.py`](https://github.com/daseinlabs/open-jev/blob/HEAD/openjev/systemone.py) · [`openjev/scorer.py`](https://github.com/daseinlabs/open-jev/blob/HEAD/openjev/scorer.py) (not yet read by a person) | **not Jev itself**: A compatible API does not imply compatible calibration, so thresholds do not transfer. |
+| [Open-Jev](https://kydlikebtc.github.io/awesome-jev/?lang=en#open-jev-zefan-cai) <sub>Zefan-Cai/Open-Jev</sub> ★100+ | open weights | — | `POST /v1/systemone` | — | `noul` | `noul` | `confidence` | — | [link](https://github.com/Zefan-Cai/Open-Jev/blob/HEAD/docs/jevbench-public.md) | [`jev/server.py`](https://github.com/Zefan-Cai/Open-Jev/blob/HEAD/jev/server.py) · [`jev/api.py`](https://github.com/Zefan-Cai/Open-Jev/blob/HEAD/jev/api.py) · [`README.md`](https://github.com/Zefan-Cai/Open-Jev/blob/HEAD/README.md) (not yet read by a person) | **not Jev itself**: A compatible API does not imply compatible calibration, so thresholds do not transfer. |
+| [openjev](https://kydlikebtc.github.io/awesome-jev/?lang=en#openjev) <sub>razorback16/openjev</sub> ★100+ | open weights | `nvidia/diffusiongemma-26B-A4B-it-NVFP4` | `POST /v1/systemone` | top level | `noul` | `noul` | `confidence` | — | — | [`openjev/api.py`](https://github.com/razorback16/openjev/blob/HEAD/openjev/api.py) · [`openjev/engine.py`](https://github.com/razorback16/openjev/blob/HEAD/openjev/engine.py) · [`openjev/config.py`](https://github.com/razorback16/openjev/blob/HEAD/openjev/config.py) (not yet read by a person) | **not Jev itself**: A compatible API does not imply compatible calibration, so thresholds do not transfer. |
+| [OpenJev](https://kydlikebtc.github.io/awesome-jev/?lang=en#openjev-siliconlabai) <sub>SiliconLabAI/OpenJev</sub> ★100+ | proxy: another provider's hosted model | `gpt-4o-mini` | `POST /api/evaluate` | top level | `noul` | `noul` | `confidence` | — | — | [`server/index.ts`](https://github.com/SiliconLabAI/OpenJev/blob/HEAD/server/index.ts) · [`src/lib/evaluate.ts`](https://github.com/SiliconLabAI/OpenJev/blob/HEAD/src/lib/evaluate.ts) (not yet read by a person) | **not Jev itself**: A compatible API does not imply compatible calibration, so thresholds do not transfer. |
+| [openjev-sglang](https://kydlikebtc.github.io/awesome-jev/?lang=en#openjev-sglang) <sub>ekzhang/openjev-sglang</sub> ★100+ | open weights | `nvidia/Qwen3.6-35B-A3B-NVFP4` | `POST /v1/systemone` | top level | `noul` | `noul` | `confidence` | yes | [link](https://github.com/ekzhang/openjev-sglang/blob/HEAD/evals/results/boolq-2026-09-18/comparison/report.md) | [`src/openjev/api.py`](https://github.com/ekzhang/openjev-sglang/blob/HEAD/src/openjev/api.py) · [`src/openjev/models.py`](https://github.com/ekzhang/openjev-sglang/blob/HEAD/src/openjev/models.py) · [`src/openjev/defaults.py`](https://github.com/ekzhang/openjev-sglang/blob/HEAD/src/openjev/defaults.py) · [`evals/boolq.py`](https://github.com/ekzhang/openjev-sglang/blob/HEAD/evals/boolq.py) (not yet read by a person) | **not Jev itself**: A compatible API does not imply compatible calibration, so thresholds do not transfer. · no licence |
+| [rizzo-flow](https://kydlikebtc.github.io/awesome-jev/?lang=en#rizzo-flow) <sub>Rizzo-AI-Academy/rizzo-flow</sub> ★100+ | open weights | `rizzoaiacademy/rizzo-flow` | `POST /v1/systemone` | top level | `noul` | `noul` | `confidence` | — | [link](https://github.com/Rizzo-AI-Academy/rizzo-flow#results-on-typed-decisions) | [`src/rizzo_flow/api.py`](https://github.com/Rizzo-AI-Academy/rizzo-flow/blob/HEAD/src/rizzo_flow/api.py) · [`src/rizzo_flow/compat.py`](https://github.com/Rizzo-AI-Academy/rizzo-flow/blob/HEAD/src/rizzo_flow/compat.py) · [`src/rizzo_flow/config.py`](https://github.com/Rizzo-AI-Academy/rizzo-flow/blob/HEAD/src/rizzo_flow/config.py) (not yet read by a person) | **not Jev itself**: A compatible API does not imply compatible calibration, so thresholds do not transfer. |
+| [simple-jev](https://kydlikebtc.github.io/awesome-jev/?lang=en#simple-jev) <sub>featherless-ai/simple-jev</sub> ★100+ | open weights | — | `POST /v1/systemone` | — | `noul` | `noul` | `confidence` | yes | — | [`hf-server/hf_server.py`](https://github.com/featherless-ai/simple-jev/blob/HEAD/hf-server/hf_server.py) · [`eval/benchmarks/jev-1.13/2026-09-20/RUN.md`](https://github.com/featherless-ai/simple-jev/blob/HEAD/eval/benchmarks/jev-1.13/2026-09-20/RUN.md) (not yet read by a person) | **not Jev itself**: A compatible API does not imply compatible calibration, so thresholds do not transfer. |
+| [von](https://kydlikebtc.github.io/awesome-jev/?lang=en#von) <sub>wfzyx/von</sub> ★100+ | open weights | `wfzyx/von` | `POST /v1/systemone` | top level | `noul` | `noul` | `confidence` | — | [link](https://github.com/wfzyx/von#empirical-benchmark) | [`src/von/server.py`](https://github.com/wfzyx/von/blob/HEAD/src/von/server.py) · [`src/von/types.py`](https://github.com/wfzyx/von/blob/HEAD/src/von/types.py) · [`src/von/backends/option_marker_backend.py`](https://github.com/wfzyx/von/blob/HEAD/src/von/backends/option_marker_backend.py) (not yet read by a person) | **not Jev itself**: A compatible API does not imply compatible calibration, so thresholds do not transfer. |
+
+43 more `alternative` rows carry no `wire` record: no one has recorded an interface from their files yet, or their files show none.
+<!-- alternatives:end -->
+
+---
+
 ## Hard limits
 
 Properties of the model, so they hold on every surface.
@@ -251,7 +299,8 @@ Follow whichever your own SDK version's docs show, and do not mix them.
   point explicitly.
 - **Thresholds across model versions.** Pin the version if you have tuned any.
 - **Thresholds onto a compatible reimplementation.** A matching wire format
-  implies nothing about calibration. See the `alternative` rows in the catalog.
+  implies nothing about calibration. See [§7](#7-compatible-interfaces-that-are-not-jev)
+  and the `alternative` rows in the catalog.
 - **Option ordering.** One independent test found that reversing option order
   moved a probability enough to cross a 0.9 threshold. It is unreplicated, so
   treat the magnitude as indicative — but if it reproduces for your workload,

@@ -999,7 +999,7 @@
     </footer>
 
     <script type="module">
-      import { SORTS, verification, evidenceKind, evidenceUrl, isIndependentReport, compareEntries, matchesEntry, queryFromState, shareUrl, stateFromQuery, summaryMarks, notIndexedByPattern, primitiveLayers, repositoryFacts, siblingCitations, platformRows, resolvePlatform, platformChoices, measurementOf, isNegativeResult } from "./catalog-core.mjs";
+      import { SORTS, verification, evidenceKind, evidenceUrl, isIndependentReport, compareEntries, matchesEntry, queryFromState, shareUrl, stateFromQuery, summaryMarks, notIndexedByPattern, primitiveLayers, repositoryFacts, siblingCitations, platformRows, resolvePlatform, platformChoices, measurementOf, wireOf, wireSources, wirePersonRead, wireRows, wireRemainder, isNegativeResult } from "./catalog-core.mjs";
       const STR = {
         en: {
           eyebrow: "Jev Decision Atlas · community index",
@@ -1099,6 +1099,35 @@
           platform_coarse: "Coarse match: these rows record {values}, which does not say which route to the API a row takes, so some may use another route.",
           platform_shared: "The same value also stands for {names}.",
           platform_listed: "compat.json lists it for {names}.",
+          w_h: "Compatible interfaces that are not Jev",
+          w_lede:
+            "Projects that answer Jev-shaped requests without being Jev: a reimplementation of the interface, another model behind the same route, or a harness that sends Jev the same requests to compare. What each project's own files show, field by field; a dash means the files do not show it. Thresholds tuned on Jev do not transfer to any of them.",
+          w_row: "Row",
+          w_weights: "Weights",
+          w_model: "Answering model",
+          w_endpoint: "Endpoint",
+          w_envelope: "Envelope",
+          w_yesno: "Yes/no type",
+          w_answer: "Yes/no answer key",
+          w_conf: "Confidence key",
+          w_baseline: "Calls Jev to compare",
+          w_comparison: "Published comparison",
+          w_read: "Read in",
+          w_caveats: "Caveats",
+          w_open: "open weights",
+          w_closed: "closed: only the project runs it",
+          w_proxy: "proxy: another provider's hosted model",
+          w_top: "top level",
+          w_wrapped: "wrapped in another field",
+          w_yes: "yes",
+          w_link: "link",
+          w_person: "(read by a person on {dates})",
+          w_unread: "(not yet read by a person)",
+          w_negative: "negative result, author-stated, not reproduced here",
+          // taxonomy.json's not-jev blurb, its second sentence (scripts/tests/test_wire.py holds both languages to it).
+          w_calibration: "A compatible API does not imply compatible calibration, so thresholds do not transfer.",
+          w_rest: "{n} more alternative rows carry no wire record: no one has recorded an interface from their files yet, or their files show none.",
+          w_rest_one: "1 more alternative row carries no wire record: no one has recorded an interface from its files yet, or its files show none.",
         },
         zh: {
           eyebrow: "Jev Decision Atlas · 社区目录",
@@ -1208,6 +1237,35 @@
           platform_coarse: "粗粒度匹配：这些行记录的是 {values}，从中看不出一行经哪条路径调用 API，其中一些可能走的是别的路径。",
           platform_shared: "同一取值也对应 {names}。",
           platform_listed: "compat.json 为 {names} 列出了这个取值。",
+          // The Chinese of the w_* strings below is model-written, except w_calibration, which is taxonomy.json's own; a person who revises them drops this note.
+          w_h: "兼容但不是 Jev 的接口",
+          w_lede:
+            "这些项目能应答 Jev 形状的请求，但它们不是 Jev：有的重新实现了接口，有的在同一路由背后换了别的模型，有的只是把同样的请求发给 Jev 做对比。下表逐项记录各项目自己的文件里能看到什么；短横线表示文件里看不出。在 Jev 上调好的阈值，搬到它们任何一个身上都不成立。",
+          w_row: "行",
+          w_weights: "权重",
+          w_model: "应答模型",
+          w_endpoint: "端点",
+          w_envelope: "请求外层",
+          w_yesno: "是非题类型",
+          w_answer: "是非答案键",
+          w_conf: "置信度键",
+          w_baseline: "调用 Jev 做对比",
+          w_comparison: "公开的对比",
+          w_read: "读自",
+          w_caveats: "注意事项",
+          w_open: "开放权重",
+          w_closed: "封闭：仅由项目方运行",
+          w_proxy: "代理：调用另一家的托管模型",
+          w_top: "顶层",
+          w_wrapped: "包在另一字段里",
+          w_yes: "是",
+          w_link: "链接",
+          w_person: "（已由人于 {dates} 核读）",
+          w_unread: "（尚无人核读）",
+          w_negative: "负面结果，作者自述，未经本仓库复现",
+          w_calibration: "协议兼容不等于校准兼容，所以阈值不能迁移。",
+          w_rest: "另有 {n} 条 alternative 行没有 wire 记录：还没有人从它们的文件里记录接口，或者它们的文件里看不出接口。",
+          w_rest_one: "另有 1 条 alternative 行没有 wire 记录：还没有人从它的文件里记录接口，或者它的文件里看不出接口。",
         },
       };
 
@@ -1906,6 +1964,7 @@
                 `<tr><td class="k">${esc(p.name)}</td><td class="wrap">${esc(i ? p.notes_zh || p.notes : p.notes)}</td><td class="k">${examplesCell(p)}</td></tr>`,
             )
             .join("")}</tbody></table>
+          ${wireTable()}
           <p><a href="${REPO}/blob/main/docs/compatibility.md">${S().c_full} ↗</a></p>`;
         el.querySelectorAll("a[data-platform]").forEach(a => a.onclick = e => {
           e.preventDefault();
@@ -1914,6 +1973,67 @@
           setView("catalog");
           refresh();
         });
+      }
+
+      // Compatible interfaces that are not Jev: the alternative rows that record
+      // their interface (wire), as docs/compatibility.md §7 shows them, by stars
+      // here as the catalogue is. The weights column is always there, and every
+      // row carries the not-jev caveat with the calibration sentence.
+      function wireTable() {
+        const dash = '<span class="dash">—</span>';
+        const code = (v) => (typeof v === "string" ? `<code>${esc(v)}</code>` : dash);
+        const weights = { open: S().w_open, closed: S().w_closed, proxy: S().w_proxy };
+        const envelope = { "top-level": S().w_top, wrapped: S().w_wrapped };
+        const rows = wireRows(DATA)
+          .slice()
+          .sort((a, b) => (b.stars || 0) - (a.stars || 0) || a.title.localeCompare(b.title) || a.slug.localeCompare(b.slug));
+        const readIn = (e, w) => {
+          const files = wireSources(w).map((item) => {
+            const url = evidenceUrl({ ...e, evidence: { path: item.path } });
+            return url ? `<a href="${esc(url)}" rel="noopener"><code>${esc(item.path)}</code></a>` : `<code>${esc(item.path)}</code>`;
+          });
+          const dates = [...new Set(wireSources(w).map((item) => item.read_on))].sort().join(", ");
+          const who = wirePersonRead(w) ? S().w_person.replace("{dates}", esc(dates)) : S().w_unread;
+          return `${files.join(" · ")} <span class="dash">${who}</span>`;
+        };
+        const caveats = (e) => {
+          const others = (e.flags || [])
+            .filter((f) => f !== "not-jev")
+            .slice()
+            .sort((a, b) => F_ORDER.indexOf(a) - F_ORDER.indexOf(b))
+            .map((f) => esc(lbl(FLAG, f)));
+          if (isNegativeResult(e)) others.push(S().w_negative);
+          return `<b>${esc(lbl(FLAG, "not-jev"))}</b>${L === "zh" ? "：" : ": "}${S().w_calibration}${others.map((o) => ` · ${o}`).join("")}`;
+        };
+        const cols = ["w_row", "w_weights", "w_model", "w_endpoint", "w_envelope", "w_yesno", "w_answer", "w_conf", "w_baseline", "w_comparison", "w_read", "w_caveats"];
+        const body = rows
+          .map((e) => {
+            const w = wireOf(e);
+            const link = typeof w.comparison_url === "string" ? `<a href="${esc(w.comparison_url)}" rel="noopener">${S().w_link}</a>` : dash;
+            return `<tr>
+              <td class="k"><a href="?lang=${L}#${encodeURIComponent(e.slug)}">${esc(e.title)}</a></td>
+              <td class="k">${weights[w.weights] ? esc(weights[w.weights]) : dash}</td>
+              <td class="k">${code(w.base_model)}</td>
+              <td class="k">${code(w.endpoint)}</td>
+              <td class="k">${envelope[w.envelope] ? esc(envelope[w.envelope]) : dash}</td>
+              <td class="k">${code(w.yesno_spelling)}</td>
+              <td class="k">${code(w.answer_field)}</td>
+              <td class="k">${code(w.confidence_field)}</td>
+              <td class="k">${w.calls_real_jev_as_baseline === true ? S().w_yes : dash}</td>
+              <td class="k">${link}</td>
+              <td class="wrap">${readIn(e, w)}</td>
+              <td class="wrap">${caveats(e)}</td>
+            </tr>`;
+          })
+          .join("");
+        const rest = wireRemainder(DATA);
+        const restLine = rest === 1 ? S().w_rest_one : S().w_rest.replace("{n}", rest);
+        return `<h2 id="not-jev-interfaces">${S().w_h}</h2>
+          <p>${S().w_lede}</p>
+          ${rows.length ? `<table class="tbl">
+            <thead><tr>${cols.map((k) => `<th>${S()[k]}</th>`).join("")}</tr></thead>
+            <tbody>${body}</tbody></table>` : ""}
+          <p>${esc(restLine)}</p>`;
       }
 
       // The notes table's last column: how many rows record a value the surface

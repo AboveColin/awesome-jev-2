@@ -8739,6 +8739,38 @@
       "score",
       "noul"
     ],
+    "wire": {
+      "endpoint": "POST /v1/systemone",
+      "yesno_spelling": "noul",
+      "answer_field": "noul",
+      "confidence_field": "confidence",
+      "envelope": "top-level",
+      "weights": "open",
+      "comparison_url": "https://github.com/Mapika/decider/blob/HEAD/docs/RESULTS.md",
+      "source": [
+        {
+          "path": "decider/serve.py",
+          "matched": [
+            "@app.post(\"/v1/systemone\")",
+            "POST /v1/systemone  {\"state\": str|object|array, \"questions\": {id: {...}}}"
+          ]
+        },
+        {
+          "path": "decider/systemone.py",
+          "matched": [
+            "return {\"type\": \"noul\", \"noul\": round(p[1], nd)}",
+            "\"confidence\": round(choice_confidence(p), nd)"
+          ]
+        },
+        {
+          "path": "README.md",
+          "matched": [
+            "https://huggingface.co/Mapika/decider-2b",
+            "a 2B model built on `Qwen/Qwen3.5-2B-Base`"
+          ]
+        }
+      ]
+    },
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -17586,6 +17618,41 @@
       ],
       "kind": "wire-shape",
       "read_on": "2026-09-22"
+    },
+    "wire": {
+      "endpoint": "POST /v1/systemone",
+      "yesno_spelling": "noul",
+      "answer_field": "noul",
+      "confidence_field": "confidence",
+      "envelope": "top-level",
+      "weights": "open",
+      "calls_real_jev_as_baseline": true,
+      "comparison_url": "https://github.com/jaredpalmer/kev#what-to-expect",
+      "source": [
+        {
+          "path": "kev/serve.py",
+          "matched": [
+            "@app.post(\"/v1/systemone\")",
+            "hybrid Qwen3.5 checkpoints run on MLX by default"
+          ]
+        },
+        {
+          "path": "kev/api.py",
+          "matched": [
+            "type: Literal[\"noul\"]",
+            "out[m[\"id\"]] = {\"type\": \"noul\", \"noul\": round_prob(p[1])}",
+            "\"confidence\": round_prob(choice_confidence(p))",
+            "class SystemOneRequest(BaseModel):",
+            "questions: dict[str, Question] = Field(min_length=1)"
+          ]
+        },
+        {
+          "path": "playground/scripts/jev-evaluate.mjs",
+          "matched": [
+            "model: \"typesafe-ai/jev\","
+          ]
+        }
+      ]
     }
   },
   {
@@ -17908,6 +17975,47 @@
       ],
       "kind": "wire-shape",
       "read_on": "2026-09-22"
+    },
+    "wire": {
+      "endpoint": "POST /v1/systemone",
+      "yesno_spelling": "noul",
+      "answer_field": "noul",
+      "confidence_field": "confidence",
+      "envelope": "top-level",
+      "weights": "open",
+      "base_model": "gliformer-large-v1",
+      "calls_real_jev_as_baseline": true,
+      "comparison_url": "https://github.com/logan-markewich/jeff/blob/HEAD/bench/RESULTS.md",
+      "source": [
+        {
+          "path": "src/jeff/server/app.py",
+          "matched": [
+            "@app.post(\"/v1/systemone\", response_model=SystemOneResponse)"
+          ]
+        },
+        {
+          "path": "src/jeff/core/schemas.py",
+          "matched": [
+            "type: Literal[\"noul\"] = \"noul\"",
+            "noul: float",
+            "confidence: float",
+            "class SystemOneRequest(BaseModel):",
+            "questions: dict[str, Question] = Field(min_length=1)"
+          ]
+        },
+        {
+          "path": "src/jeff/server/config.py",
+          "matched": [
+            "os.environ.get(\"JEFF_MODEL\", \"models/gliformer-large-v1\")"
+          ]
+        },
+        {
+          "path": "bench/jevbench.py",
+          "matched": [
+            "--url https://api.typesafe.ai --key-env TYPESAFE_API_KEY"
+          ]
+        }
+      ]
     },
     "first_seen": "2026-09-22",
     "sources": [
@@ -62010,6 +62118,47 @@
       "kind": "wire-shape",
       "read_on": "2026-09-24"
     },
+    "wire": {
+      "endpoint": "POST /v1/systemone",
+      "yesno_spelling": "noul",
+      "answer_field": "noul",
+      "confidence_field": "confidence",
+      "envelope": "top-level",
+      "weights": "open",
+      "base_model": "convaiinnovations/laya",
+      "calls_real_jev_as_baseline": true,
+      "comparison_url": "https://github.com/NandhaKishorM/laya/blob/HEAD/research/benchmarks/feishu_zh/README.md",
+      "source": [
+        {
+          "path": "laya/serve.py",
+          "matched": [
+            "@app.post(\"/v1/systemone\")",
+            "state = body.get(\"state\")",
+            "questions = body[\"questions\"]"
+          ]
+        },
+        {
+          "path": "laya/agent.py",
+          "matched": [
+            "\"type\": \"noul\",",
+            "\"noul\": round(float(p[1]), 4),",
+            "\"confidence\": round(confidence_from_probs(p, k), 4),"
+          ]
+        },
+        {
+          "path": "laya/router.py",
+          "matched": [
+            "BUNDLE_REPO = \"convaiinnovations/laya\""
+          ]
+        },
+        {
+          "path": "research/benchmarks/feishu_zh/run.py",
+          "matched": [
+            "client.post('https://api.typesafe.ai/v1/systemone'"
+          ]
+        }
+      ]
+    },
     "zh_machine": true,
     "languages": [
       "python"
@@ -63723,6 +63872,39 @@
       ],
       "kind": "wire-shape",
       "read_on": "2026-09-24"
+    },
+    "wire": {
+      "endpoint": "POST /v1/systemone",
+      "yesno_spelling": "noul",
+      "answer_field": "noul",
+      "confidence_field": "confidence",
+      "envelope": "top-level",
+      "weights": "open",
+      "base_model": "diffusiongemma-26B-A4B-it-4bit",
+      "source": [
+        {
+          "path": "src/server.ts",
+          "matched": [
+            "request.method === \"POST\" && pathname === \"/v1/systemone\""
+          ]
+        },
+        {
+          "path": "src/types.ts",
+          "matched": [
+            "export type NoulAnswer = { type: \"noul\"; noul: number };",
+            "confidence: number;",
+            "export interface SystemOneRequest {",
+            "questions: Record<string, Question>;"
+          ]
+        },
+        {
+          "path": "src/config.ts",
+          "matched": [
+            "\"diffusiongemma-26B-A4B-it-4bit\"",
+            "process.env.LOCALJEV_UPSTREAM ?? \"http://127.0.0.1:8000\""
+          ]
+        }
+      ]
     },
     "zh_machine": true,
     "languages": [
@@ -65816,7 +65998,39 @@
     "primitives_seen": [
       "choice",
       "score"
-    ]
+    ],
+    "wire": {
+      "endpoint": "POST /api/evaluate",
+      "yesno_spelling": "boolean",
+      "answer_field": "p_true",
+      "envelope": "wrapped",
+      "weights": "open",
+      "calls_real_jev_as_baseline": true,
+      "comparison_url": "https://github.com/TianyuCodings/NanoJev/blob/HEAD/README.en.md",
+      "source": [
+        {
+          "path": "scripts/serve_decisions.py",
+          "matched": [
+            "if urlparse(self.path).path!='/api/evaluate':",
+            "q['type']=='boolean'",
+            "Serve a local checkpoint and reader demo; weights load once, no provider calls."
+          ]
+        },
+        {
+          "path": "scripts/predict_toy_decisions.py",
+          "matched": [
+            "set(payload) != {\"states\"}",
+            "result.update(p_true=probabilities[1], value=bool(best))"
+          ]
+        },
+        {
+          "path": "scripts/jev_probe.mjs",
+          "matched": [
+            "evaluate({ model: 'typesafe-ai/jev'"
+          ]
+        }
+      ]
+    }
   },
   {
     "slug": "nearhere-three-way-comparison",
@@ -67203,6 +67417,40 @@
       "kind": "wire-shape",
       "read_on": "2026-09-22"
     },
+    "wire": {
+      "endpoint": "POST /v1/systemone",
+      "yesno_spelling": "noul",
+      "answer_field": "noul",
+      "confidence_field": "confidence",
+      "envelope": "top-level",
+      "weights": "open",
+      "base_model": "gemma-3-4b-it",
+      "comparison_url": "https://github.com/daseinlabs/open-jev#typesafe-system-one-contract",
+      "source": [
+        {
+          "path": "openjev/server.py",
+          "matched": [
+            "@app.post(\"/v1/systemone\", response_model=SystemOneResponse, dependencies=[Depends(_auth)])"
+          ]
+        },
+        {
+          "path": "openjev/systemone.py",
+          "matched": [
+            "type: Literal[\"noul\"] = \"noul\"",
+            "noul: float",
+            "confidence: float",
+            "class SystemOneRequest(BaseModel):",
+            "questions: dict[str, Question] = Field(min_length=1)"
+          ]
+        },
+        {
+          "path": "openjev/scorer.py",
+          "matched": [
+            "DEFAULT_MODEL = \"models/gemma-3-4b-it\""
+          ]
+        }
+      ]
+    },
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -67476,6 +67724,37 @@
     "primitives_seen": [
       "choice"
     ],
+    "wire": {
+      "endpoint": "POST /v1/systemone",
+      "yesno_spelling": "noul",
+      "answer_field": "noul",
+      "confidence_field": "confidence",
+      "weights": "open",
+      "comparison_url": "https://github.com/Zefan-Cai/Open-Jev/blob/HEAD/docs/jevbench-public.md",
+      "source": [
+        {
+          "path": "jev/server.py",
+          "matched": [
+            "if urlsplit(self.path).path not in (\"/v1/inference\", \"/v1/systemone\", \"/api/jev\"):",
+            "def do_POST(self):"
+          ]
+        },
+        {
+          "path": "jev/api.py",
+          "matched": [
+            "if kind not in (\"choice\", \"score\", \"noul\"):",
+            "answer = {\"type\": kind, \"noul\": probs[1]}",
+            "\"confidence\": choice_confidence(probs)}"
+          ]
+        },
+        {
+          "path": "README.md",
+          "matched": [
+            "https://huggingface.co/ZefanCai/Open-Jev-27B-v1.1"
+          ]
+        }
+      ]
+    },
     "zh_machine": true,
     "languages": [
       "python"
@@ -67937,6 +68216,40 @@
       "kind": "wire-shape",
       "read_on": "2026-09-22"
     },
+    "wire": {
+      "endpoint": "POST /v1/systemone",
+      "yesno_spelling": "noul",
+      "answer_field": "noul",
+      "confidence_field": "confidence",
+      "envelope": "top-level",
+      "weights": "open",
+      "base_model": "nvidia/diffusiongemma-26B-A4B-it-NVFP4",
+      "source": [
+        {
+          "path": "openjev/api.py",
+          "matched": [
+            "@app.post(\"/v1/systemone\")",
+            "type: Literal[\"noul\"]",
+            "class SystemOneRequest(BaseModel):",
+            "questions: dict[str, Question] = Field(min_length=1)"
+          ]
+        },
+        {
+          "path": "openjev/engine.py",
+          "matched": [
+            "return {\"type\": \"noul\", \"noul\": p[0]}",
+            "\"confidence\": confidence(p)}"
+          ]
+        },
+        {
+          "path": "openjev/config.py",
+          "matched": [
+            "_env(\"OPENJEV_TOKENIZER\", \"nvidia/diffusiongemma-26B-A4B-it-NVFP4\")",
+            "_env(\"OPENJEV_BACKEND\", \"vllm\")"
+          ]
+        }
+      ]
+    },
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -68151,6 +68464,47 @@
       "kind": "wire-shape",
       "read_on": "2026-09-22"
     },
+    "wire": {
+      "endpoint": "POST /v1/systemone",
+      "yesno_spelling": "noul",
+      "answer_field": "noul",
+      "confidence_field": "confidence",
+      "envelope": "top-level",
+      "weights": "open",
+      "base_model": "nvidia/Qwen3.6-35B-A3B-NVFP4",
+      "calls_real_jev_as_baseline": true,
+      "comparison_url": "https://github.com/ekzhang/openjev-sglang/blob/HEAD/evals/results/boolq-2026-09-18/comparison/report.md",
+      "source": [
+        {
+          "path": "src/openjev/api.py",
+          "matched": [
+            "\"/v1/systemone\",",
+            "async def systemone(payload: SystemOneRequest, request: Request):"
+          ]
+        },
+        {
+          "path": "src/openjev/models.py",
+          "matched": [
+            "type: Literal[\"noul\"] = \"noul\"",
+            "noul: float = Field(",
+            "confidence: float = Field(",
+            "class SystemOneRequest(StrictModel):"
+          ]
+        },
+        {
+          "path": "src/openjev/defaults.py",
+          "matched": [
+            "DEFAULT_MODEL = \"nvidia/Qwen3.6-35B-A3B-NVFP4\""
+          ]
+        },
+        {
+          "path": "evals/boolq.py",
+          "matched": [
+            "model = \"~typesafe/jev-latest\" if is_jev else MODEL"
+          ]
+        }
+      ]
+    },
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -68332,6 +68686,34 @@
       ],
       "kind": "wire-shape",
       "read_on": "2026-09-24"
+    },
+    "wire": {
+      "endpoint": "POST /api/evaluate",
+      "yesno_spelling": "noul",
+      "answer_field": "noul",
+      "confidence_field": "confidence",
+      "envelope": "top-level",
+      "weights": "proxy",
+      "base_model": "gpt-4o-mini",
+      "source": [
+        {
+          "path": "server/index.ts",
+          "matched": [
+            "app.post(\"/api/evaluate\", async (req, res) => {",
+            "state: body.state,",
+            "questions: body.questions,"
+          ]
+        },
+        {
+          "path": "src/lib/evaluate.ts",
+          "matched": [
+            "model = \"gpt-4o-mini\",",
+            "return new OpenAI({",
+            "answer: { type: \"noul\" as const, noul: Math.round(result.probability * 1000) / 1000 },",
+            "answers[name] = { type: \"choice\", choice, confidence, probabilities };"
+          ]
+        }
+      ]
     },
     "zh_machine": true,
     "languages": [
@@ -74917,6 +75299,42 @@
       "score",
       "noul"
     ],
+    "wire": {
+      "endpoint": "POST /v1/systemone",
+      "yesno_spelling": "noul",
+      "answer_field": "noul",
+      "confidence_field": "confidence",
+      "envelope": "top-level",
+      "weights": "open",
+      "base_model": "rizzoaiacademy/rizzo-flow",
+      "comparison_url": "https://github.com/Rizzo-AI-Academy/rizzo-flow#results-on-typed-decisions",
+      "source": [
+        {
+          "path": "src/rizzo_flow/api.py",
+          "matched": [
+            "@app.post(\"/v1/systemone\", dependencies=[Depends(authorize)])"
+          ]
+        },
+        {
+          "path": "src/rizzo_flow/compat.py",
+          "matched": [
+            "type: Literal[\"noul\"]",
+            "answers[key] = {\"type\": \"noul\", \"noul\": ps[\"true\"]}",
+            "\"confidence\": confidence(list(named.values())),",
+            "class SystemOneRequest(Wire):",
+            "state: Structured"
+          ]
+        },
+        {
+          "path": "src/rizzo_flow/config.py",
+          "matched": [
+            "_FLOW_4B = (\"rizzoaiacademy/rizzo-flow\"",
+            "DEFAULT_SIZE = \"4b\"",
+            "DEFAULT_VARIANT = \"flow\""
+          ]
+        }
+      ]
+    },
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -77400,7 +77818,33 @@
     },
     "primitives_seen": [
       "noul"
-    ]
+    ],
+    "wire": {
+      "endpoint": "POST /v1/systemone",
+      "yesno_spelling": "noul",
+      "answer_field": "noul",
+      "confidence_field": "confidence",
+      "weights": "open",
+      "calls_real_jev_as_baseline": true,
+      "source": [
+        {
+          "path": "hf-server/hf_server.py",
+          "matched": [
+            "@router.post(\"/v1/systemone\", include_in_schema=False)",
+            "answers[key] = {\"type\": \"noul\", \"noul\": value}",
+            "\"confidence\": max(probs.values()),",
+            "parser.add_argument(\"--model\", required=True)",
+            "tokenizer = AutoTokenizer.from_pretrained(model_name, revision=revision)"
+          ]
+        },
+        {
+          "path": "eval/benchmarks/jev-1.13/2026-09-20/RUN.md",
+          "matched": [
+            "--model typesafe/jev-1.13"
+          ]
+        }
+      ]
+    }
   },
   {
     "slug": "skill-router",
@@ -92016,6 +92460,41 @@
     "primitives_seen": [
       "noul"
     ],
+    "wire": {
+      "endpoint": "POST /v1/systemone",
+      "yesno_spelling": "noul",
+      "answer_field": "noul",
+      "confidence_field": "confidence",
+      "envelope": "top-level",
+      "weights": "open",
+      "base_model": "wfzyx/von",
+      "comparison_url": "https://github.com/wfzyx/von#empirical-benchmark",
+      "source": [
+        {
+          "path": "src/von/server.py",
+          "matched": [
+            "@app.post(\"/v1/systemone\", response_model=SystemOneResponse)",
+            "class SystemOneRequest(BaseModel):",
+            "questions: Dict[str, Dict[str, Any]] = Field(..., description=\"Dict of question definitions\")"
+          ]
+        },
+        {
+          "path": "src/von/types.py",
+          "matched": [
+            "type: Literal[\"noul\"] = \"noul\"",
+            "noul: float = Field(..., description=\"Probability between 0.0 and 1.0 that the condition is true\")",
+            "confidence: float = Field(..., description=\"Confidence metric (0.0 to 1.0)\")"
+          ]
+        },
+        {
+          "path": "src/von/backends/option_marker_backend.py",
+          "matched": [
+            "VON_HF_REPO = \"wfzyx/von\"",
+            "hf_hub_download(repo_id=VON_HF_REPO, filename=\"option_marker.pt\")"
+          ]
+        }
+      ]
+    },
     "zh_machine": true,
     "languages": [
       "python"

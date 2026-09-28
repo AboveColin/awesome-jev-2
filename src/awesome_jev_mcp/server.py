@@ -304,6 +304,18 @@ def get_example(slug: str) -> dict[str, Any]:
     is unfavourable, or a row of another kind flagged `negative-result`.
     Author-stated, not reproduced here. search_examples() carries it too.
 
+    `wire`, on some `alternative` rows, records what the project's own files
+    show about the interface it offers in place of Jev: its `endpoint`, how it
+    spells the yes/no type (`yesno_spelling`) and where the answer and the
+    confidence are read (`answer_field`, `confidence_field`), the request
+    `envelope`, where its answers come from (`weights`: open, closed, or a
+    proxy in front of another provider's model; `base_model`), whether it
+    sends Jev the same requests to compare (`calls_real_jev_as_baseline`), a
+    `comparison_url`, and the files it was read in (`source`, re-read weekly;
+    `read_on` dates a person's reading). A field the files do not show is
+    absent. A compatible interface implies nothing about calibration: those
+    rows are flagged `not-jev`. search_examples() leaves it out.
+
     `caveat_glossary`, after the row's own fields, says in English what each
     of its `flags` means (awesome-jev://flags lists them all).
 

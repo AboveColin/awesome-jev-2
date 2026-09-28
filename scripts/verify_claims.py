@@ -45,8 +45,15 @@ this script ever writes; the weekly metadata run calls it and commits the
 result with the other mechanical facts. Nothing reads `primitives_seen` in place
 of `question_types`.
 
+An `alternative` row's `wire` record cites the files its interface was read in
+(wire.source: path and matched strings, as evidence does; scripts/wire.py).
+Each of those files is re-read the same way and reported on its own line,
+marked `wire.source`. A file there that lost only a model version is reported
+`claim-gone`, not `version-moved`: the fields were read in it, so a person
+re-reads it rather than rewriting strings.
+
 Usage:
-  python3 scripts/verify_claims.py                  # check every row with evidence
+  python3 scripts/verify_claims.py                  # check every row with evidence, and every wire.source file
   python3 scripts/verify_claims.py --only slug      # check one row
   python3 scripts/verify_claims.py --discover       # propose evidence for rows lacking it
   python3 scripts/verify_claims.py --json           # machine-readable report
@@ -81,6 +88,8 @@ from _github import (
 )
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+
+from wire import claims as wire_claims  # noqa: E402
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 CATALOG = ROOT / "catalog.json"
@@ -170,6 +179,28 @@ def check(entry: dict) -> dict:
         return read_claim(slug, repo, entry["evidence"])
     except RateLimited as exc:
         return {"slug": slug, "status": "skipped", "detail": f"not checked: {exc}"}
+
+
+# A result about a file wire.source cites carries claim=WIRE.
+WIRE = "wire"
+
+
+def check_wire(item: tuple[dict, dict]) -> dict:
+    """Re-read one file an alternative row's wire.source cites, as check()
+    re-reads evidence. A lost model version counts as claim-gone here: the
+    fields were read in that file, so it is a person's to re-read."""
+    entry, source = item
+    slug = entry["slug"]
+    repo = repo_of(entry)
+    if not repo:
+        result = {"status": "no-repo", "detail": "row has no GitHub repository"}
+    else:
+        try:
+            result = read_claim(slug, repo, source)
+        except RateLimited as exc:
+            result = {"status": "skipped", "detail": f"not checked: {exc}"}
+    status = "claim-gone" if result["status"] == VERSION_MOVED else result["status"]
+    return {"slug": slug, "status": status, "claim": WIRE, "detail": f"wire.source {result['detail']}"}
 
 
 def read_claim(slug: str, repo: str, evidence: dict) -> dict:
@@ -594,13 +625,17 @@ def main() -> int:
         for e in catalog
         if "evidence" in e and (not args.only or e["slug"] == args.only)
     ]
-    if not todo:
+    # Each file an alternative row's wire record cites is a claim of its own.
+    wire_todo = [
+        (e, source) for e in catalog if not args.only or e["slug"] == args.only for source in wire_claims(e)
+    ]
+    if not todo and not wire_todo:
         print("no rows carry evidence yet")
         return 0
 
-    print(f"re-checking {len(todo)} claim(s)\n", file=sys.stderr)
+    print(f"re-checking {len(todo)} claim(s) and {len(wire_todo)} wire source file(s)\n", file=sys.stderr)
     with ThreadPoolExecutor(max_workers=WORKERS) as pool:
-        results = list(pool.map(check, todo))
+        results = list(pool.map(check, todo)) + list(pool.map(check_wire, wire_todo))
 
     # A claim the rate limit kept us from reading is neither a pass nor a
     # failure. Counting it as either would be the false report this avoids.
@@ -614,6 +649,7 @@ def main() -> int:
         "## Cited call sites\n\n"
         + f"- checked {len(results) - len(skipped)} of {len(results)} claim(s): "
         + f"{len(failed)} failed, {len(skipped)} skipped (GitHub rate limit)\n"
+        + f"- {len(wire_todo)} of them are files an `alternative` row's `wire` record cites (wire.source)\n"
         + (f"- {moved} of the failures only moved to another model version:\n" if moved else "")
         + "".join(f"  - {line}\n" for line in move_lines(moves))
         + "".join(f"- {line}\n" for line in usage_lines())
@@ -661,6 +697,8 @@ def main() -> int:
         if failed:
             print("\nFailures need a person: an upstream rename is a false positive,")
             print("a removed integration means the row's question_types is now wrong.")
+            if any(r.get("claim") == WIRE for r in failed):
+                print("A wire.source failure: the file behind a row's wire record changed; re-read it and correct wire.")
     log_usage()
 
     return 1 if failed else 0

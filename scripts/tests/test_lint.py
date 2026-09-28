@@ -99,6 +99,43 @@ FULL = {
     "notes_zh": "demo",
 }
 
+# An alternative that records the interface it offers (I48): `wire` belongs
+# only on such a row, so FULL (a benchmark) cannot carry it. Every field of
+# wire and of a wire.source item is here.
+ALTERNATIVE = {
+    **MINIMAL,
+    "slug": "demo-alt",
+    "url": "https://github.com/someone/demo-alt",
+    "kind": "alternative",
+    "patterns": ["overview"],
+    "has_code": True,
+    "languages": ["python"],
+    "platforms": ["self-hosted"],
+    "evidence": {"path": "bench.py", "matched": ["api.typesafe.ai/v1/systemone"], "kind": "wire-shape"},
+    "wire": {
+        "endpoint": "POST /v1/systemone",
+        "yesno_spelling": "noul",
+        "answer_field": "noul",
+        "confidence_field": "confidence",
+        "envelope": "top-level",
+        "weights": "open",
+        "base_model": "someone/demo-4b",
+        "calls_real_jev_as_baseline": True,
+        "comparison_url": "https://github.com/someone/demo-alt/blob/main/RESULTS.md",
+        "source": [
+            {
+                "path": "server.py",
+                "matched": ['@app.post("/v1/systemone")', '{"type": "noul", "noul": p}', '"confidence": c'],
+                "read_on": "2026-09-20",
+            },
+            {"path": "config.py", "matched": ['MODEL = "someone/demo-4b"']},
+            {"path": "bench.py", "matched": ["api.typesafe.ai/v1/systemone"]},
+        ],
+    },
+    "flags": ["not-jev"],
+    "notes": "Not Jev; a compatible API does not imply compatible calibration.",
+}
+
 # A row as it sits in retired.json: a non-2xx status and a reason.
 RETIRED = {
     **MINIMAL,
@@ -162,8 +199,17 @@ class FixtureTest(FindingsAssertions):
         self.assertClean(lint_row(RETIRED, retired=True))
 
     def test_full_row_exercises_every_field_the_schema_defines(self):
-        missing = set(SCHEMA["properties"]) - set(FULL) - {"evidence_none"}
+        # evidence_none and evidence are exclusive; wire belongs on an
+        # alternative, which ALTERNATIVE exercises.
+        missing = set(SCHEMA["properties"]) - set(FULL) - {"evidence_none", "wire"}
         self.assertEqual(missing, set(), "add a valid value for each new schema field to FULL in test_lint.py")
+
+    def test_the_alternative_row_passes_and_exercises_every_wire_field(self):
+        self.assertClean(lint_row(ALTERNATIVE))
+        wire = SCHEMA["properties"]["wire"]
+        self.assertEqual(set(wire["properties"]) - set(ALTERNATIVE["wire"]), set())
+        item = set(wire["properties"]["source"]["items"]["properties"])
+        self.assertEqual(item - {key for s in ALTERNATIVE["wire"]["source"] for key in s}, set())
 
     def test_findings_name_the_file_index_and_slug(self):
         message = self.assertOnly(lint_row(row(MINIMAL, patterns=["overview", "fan-out"])), "error")
@@ -593,6 +639,89 @@ class EntryInvariantTest(FindingsAssertions):
         for source in ("upstream-description", "upstream-description-stale", DROP):
             with self.subTest(source=source):
                 self.assertClean(lint_row(row(FULL, summary=loud, summary_source=source)))
+
+    def test_wire_belongs_on_an_alternative_that_says_it_is_not_jev(self):
+        self.assertOnly(
+            lint_row(row(ALTERNATIVE, kind="project")),
+            "error",
+            "demo-alt: has a wire record but kind is 'project'",
+            "only on a kind: alternative row",
+        )
+        self.assertOnly(
+            lint_row(row(ALTERNATIVE, flags=DROP, notes=DROP)),
+            "error",
+            "demo-alt: has a wire record but lacks the not-jev flag",
+        )
+        off_github = row(ALTERNATIVE, url="https://example.com/demo-alt", evidence=DROP, evidence_none="docs-page")
+        self.assertOnly(lint_row(off_github), "error", "demo-alt: has a wire record but no GitHub repository")
+        self.assertClean(lint_row(row(ALTERNATIVE, wire=DROP)))
+
+    def test_wire_records_something_and_cites_each_file_once(self):
+        only_source = {"source": ALTERNATIVE["wire"]["source"]}
+        self.assertOnly(lint_row(row(ALTERNATIVE, wire=only_source)), "error", "records nothing besides its source")
+        twice = [*ALTERNATIVE["wire"]["source"], {"path": "server.py", "matched": ["other text"]}]
+        self.assertOnly(
+            lint_row(row(ALTERNATIVE, wire=row(ALTERNATIVE["wire"], source=twice))),
+            "error",
+            "wire.source cites 'server.py' twice",
+        )
+
+    def test_every_value_copied_from_a_file_is_in_a_matched_string(self):
+        for field, value, shown in (
+            ("endpoint", "POST /v2/decide", "/v2/decide"),
+            ("yesno_spelling", "boolean", "boolean"),
+            ("answer_field", "probability", "probability"),
+            ("confidence_field", "certainty", "certainty"),
+            ("base_model", "someone/other-9b", "someone/other-9b"),
+        ):
+            with self.subTest(field=field):
+                self.assertOnly(
+                    lint_row(row(ALTERNATIVE, wire=row(ALTERNATIVE["wire"], **{field: value}))),
+                    "error",
+                    f"wire.{field} {shown!r} is in none of wire.source's matched strings",
+                )
+        # The method is the schema's to hold; only the path has to be in the file.
+        self.assertClean(lint_row(row(ALTERNATIVE, wire=row(ALTERNATIVE["wire"], endpoint="GET /v1/systemone"))))
+
+    def test_a_baseline_call_names_jevs_host_or_a_gateway_id(self):
+        local = [
+            {"path": "server.py", "matched": ['@app.post("/v1/systemone")', '{"type": "noul", "noul": p}', '"confidence": c']},
+            {"path": "config.py", "matched": ['MODEL = "someone/demo-4b"', "jev-latest"]},
+        ]
+        self.assertOnly(
+            lint_row(row(ALTERNATIVE, wire=row(ALTERNATIVE["wire"], source=local))),
+            "error",
+            "wire.calls_real_jev_as_baseline is true but no matched string names Jev's own host",
+        )
+        self.assertClean(
+            lint_row(row(ALTERNATIVE, wire=row(ALTERNATIVE["wire"], source=local, calls_real_jev_as_baseline=DROP)))
+        )
+        for signal in ("~typesafe/jev-latest", 'model: "typesafe-ai/jev"'):
+            with self.subTest(signal=signal):
+                sources = [*local, {"path": "bench.mjs", "matched": [signal]}]
+                self.assertClean(lint_row(row(ALTERNATIVE, wire=row(ALTERNATIVE["wire"], source=sources))))
+
+    def test_a_person_reading_a_wire_source_is_a_real_past_date(self):
+        for read_on, fragment in (("2026-09-28", "wire.source[0].read_on 2026-09-28 is in the future"),
+                                  ("2026-02-30", "wire.source[0].read_on is not a valid date")):
+            with self.subTest(read_on=read_on):
+                source = [row(ALTERNATIVE["wire"]["source"][0], read_on=read_on), *ALTERNATIVE["wire"]["source"][1:]]
+                self.assertOnly(lint_row(row(ALTERNATIVE, wire=row(ALTERNATIVE["wire"], source=source))), "error", fragment)
+
+    def test_the_schema_holds_the_shape_of_wire(self):
+        for change, fragment in (
+            ({"calls_real_jev_as_baseline": False}, ".wire.calls_real_jev_as_baseline: False is not one of: True"),
+            ({"weights": "local"}, ".wire.weights: 'local' is not one of: open, closed, proxy"),
+            ({"envelope": "nested"}, ".wire.envelope: 'nested' is not one of: top-level, wrapped"),
+            ({"endpoint": "/v1/systemone"}, ".wire.endpoint: '/v1/systemone' does not match"),
+            ({"comparison_url": "http://example.com/x"}, ".wire.comparison_url: 'http://example.com/x' does not match"),
+            ({"verified": True}, ".wire: unknown field 'verified'"),
+        ):
+            with self.subTest(change=change):
+                self.assertOnly(lint_row(row(ALTERNATIVE, wire=row(ALTERNATIVE["wire"], **change))), "error", fragment)
+        # Without a cited file nothing backs the values either, which the rules say too.
+        errors, _ = lint_row(row(ALTERNATIVE, wire=row(ALTERNATIVE["wire"], source=[])))
+        self.assertIn("catalog.json[0].wire.source: needs at least 1 item(s)", errors)
 
     def test_summary_source_is_one_of_three(self):
         self.assertOnly(

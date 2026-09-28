@@ -37,6 +37,7 @@ from classify import classify_broad, suggest  # noqa: E402
 from evidence_url import evidence_url  # noqa: E402
 from measurements import unread  # noqa: E402
 from readme.rows import esc, md_url, star_band, star_label  # noqa: E402
+import wire  # noqa: E402
 
 ROOT = _stats.ROOT
 OUT = ROOT / "docs" / "review-queue.md"
@@ -371,8 +372,53 @@ def measurement_unread(catalog: list[dict]) -> Section:
     )
 
 
+def wire_unread(catalog: list[dict]) -> Section:
+    marked = by_band(wire.unread(catalog))
+    return Section(
+        key="wire-unread",
+        title_en="Interfaces of alternatives no person has read in the cited files",
+        title_zh="尚无人在所引文件中核读的替代实现接口",
+        about_en=(
+            "The row's `wire` record cites files without a `read_on`: a script or a model read the "
+            "project's code for its route, its yes/no spelling, where its answers come from and whether it "
+            "calls Jev to compare, and no person has checked since. Every value is backed by a string in a "
+            "cited file, which the weekly `claims` run re-reads; whether the strings mean what the fields say "
+            "is the reading. The records first filled in on 2026-09-28 were read by a model; "
+            "[method.md](method.md) says how. [compatibility.md](compatibility.md#7-compatible-interfaces-that-are-not-jev) "
+            "shows every field."
+        ),
+        about_zh=(
+            "该行的 `wire` 记录所引文件没有 `read_on`：由脚本或模型阅读项目代码，得出其路由、是/否题型的写法、"
+            "答案来自哪里、是否调用 Jev 做对比，此后没有人核对过。每个值都有所引文件中的一段字符串作依据，"
+            "每周的 `claims` 任务会重读这些字符串；这些字符串是否真如字段所说，则要靠人读。"
+            "2026-09-28 首次填写的记录由模型阅读得出，做法见 [method.md](method.md)。"
+            "全部字段见 [compatibility.md](compatibility.md#7-compatible-interfaces-that-are-not-jev)。"
+        ),
+        leave_en=(
+            "To take a row off, read each file in `wire.source` against every field, correct or remove any "
+            "field the files do not show, and set `read_on` on each source to the day you read it (see the "
+            "`wire` field rules in [CONTRIBUTING](../CONTRIBUTING.md#field-rules))."
+        ),
+        leave_zh=(
+            "移出方法：对照 `wire.source` 中的每个文件逐项核读，改正或删去文件里看不出的字段，再把每个来源的 "
+            "`read_on` 设为核读当天（见 [CONTRIBUTING](../CONTRIBUTING.md#field-rules) 中关于 `wire` 的字段规则）。"
+        ),
+        columns=(("Row", "行"), ("Stars", "星标"), ("Weights", "权重"), ("Cited files", "引用的文件")),
+        rows=tuple(
+            (
+                row_link(e),
+                star_label(e.get("stars")),
+                cell(e["wire"]["weights"]) if e["wire"].get("weights") else "—",
+                " ".join(cell(item["path"]) for item in wire.sources(e["wire"])),
+            )
+            for e in marked
+        ),
+    )
+
+
 SECTIONS = (
     examples_dir, single_model_name, tool_selection_broad_words, unsorted_overview, generic_summary, measurement_unread,
+    wire_unread,
 )
 
 HEADER = "<!-- Written by scripts/build_review_queue.py from catalog.json. Edit those, not this file. -->"

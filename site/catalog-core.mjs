@@ -186,6 +186,39 @@ export function isNegativeResult(entry) {
   return (measurementOf(entry) || {}).direction === NEGATIVE_DIRECTION;
 }
 
+// An alternative row's `wire`: what the project's own files show about the
+// interface it offers in place of Jev (scripts/wire.py, schema/entry.schema.json).
+// The Compatibility view lists the alternative rows that record one and counts
+// those that do not, as docs/compatibility.md does; both suites read the cases
+// in scripts/tests/wire_cases.json.
+export const WIRE_KIND = "alternative";
+export const WIRE_WEIGHTS = ["open", "closed", "proxy"];
+
+export function wireOf(entry) {
+  const w = entry.wire;
+  return w && typeof w === "object" && !Array.isArray(w) ? w : null;
+}
+
+// The well-formed items of wire.source (lint reports the rest).
+export function wireSources(wire) {
+  const items = wire && Array.isArray(wire.source) ? wire.source : [];
+  return items.filter(i => i && typeof i === "object" && !Array.isArray(i) && typeof i.path === "string" && Array.isArray(i.matched));
+}
+
+// Every cited file carries a person's reading date.
+export function wirePersonRead(wire) {
+  const items = wireSources(wire);
+  return items.length > 0 && items.every(i => "read_on" in i);
+}
+
+export function wireRows(entries) {
+  return entries.filter(e => e.kind === WIRE_KIND && wireOf(e));
+}
+
+export function wireRemainder(entries) {
+  return entries.filter(e => e.kind === WIRE_KIND && !wireOf(e)).length;
+}
+
 export function isIndependentReport(entry) {
   return entry.kind === "benchmark" && !(entry.flags || []).includes("vendor-reported");
 }

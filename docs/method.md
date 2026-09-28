@@ -335,6 +335,72 @@ reading of an author's numbers alone. The flag marks a whole row, not one use:
 hermes-jev-skills keeps Jev for its other uses, and `list_patterns` counts it
 as a negative result under every pattern the row files under.
 
+Since 2026-09-28 a `kind: alternative` row may carry `wire`: what the project's
+own files show about the interface it offers in place of Jev. Its route
+(`endpoint`); the `type` its requests give the yes/no question
+(`yesno_spelling`) and the keys a yes/no answer and a choice or score
+confidence are read from (`answer_field`, `confidence_field`); whether state
+and questions sit at the top of the request body (`envelope`); where its
+answers come from in the default configuration (`weights`: `open`, a model you
+can run yourself; `closed`, one only the project runs; `proxy`, another
+provider's hosted model the server calls) and which model that is
+(`base_model`); whether one of its files sends Jev the same requests to compare
+(`calls_real_jev_as_baseline`, recorded only when true, since no string can
+show a call is absent); where it publishes a comparison with Jev
+(`comparison_url`); and the files all this was read in (`source`, up to four,
+each a path and matched strings as `evidence` cites one). Until then the
+catalogue said the same sentence about most alternatives, and a reader could
+not tell the same route with the yes/no type spelt `boolean` from open weights
+behind the same route, or a proxy in front of another provider's model, or a
+project whose only link to Jev is an evaluation that calls it. `lint` allows
+`wire` only on an alternative that carries the `not-jev` flag and a GitHub
+repository, and requires every value copied out of a file (the endpoint's
+path, the spellings and keys, the model) to sit inside one of the matched
+strings, and a string naming Jev's own host or a gateway's id for Jev behind a
+baseline call; the weekly `claims` run re-reads every cited file beside the
+evidence files, so a value whose string disappears is reported. Nothing is
+inferred: a field the files do not show is left out and printed as a dash.
+`build_compat.py` generates `docs/compatibility.md` §7, "Compatible interfaces
+that are not Jev", from these records alone: the *Weights* column on every
+row, the `not-jev` caveat with the calibration sentence of its taxonomy blurb
+on every row, the row's other caveats, whether a person has read the files,
+and a count of the alternatives that record no interface. The site's
+Compatibility view shows the same rows (`catalog-core.mjs` selects them, held
+to `scripts/wire.py` on shared cases); `get_example` returns `wire` with the
+row and `search_examples` leaves it out. `source` is a list where the
+proposal named one object: a server's route, its request types and its default
+model usually sit in different files (localjev's `src/server.ts`,
+`src/types.ts` and `src/config.ts`), and one file would have left the
+*Weights* column empty on most rows.
+
+The records were first filled in the same day, for the 18 alternative rows with
+at least 100 stars, by a model (the session that made this change) reading each
+repository's server code with read-only GitHub requests; every matched string
+was confirmed present at `HEAD` that day with `verify_claims.py --only`, and no
+record carries `read_on`, so all 14 are in the review queue. Fourteen got a
+record: laya-nandhakishorm, jaredpalmer-kev, nanojev, decider, jeff, localjev,
+open-jev, open-jev-zefan-cai, openjev, openjev-siliconlabai, openjev-sglang,
+rizzo-flow, simple-jev and von. Twelve serve `POST /v1/systemone` with the
+yes/no type spelt `noul`; NanoJev serves `POST /api/evaluate` with `boolean`
+and `p_true` inside a `{"states": [...]}` wrapper, and SiliconLabAI's OpenJev
+serves `POST /api/evaluate` as a proxy to `gpt-4o-mini`. Six show a file that
+sends Jev the same requests (laya, kev, NanoJev, simple-jev, openjev-sglang,
+jeff). Four got none: openwork and deep-searcher offer no Jev-shaped
+interface, and their only file about Jev calls Jev itself (a CI review script,
+an evaluation of a stopping signal), so they look filed under `alternative`
+for being an alternative to something else; semif is a command-line semantic
+if with its own interface; jevlike is a trainable model with no server. A
+maintainer should spot-check the fourteen and decide on the four. Judgement
+calls: laya's `base_model` is its bundle repository, because its router picks
+one of three checkpoints per request; kev, decider, Open-Jev and simple-jev
+leave `base_model` out, their default being a local run path or a required
+argument; razorback16/openjev's is its tokenizer default, the repository its
+vLLM backend serves; simple-jev's baseline call is its committed run record
+through OpenRouter; decider's notes say it calls the API as a baseline, but no
+file read shows the call, so the field is left out. The alternatives below 100
+stars carry no record yet; they are for a person, in the order discovery
+brings them up.
+
 ## Discovery is crowdsourced, verification is not
 
 There are dozens of Jev directories. Each is a different person's sweep of the
@@ -999,6 +1065,7 @@ catalogue passed 800, and no build ever went red.
 | Counts and tables about the catalogue | Whenever a row is added or edited | Generated from `catalog.json` — the READMEs by `build_readme.py`, the figures by `build_assets.py`, the catalogue's shape (`docs/shape.md`) by `build_shape.py`, and every number inside the hand-written docs and `llms.txt` by `build_docs.py`. The site's link-preview tags are written into the Pages artifact at deploy by `assemble_site.py --deploy` and never committed. All numbers share one definition in `scripts/_stats.py`. `lint` regenerates all of them on every run (next row), and `lint_docs.py` rejects a catalogue count typed anywhere else. |
 | Generated files after a merge | Whenever a pull request lands | A pull request need only change the sources. `lint` runs `regenerate.py` on every event, then `check_generated.py` decides: on a pull request each generated file must be untouched since the merge base or byte-identical to the regenerated output, with every verdict in the run's summary; on `main`, drift is handed to the `regenerate` job, which rebuilds from the tip, runs `lint`'s checks again and commits `chore: regenerate from catalog.json` as `github-actions[bot]` — rebasing if `main` moved, leaving a `regenerate/<sha>` branch if that no longer applies, never force-pushing. A dispatched or manual `lint` run is strict: any drift fails. |
 | What each benchmark's author measured | When a person reads a benchmark's report | Recorded by hand in the row's `measurement` (`kind: benchmark` rows only). `lint` holds it to its rules and its model string to `compat.json`; `build_benchmarks.py` regenerates `docs/benchmarks.md` and its Chinese twin from it; a measurement without `read_on` stays in the review queue until a person reads the report against it. Every direction is the author's, shown as author-stated, not reproduced here. |
+| The interface each `alternative` offers | When a person reads an alternative's files | Recorded by hand in the row's `wire` (`kind: alternative` rows with the `not-jev` flag only). `lint` holds every value copied out of a file to one of the matched strings in `wire.source` (`scripts/wire.py`); `build_compat.py` regenerates the table in `docs/compatibility.md` §7 and the site draws the same rows; `claims` re-reads every cited file weekly beside the evidence files, marked `wire.source`. A record no person has read (no `read_on` on some source) is listed in the [review queue](review-queue.md#wire-unread). |
 | Images that show data | Same | Rendered from the data on every Pages deploy by `render_images.py` and never committed: the site's `og:image`, and the README and compatibility screenshots. The deploy refuses to publish a page that did not finish loading its data. |
 | Files the site serves to agents | Same | Written into the Pages artifact at deploy by `assemble_site.py` and never committed: `retired.json`, the entry schema and `llms.txt` beside the page's own data, and under `api/v1/` an index plus one JSON file per decision pattern (`site_api.py`), each row shaped and ordered by the MCP server's own `query.py`. `check_site_data.py` refuses to publish a pattern file that differs from a rebuild or holds a different number of rows than `stats.json` counts for its pattern, and an index whose keys are not `patterns.json`'s. `llms.txt` is published with its values refilled from the same stats, so the site's copy never trails the data beside it. |
 | The GitHub social preview | Never | It can only be uploaded by hand, so it is the durable card: its one figure is a floor ("800+") that growth can only make an understatement, never wrong. `description` reports whether one is uploaded. |

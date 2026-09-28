@@ -6,6 +6,7 @@ import {
   UNINDEXED_KINDS, notIndexedByPattern, PRIMITIVES, primitiveLayers, repositoryFacts, siblingCitations,
   COARSE, platformRows, resolvePlatform, platformChoices, DIRECTIONS, measurementOf,
   NEGATIVE_FLAG, NEGATIVE_DIRECTION, isNegativeResult,
+  WIRE_KIND, WIRE_WEIGHTS, wireOf, wireSources, wirePersonRead, wireRows, wireRemainder,
 } from "../site/catalog-core.mjs";
 import { readFileSync } from "node:fs";
 
@@ -341,4 +342,27 @@ test("a negative result is the flag or an unfavourable direction, on the cases t
   assert.equal(matchesEntry(neg, {...DEFAULTS, neg: true}), true);
   assert.equal(matchesEntry(pos, {...DEFAULTS, neg: true}), false);
   assert.equal(matchesEntry(pos, DEFAULTS), true);
+});
+
+test("the compatibility view lists the alternatives that record their interface, on the cases the generator shares", () => {
+  const {cases} = JSON.parse(readFileSync(new URL("./tests/wire_cases.json", import.meta.url)));
+  assert.ok(cases.length >= 8);
+  const entries = cases.map(c => c.entry);
+  const listed = new Set(wireRows(entries).map(e => e.slug));
+  for (const c of cases) {
+    assert.equal(listed.has(c.entry.slug), c.wired, c.name);
+    assert.equal(wirePersonRead(wireOf(c.entry)), c.person_read, c.name);
+  }
+  assert.equal(wireRemainder(entries), cases.filter(c => c.unwired).length);
+  assert.deepEqual(wireSources(null), []);
+  const schema = JSON.parse(readFileSync(new URL("../schema/entry.schema.json", import.meta.url)));
+  assert.deepEqual(WIRE_WEIGHTS, schema.properties.wire.properties.weights.enum);
+  assert.equal(WIRE_KIND, "alternative");
+});
+
+test("every wire record in the real catalogue is on an alternative row the view lists", () => {
+  const catalog = JSON.parse(readFileSync(new URL("../catalog.json", import.meta.url)));
+  const withWire = catalog.filter(e => "wire" in e);
+  assert.deepEqual(wireRows(catalog).map(e => e.slug), withWire.map(e => e.slug));
+  assert.equal(wireRemainder(catalog), catalog.filter(e => e.kind === "alternative").length - withWire.length);
 });

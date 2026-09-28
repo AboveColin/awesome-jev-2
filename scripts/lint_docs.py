@@ -242,8 +242,24 @@ def docs_urls(compat: dict) -> set[str]:
     return out
 
 
+# Marker blocks whose links cite files in catalogued projects' repositories,
+# as a README row does: docs/compatibility.md's `alternatives` table, generated
+# from catalog.json's `wire` records (scripts/wire.py). A path there that names
+# a model version is a project's own file, not a vendor page.
+CATALOGUE_BLOCKS = ("alternatives",)
+
+
+def without_catalogue_blocks(text: str) -> str:
+    """`text` with the CATALOGUE_BLOCKS blanked, newlines kept for line numbers."""
+    for name in CATALOGUE_BLOCKS:
+        block = re.compile(rf"<!-- {name}:start -->.*?<!-- {name}:end -->", re.S)
+        text = block.sub(lambda m: re.sub(r"[^\n]", " ", m.group(0)), text)
+    return text
+
+
 def check_versioned_urls(rel: str, text: str, allowed: set[str]) -> list[str]:
     found = []
+    text = without_catalogue_blocks(text)
     for m in VERSIONED_URL.finditer(text):
         url = m.group(0).rstrip(".,;:")
         if url.rstrip("/") not in {u.rstrip("/") for u in allowed}:

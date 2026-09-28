@@ -16,6 +16,7 @@ Rows a script has singled out for a person to read. Each entry is a machine sign
 | [Overview rows with code, not yet indexed by pattern · 带代码、尚未按模式索引的 overview 行](#unsorted-overview) | 252 |
 | [Rows with code whose summary names nothing about Jev · 带代码、摘要没有提到 Jev 的行](#generic-summary) | 102 |
 | [Benchmark measurements no person has read against the report · 尚无人对照报告核读的基准测试测量](#measurement-unread) | 24 |
+| [Interfaces of alternatives no person has read in the cited files · 尚无人在所引文件中核读的替代实现接口](#wire-unread) | 14 |
 
 <a id="examples-dir"></a>
 
@@ -647,3 +648,32 @@ To take a row off, read the author's report (the row's link, or `measurement.rep
 | [jev-rerank-bench](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-rerank-bench) |  | `mixed` | [`https://github.com/anessbelbati/jev-rerank-bench`](https://github.com/anessbelbati/jev-rerank-bench) |
 | [jev-search-rerank-eval](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-search-rerank-eval) |  | `mixed` | [`https://github.com/zhuyansen/jev-search-rerank-eval`](https://github.com/zhuyansen/jev-search-rerank-eval) |
 | [pdf-race](https://kydlikebtc.github.io/awesome-jev/?lang=en#pdf-race) |  | — | [`https://github.com/goodrahstar/pdf-race`](https://github.com/goodrahstar/pdf-race) |
+
+<a id="wire-unread"></a>
+
+## Interfaces of alternatives no person has read in the cited files · 尚无人在所引文件中核读的替代实现接口
+
+The row's `wire` record cites files without a `read_on`: a script or a model read the project's code for its route, its yes/no spelling, where its answers come from and whether it calls Jev to compare, and no person has checked since. Every value is backed by a string in a cited file, which the weekly `claims` run re-reads; whether the strings mean what the fields say is the reading. The records first filled in on 2026-09-28 were read by a model; [method.md](method.md) says how. [compatibility.md](compatibility.md#7-compatible-interfaces-that-are-not-jev) shows every field.
+
+该行的 `wire` 记录所引文件没有 `read_on`：由脚本或模型阅读项目代码，得出其路由、是/否题型的写法、答案来自哪里、是否调用 Jev 做对比，此后没有人核对过。每个值都有所引文件中的一段字符串作依据，每周的 `claims` 任务会重读这些字符串；这些字符串是否真如字段所说，则要靠人读。2026-09-28 首次填写的记录由模型阅读得出，做法见 [method.md](method.md)。全部字段见 [compatibility.md](compatibility.md#7-compatible-interfaces-that-are-not-jev)。
+
+To take a row off, read each file in `wire.source` against every field, correct or remove any field the files do not show, and set `read_on` on each source to the day you read it (see the `wire` field rules in [CONTRIBUTING](../CONTRIBUTING.md#field-rules)).
+
+移出方法：对照 `wire.source` 中的每个文件逐项核读，改正或删去文件里看不出的字段，再把每个来源的 `read_on` 设为核读当天（见 [CONTRIBUTING](../CONTRIBUTING.md#field-rules) 中关于 `wire` 的字段规则）。
+
+| Row · 行 | Stars · 星标 | Weights · 权重 | Cited files · 引用的文件 |
+| --- | --- | --- | --- |
+| [laya-nandhakishorm](https://kydlikebtc.github.io/awesome-jev/?lang=en#laya-nandhakishorm) | ★10k+ | `open` | `laya/serve.py` `laya/agent.py` `laya/router.py` `research/benchmarks/feishu_zh/run.py` |
+| [jaredpalmer-kev](https://kydlikebtc.github.io/awesome-jev/?lang=en#jaredpalmer-kev) | ★1k+ | `open` | `kev/serve.py` `kev/api.py` `playground/scripts/jev-evaluate.mjs` |
+| [nanojev](https://kydlikebtc.github.io/awesome-jev/?lang=en#nanojev) | ★1k+ | `open` | `scripts/serve_decisions.py` `scripts/predict_toy_decisions.py` `scripts/jev_probe.mjs` |
+| [decider](https://kydlikebtc.github.io/awesome-jev/?lang=en#decider) | ★100+ | `open` | `decider/serve.py` `decider/systemone.py` `README.md` |
+| [jeff](https://kydlikebtc.github.io/awesome-jev/?lang=en#jeff) | ★100+ | `open` | `src/jeff/server/app.py` `src/jeff/core/schemas.py` `src/jeff/server/config.py` `bench/jevbench.py` |
+| [localjev](https://kydlikebtc.github.io/awesome-jev/?lang=en#localjev) | ★100+ | `open` | `src/server.ts` `src/types.ts` `src/config.ts` |
+| [open-jev](https://kydlikebtc.github.io/awesome-jev/?lang=en#open-jev) | ★100+ | `open` | `openjev/server.py` `openjev/systemone.py` `openjev/scorer.py` |
+| [open-jev-zefan-cai](https://kydlikebtc.github.io/awesome-jev/?lang=en#open-jev-zefan-cai) | ★100+ | `open` | `jev/server.py` `jev/api.py` `README.md` |
+| [openjev](https://kydlikebtc.github.io/awesome-jev/?lang=en#openjev) | ★100+ | `open` | `openjev/api.py` `openjev/engine.py` `openjev/config.py` |
+| [openjev-siliconlabai](https://kydlikebtc.github.io/awesome-jev/?lang=en#openjev-siliconlabai) | ★100+ | `proxy` | `server/index.ts` `src/lib/evaluate.ts` |
+| [openjev-sglang](https://kydlikebtc.github.io/awesome-jev/?lang=en#openjev-sglang) | ★100+ | `open` | `src/openjev/api.py` `src/openjev/models.py` `src/openjev/defaults.py` `evals/boolq.py` |
+| [rizzo-flow](https://kydlikebtc.github.io/awesome-jev/?lang=en#rizzo-flow) | ★100+ | `open` | `src/rizzo_flow/api.py` `src/rizzo_flow/compat.py` `src/rizzo_flow/config.py` |
+| [simple-jev](https://kydlikebtc.github.io/awesome-jev/?lang=en#simple-jev) | ★100+ | `open` | `hf-server/hf_server.py` `eval/benchmarks/jev-1.13/2026-09-20/RUN.md` |
+| [von](https://kydlikebtc.github.io/awesome-jev/?lang=en#von) | ★100+ | `open` | `src/von/server.py` `src/von/types.py` `src/von/backends/option_marker_backend.py` |

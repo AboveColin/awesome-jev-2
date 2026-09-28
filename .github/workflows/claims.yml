@@ -1,6 +1,7 @@
 # Weekly re-check that what this repository says about things it does not control
-# is still true upstream: the call sites cited in catalog.json, and the model
-# strings compat.json records for each platform. Reports by opening an issue rather than failing the build: an
+# is still true upstream: the call sites cited in catalog.json, the files an
+# alternative row's `wire` record was read in (wire.source, since 2026-09-28),
+# and the model strings compat.json records for each platform. Reports by opening an issue rather than failing the build: an
 # upstream rename is a false positive, and a permanently red repo teaches
 # people to ignore the signal.
 #
@@ -86,6 +87,9 @@ jobs:
               echo '  names another: counted per version below, not listed row by row.'
               echo '  `python3 scripts/verify_claims.py --propose-version-rewrite` prints'
               echo '  each row'"'"'s `evidence.matched` rewritten; apply it and leave `read_on`.'
+              echo '- a line reading `wire.source` — a file an `alternative` row'"'"'s `wire`'
+              echo '  record was read in moved or lost its strings. Re-read it and correct'
+              echo '  `wire` (docs/compatibility.md §7 shows it).'
               echo
               echo '```'
               # Rows that only moved their pin are summed up in the

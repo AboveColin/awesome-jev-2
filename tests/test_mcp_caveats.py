@@ -225,5 +225,22 @@ class PrimitiveSignalTest(unittest.TestCase):
         self.assertIn("never matches", self.server.search_examples.__doc__)
 
 
+class WireTest(unittest.TestCase):
+    """An alternative's interface reaches an agent whole, with what it is (I48)."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.server = load_server()
+
+    def test_get_example_returns_wire_and_search_leaves_it_out(self):
+        wired = next(e for e in self.server.CATALOG if "wire" in e)
+        self.assertEqual(self.server.get_example(wired["slug"])["wire"], wired["wire"])
+        self.assertIn("not-jev", wired["flags"])
+        self.assertNotIn("wire", self.server._compact(wired))
+        doc = self.server.get_example.__doc__
+        self.assertIn("`wire`", doc)
+        self.assertIn("implies nothing about calibration", doc)
+
+
 if __name__ == "__main__":
     unittest.main()

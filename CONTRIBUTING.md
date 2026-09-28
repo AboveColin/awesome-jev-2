@@ -323,6 +323,29 @@ turn red, and writes nothing (the runbook is in
   filled in by a script or a model, and
   [`docs/review-queue.md`](docs/review-queue.md#measurement-unread) lists it.
   [`docs/benchmarks.md`](docs/benchmarks.md) is generated from these fields.
+- **`wire`** — on a `kind: alternative` row with the `not-jev` flag only
+  (`lint.py` fails it anywhere else): what the project's own files show about
+  the interface it offers in place of Jev. Read the files and record only what
+  they show: `endpoint` (method and path, e.g. `POST /v1/systemone`),
+  `yesno_spelling` (the `type` its yes/no question takes), `answer_field` and
+  `confidence_field` (the keys a yes/no answer and a choice or score confidence
+  are read from), `envelope` (`top-level` or `wrapped`), `weights` (`open`: a
+  model you can run yourself; `closed`: one only the project runs; `proxy`:
+  another provider's hosted model the server calls), `base_model` (as the file
+  names it; leave it out when the default is a local path or a required
+  argument), `calls_real_jev_as_baseline` (only `true`, when a file sends Jev
+  the same requests to compare), `comparison_url` (where the project publishes
+  a comparison with Jev), and `source`: each file you read, as a `path` and the
+  `matched` strings that back the fields read from it. `lint.py` fails a copied
+  value (the endpoint's path, the spellings and keys, the model) that is in
+  none of the matched strings, and a baseline call without a string naming
+  `api.typesafe.ai` or a gateway's id for Jev; the weekly `claims` run re-reads
+  every cited file. Never infer a field. Set `read_on` on a source to the day
+  you read that file against the fields; a record without it was filled in by
+  a script or a model, and
+  [`docs/review-queue.md`](docs/review-queue.md#wire-unread) lists it.
+  [`docs/compatibility.md`](docs/compatibility.md#7-compatible-interfaces-that-are-not-jev)
+  §7 is generated from these fields.
 - **`sources`** — at least one, so the row is attributable. Name where you found
   it, not where it lives. Two fixed strings name submissions made directly to
   this repository, and they mean different things:

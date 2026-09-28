@@ -117,8 +117,24 @@ class ClaimsIssueTest(unittest.TestCase):
                 self.assertEqual(vc.main(), 1)
         return out.getvalue()
 
-    def run_step(self, claims="0", compat="0", stale="false", age="6") -> str:
-        (self.dir / "report.txt").write_text(self.report())
+    def wire_report(self) -> str:
+        """The same report on an alternative row whose wire.source file lost its string."""
+        row = {"slug": "alt", "kind": "alternative", "url": "https://github.com/o/alt",
+               "wire": {"weights": "open", "source": [{"path": "server.py", "matched": ["/v1/systemone"]}]}}
+        with tempfile.TemporaryDirectory() as tmp:
+            catalog = pathlib.Path(tmp) / "catalog.json"
+            catalog.write_text(json.dumps([row]))
+            out = io.StringIO()
+            with mock.patch.object(vc, "CATALOG", catalog), mock.patch.object(sys, "argv", ["verify_claims.py"]), \
+                 mock.patch.object(vc, "raw_get", return_value="@app.post('/v2/decide')"), \
+                 mock.patch.object(vc, "default_branch", return_value="main"), \
+                 mock.patch.dict(os.environ, {"GITHUB_STEP_SUMMARY": ""}), \
+                 contextlib.redirect_stdout(out), contextlib.redirect_stderr(io.StringIO()):
+                self.assertEqual(vc.main(), 1)
+        return out.getvalue()
+
+    def run_step(self, claims="0", compat="0", stale="false", age="6", report=None) -> str:
+        (self.dir / "report.txt").write_text(self.report() if report is None else report)
         (self.dir / "compat.txt").write_text("11 ok, 0 string-gone, 0 newer-version, 0 unreadable\n")
         env = {
             **os.environ,
@@ -138,6 +154,12 @@ class ClaimsIssueTest(unittest.TestCase):
         self.assertIn("CLAIM-GONE   c", body)
         self.assertIn("--propose-version-rewrite", body)
         self.assertNotIn("compat.json not read lately", body)
+
+    def test_a_wire_source_that_lost_its_strings_is_listed_and_explained(self):
+        body = self.run_step(claims="1", report=self.wire_report())
+        self.assertIn("CLAIM-GONE   alt  wire.source o/alt@main:server.py no longer contains ['/v1/systemone']", body)
+        self.assertIn("a line reading `wire.source`", body)
+        self.assertIn("correct\n  `wire`", body)
 
     def test_an_old_reading_opens_the_issue_with_its_age(self):
         condition = next(line for line in self.lines if line.strip().startswith("if:"))

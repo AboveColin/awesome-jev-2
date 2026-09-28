@@ -319,6 +319,113 @@
         "no-jev-call-site"
       ]
     },
+    "wire": {
+      "description": "What a kind: alternative project's own files show about the interface it offers in place of Jev: a reading of its code, field by field, never inferred. A field the cited files do not show is left out, and every surface prints a dash for it. Only on a kind: alternative row that carries the not-jev flag (scripts/lint.py; the rules live in scripts/wire.py). A compatible interface implies nothing about calibration: every surface showing wire shows the not-jev caveat beside it. docs/compatibility.md's table of compatible interfaces that are not Jev is generated from it.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source"
+      ],
+      "properties": {
+        "endpoint": {
+          "description": "The HTTP method and path its server answers a decision request on, e.g. `POST /v1/systemone`. Lint requires the path inside one of wire.source's matched strings.",
+          "type": "string",
+          "pattern": "^(GET|POST|PUT) /[^ ]*$",
+          "maxLength": 80
+        },
+        "yesno_spelling": {
+          "description": "The `type` its requests give Jev's yes/no question: `noul`, as Jev's own API spells it, or another spelling such as `boolean`. Written as the cited file writes it; lint requires it inside one of wire.source's matched strings.",
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 40
+        },
+        "answer_field": {
+          "description": "The key a yes/no answer's probability is read from, e.g. `noul`. Written as the cited file writes it; lint requires it inside one of wire.source's matched strings.",
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 40
+        },
+        "confidence_field": {
+          "description": "The key a choice or score answer's confidence is read from, e.g. `confidence`. Present in the answer does not mean computed as Jev computes it. Written as the cited file writes it; lint requires it inside one of wire.source's matched strings.",
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 40
+        },
+        "envelope": {
+          "description": "`top-level` when state and questions sit at the top of the request body, as in Jev's own API; `wrapped` when they sit inside another field.",
+          "type": "string",
+          "enum": [
+            "top-level",
+            "wrapped"
+          ]
+        },
+        "weights": {
+          "description": "Where its answers come from in the default configuration the cited files show. `open`: a model whose weights you can run yourself, published or produced by the project's own training code. `closed`: a model only the project runs, weights unpublished. `proxy`: another provider's hosted model, which the server calls and reshapes.",
+          "type": "string",
+          "enum": [
+            "open",
+            "closed",
+            "proxy"
+          ]
+        },
+        "base_model": {
+          "description": "The model that answers in that default configuration, as the cited file names it: a checkpoint the project publishes, a model it runs, or another provider's model id. Left out when the default is a local path or a required argument. Written as the cited file writes it; lint requires it inside one of wire.source's matched strings.",
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "calls_real_jev_as_baseline": {
+          "description": "A cited file sends Jev the same requests to compare with. Only true is recorded: no string can show that a call is absent, so absent means the cited files do not show one. Lint requires a matched string naming Jev's own host or a gateway's id for Jev.",
+          "type": "boolean",
+          "enum": [
+            true
+          ]
+        },
+        "comparison_url": {
+          "description": "Where the project publishes a comparison of its answers with Jev's: a results file, a README section or a write-up. Its numbers are the project's, not reproduced here.",
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https://"
+        },
+        "source": {
+          "description": "The files the fields above were read in, each cited as evidence is: scripts/verify_claims.py re-reads every one each week and reports a file whose matched strings are gone.",
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 4,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "path",
+              "matched"
+            ],
+            "properties": {
+              "path": {
+                "description": "Repository-relative path of the file.",
+                "type": "string",
+                "minLength": 1
+              },
+              "matched": {
+                "description": "Strings in that file that back the fields read from it. Every one must still be present.",
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 6,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "minLength": 2
+                }
+              },
+              "read_on": {
+                "description": "Date a person last read this file against the fields. Absent means a script or a model read it and no person has since (docs/review-queue.md lists those rows).",
+                "type": "string",
+                "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+              }
+            }
+          }
+        }
+      }
+    },
     "official": {
       "description": "True only when published by TypeSafe AI itself. Community content from the jevai.org site is NOT official.",
       "type": "boolean"
