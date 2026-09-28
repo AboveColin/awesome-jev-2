@@ -335,8 +335,15 @@ def check_leading_markers(rel: str, text: str) -> list[str]:
 # constants in scripts/readme/ and build_assets.py, so checking what they emit
 # is how those constants get checked. Since 2026-09-27 also the MCP server's
 # source, whose strings reach every agent that asks it, the Claude Code plugin
-# manifests, and the issue forms, which link the vendor's pages.
-EXTRA_FACT_FILES = ("examples/*.py", "docs/assets/*.svg", "src/**/*.py", ".claude-plugin/**", ".github/ISSUE_TEMPLATE/*")
+# manifests, and the issue forms, which link the vendor's pages. Since
+# 2026-09-28 also the hand-written prose the site and the MCP server serve
+# from JSON — the curated collections' reasons and cautions, the pattern and
+# label blurbs, the entry schema's field descriptions — and the site's
+# script module; none states a vendor fact today, and this keeps it so.
+EXTRA_FACT_FILES = (
+    "examples/*.py", "docs/assets/*.svg", "src/**/*.py", ".claude-plugin/**", ".github/ISSUE_TEMPLATE/*",
+    "collections.json", "patterns.json", "taxonomy.json", "schema/*.json", "site/*.mjs",
+)
 
 
 def hand_written_files() -> list[str]:

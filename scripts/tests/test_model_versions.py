@@ -257,6 +257,22 @@ class LintDocsTest(unittest.TestCase):
         for rel in ("src/awesome_jev_mcp/server.py", ".claude-plugin/plugin.json", ".github/ISSUE_TEMPLATE/config.yml"):
             self.assertIn(rel, files)
 
+    def test_every_file_that_states_facts_to_a_reader_or_an_agent_is_read(self):
+        # I30 asked for the MCP package's Python, the agent skill and the
+        # examples; B20 had added the first, the other two were already read.
+        # The JSON prose the site and the server serve, and the site's module,
+        # joined on 2026-09-28.
+        files = set(lint_docs.fact_file_list(lint_docs.hand_written_files()))
+        wanted = set(lint_docs.tracked("src/**/*.py", "skills/**/*.md", "examples/**/*.py", "site/*.mjs"))
+        wanted |= {"collections.json", "patterns.json", "taxonomy.json", "schema/entry.schema.json",
+                   "site/index.html", "llms.txt"}
+        self.assertTrue({"skills/awesome-jev/SKILL.md", "src/awesome_jev_mcp/query.py"} <= wanted)
+        self.assertEqual(wanted - files, set())
+        # compat.json is the source, checked by its own rule (check_compat_prose);
+        # catalogue rows quote upstream documents and are lint.py's business.
+        self.assertNotIn("compat.json", files)
+        self.assertNotIn("catalog.json", files)
+
     def test_a_versioned_vendor_link_must_be_recorded(self):
         text = ("See [notes](https://docs.example/model-notes/jev-1.13).\n"
                 "Old: https://docs.example/model-notes/jev-1.12, and https://docs.example/jev-1.13/x.\n"

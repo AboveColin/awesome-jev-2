@@ -161,7 +161,8 @@ exempt: a log entry about the first build is true forever.
 
 Model strings and limits are held to `compat.json` the same way: write
 `jev-latest` or `max 255` anywhere and `lint_docs.py` checks it against that
-file — in the docs, the MCP server's source and the plugin manifests alike. A
+file — in the docs, the MCP server's source, the plugin manifests and the prose
+in `collections.json`, `patterns.json`, `taxonomy.json` and the schema alike. A
 link to a vendor page whose address names a model version (the known
 limitations page) must be the one `compat.json` records as that platform's
 `docs_url`. If the vendor changes one, change `compat.json` and every stale
