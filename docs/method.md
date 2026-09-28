@@ -1357,11 +1357,16 @@ only where the file itself, in its code or its own comment on the constant,
 shows which answer's quantity the constant is compared with and what the code
 then does, and not a check that a probability
 lies between 0 and 1 or that probabilities sum to one, a test, a mock, a
-benchmark's scoring or a report's filter, a score derived from several answers,
-or a file under an examples or demos directory, and never more than the six
+benchmark's scoring or a report's filter, a score derived from several answers
+or a posterior that blends an answer with a prior, or a file under an examples
+or demos directory, and never more than the six
 strings `evidence.matched` holds. Each of the 33 rows was then re-checked with
 `verify_claims.py --only`, and every string was present at HEAD. None carries
 `read_on`, so all 33 are listed in the review queue until a person reads them.
+On review the next day (2026-09-29) the three recorded on jev-builder-loop were
+removed with the matched strings added for them: its code compares those
+constants with a posterior that blends a prior with Jev's probability, not with
+Jev's answer. That leaves 52 constants on 32 rows.
 A project that retunes a recorded constant turns its row's claim red in the
 weekly `claims` issue, as any lost matched string does, and the weekly signal
 step then drops the row's `primitives_seen` until a person updates the item and

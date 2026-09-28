@@ -23567,36 +23567,10 @@
       "matched": [
         "api.typesafe.ai",
         "jev-latest",
-        "/v1/systemone",
-        "noul.get(\"repeat_failure\", 0) >= 0.7",
-        "noul.get(\"missing_context\", 0) >= 0.65",
-        "noul.get(\"progress\", 1) < 0.35"
+        "/v1/systemone"
       ],
       "read_on": "2026-09-22"
     },
-    "observed_thresholds": [
-      {
-        "question_type": "noul",
-        "compares": "probability",
-        "value": 0.7,
-        "decision": "at or above, on the same action: change approach",
-        "source": "noul.get(\"repeat_failure\", 0) >= 0.7"
-      },
-      {
-        "question_type": "noul",
-        "compares": "probability",
-        "value": 0.65,
-        "decision": "at or above: gather facts before acting",
-        "source": "noul.get(\"missing_context\", 0) >= 0.65"
-      },
-      {
-        "question_type": "noul",
-        "compares": "probability",
-        "value": 0.35,
-        "decision": "below, after two attempts: change approach",
-        "source": "noul.get(\"progress\", 1) < 0.35"
-      }
-    ],
     "first_seen": "2026-09-22",
     "sources": [
       {

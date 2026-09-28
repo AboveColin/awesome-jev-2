@@ -17,7 +17,7 @@ Rows a script has singled out for a person to read. Each entry is a machine sign
 | [Rows with code whose summary names nothing about Jev · 带代码、摘要没有提到 Jev 的行](#generic-summary) | 102 |
 | [Benchmark measurements no person has read against the report · 尚无人对照报告核读的基准测试测量](#measurement-unread) | 24 |
 | [Interfaces of alternatives no person has read in the cited files · 尚无人在所引文件中核读的替代实现接口](#wire-unread) | 14 |
-| [Thresholds no person has read in the cited file · 尚无人在所引文件中核读的阈值](#thresholds-unread) | 33 |
+| [Thresholds no person has read in the cited file · 尚无人在所引文件中核读的阈值](#thresholds-unread) | 32 |
 
 <a id="examples-dir"></a>
 
@@ -713,7 +713,6 @@ To take a row off, read the cited file against every item: correct `question_typ
 | [codex-jev-router-suenot](https://kydlikebtc.github.io/awesome-jev/?lang=en#codex-jev-router-suenot) |  | `noul probability 0.8` `choice confidence 0.75` | [`src/router.mjs`](https://github.com/suenot/codex-jev-router/blob/HEAD/src/router.mjs) |
 | [construct-auto-classifier](https://kydlikebtc.github.io/awesome-jev/?lang=en#construct-auto-classifier) |  | `noul probability 0.7` `choice confidence 0.6` `choice probability 0.6` | [`src/classifier/jev-client.ts`](https://github.com/godspede/construct-auto-classifier/blob/HEAD/src/classifier/jev-client.ts) |
 | [jev-boe-demo](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-boe-demo) |  | `noul probability 0.6` `score score 2` | [`pipeline/analyze.ts`](https://github.com/Tatuck/jev-boe-demo/blob/HEAD/pipeline/analyze.ts) |
-| [jev-builder-loop](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-builder-loop) |  | `noul probability 0.7` `noul probability 0.65` `noul probability 0.35` | [`scripts/loop.py`](https://github.com/rainbowpuffpuff/jev-builder-loop/blob/HEAD/scripts/loop.py) |
 | [jev-in-codex](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-in-codex) |  | `choice confidence 0.8` | [`src/labelling.ts`](https://github.com/teempai/jev-in-codex/blob/HEAD/src/labelling.ts) |
 | [jev-mcp-spring](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-mcp-spring) |  | `noul probability 0.7` `noul probability 0.3` | [`src/main/java/dev/ashfaqbs/jevmcp/tools/JevTools.java`](https://github.com/Ashfaqbs/jev-mcp-spring/blob/HEAD/src/main/java/dev/ashfaqbs/jevmcp/tools/JevTools.java) |
 | [jev-mobile-xinwang-nwpu](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-mobile-xinwang-nwpu) |  | `noul probability 0.5` | [`jev_mobile/model.py`](https://github.com/xinwang-nwpu/jev-mobile/blob/HEAD/jev_mobile/model.py) |

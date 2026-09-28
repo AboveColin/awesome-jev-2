@@ -247,8 +247,9 @@ turn red, and writes nothing (the runbook is in
   Add that `source` to `evidence.matched` too (at most six strings): lint
   requires it there, and the weekly `claims` run then re-reads it, so a
   project that moves its threshold turns the claim red. Record only a constant
-  that decides something about a Jev answer — not a range check, a test, a
-  mock or a derived score — and never on a `not-jev` row or on this
+  that decides something about a Jev answer itself — not a range check, a
+  test, a mock, a score derived from several answers or a posterior that
+  blends an answer with a prior — and never on a `not-jev` row or on this
   repository's own examples. Set `read_on` on each item you read yourself;
   without it the row is listed in the
   [review queue](docs/review-queue.md#thresholds-unread). It records what that

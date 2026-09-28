@@ -31,8 +31,8 @@ table regenerated like the first half, each reading in it dated on its own.
 | Machine signal: rows with code, not TypeSafe AI's own, whose summary names nothing about Jev and that carry no `notes` ([review queue](review-queue.md#generic-summary)) | 102 |
 | Benchmark rows indexing their own author's measurement (`measurement`: task, datasets, comparators, the author's direction; author-stated, not reproduced here; [side by side](benchmarks.md)) | 24 |
 | Machine signal: of those, measurements no person has read against the author's report ([review queue](review-queue.md#measurement-unread)) | 24 |
-| Rows recording thresholds their cited file compares a Jev answer with (`observed_thresholds`: each a constant written in that file; what one project chose, not a recommendation) | 33 |
-| Machine signal: of those, rows with a threshold no person has read in the file ([review queue](review-queue.md#thresholds-unread)) | 33 |
+| Rows recording thresholds their cited file compares a Jev answer with (`observed_thresholds`: each a constant written in that file; what one project chose, not a recommendation) | 32 |
+| Machine signal: of those, rows with a threshold no person has read in the file ([review queue](review-queue.md#thresholds-unread)) | 32 |
 | Negative results: rows whose own author measured Jev for the use and concluded against it (a benchmark's `measurement.direction` unfavourable, the `negative-result` flag on any other row; author-stated, not reproduced here; [listed below](#negative-results)) | 5 |
 | Patterns covered | 18 of 18 |
 | Rows whose `patterns` are exactly what the keyword rules suggest for their summary (agreement with the rules, not a review: any review of these rows was not recorded) | 758 of 1207 |
