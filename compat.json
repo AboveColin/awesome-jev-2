@@ -1,6 +1,6 @@
 {
   "as_of": "2026-09-22",
-  "note": "The platform surface matrix. Single source of truth for both docs/compatibility.md (generated between markers by scripts/build_compat.py) and the Compatibility view on the site, so the two can never disagree. A dash means the surface does not expose that concept.",
+  "note": "The platform surface matrix. Single source of truth for both docs/compatibility.md (generated between markers by scripts/build_compat.py) and the Compatibility view on the site, so the two can never disagree. A dash means the surface does not expose that concept. A platform's docs_url is a page of its documentation whose address names a model version (the vendor's known limitations of the current model): hand-written docs may link only the versioned pages recorded here, so a release that moves the page turns every stale link red.",
   "platforms": [
     {
       "id": "typesafe-native",
@@ -16,7 +16,8 @@
       "env": "TYPESAFE_API_KEY",
       "notes": "The reference surface. Everything else is measured against this.",
       "notes_zh": "基准面。其他所有平台都以它为参照。",
-      "model_source": "https://docs.typesafe.ai/models"
+      "model_source": "https://docs.typesafe.ai/models",
+      "docs_url": "https://docs.typesafe.ai/model-jaggedness/jev-1.13"
     },
     {
       "id": "vercel-eval",

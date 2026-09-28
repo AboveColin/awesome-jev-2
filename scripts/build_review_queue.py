@@ -125,12 +125,14 @@ def single_model_name(catalog: list[dict]) -> Section:
         title_en="Evidence resting on one model name or the API host",
         title_zh="证据只靠一个模型名或 API 主机",
         about_en=(
-            f"The only string in `evidence.matched` is one of {names}. Any file that configures Jev "
+            f"The only string in `evidence.matched` is one of {names}, or a pinned model version "
+            "(`jev-` and a version number). Any file that configures Jev "
             "contains one of them (a settings file, a pricing table, a model list) whether or not it "
             "calls the API, so the weekly text check can keep passing after the call itself is gone."
         ),
         about_zh=(
-            f"`evidence.matched` 里唯一的字符串是 {names} 之一。任何配置 Jev 的文件都会包含它们"
+            f"`evidence.matched` 里唯一的字符串是 {names} 之一，或一个固定的模型版本号"
+            "（`jev-` 加版本号）。任何配置 Jev 的文件都会包含它们"
             "（设置文件、价格表、模型列表），不论是否真的调用 API；所以即使调用本身已经删除，"
             "每周的文本检查也可能继续通过。"
         ),

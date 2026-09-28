@@ -44,6 +44,7 @@ from __future__ import annotations
 
 import functools
 import importlib.metadata
+import re
 
 from typing import Any, Literal
 
@@ -380,6 +381,46 @@ def compatibility(surface: str = "") -> dict[str, Any]:
     }
 
 
+def _accepted(platform: dict) -> list[str]:
+    """The individual strings a surface accepts, from its `·`-joined cell. A
+    parenthetical is a remark about the string (`jev-latest (default)`), not
+    part of it; scripts/lint_docs.py reads the cell the same way."""
+    return [
+        re.sub(r"\s*\(.*\)$", "", part.strip())
+        for part in platform["model"].split("·")
+        if part.strip() not in ("—", "")
+    ]
+
+
+def _model_hint() -> str:
+    """What to send instead, built from compat.json and nothing else, so a
+    release changes compat.json alone. Until 2026-09-27 this was a sentence
+    with the versioned ids typed in, which nothing checked."""
+    official = [p for p in COMPAT["platforms"] if p.get("official")]
+    own = [m for p in official for m in _accepted(p)]
+    versioned = [m for m in own if re.search(r"\d\.\d", m)]
+    aliases = [m for m in own if m not in versioned]
+    parts = []
+    if versioned:
+        tail = f", with aliases {' and '.join(aliases)}" if aliases else ""
+        parts.append(f"The versioned id is {' and '.join(versioned)}{tail}.")
+    # Surfaces that take the same strings are named together, in compat.json's order.
+    renamed: dict[tuple[str, ...], list[str]] = {}
+    for platform in COMPAT["platforms"]:
+        theirs = tuple(m for m in _accepted(platform) if m not in own)
+        if theirs:
+            renamed.setdefault(theirs, []).append(platform["name"])
+    if renamed:
+        parts.append(
+            "Gateways and SDKs rename it: "
+            + "; ".join(f"{' or '.join(ms)} on {' and '.join(names)}" for ms, names in renamed.items())
+            + "."
+        )
+    parts += [f"`{item['s']}`: {item['why']}" for item in COMPAT.get("not_model_strings", [])]
+    parts.append("Pin a version rather than an alias once you have tuned any threshold.")
+    return " ".join(parts)
+
+
 @tool
 def check_model_string(model: str) -> dict[str, Any]:
     """Check whether a Jev model string is real, and which surface it belongs to.
@@ -393,31 +434,23 @@ def check_model_string(model: str) -> dict[str, Any]:
     """
     needle = model.strip()
 
-    def accepted(platform: dict) -> list[str]:
-        """The individual strings a surface accepts, from its `·`-joined cell."""
-        return [
-            part.strip()
-            for part in platform["model"].split("·")
-            if part.strip() not in ("—", "")
-        ]
-
     # Exact match, deliberately. A substring test reports `typesafe/jev-1` as
-    # valid because it is a prefix of `typesafe/jev-1.13` — and catching that
-    # exact fabrication is the only reason this tool exists.
+    # valid because it is a prefix of OpenRouter's versioned string — and
+    # catching that exact fabrication is the only reason this tool exists.
     hits = [
         {
             "surface": p["name"],
-            "accepts": accepted(p),
+            "accepts": _accepted(p),
             "endpoint": p["endpoint"],
             "env": p["env"],
         }
         for p in COMPAT["platforms"]
-        if needle and needle in accepted(p)
+        if needle and needle in _accepted(p)
     ]
     if hits:
         return {"model": needle, "valid": True, "surfaces": hits}
 
-    every = sorted({m for p in COMPAT["platforms"] for m in accepted(p)})
+    every = sorted({m for p in COMPAT["platforms"] for m in _accepted(p)})
     # A near miss is the common case, so name it rather than just saying no.
     near = [
         m for m in every if needle and (m.startswith(needle) or needle.startswith(m))
@@ -428,13 +461,7 @@ def check_model_string(model: str) -> dict[str, Any]:
         "reason": "matches no model string on any documented surface",
         "close_but_wrong": near or None,
         "valid_strings": every,
-        "hint": (
-            "The versioned id is jev-1.13.0, with aliases jev-latest and jev-preview. "
-            "Gateways rename it: typesafe-ai/jev on Vercel, typesafe/jev on Cloudflare, "
-            "typesafe/jev-1.13 on OpenRouter. `typesafe/jev-1` exists nowhere and is the "
-            "most repeated fabrication about this model. Pin a version rather than an "
-            "alias once you have tuned any threshold."
-        ),
+        "hint": _model_hint(),
     }
 
 

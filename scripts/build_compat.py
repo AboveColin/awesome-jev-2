@@ -7,7 +7,10 @@ The site reads the same compat.json, which means the doc and the site cannot
 drift apart — the failure mode that would quietly make the matrix useless.
 
 Only the regions between the markers below are rewritten; the prose around
-them is hand-written and left alone.
+them is hand-written and left alone. One inline value, `<!--n:as_of-->`, is
+compat.json's `as_of`: the day a person last read every platform's page. It is
+written as that date, never as an age, which would be wrong a day later; the
+weekly claims run reports how old it is.
 
 Run: python3 scripts/build_compat.py
      python3 scripts/build_compat.py --check    # CI: fail if out of date
@@ -21,7 +24,7 @@ import pathlib
 import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
-from _markers import normalise, replace_block  # noqa: E402
+from _markers import normalise, replace_block, replace_inline  # noqa: E402
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 COMPAT = ROOT / "compat.json"
@@ -93,11 +96,13 @@ def limits_table(limits: list[dict]) -> list[str]:
     return table(["", "Limit", "Why it matters"], rows)
 
 
-def build() -> str:
-    data = json.loads(COMPAT.read_text())
+def build(data: dict | None = None, text: str | None = None) -> str:
+    """docs/compatibility.md regenerated from compat.json (or from `data`,
+    applied to `text`: lint_docs.py's release rehearsal renders a compat.json
+    that does not exist yet)."""
+    data = json.loads(COMPAT.read_text()) if data is None else data
     platforms = data["platforms"]
-    original = DOC.read_text()
-    text = original
+    text = DOC.read_text() if text is None else text
 
     for name, (header, row_of) in BLOCKS.items():
         body = "\n".join(table(header, [row_of(p) for p in platforms]))
@@ -107,8 +112,7 @@ def build() -> str:
         body = "\n".join(limits_table(data["limits"]))
         text = replace_block(text, "limits", body, where="docs/compatibility.md")
 
-    text = text.replace("<!-- as_of -->", data["as_of"])
-    return text
+    return replace_inline(text, {"as_of": data["as_of"]}, where="docs/compatibility.md")
 
 
 

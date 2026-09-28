@@ -28,12 +28,12 @@ from unittest.mock import patch
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "scripts"))
 
+import _github  # noqa: E402
 import _stats  # noqa: E402
 import build_readme  # noqa: E402
 import build_review_queue as queue  # noqa: E402
 import lint_docs  # noqa: E402
 import regenerate  # noqa: E402
-import verify_claims  # noqa: E402
 from readme import sections  # noqa: E402
 
 
@@ -122,7 +122,15 @@ class SignalTest(unittest.TestCase):
     def test_the_model_names_are_ones_discovery_treats_as_jev_signals(self):
         # verify_claims --discover scores a file by these; a name here that it
         # does not know would be a signal nothing else in the repository uses.
-        self.assertTrue(set(_stats.MODEL_NAMES_AND_HOST) <= set(verify_claims.STRONG))
+        self.assertTrue(set(_stats.MODEL_NAMES_AND_HOST) <= set(_github.strong()))
+        # A pinned version counts for both, whichever version it is.
+        for version in _github.version_signals():
+            if _github.VERSION.fullmatch(version):
+                self.assertTrue(_stats.PINNED_MODEL_VERSION.fullmatch(version))
+        self.assertEqual(_github.strong_signals("jev-9.9"), ["jev-9.9"])
+        self.assertTrue(_stats.single_model_name(entry("x", path="a.py", matched=["jev-9.9"])))
+        self.assertTrue(_stats.single_model_name(entry("x", path="a.py", matched=["jev-9.9.1"])))
+        self.assertFalse(_stats.single_model_name(entry("x", path="a.py", matched=["jev-2048"])))
 
 
 class RealCatalogueTest(unittest.TestCase):

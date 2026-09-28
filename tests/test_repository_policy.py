@@ -9,6 +9,7 @@ contributor guide says how changes reach main.
 from __future__ import annotations
 
 import pathlib
+import re
 import sys
 import unittest
 
@@ -38,8 +39,10 @@ class ModelStringCheckTest(unittest.TestCase):
     def test_the_fabricated_model_string_is_rejected_and_real_ones_are_not(self):
         server = load_server()
         self.assertIs(server.check_model_string(model="typesafe/jev-1")["valid"], False)
+        # A parenthetical is a remark about the string, not part of it
+        # (`jev-latest (default)`), as lint_docs.py reads the cell too.
         real = [
-            part.strip()
+            re.sub(r"\s*\(.*\)$", "", part.strip())
             for platform in server.COMPAT["platforms"]
             for part in platform["model"].split("·")
             if part.strip() not in ("—", "")

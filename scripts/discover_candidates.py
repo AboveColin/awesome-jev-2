@@ -40,7 +40,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 
-from _github import CODE_EXT, SELF, api_get, default_branch, raw_get, repo_of  # noqa: E402
+from _github import CODE_EXT, SELF, api_get, default_branch, raw_get, repo_of, strong_signals  # noqa: E402
 # The keyword rules behind each candidate's suggested kind and patterns live in
 # classify.py; re-exported, so `from discover_candidates import classify` works.
 from classify import classify  # noqa: E402,F401
@@ -112,25 +112,10 @@ DECLINED = ROOT / "docs" / "declined.txt"
 # they describe.
 WORKERS = 8
 
-# Same signals verify_claims.py uses: an import or an endpoint is proof, a bare
-# primitive name is not, because "choice" and "score" are ordinary words.
-STRONG = [
-    "api.typesafe.ai",
-    "typesafe_sdk",
-    "@typesafe-ai/sdk",
-    # The Vercel AI SDK provider: evaluate() calls, where noul is spelled boolean.
-    "@ai-sdk/typesafe-ai",
-    "typesafe-ai/jev",
-    "typesafe/jev",
-    "jev-latest",
-    "jev-1.13",
-    "/v1/systemone",
-    "systemOne",
-    "system_one",
-    "langchain_typesafe",
-    "TypeSafeClient",
-    "AsyncTypeSafeClient",
-]
+# A candidate is judged by the signals verify_claims.py proposes evidence by,
+# _github.strong_signals(): an import, the endpoint or a model name is proof, a
+# bare primitive name is not, because "choice" and "score" are ordinary words.
+# The model names come from compat.json, so a release changes one file.
 
 
 def only_slug(text: str) -> str | None:
@@ -197,7 +182,7 @@ def inspect(slug: str) -> dict:
             body = raw_get(slug, branch, path)
             if not body:
                 continue
-            found = [s for s in STRONG if s in body]
+            found = strong_signals(body)
             if not found:
                 continue
             score = len(found) - (5 if testy.search(path) else 0)
@@ -229,7 +214,7 @@ def inspect(slug: str) -> dict:
     # A README may claim Jev while the code never calls it. That gap is exactly
     # what propagates through these lists, so name it rather than guessing.
     _, readme = fetch_readme(out["url"])
-    mentions = any(s in readme for s in STRONG) or bool(
+    mentions = bool(strong_signals(readme)) or bool(
         re.search(r"\bjev\b", readme, re.I)
     )
     return {**out, "verdict": "mentions-only" if mentions else "no-signal"}

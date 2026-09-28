@@ -4,6 +4,12 @@
 # upstream rename is a false positive, and a permanently red repo teaches
 # people to ignore the signal.
 #
+# Since 2026-09-27 the report also says how many days ago a person last read the
+# platform pages (compat.json's as_of) and opens the issue past 45; counts the
+# rows whose cited file only moved to another model version together, one line
+# per version; and flags a platform page naming a version newer than compat.json
+# records, the cue for the release rehearsal in docs/method.md ("Kept current").
+#
 # Injection review: no `github.event.*` value reaches a `run:` block. The issue
 # body is read from a file the script wrote, never interpolated into a shell.
 name: claims
@@ -47,17 +53,23 @@ jobs:
 
       - name: Verify the platform matrix
         id: compat
+        # verify_compat.py also writes `stale` and `age` to this step's
+        # outputs: how many days since a person read every platform page
+        # (compat.json's as_of). The age lives here and in the issue, never
+        # in a committed file, where it would be wrong the next day.
         run: |
           set +e
           python3 scripts/verify_compat.py | tee /tmp/compat.txt
           echo "failed=${PIPESTATUS[0]}" >> "$GITHUB_OUTPUT"
 
       - name: Open or update an issue when something stops holding
-        if: steps.verify.outputs.failed != '0' || steps.compat.outputs.failed != '0'
+        if: steps.verify.outputs.failed != '0' || steps.compat.outputs.failed != '0' || steps.compat.outputs.stale == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CLAIMS_FAILED: ${{ steps.verify.outputs.failed }}
           COMPAT_FAILED: ${{ steps.compat.outputs.failed }}
+          COMPAT_STALE: ${{ steps.compat.outputs.stale }}
+          COMPAT_AGE: ${{ steps.compat.outputs.age }}
         run: |
           {
             echo "A scheduled re-read found something this repository states that no"
@@ -69,22 +81,38 @@ jobs:
               echo '- `path-gone` — the file moved or was renamed. Update `evidence.path`.'
               echo '- `claim-gone` — the strings are gone. The integration may have been'
               echo '  removed, in which case `question_types` on that row is now wrong.'
+              echo '- `version-moved` — only a pinned model version is gone, and the file'
+              echo '  names another: counted per version below, not listed row by row.'
+              echo '  `python3 scripts/verify_claims.py --propose-version-rewrite` prints'
+              echo '  each row'"'"'s `evidence.matched` rewritten; apply it and leave `read_on`.'
               echo
               echo '```'
-              grep -vE '^\s+ok\s' /tmp/report.txt
+              # Rows that only moved their pin are summed up in the
+              # `version-moved: N row(s) now pin X` lines instead.
+              grep -vE '^\s+(ok|VERSION-MOVED)\s' /tmp/report.txt
               echo '```'
             fi
             if [ "$COMPAT_FAILED" != "0" ]; then
               echo
               echo "### Platform model strings"
               echo
-              echo 'A string compat.json records is no longer on its platform page. Update'
-              echo 'compat.json, then run `build_compat.py` and `lint_docs.py`: every doc'
-              echo 'still quoting the old string will show up as an error.'
+              echo 'A string compat.json records is no longer on its platform page, or a'
+              echo 'page names a newer model version (`newer-version`). Update compat.json,'
+              echo 'then run `build_compat.py` and `lint_docs.py`: every doc still quoting'
+              echo 'the old string will show up as an error. For a new version, first'
+              echo 'rehearse: `python3 scripts/lint_docs.py --simulate-model <version>`.'
               echo
               echo '```'
               cat /tmp/compat.txt
               echo '```'
+            fi
+            if [ "$COMPAT_STALE" = "true" ]; then
+              echo
+              echo "### compat.json not read lately"
+              echo
+              echo "A person last read every platform page ${COMPAT_AGE:-an unknown number of} day(s)"
+              echo 'ago (compat.json `as_of`). Read each page, correct compat.json, and set'
+              echo '`as_of` to that day; the weekly string match does not count as a reading.'
             fi
           } > /tmp/body.md
 

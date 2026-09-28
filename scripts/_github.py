@@ -28,9 +28,11 @@ are recorded; usage_lines() says what a run spent and what is left.
 
 from __future__ import annotations
 
+import functools
 import http.client
 import json
 import os
+import pathlib
 import re
 import sys
 import threading
@@ -89,6 +91,102 @@ LANG_EXT: dict[str, tuple[str, ...]] = {
 }
 # SQL is not a catalogue language, but a query calling Jev is still a call site.
 CODE_EXT: tuple[str, ...] = tuple(e for exts in LANG_EXT.values() for e in exts) + (".sql",)
+
+# ---- What says a file calls Jev -------------------------------------------
+#
+# An import, the endpoint, a client class or a model name is a strong signal
+# that a file calls Jev; a bare primitive name is not, because "choice" and
+# "score" are ordinary words. verify_claims.py (proposing evidence) and
+# discover_candidates.py (judging a candidate) read files by these signals.
+# Until 2026-09-27 each kept its own copy of the list with the model version
+# typed in, so a release would have left both looking for the old one. The
+# model names now come from compat.json (version_signals), and a pinned version
+# compat.json does not list yet still counts (VERSION), so a mistake in
+# compat.json cannot hide a file that pins a real version.
+COMPAT = pathlib.Path(__file__).resolve().parent.parent / "compat.json"
+
+# In the order a proposal quotes them: verify_claims.py takes the first two it
+# finds, discover_candidates.py the first three. compat.json's model names go
+# between the two halves, where the typed-in ones stood.
+STRONG_BEFORE_MODELS: tuple[str, ...] = (
+    "api.typesafe.ai",
+    "typesafe_sdk",
+    "@typesafe-ai/sdk",
+    # The Vercel AI SDK provider: evaluate() calls, where noul is spelled boolean.
+    "@ai-sdk/typesafe-ai",
+    # The gateways' model ids that name no version.
+    "typesafe-ai/jev",
+    "typesafe/jev",
+)
+STRONG_AFTER_MODELS: tuple[str, ...] = (
+    "/v1/systemone",
+    "systemOne",
+    "system_one",
+    "langchain_typesafe",
+    "TypeSafeClient",
+    "AsyncTypeSafeClient",
+)
+
+# A Jev model name as a file or a compat.json cell writes it: an alias
+# (`jev-latest`) or a version (`jev-1.2`, `jev-1.2.0`). Not after a word
+# character, a dot or a hyphen, so `my-jev-1.2` is another project's version;
+# and a version needs its dot, because `jev-2048` is a catalogued project.
+MODEL_NAME = re.compile(r"(?<![\w.-])jev-(?:\d+(?:\.\d+)+|[a-z]+)")
+VERSION = re.compile(r"(?<![\w.-])jev-\d+(?:\.\d+)+")
+
+
+def version_parts(token: str) -> tuple[int, ...]:
+    """(1, 2, 0) for `jev-1.2.0`: the order versions sort in."""
+    return tuple(int(part) for part in token.split("-", 1)[1].split("."))
+
+
+def version_stem(token: str, parts: int = 2) -> str:
+    """`jev-1.2` for `jev-1.2.0`: a version cut to its first `parts` numbers."""
+    return "jev-" + ".".join(str(n) for n in version_parts(token)[:parts])
+
+
+def version_signals(compat: dict | None = None) -> tuple[str, ...]:
+    """The Jev model names compat.json records, as a file using them contains
+    them: each alias whole (`jev-latest`), each version cut to major.minor
+    (`jev-1.2`, which `jev-1.2.0` and `typesafe/jev-1.2` both contain).
+    In compat.json's order, first mention first."""
+    data = json.loads(COMPAT.read_text()) if compat is None else compat
+    names: list[str] = []
+    for platform in data.get("platforms", []):
+        for name in MODEL_NAME.findall(platform.get("model") or ""):
+            name = version_stem(name) if VERSION.fullmatch(name) else name
+            if name not in names:
+                names.append(name)
+    return tuple(names)
+
+
+@functools.lru_cache(maxsize=1)
+def _listed_models() -> tuple[str, ...]:
+    return version_signals()
+
+
+def strong(models: tuple[str, ...] | None = None) -> tuple[str, ...]:
+    """Every literal strong signal, compat.json's model names in their place."""
+    models = _listed_models() if models is None else models
+    return (*STRONG_BEFORE_MODELS, *models, *STRONG_AFTER_MODELS)
+
+
+def strong_signals(body: str, models: tuple[str, ...] | None = None) -> list[str]:
+    """The strong signals a file contains, in strong()'s order. A pinned
+    version compat.json does not list (a release it has not caught up with)
+    counts too, cut to major.minor, right after the model names it does list."""
+    models = _listed_models() if models is None else models
+    pinned: list[str] = []
+    for token in VERSION.findall(body):
+        stem = version_stem(token)
+        if stem not in models and stem not in pinned:
+            pinned.append(stem)
+    return (
+        [s for s in STRONG_BEFORE_MODELS if s in body]
+        + [s for s in models if s in body]
+        + pinned
+        + [s for s in STRONG_AFTER_MODELS if s in body]
+    )
 
 _branches: dict[str, str] = {}
 

@@ -668,6 +668,8 @@ python3 scripts/verify_claims.py # re-read every cited call site
 python3 scripts/review_pr.py     # the review card for this branch's rows against origin/main
 python3 scripts/build_assets.py  # regenerate the README figures
 python3 scripts/build_compat.py  # regenerate the compatibility tables
+python3 scripts/verify_compat.py # re-read each platform page for compat.json's strings
+python3 scripts/lint_docs.py --simulate-model <version>  # rehearse a model release; writes nothing
 python3 scripts/zh_audit.py      # the translation queue; --json: every machine translation measured
 python3 scripts/regenerate.py    # or: every generator above, in order
 ```
@@ -786,9 +788,9 @@ catalogue passed 800, and no build ever went red.
 | The GitHub social preview | Never | It can only be uploaded by hand, so it is the durable card: its one figure is a floor ("800+") that growth can only make an understatement, never wrong. `description` reports whether one is uploaded. |
 | The repository description | When the count crosses a hundred, or the wording changes | Only an admin can edit it, so it states the count floored to the hundred: `_stats.pitch_public()`, the same sentence as the site's `description` and `og:description`. The `description` workflow compares the whole sentence on every push to `main`; on drift it warns and keeps one open issue, labelled `description`, holding the exact `gh repo edit` command, instead of failing a build nobody but an admin can fix. `lint` prints the would-be sentence on every run, pull requests included. Every other surface — the READMEs, `status.md`, `llms.txt`, the figures — carries the exact count. |
 | Labels for patterns, kinds and flags | When the taxonomy changes | One copy each, in `patterns.json` and `taxonomy.json`, read by the README generators and by the site at runtime. `lint` checks both against the schema; `lint_docs` checks `docs/patterns.md` has a section for each pattern. |
-| Model strings and limits | When the vendor or a gateway ships | One source, `compat.json`. `lint_docs` checks every copy — in docs, examples, and the generated README and figures — against it. `claims` re-reads each platform's documentation weekly and opens an issue if a recorded string disappears. |
+| Model strings and limits | When the vendor or a gateway ships | One source, `compat.json`. `lint_docs` checks every copy against it — in docs, examples, the generated README and figures, the MCP server's source, the plugin manifests, the issue forms and `compat.json`'s own prose — and holds every hand-written link to a page whose address names a model version to the `docs_url` recorded there. Read from it rather than copied: the model names `verify_claims.py` and `discover_candidates.py` look for, the MCP server's `check_model_string` hint, and `docs/compatibility.md`'s tables and the date a person last read the pages (`as_of`). `claims` re-reads each platform's documentation weekly and opens an issue if a recorded string disappears, if a page names a newer model version than `compat.json` records, or if `as_of` is more than 45 days old; how old is said in the run's log and the issue, never in a committed file. `lint_docs.py --simulate-model` rehearses a release (below). |
 | Link status, stars, licences, archive status, whether a summary is the repository's own description, creation date, last push and commit count (with `single-commit`), which sibling directories link each repository | Continuously, upstream | `metadata` weekly: stamps every link that answers, re-reads the GitHub API and every sibling directory's README, rebuilds everything generated, commits it, runs `lint`'s checks on that commit (`check.py --ci --quick`: all but the preview images, which `pages` renders), pushes to `main`, and redeploys the site. It opens an issue only for a change that is more than a star count, a last push, a commit count or a sibling-list citation, and falls back to a branch if `main` moved underneath it. `links` weekly is the separate alarm for a dead link, which only a person may retire, and for a sweep so refused by GitHub or by other hosts that it checked little. Both jobs, and `claims`, write their counts and the GitHub budget they spent to the run's summary. The site shows the date of the sweep its figure comes from, and the status page how many rows share it. |
-| Whether cited text is still present | Continuously, upstream | `claims` is scheduled weekly to fetch each `evidence` file and report missing strings or files. Counts show citations recorded, not CI passes, and the job does not update the human `read_on` date. |
+| Whether cited text is still present | Continuously, upstream | `claims` is scheduled weekly to fetch each `evidence` file and report missing strings or files. Counts show citations recorded, not CI passes, and the job does not update the human `read_on` date. A claim that lost only its pinned model version, from a file that names another, is `version-moved`: the issue counts those rows per version instead of listing each, and `verify_claims.py --propose-version-rewrite` prints each one's `evidence.matched` rewritten, for a person to apply without touching `read_on`. |
 | What the catalogue is missing | Continuously, upstream | `discover` weekly: harvests every sibling directory, reads the code of the most-cited uncatalogued repositories, searches for sibling directories not yet harvested, and keeps one issue: its description is the queue of every candidate, ticked or struck through from `catalog.json`, `retired.json` and `docs/declined.txt` (`queue_sync.py`), and each week's new candidates are a comment, a box per candidate to claim with the command that re-reads it. It never adds a row. Its verdicts are kept in `.discover/seen.json`, which `metadata` commits from `discover`'s artifact. |
 | The MCP package on PyPI | When `pyproject.toml`'s version changes | A release is a tag a maintainer pushes, so PyPI can lag `main`. `check_release.py` compares the two on every push to `main`, in `lint`'s `release` job: a version not yet on PyPI is a warning carrying the tag command; a version older than PyPI's newest, or `pyproject.toml` and `.claude-plugin/plugin.json` disagreeing, fails. The file comparison also runs on every pull request, as a unit test. After an upload, `publish` installs the release back from PyPI. |
 | Dated history | Never | This page's log sections are append-only and exempt from the number rules: what the first build found is true forever. |
@@ -858,3 +860,53 @@ the wholly generated files (both READMEs, `docs/by-pattern/`, `docs/assets/`)
 `linguist-generated`, so GitHub collapses them in a pull request's diff; files
 that are hand-written around generated blocks are not marked, because their
 prose still needs reading.
+
+### When the vendor ships a model
+
+Since 2026-09-27 a model release is rehearsed before it happens, and changes
+`compat.json` rather than a list of files someone has to remember. Before
+then the version was typed into the two scripts that recognise a Jev call
+site, the MCP server's advice on model strings and the review queue's
+model-name signal, and none of those copies was checked; links to the
+vendor's versioned known-limitations page escaped `lint_docs` because a model
+string after a slash reads as a URL path; and 183 rows quote the pinned
+version in `evidence.matched`, each of which the weekly `claims` run would
+have reported as `claim-gone`, mixed in with real removals, as its project
+moved to the new pin.
+
+The runbook:
+
+1. `claims` reports `newer-version` when a platform's page names a model
+   version newer than any `compat.json` records. That is the cue.
+2. `python3 scripts/lint_docs.py --simulate-model <that version>` builds the
+   `compat.json` a maintainer would write — the newest recorded version
+   replaced in every model cell and `docs_url`, at the precision it was
+   written in — runs `lint_docs`'s checks against it with
+   `docs/compatibility.md` regenerated from it, and writes nothing. It lists
+   each copy that would go red, what follows `compat.json` with nothing to
+   edit, and what the catalogue will do. Run on 2026-09-27 for the next
+   minor version, 1.14.0, it listed 14 findings in 12 files: the issue form's and two docs' links to
+   the known-limitations page; `llms.txt` and the agent skill naming
+   OpenRouter's versioned string; `docs/compatibility.md`'s hand-written
+   table of common mistakes; the two explanations in `compat.json`'s
+   `not_model_strings`; and both READMEs and three pattern pages, through
+   three catalogue rows whose summaries quote the versioned id
+   (`typesafe-models`, `jev-demo`, `typesafe-ai-jev-example`).
+3. A person reads each platform's page and edits `compat.json`: the model
+   cells, `docs_url`, the prose the rehearsal names, and `as_of` to the day
+   of that reading. Whether the old version stays listed while the vendor
+   still serves it is their call; keeping it keeps rows describing a
+   measurement on it valid, which a person would otherwise reword. Then fix
+   the files listed and run `python3 scripts/check.py`.
+4. Over the following weeks, as projects move their pin, `claims` counts the
+   rows whose cited file names another version ("N rows now pin X") and
+   `python3 scripts/verify_claims.py --propose-version-rewrite` prints their
+   rewritten strings. A person applies them in one pull request and leaves
+   `read_on` alone: rewriting a string is not reading the call site.
+   `version-moved` is a classification, not a verdict: a project may move its
+   pin and drop the integration in the same commit, which only reading the
+   file shows.
+
+A pinned version `compat.json` does not list yet still counts as a Jev
+signal when a script reads a stranger's code, so a mistake in `compat.json`
+cannot hide a file that pins a real version.

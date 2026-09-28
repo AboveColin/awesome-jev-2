@@ -19,8 +19,11 @@ debugging.
 > Markdown docs. Every other row was read from that platform's own
 > documentation, cited in that platform's catalog row. Where a detail could not
 > be confirmed from a primary source it is a dash rather than a guess.
-> Everything here was true on 2026-09-22; **open the linked doc before you
-> ship.**
+> compat.json was last checked by a person, against every platform's page,
+> on <!--n:as_of-->2026-09-22<!--/n--> (its `as_of`), and everything here was
+> true then. The weekly `claims` run re-reads each page for the recorded model
+> strings; a string still being there does not move that date. **Open the
+> linked doc before you ship.**
 
 [![The compatibility matrix on the site, with cells that differ from the native surface in red and matching cells in green](https://kydlikebtc.github.io/awesome-jev/img/site-compat.png)](https://kydlikebtc.github.io/awesome-jev/?view=compat)
 

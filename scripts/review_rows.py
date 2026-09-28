@@ -269,6 +269,19 @@ def check_call_site(row: dict, net: Net | None, reason: str) -> list[Finding]:
             f"{where} does not contain every `evidence.matched` string. Copy them from the file "
             "exactly as it reads on the default branch.",
         )]
+    if status == "version-moved":
+        # verify_claims.py: only a pinned model version is gone, and the file
+        # names another. Still wrong as written, so still an error.
+        proposed = result.get("proposed")
+        fix = (
+            f" As the file reads now: {', '.join(code(s) for s in proposed)}."
+            if proposed else " Copy them from the file exactly as it reads on the default branch."
+        )
+        return [Finding(
+            key, "error",
+            f"{where} names {', '.join(code(v) for v in result.get('pins') or [])} where "
+            "`evidence.matched` quotes another model version." + fix,
+        )]
     if status == "path-gone":
         return [Finding(
             key, "error",

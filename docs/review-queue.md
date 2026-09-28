@@ -56,9 +56,9 @@ To take a row off, read the file and set `evidence.kind`: `call-site` when it is
 
 ## Evidence resting on one model name or the API host · 证据只靠一个模型名或 API 主机
 
-The only string in `evidence.matched` is one of `jev-latest`, `jev-1.13`, `typesafe-ai/jev`, `typesafe/jev`, `api.typesafe.ai`. Any file that configures Jev contains one of them (a settings file, a pricing table, a model list) whether or not it calls the API, so the weekly text check can keep passing after the call itself is gone.
+The only string in `evidence.matched` is one of `jev-latest`, `typesafe-ai/jev`, `typesafe/jev`, `api.typesafe.ai`, or a pinned model version (`jev-` and a version number). Any file that configures Jev contains one of them (a settings file, a pricing table, a model list) whether or not it calls the API, so the weekly text check can keep passing after the call itself is gone.
 
-`evidence.matched` 里唯一的字符串是 `jev-latest`, `jev-1.13`, `typesafe-ai/jev`, `typesafe/jev`, `api.typesafe.ai` 之一。任何配置 Jev 的文件都会包含它们（设置文件、价格表、模型列表），不论是否真的调用 API；所以即使调用本身已经删除，每周的文本检查也可能继续通过。
+`evidence.matched` 里唯一的字符串是 `jev-latest`, `typesafe-ai/jev`, `typesafe/jev`, `api.typesafe.ai` 之一，或一个固定的模型版本号（`jev-` 加版本号）。任何配置 Jev 的文件都会包含它们（设置文件、价格表、模型列表），不论是否真的调用 API；所以即使调用本身已经删除，每周的文本检查也可能继续通过。
 
 To take a row off, add a second string from the call itself (an import, the method called, a question type) to `evidence.matched`, then run `python3 scripts/verify_claims.py --only <slug>` to confirm the file holds every string.
 

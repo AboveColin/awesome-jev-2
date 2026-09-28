@@ -44,7 +44,11 @@ EXAMPLES_DIR = re.compile(r"(^|/)examples?/")
 # configures Jev contains one (a settings file, a pricing table, a model list)
 # whether or not it calls the API, so on its own it is the thinnest witness a
 # citation can have. A second matched string from the call itself ends it.
-MODEL_NAMES_AND_HOST = ("jev-latest", "jev-1.13", "typesafe-ai/jev", "typesafe/jev", "api.typesafe.ai")
+# A pinned model version counts whichever it is (PINNED_MODEL_VERSION): the
+# version typed in here would have gone stale with the next release, and a
+# citation resting on the next version is as thin as one resting on this one.
+MODEL_NAMES_AND_HOST = ("jev-latest", "typesafe-ai/jev", "typesafe/jev", "api.typesafe.ai")
+PINNED_MODEL_VERSION = re.compile(r"jev-\d+(?:\.\d+)+")
 
 # A row filed under tool-selection that only the keyword rules' broad words
 # suggest: "control", "harness" or "screen" on their own, or a robot, an
@@ -114,7 +118,9 @@ def examples_unjudged(entry: dict) -> bool:
 def single_model_name(entry: dict) -> bool:
     """Machine signal: the citation rests on one model name or the API host."""
     matched = (entry.get("evidence") or {}).get("matched") or []
-    return len(matched) == 1 and matched[0] in MODEL_NAMES_AND_HOST
+    return len(matched) == 1 and (
+        matched[0] in MODEL_NAMES_AND_HOST or PINNED_MODEL_VERSION.fullmatch(matched[0]) is not None
+    )
 
 
 def signal_only(entry: dict) -> list[str]:

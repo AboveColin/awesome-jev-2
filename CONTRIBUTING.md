@@ -156,8 +156,14 @@ exempt: a log entry about the first build is true forever.
 
 Model strings and limits are held to `compat.json` the same way: write
 `jev-latest` or `max 255` anywhere and `lint_docs.py` checks it against that
-file. If the vendor changes one, change `compat.json` and every stale copy
-turns red.
+file — in the docs, the MCP server's source and the plugin manifests alike. A
+link to a vendor page whose address names a model version (the known
+limitations page) must be the one `compat.json` records as that platform's
+`docs_url`. If the vendor changes one, change `compat.json` and every stale
+copy turns red. Before a release,
+`python3 scripts/lint_docs.py --simulate-model <version>` lists what would
+turn red, and writes nothing (the runbook is in
+[`docs/method.md`](docs/method.md#when-the-vendor-ships-a-model)).
 
 ## Field rules
 
@@ -229,7 +235,11 @@ turns red.
   about Jev), `no-jev-call-site`. A link holding no code at all, such as a list
   of links or a community site, gets `has_code: false` rather than either. Set
   `read_on` to the date you actually read that file; do not advance it after an
-  automated text check. An `evidence` record is a
+  automated text check. When the weekly claims issue counts a row as
+  `version-moved` (its file now names another model version),
+  `python3 scripts/verify_claims.py --propose-version-rewrite --only <slug>`
+  prints `matched` rewritten to the file as it reads; apply it and leave
+  `read_on` as it is. An `evidence` record is a
   citation, not a stored CI pass or proof that the integration executes.
   `evidence.kind` says what the file shows: leave it out (or write
   `call-site`) when the project calls Jev there; write `wire-shape` when it only

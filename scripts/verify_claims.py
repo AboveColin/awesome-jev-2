@@ -25,6 +25,14 @@ resolves, not a reason to check the wrong thing.
 Exit code is 0 when every claim holds and 1 when any fails, so the scheduled
 workflow can open an issue.
 
+A claim that lost only a pinned model version (`jev-1.2`, say) from a file that
+now names another is reported as `version-moved` rather than `claim-gone`, and
+the report counts those rows per version ("N rows now pin X"): when the vendor
+ships a model, projects move their pin one by one, and each move is not a
+removed integration. It still fails, since its strings are gone.
+`--propose-version-rewrite` prints the rewritten `evidence.matched` for each
+such row and writes nothing; a person applies it and leaves `read_on` alone.
+
 A file whose claim holds is also searched for the primitives' request and
 answer shapes — `"type": "choice"`, `Noul(`, `.noul` and the like
 (PRIMITIVE_SHAPES), and a call to the TypeScript SDK's `choice()`, `score()`
@@ -43,6 +51,8 @@ Usage:
   python3 scripts/verify_claims.py --discover       # propose evidence for rows lacking it
   python3 scripts/verify_claims.py --json           # machine-readable report
   python3 scripts/verify_claims.py --write-signals  # record primitives_seen in catalog.json
+  python3 scripts/verify_claims.py --propose-version-rewrite [--json]
+      # dry run: evidence.matched rewritten for each version-moved row
 """
 
 from __future__ import annotations
@@ -56,6 +66,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 from _github import (
     CODE_EXT,
+    VERSION,
     RateLimited,
     api_get,
     default_branch,
@@ -63,7 +74,10 @@ from _github import (
     raw_get,
     repo_of,
     step_summary,
+    strong_signals,
     usage_lines,
+    version_parts,
+    version_stem,
 )
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
@@ -71,27 +85,11 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 CATALOG = ROOT / "catalog.json"
 
-# Signals that a file is a genuine Jev call site rather than a mention. The
-# import and the endpoint are strong; a bare primitive name is not, because
-# "choice" and "score" are ordinary English words.
-STRONG = [
-    "api.typesafe.ai",
-    "typesafe_sdk",
-    "@typesafe-ai/sdk",
-    # The Vercel AI SDK provider: evaluate() calls, where noul is spelled boolean.
-    "@ai-sdk/typesafe-ai",
-    "typesafe-ai/jev",
-    "typesafe/jev",
-    "jev-latest",
-    "jev-1.13",
-    "/v1/systemone",
-    "systemOne",
-    "system_one",
-    "langchain_typesafe",
-    "TypeSafeClient",
-    "AsyncTypeSafeClient",
-]
-# Only meaningful alongside a strong signal.
+# Signals that a file is a genuine Jev call site rather than a mention — an
+# import, the endpoint, a model name — are _github.strong_signals(), shared with
+# discover_candidates.py; the model names come from compat.json. A bare
+# primitive name is only meaningful alongside one, because "choice" and
+# "score" are ordinary English words.
 WEAK = ["noul", "Noul", "choice", "Choice", "score", "Score"]
 
 # The Jev primitives, in the order schema/entry.schema.json lists them for
@@ -202,6 +200,24 @@ def read_claim(slug: str, repo: str, evidence: dict) -> dict:
         }
 
     missing = [needle for needle in evidence["matched"] if needle not in body]
+    pins = moved_to(missing, body)
+    if pins:
+        # Only a model version is gone and the file names another: the
+        # integration is most likely still there, pinned to a newer model.
+        # A classification for the person reading the report, not a verdict.
+        return {
+            "slug": slug,
+            "status": VERSION_MOVED,
+            "detail": (
+                f"{repo}@{branch}:{evidence['path']} no longer contains {missing}; "
+                f"it names {', '.join(pins)} instead"
+            ),
+            "pins": pins,
+            "path": evidence["path"],
+            "matched": list(evidence["matched"]),
+            "proposed": rewrite(evidence["matched"], body, pins[-1]),
+            "primitive_signals": primitive_signals(body),
+        }
     if missing:
         return {
             "slug": slug,
@@ -214,6 +230,117 @@ def read_claim(slug: str, repo: str, evidence: dict) -> dict:
         "detail": f"{repo}@{branch}:{evidence['path']}",
         "primitive_signals": primitive_signals(body),
     }
+
+
+# --- version-moved -------------------------------------------------------------
+#
+# About one cited row in six quotes a pinned model version in evidence.matched.
+# When the vendor ships the next one, those projects move their pin one by
+# one, and each move would read as claim-gone — mixed in with real removals,
+# and each worth a person's re-read. A claim that lost only model
+# versions, from a file that names another version, is `version-moved`
+# instead: reported together ("N rows now pin X") with the rewritten strings
+# proposed (--propose-version-rewrite), never written. A person applies them;
+# `read_on` stays as it is, because a string rewrite is not a reading.
+VERSION_MOVED = "version-moved"
+
+
+def moved_to(missing: list[str], body: str) -> list[str]:
+    """The model versions (major.minor) a file names in place of those its
+    claim lost, oldest first; [] when the claim lost anything but a model
+    version, or the file names no other version."""
+    if not missing:
+        return []
+    lost = set()
+    for needle in missing:
+        token = VERSION.search(needle)
+        if not token:
+            return []
+        lost.add(version_stem(token.group(0)))
+    found = {version_stem(token) for token in VERSION.findall(body)} - lost
+    return sorted(found, key=version_parts)
+
+
+def rewrite(matched: list[str], body: str, target: str) -> list[str] | None:
+    """evidence.matched with each version the file no longer names moved to
+    `target`, written as precisely as before (`jev-1.2.0` becomes the file's
+    `jev-1.3.x`, `jev-1.2` becomes `jev-1.3`). None when a rewritten string
+    is still not in the file: then a person reads it."""
+    out = []
+    for needle in matched:
+        if needle in body:
+            out.append(needle)
+            continue
+        token = VERSION.search(needle)
+        if not token:
+            return None
+        precision = len(version_parts(token.group(0)))
+        written = sorted(
+            (t for t in VERSION.findall(body) if version_stem(t) == target and len(version_parts(t)) >= precision),
+            key=version_parts,
+        )
+        new = version_stem(written[-1], precision) if written else target
+        candidate = needle[: token.start()] + new + needle[token.end() :]
+        if candidate not in body:
+            return None
+        out.append(candidate)
+    return out
+
+
+def version_moves(results: list[dict]) -> dict[str, list[str]]:
+    """Slugs by the newest version their file now names, for the report."""
+    moves: dict[str, list[str]] = {}
+    for result in results:
+        if result["status"] == VERSION_MOVED:
+            moves.setdefault(result["pins"][-1], []).append(result["slug"])
+    return dict(sorted(moves.items(), key=lambda item: version_parts(item[0])))
+
+
+def move_lines(moves: dict[str, list[str]]) -> list[str]:
+    """One line per version, the form claims.yml's issue quotes."""
+    return [
+        f"version-moved: {len(slugs)} row(s) now pin {target} — their cited file names it in place of the "
+        "version in evidence.matched; `python3 scripts/verify_claims.py --propose-version-rewrite` "
+        "lists the strings to review (read_on stays as it is)"
+        for target, slugs in moves.items()
+    ]
+
+
+def propose_rewrites(todo: list[dict], as_json: bool) -> int:
+    """--propose-version-rewrite: a dry run. Reads every cited file and prints,
+    for each version-moved row, evidence.matched as it is and as the file now
+    reads. Writes nothing; read_on is never part of it."""
+    print(f"reading {len(todo)} cited file(s) for moved model versions\n", file=sys.stderr)
+    with ThreadPoolExecutor(max_workers=WORKERS) as pool:
+        results = list(pool.map(check, todo))
+    moved = [r for r in results if r["status"] == VERSION_MOVED]
+    unread = [r for r in results if r["status"] == "skipped"]
+    if as_json:
+        print(json.dumps(
+            [{key: r[key] for key in ("slug", "path", "matched", "proposed", "pins")} for r in moved],
+            indent=2, ensure_ascii=False,
+        ))
+    else:
+        for r in moved:
+            print(f"  {r['slug']}  {r['path']}")
+            print(f"    matched:  {json.dumps(r['matched'], ensure_ascii=False)}")
+            if r["proposed"] is None:
+                print(f"    proposed: none — the file names {', '.join(r['pins'])}, but not in a form "
+                      "the old strings can be rewritten to; read it")
+            else:
+                print(f"    proposed: {json.dumps(r['proposed'], ensure_ascii=False)}")
+        for line in move_lines(version_moves(results)):
+            print(line)
+    rewritable = sum(1 for r in moved if r["proposed"] is not None)
+    tail = f"; {len(unread)} not read (GitHub rate limit)" if unread else ""
+    print(
+        f"version rewrites: {len(moved)} of {len(results)} cited row(s) version-moved, "
+        f"{rewritable} with a proposed evidence.matched{tail}. Nothing written; "
+        "apply by hand and leave read_on as it is.",
+        file=sys.stderr if as_json else sys.stdout,
+    )
+    log_usage()
+    return 0
 
 
 def needs_discovery(entry: dict) -> bool:
@@ -266,7 +393,7 @@ def discover(entry: dict) -> dict:
         body = raw_get(repo, branch, path)
         if not body:
             continue
-        strong = [s for s in STRONG if s in body]
+        strong = strong_signals(body)
         if not strong:
             continue
         weak = weak_words(body)
@@ -307,13 +434,16 @@ def discover(entry: dict) -> dict:
 SEEN = "primitives_seen"
 # A read that found the cited file without the claim, or no file or repository
 # at all: that file shows nothing now, so the row carries no signal. A read the
-# rate limit stopped is no read, and changes nothing.
+# rate limit stopped is no read, and changes nothing. A file whose claim lost
+# only its model version (version-moved) was read and still holds the rest, so
+# its signals count like a pass.
 UNSEEN = ("claim-gone", "path-gone", "repo-gone")
+READ = ("ok", VERSION_MOVED)
 
 
 def seen_after(result: dict) -> list[str] | None:
     """What a row's primitives_seen should be after this read; None to leave it."""
-    if result["status"] == "ok":
+    if result["status"] in READ:
         return list(result.get("primitive_signals") or [])
     if result["status"] in UNSEEN:
         return []
@@ -354,7 +484,7 @@ def apply_signals(catalog: list[dict], results: list[dict]) -> tuple[list[dict],
         elif not old:
             outcome["added"].append(f"  + {slug}: {', '.join(seen)}")
         elif not seen:
-            why = "no shape in the file" if result["status"] == "ok" else result["status"]
+            why = "no shape in the file" if result["status"] in READ else result["status"]
             outcome["removed"].append(f"  - {slug}: {', '.join(old)} ({why})")
         else:
             outcome["changed"].append(f"  ~ {slug}: {', '.join(old)} -> {', '.join(seen)}")
@@ -410,6 +540,12 @@ def main() -> int:
         action="store_true",
         help="record in catalog.json the primitives whose shape each cited file contains (primitives_seen)",
     )
+    mode.add_argument(
+        "--propose-version-rewrite",
+        action="store_true",
+        help="dry run: for each version-moved row, print evidence.matched rewritten to the version its "
+        "file now names; writes nothing and never touches read_on",
+    )
     parser.add_argument("--json", action="store_true", help="machine-readable output")
     args = parser.parse_args()
 
@@ -418,6 +554,10 @@ def main() -> int:
     if args.write_signals:
         todo = [e for e in catalog if "evidence" in e and (not args.only or e["slug"] == args.only)]
         return write_signals(catalog, todo)
+
+    if args.propose_version_rewrite:
+        todo = [e for e in catalog if "evidence" in e and (not args.only or e["slug"] == args.only)]
+        return propose_rewrites(todo, args.json)
 
     if args.discover:
         todo = [e for e in catalog if needs_discovery(e) and (not args.only or e["slug"] == args.only)]
@@ -465,11 +605,17 @@ def main() -> int:
     # A claim the rate limit kept us from reading is neither a pass nor a
     # failure. Counting it as either would be the false report this avoids.
     skipped = [r for r in results if r["status"] == "skipped"]
+    # A version-moved claim still fails: its strings are gone, and only a
+    # person may rewrite them. It is reported apart, grouped by version.
     failed = [r for r in results if r["status"] not in ("ok", "skipped")]
+    moves = version_moves(results)
+    moved = sum(len(slugs) for slugs in moves.values())
     step_summary(
         "## Cited call sites\n\n"
         + f"- checked {len(results) - len(skipped)} of {len(results)} claim(s): "
         + f"{len(failed)} failed, {len(skipped)} skipped (GitHub rate limit)\n"
+        + (f"- {moved} of the failures only moved to another model version:\n" if moved else "")
+        + "".join(f"  - {line}\n" for line in move_lines(moves))
         + "".join(f"- {line}\n" for line in usage_lines())
     )
     if skipped:
@@ -485,6 +631,8 @@ def main() -> int:
                     "checked": len(results),
                     "failed": failed,
                     "skipped": skipped,
+                    # Slugs by the version their cited file now names; each is also in `failed`.
+                    "version_moved": moves,
                     # A text signal per file whose claim held; see --write-signals.
                     "primitive_signals": {
                         r["slug"]: r["primitive_signals"]
@@ -502,6 +650,11 @@ def main() -> int:
             shapes = r.get("primitive_signals")
             tail = f"  · primitive shapes: {', '.join(shapes)}" if shapes else ""
             print(f"  {mark:<12} {r['slug']}  {r['detail']}{tail}")
+        lines = move_lines(moves)
+        if lines:
+            print()
+            for line in lines:
+                print(line)
         held = len(results) - len(failed) - len(skipped)
         tail = f"; {len(skipped)} not checked (GitHub rate limit)" if skipped else ""
         print(f"\n{held}/{len(results)} claims still hold{tail}")
