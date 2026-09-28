@@ -1281,13 +1281,15 @@ leave the page half generated.
 Since 2026-09-28, the patterns page has a Chinese rendering,
 `docs/patterns.zh-CN.md`, which the Chinese README and the Chinese pattern pages
 link instead of the English page. A model wrote it from the English page, and
-its first lines say so and that the English governs; no person has read it
-yet. `lint_docs` holds it to the English page's rules: a `## key` section for
-every pattern in `patterns.json`, each ending with its `catalogued-<key>`
-markers, which `build_docs.py` fills in Chinese. Its model strings and limits
-are checked against `compat.json` like any other page's, and for that the
-limit rules gained the Chinese phrasings (`最多 255 个选项`, `2–10 级`,
-`64k token`), which also read the limits where the Chinese README, the
+its first lines say so and that the English governs; no person had read it
+when it landed. `lint_docs` holds it to the English page's rules: a `## key`
+section for every pattern in `patterns.json`, each ending with its
+`catalogued-<key>` markers, which `build_docs.py` fills in Chinese. Its model
+strings and limits are checked against `compat.json` like any other page's,
+and for that the limit rules gained the Chinese phrasings (`N 个选项`,
+`N–M 级` or `N–M 个有序级别`, `Nk token` or `Nk 上下文`; written here without
+the numbers, so this dated entry never has to change when a limit does),
+which also read the limits where the Chinese README, the
 Chinese overview page and the Chinese primitives figure already stated them;
 each agreed with `compat.json`. The model-string rule no longer treats a
 Chinese character as part of a word: Python's `\w` matches one, so a model
