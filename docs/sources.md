@@ -61,7 +61,9 @@ reads each README (`scripts/attribute_sources.py`) and records every link it
 finds on the row as a `sources` item: the list's `owner/name` and its URL.
 Nothing else is taken from a list — many ship no licence, and a URL is a fact
 where a description is someone's writing. A list that could not be read keeps
-the citations it had when last read.
+the citations it had when last read. A directory renamed since it was listed
+is there under both names, and its old name shows no rows: GitHub serves the
+same README under each, and it is counted once, under the name listed first.
 
 <!-- citations:start -->
 | Sibling directory | Catalogued rows whose repository its README links |
@@ -80,7 +82,6 @@ the citations it had when last read.
 | [jqueryscript/awesome-jev](https://github.com/jqueryscript/awesome-jev) | 205 |
 | [JohnDotOwl/awesome-jev](https://github.com/JohnDotOwl/awesome-jev) | 189 |
 | [cobanov/awesome-jev](https://github.com/cobanov/awesome-jev) | 179 |
-| [AbdelStark/awesome-typesafe](https://github.com/AbdelStark/awesome-typesafe) | 178 |
 | [AbdelStark/awesome-typesafe-jev](https://github.com/AbdelStark/awesome-typesafe-jev) | 178 |
 | [walidboulanouar/awesome-jev-use-cases](https://github.com/walidboulanouar/awesome-jev-use-cases) | 152 |
 | [robokrunch/awesome-jev](https://github.com/robokrunch/awesome-jev) | 146 |
@@ -95,7 +96,6 @@ the citations it had when last read.
 | [sontakey/awesome-jev](https://github.com/sontakey/awesome-jev) | 80 |
 | [Anil-matcha/awesome-jev-by-typesafe](https://github.com/Anil-matcha/awesome-jev-by-typesafe) | 78 |
 | [charetterat/awesome-jev-essentials](https://github.com/charetterat/awesome-jev-essentials) | 75 |
-| [OmniJev/awesome-jev](https://github.com/OmniJev/awesome-jev) | 72 |
 | [OmniJev/awesome-jev-gallery](https://github.com/OmniJev/awesome-jev-gallery) | 72 |
 | [rhc98/awesome-jev](https://github.com/rhc98/awesome-jev) | 64 |
 | [seeapi/awesome-jev-use-cases](https://github.com/seeapi/awesome-jev-use-cases) | 64 |
@@ -115,8 +115,10 @@ the citations it had when last read.
 | [everyinfra/jev-radar](https://github.com/everyinfra/jev-radar) | 3 |
 | [visitworld123/Awesome-Robot-Use-Agent](https://github.com/visitworld123/Awesome-Robot-Use-Agent) | 3 |
 | [nexibeo/jev-cookbook](https://github.com/nexibeo/jev-cookbook) | 2 |
+| [AbdelStark/awesome-typesafe](https://github.com/AbdelStark/awesome-typesafe) | 0 |
 | [Hiwoniu/Jev-Case](https://github.com/Hiwoniu/Jev-Case) | 0 |
 | [mizzlelover/jev-hub](https://github.com/mizzlelover/jev-hub) | 0 |
+| [OmniJev/awesome-jev](https://github.com/OmniJev/awesome-jev) | 0 |
 | [theSekyi/jevusecases](https://github.com/theSekyi/jevusecases) | 0 |
 <!-- citations:end -->
 

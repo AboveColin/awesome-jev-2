@@ -230,11 +230,18 @@ def cited_in(body: str) -> set[str]:
 class Harvest:
     """What one read of the lists found. `cited` maps a repository (slug_of)
     to the lists (as read_lists() gave them) whose README links it; `reached`
-    and `unreached` split the lists by whether a README could be read."""
+    and `unreached` split the lists by whether a README could be read.
+
+    `same` pairs a list with the earlier one whose README it returned word for
+    word. GitHub keeps serving a renamed repository's files under its old name,
+    so one directory listed under both names would otherwise cite every row
+    twice; such a list is reached but cites nothing, and the file should keep
+    one line for it."""
 
     cited: dict[str, frozenset[str]]
     reached: tuple[str, ...]
     unreached: tuple[str, ...]
+    same: tuple[tuple[str, str], ...] = ()
 
     def counts(self) -> collections.Counter[str]:
         """How many lists cite each repository, repositories in slug order, so
@@ -253,15 +260,23 @@ def harvest(
         fetched = list(pool.map(fetch, lists))
     cited: dict[str, set[str]] = {}
     reached, unreached = [], []
+    first: dict[str, str] = {}
+    same: list[tuple[str, str]] = []
     for url, (_, body) in zip(lists, fetched):
         if not body:
             unreached.append(url)
             continue
         reached.append(url)
+        # One directory under two names (see Harvest): counted once, as the earlier line.
+        earlier = first.setdefault(body, url)
+        if earlier != url:
+            same.append((url, earlier))
+            continue
         for slug in cited_in(body):
             cited.setdefault(slug, set()).add(url)
     return Harvest(
         {slug: frozenset(urls) for slug, urls in cited.items()},
         tuple(reached),
         tuple(unreached),
+        tuple(same),
     )

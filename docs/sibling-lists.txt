@@ -12,18 +12,24 @@
 # removed from this file loses those citations; run
 # `python3 scripts/attribute_sources.py --offline --write` when you remove one.
 #
+# A directory renamed since it was listed keeps its old name here too, on the
+# line after its current name: other lists still link the old name, and listing
+# it keeps discovery from proposing the directory itself as a candidate. GitHub
+# serves the same README under both names, and a README identical to an
+# earlier line's is counted once, as that line (scripts/sibling_lists.py).
+#
 # One line per list. Seeded 2026-09-22 from the "Other lists" section of
 # heyjunpenn/awesome-jev, which had done this collection already.
-https://github.com/AbdelStark/awesome-typesafe
 https://github.com/AbdelStark/awesome-typesafe-jev
+https://github.com/AbdelStark/awesome-typesafe
 https://github.com/Anil-matcha/awesome-jev-by-typesafe
 https://github.com/AnotiaWang/awesome-jev
 https://github.com/AppitStudio/awesome-jev
 https://github.com/BeatAPI/awesome-jev
 https://github.com/Hiwoniu/Jev-Case
 https://github.com/MrJev/awesome-jev
-https://github.com/OmniJev/awesome-jev
 https://github.com/OmniJev/awesome-jev-gallery
+https://github.com/OmniJev/awesome-jev
 https://github.com/Promethe-us/awesome-jev
 https://github.com/aliaihub/awesome-jev-usecases
 https://github.com/anandi1989/awesome-jev-usecases

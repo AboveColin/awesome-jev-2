@@ -141,6 +141,17 @@ class HarvestTest(unittest.TestCase):
         # A list naming a repository twice still cites it once.
         self.assertEqual(found.counts()["acme/tool"], 2)
 
+    def test_a_list_returning_an_earlier_lists_readme_is_counted_once(self):
+        # GitHub serves a renamed repository's README under its old name too,
+        # so one directory listed under both names must not cite a row twice.
+        text = "https://github.com/acme/tool https://github.com/acme/other"
+        found = harvest_of({A: text, B: "https://github.com/acme/tool", C: text})
+        self.assertEqual(found.reached, (A, B, C))
+        self.assertEqual(found.same, ((C, A),))
+        self.assertEqual(found.cited["acme/tool"], frozenset({A, B}))
+        self.assertEqual(found.cited["acme/other"], frozenset({A}))
+        self.assertEqual(harvest_of({A: "x", B: "y"}).same, ())
+
     def test_ties_break_by_name_not_by_chance(self):
         found = harvest_of({A: "https://github.com/zz/b https://github.com/aa/b https://github.com/mm/b"})
         self.assertEqual([slug for slug, _ in found.counts().most_common()], ["aa/b", "mm/b", "zz/b"])
@@ -149,7 +160,8 @@ class HarvestTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             lists = pathlib.Path(tmp) / "sibling-lists.txt"
             lists.write_text(f"{A}\n{B}\n")
-            readmes = {A: "https://github.com/zz-new/hit", B: "https://github.com/zz-new/hit"}
+            # Two lists' READMEs, each its own text (one identical to another would count once).
+            readmes = {A: "https://github.com/zz-new/hit", B: "- https://github.com/zz-new/hit"}
             out, err = io.StringIO(), io.StringIO()
             with mock.patch.object(dc, "SIBLINGS", lists), \
                     mock.patch.object(dc, "fetch_readme", lambda url: (url, readmes.get(url, ""))), \
@@ -165,7 +177,7 @@ class AttributeTest(unittest.TestCase):
     def test_citations_follow_the_sources_a_person_wrote_sorted_by_url(self):
         entry = row("tool", "https://github.com/acme/tool", AGGREGATE, {"catalog": "web search", "url": "https://x.example"})
         before = copy.deepcopy(entry)
-        new = attr.attributed(entry, harvest_of({C: "https://github.com/acme/tool", A: "https://github.com/acme/tool"}), LISTED)
+        new = attr.attributed(entry, harvest_of({C: "- https://github.com/acme/tool", A: "https://github.com/acme/tool"}), LISTED)
         self.assertEqual(entry, before, "the row passed in is not changed")
         self.assertEqual(list(new), list(entry), "same keys, same order")
         self.assertEqual(new["sources"], [*before["sources"], sl.citation(A), sl.citation(C)])
@@ -227,7 +239,7 @@ class MainTest(unittest.TestCase):
         self.catalog = self.dir / "catalog.json"
         self.rows = [row("tool", "https://github.com/acme/tool"), row("docs", "https://docs.example.com")]
         self.catalog.write_text(json.dumps(self.rows, indent=2) + "\n")
-        self.readmes = {A: "https://github.com/acme/tool", B: "https://github.com/acme/tool"}
+        self.readmes = {A: "https://github.com/acme/tool", B: "- https://github.com/acme/tool"}
         for name, value in (("SIBLINGS", self.lists), ("CATALOG", self.catalog)):
             patcher = mock.patch.object(attr, name, value)
             patcher.start()
@@ -254,6 +266,32 @@ class MainTest(unittest.TestCase):
             "1 not read, their citations kept as last read",
         )
         self.assertIn("  ~ tool: +alpha/awesome-jev +Beta/jev-list", out)
+
+    def test_a_directory_listed_under_two_names_is_recorded_once(self):
+        # C answers with A's README (a renamed list): its citation goes, A's stays.
+        self.rows[0]["sources"] = [AGGREGATE, sl.citation(A), sl.citation(C)]
+        self.catalog.write_text(json.dumps(self.rows, indent=2) + "\n")
+        self.readmes = {A: "https://github.com/acme/tool", B: "nothing", C: "https://github.com/acme/tool"}
+        code, out, _ = self.run_main("--write")
+        self.assertEqual(code, 0)
+        self.assertEqual(json.loads(self.catalog.read_text())[0]["sources"], [AGGREGATE, sl.citation(A)])
+        self.assertIn(f"      {C} = {A}", out)
+        self.assertTrue(out.splitlines()[-1].endswith("; 1 returned an earlier list's README, counted once"), out)
+
+    def test_the_real_file_lists_a_current_name_before_its_old_one(self):
+        # The two renamed directories: the old name follows the current one,
+        # so the citations are recorded under the name GitHub answers to now.
+        lines = sl.listed_urls(sl.read_lists())
+        for current, old in (
+            ("https://github.com/AbdelStark/awesome-typesafe-jev", "https://github.com/AbdelStark/awesome-typesafe"),
+            ("https://github.com/OmniJev/awesome-jev-gallery", "https://github.com/OmniJev/awesome-jev"),
+        ):
+            with self.subTest(current=current):
+                self.assertLess(lines.index(current), lines.index(old))
+        catalog = json.loads((ROOT / "catalog.json").read_text(encoding="utf-8"))
+        cited = {url for entry in catalog for url in sl.citations_of(entry)}
+        self.assertNotIn("https://github.com/AbdelStark/awesome-typesafe", cited)
+        self.assertNotIn("https://github.com/OmniJev/awesome-jev", cited)
 
     def test_nothing_is_written_without_write_or_without_a_change(self):
         before = self.catalog.read_bytes()

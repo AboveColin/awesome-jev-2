@@ -68,12 +68,12 @@ project, and a repository no list links is not thereby worse.
 | Sibling directories linking the repository | Rows |
 | --- | --- |
 | 0 | 7 |
-| 1 | 18 |
-| 2 | 89 |
-| 3–5 | 496 |
-| 6–10 | 319 |
-| 11–20 | 148 |
-| 21 or more | 59 |
+| 1 | 21 |
+| 2 | 92 |
+| 3–5 | 500 |
+| 6–10 | 323 |
+| 11–20 | 142 |
+| 21 or more | 51 |
 <!-- cited-by:end -->
 
 ### Coverage gaps

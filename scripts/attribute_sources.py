@@ -23,6 +23,10 @@ What changes, and what does not:
 - A list read this time: its citations follow its README, added and removed.
 - A list in docs/sibling-lists.txt that could not be read: its citations are
   kept as last read, so a host having a bad day moves nothing.
+- A list whose README is word for word an earlier line's cites nothing: GitHub
+  serves a renamed repository under its old name too, and a directory listed
+  under both names (docs/sibling-lists.txt says why it may be) counts once, as
+  the name listed first. The log and the job summary name each such list.
 - A list no longer in docs/sibling-lists.txt: its citations are dropped (lint
   fails a citation of a list the file does not name).
 - A list never cites its own row, and a row of this repository's own (the
@@ -143,9 +147,10 @@ def tally(changes: list[dict], rows: int, found: Harvest | None, listed: list[st
         else f"read 0 of {len(listed)} list(s) (offline)"
     )
     kept = f"; {len(found.unreached)} not read, their citations kept as last read" if found and found.unreached else ""
+    twice = f"; {len(found.same)} returned an earlier list's README, counted once" if found and found.same else ""
     return (
         f"sibling-list citations: {len(changes)} of {rows} row(s) changed "
-        f"({added} added, {removed} removed); {read}{kept}"
+        f"({added} added, {removed} removed); {read}{kept}{twice}"
     )
 
 
@@ -182,12 +187,17 @@ def report(changes: list[dict], found: Harvest | None, listed: list[str], rows: 
         print(f"\n  {len(found.unreached)} list(s) not read; their citations are kept as last read:")
         for url in found.unreached:
             print(f"      {url}")
+    if found and found.same:
+        print(f"\n  {len(found.same)} list(s) returned an earlier list's README; each is counted once, as that list:")
+        for url, earlier in found.same:
+            print(f"      {url} = {earlier}")
     line = tally(changes, rows, found, listed)
     step_summary(
         "## Sibling-list citations\n\n"
         + f"- {line.removeprefix('sibling-list citations: ')}\n"
         + f"- {'written to' if write and changes else 'would change'} catalog.json\n"
         + "".join(f"- not read: {url}\n" for url in (found.unreached if found else ()))
+        + "".join(f"- same README as {earlier}, counted once: {url}\n" for url, earlier in (found.same if found else ()))
     )
     print(f"\n{line}")
 

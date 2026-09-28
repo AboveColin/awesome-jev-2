@@ -301,9 +301,15 @@ sorted by URL. Those stay as they were and still say where the row was found;
 `docs/sibling-lists.txt` names. A list that does not answer keeps its
 citations as last read, a list removed from the file loses them, a list never
 cites its own row, and this repository's examples are cited by none. The
-first read, on 2026-09-28, reached all 52 lists and recorded 8,269 citations
-on 1,129 of the 1,136 rows whose repository is not this one; no list links the
-other seven, and three of the lists link no catalogued repository. It is a
+first read, on 2026-09-28, reached all 52 lines of the file and recorded 8,019
+citations on 1,129 of the 1,136 rows whose repository is not this one; no list
+links the other seven, and three of the lists link no catalogued repository.
+The 52 lines are 50 directories: two had been renamed and were listed under
+both names, and GitHub serves a renamed repository's README under its old name
+too, so the first backfill counted them twice (250 citations, taken out the
+same day). A README identical to an earlier line's now cites nothing, and
+`docs/sibling-lists.txt` keeps each old name after the current one so that
+discovery does not propose the directory itself. It is a
 fact about the lists, and like a star count it measures attention: they copy
 from each other, so the number says how widely a project is mentioned, not
 that anyone checked it, and nothing here ranks, filters or flags a row by it.
@@ -313,7 +319,7 @@ the count on each card and the lists in its details, and the weekly digest
 counts the changes without naming a row, so they open no notice. A link is
 matched on the repository name the list writes, so a list still linking a
 renamed repository by its old name is not counted. The cost is size:
-`catalog.json` grew from 1.78 MB to 2.81 MB and by 33,076 lines, about a sixth
+`catalog.json` grew from 1.78 MB to 2.77 MB and by 32,076 lines, about a sixth
 once compressed.
 
 ### The bulk pass, and what it cost
