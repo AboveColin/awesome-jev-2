@@ -126,6 +126,7 @@ class CollectionsResourceTest(unittest.TestCase):
                          [("first-call", 2, "awesome-jev://collections/first-call"),
                           ("measured", 2, "awesome-jev://collections/measured")])
         self.assertIn("not a runtime certification", answer["note"])
+        self.assertIn("not reproduced here", answer["note"], "a measured pick was run by its author, not by us")
 
     def test_one_path_in_its_own_order_with_each_row(self):
         answer = query.collection_detail(COLLECTIONS, ROWS, FLAGS, "first-call")
@@ -233,7 +234,10 @@ class RegistrationTest(unittest.TestCase):
     def read(self, uri: str, **params) -> dict:
         text = self.server.mcp.resources[uri]["fn"](**params)
         self.assertIsInstance(text, str)
-        return json.loads(text)
+        answer = json.loads(text)
+        # Compact separators, as on the site's api/v1 files: an agent pays for every byte.
+        self.assertEqual(text, json.dumps(answer, ensure_ascii=False, separators=(",", ":")))
+        return answer
 
     def test_each_resource_answers_with_query_on_the_loaded_data_and_the_data_line(self):
         s = self.server

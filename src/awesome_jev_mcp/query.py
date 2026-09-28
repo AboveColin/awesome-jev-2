@@ -50,7 +50,8 @@ FLAGS_NOTE = (
 COLLECTIONS_NOTE = (
     "Curated entry points: editorial paths through the catalogue, each pick with why it is "
     "there (reason) and what to watch for (caution). A pick is editorial relevance, not a "
-    "runtime certification; nothing here was executed."
+    "runtime certification. This catalogue ran none of them; a measurement a pick reports is "
+    "its author's, not reproduced here."
 )
 
 # Where each pattern's "when NOT to use this" lives: docs/patterns.md, one
