@@ -6,9 +6,16 @@ Jev (https://docs.typesafe.ai/) returns typed decisions rather than text: a `cho
 
 ## Machine-readable data
 
-Catalog (<!--n:entries-->1207<!--/n--> entries): https://raw.githubusercontent.com/kydlikebtc/awesome-jev/main/catalog.json
-Retired entries (dead links): https://raw.githubusercontent.com/kydlikebtc/awesome-jev/main/retired.json
-JSON Schema for one entry: https://raw.githubusercontent.com/kydlikebtc/awesome-jev/main/schema/entry.schema.json
+Served by the repository's GitHub Pages site, rebuilt from `main` whenever the data changes (Pages sends `Access-Control-Allow-Origin: *`). The catalogue is too large to read whole, so start from the index and read one decision pattern at a time:
+
+Index of the per-pattern files, with each pattern's row count and its file's address and size: https://kydlikebtc.github.io/awesome-jev/api/v1/index.json
+One decision pattern's rows: https://kydlikebtc.github.io/awesome-jev/api/v1/patterns/<pattern>.json (for example safety-gating.json; the keys are listed under "Two axes"). Rows are shaped and ordered as the MCP server's `search_examples` returns them, and every row filed under the pattern is there, caveat flags included: a row flagged `not-jev` or `shadow-mode-only` is not an example of deciding with Jev, and the server leaves those out by default. A row can sit under several patterns.
+Catalog (<!--n:entries-->1207<!--/n--> entries): https://kydlikebtc.github.io/awesome-jev/catalog.json
+Retired entries (dead links): https://kydlikebtc.github.io/awesome-jev/retired.json
+JSON Schema for one entry: https://kydlikebtc.github.io/awesome-jev/schema/entry.schema.json
+This file: https://kydlikebtc.github.io/awesome-jev/llms.txt
+
+If the site is unreachable, every file above except those under `api/` is also at the same path under https://raw.githubusercontent.com/kydlikebtc/awesome-jev/main/ (as committed on `main`), for example https://raw.githubusercontent.com/kydlikebtc/awesome-jev/main/catalog.json.
 
 Each entry carries the fields defined in the JSON Schema: <!--n:fields-->slug, title, summary, summary_source, summary_zh, zh_machine, url, kind, patterns, patterns_reviewed, question_types, languages, platforms, author, repo, stars, repo_license, repo_created_at, repo_pushed_at, repo_commits, package, evidence, primitives_seen, evidence_none, official, has_code, published, first_seen, checked, link_status, flags, notes, notes_zh, sources, license<!--/n-->. `summary` is English and `summary_zh` Chinese; `summary_source` says whose words `summary` is (`upstream-description`: the project's own GitHub description; `upstream-description-stale`: taken from that description, which no longer reads the same; `curated`: written for this catalogue; absent: not recorded); `evidence` names the file a claim was read in, and `evidence_none` says why no file can be cited.
 
@@ -39,9 +46,10 @@ MCP server: in Claude Code, `/plugin marketplace add kydlikebtc/awesome-jev` the
 
 Agent skill: https://github.com/kydlikebtc/awesome-jev/blob/main/skills/awesome-jev/SKILL.md — the facts generated Jev code most often gets wrong, and the design rules worth following.
 
-Decision taxonomy: https://raw.githubusercontent.com/kydlikebtc/awesome-jev/main/patterns.json
-Kind and flag labels (EN/中文): https://raw.githubusercontent.com/kydlikebtc/awesome-jev/main/taxonomy.json
-Platform matrix: https://raw.githubusercontent.com/kydlikebtc/awesome-jev/main/compat.json
+Decision taxonomy: https://kydlikebtc.github.io/awesome-jev/patterns.json
+Kind and flag labels (EN/中文): https://kydlikebtc.github.io/awesome-jev/taxonomy.json
+Platform matrix: https://kydlikebtc.github.io/awesome-jev/compat.json
+(Each also under https://raw.githubusercontent.com/kydlikebtc/awesome-jev/main/, as above.)
 
 ## What is verified
 

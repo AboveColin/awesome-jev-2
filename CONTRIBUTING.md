@@ -76,7 +76,10 @@ python3 scripts/assemble_site.py && python3 -m http.server --directory site
 
 A local preview has no link-preview tags: `site/index.html` keeps a
 placeholder in git, and only the Pages deploy (`assemble_site.py --deploy`)
-writes them.
+writes them. The same command writes the files the site serves to agents —
+`site/api/v1/`, one JSON file per decision pattern, and copies of
+`retired.json`, the schema and `llms.txt` — which, like every other file it
+writes, are never committed.
 
 ### The review card
 

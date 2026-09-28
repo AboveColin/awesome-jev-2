@@ -23,7 +23,8 @@
 # for a pull request, so code from a fork never runs with a write token. It
 # commits as github-actions[bot]. A push made with GITHUB_TOKEN triggers no
 # other workflow, and none needs to run: nothing Pages builds from is
-# generated (the link-preview tags are written at deploy), and the push that
+# generated (the link-preview tags are written at deploy, and the llms.txt it
+# publishes has its values refilled there), and the push that
 # changed a source already triggered pages and description. So, unlike
 # metadata.yml, it holds no `actions: write` and dispatches nothing.
 #

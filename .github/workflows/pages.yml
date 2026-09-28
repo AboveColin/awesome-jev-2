@@ -1,5 +1,7 @@
 # Publishes site/ to GitHub Pages with catalog.json copied in at build time, so
-# the data lives in exactly one place in the repo.
+# the data lives in exactly one place in the repo. The same build writes the
+# files agents read from this domain: retired.json, the entry schema, llms.txt
+# and one JSON file per decision pattern under api/v1/ (assemble_site.py).
 #
 # Injection review: no `github.event.*` value is referenced anywhere in this
 # workflow, so no attacker-controlled string can reach a `run:` block. The one
@@ -17,14 +19,20 @@ on:
       - "patterns.json"
       - "taxonomy.json"
       - "collections.json"
+      - "retired.json"
+      - "schema/**"
+      - "llms.txt"
       - "scripts/_stats.py"
       - "scripts/_markers.py"
       - "scripts/assemble_site.py"
+      - "scripts/build_docs.py"
       - "scripts/check_collections.py"
       - "scripts/check_site_data.py"
       - "scripts/classify.py"
       - "scripts/render_images.py"
       - "scripts/sibling_lists.py"
+      - "scripts/site_api.py"
+      - "src/awesome_jev_mcp/query.py"
       - ".github/workflows/pages.yml"
   workflow_dispatch:
 

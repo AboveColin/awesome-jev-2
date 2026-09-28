@@ -68,11 +68,20 @@ The Claude Code plugin for this repository starts the server for you. Elsewhere,
 package, install it from the repository instead:
 `pip install git+https://github.com/kydlikebtc/awesome-jev`.
 
-Without it, read
+Without it, start from
+[`api/v1/index.json`](https://kydlikebtc.github.io/awesome-jev/api/v1/index.json)
+on the catalogue's site. It lists every decision pattern with its row count and
+the address of a small file holding that pattern's rows, shaped as
+`search_examples` returns them, caveat flags included: read the one pattern you
+need rather than the whole catalogue, and skip rows flagged `not-jev` or
+`shadow-mode-only`, as the server does. Read
+[`compat.json`](https://kydlikebtc.github.io/awesome-jev/compat.json) before
+writing a model string. If the site is unreachable, the same data files are on
+GitHub:
 [`catalog.json`](https://raw.githubusercontent.com/kydlikebtc/awesome-jev/main/catalog.json)
 and
-[`compat.json`](https://raw.githubusercontent.com/kydlikebtc/awesome-jev/main/compat.json)
-directly, or [the searchable site](https://kydlikebtc.github.io/awesome-jev/).
+[`compat.json`](https://raw.githubusercontent.com/kydlikebtc/awesome-jev/main/compat.json).
+A person can search [the site](https://kydlikebtc.github.io/awesome-jev/) itself.
 
 ## Design rules worth following
 

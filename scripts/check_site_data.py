@@ -11,6 +11,12 @@ can never be committed there again; after `assemble_site.py --deploy` it must be
 exactly the tags the current stats produce, so Pages cannot publish a page whose
 link preview is missing or stale.
 
+And it holds the files published for agents to what the catalogue gives:
+site/llms.txt to llms.txt with its values refilled, and site/api/v1/ to a
+rebuild from site/catalog.json, with each pattern file holding as many rows as
+stats.json's by_pattern counts and the index listing exactly patterns.json's
+keys (scripts/site_api.py).
+
 Run: python3 scripts/check_site_data.py
      python3 scripts/check_site_data.py --deploy    # pages.yml, after assemble --deploy
 """
@@ -24,7 +30,10 @@ import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 
-from assemble_site import META_PLACEHOLDER, ROOT, RUNTIME_FILES, meta_block, meta_body, stats_payload  # noqa: E402
+import site_api  # noqa: E402
+from assemble_site import (  # noqa: E402
+    META_PLACEHOLDER, PUBLISHED, ROOT, RUNTIME_FILES, SITE_URL, meta_block, meta_body, stats_payload,
+)
 from check_collections import validate_collections  # noqa: E402
 
 # The site renders these fields unconditionally; a missing one is a blank cell.
@@ -59,12 +68,20 @@ def main(argv: list[str] | None = None) -> int:
         help="require the link-preview tags written by assemble_site.py --deploy",
     )
     args = parser.parse_args(argv)
+    current = stats_payload()
 
     for name in RUNTIME_FILES:
         copy = ROOT / "site" / name
         if not copy.exists():
             print(f"error: site/{name} is missing; the Pages job should copy it in", file=sys.stderr)
             return 1
+        if name == "llms.txt":
+            # Published with its inline values refilled from the current stats.
+            if copy.read_text() != site_api.llms_text((ROOT / name).read_text(), current):
+                print(f"error: site/{name} is not {name} with current values; run assemble_site.py", file=sys.stderr)
+                return 1
+            print(f"site/{name} is {name} with its values refilled from _stats.compute()")
+            continue
         if json.loads((ROOT / name).read_text()) != json.loads(copy.read_text()):
             print(f"error: site/{name} differs from {name}", file=sys.stderr)
             return 1
@@ -88,6 +105,20 @@ def main(argv: list[str] | None = None) -> int:
     )
 
     catalog = json.loads((ROOT / "site" / "catalog.json").read_text())
+    patterns = json.loads((ROOT / "site" / "patterns.json").read_text())["patterns"]
+    problems = site_api.api_problems(
+        ROOT / "site", catalog, patterns, current,
+        site_url=SITE_URL, published=PUBLISHED,
+    )
+    if problems:
+        for problem in problems:
+            print(f"error: {problem}", file=sys.stderr)
+        return 1
+    print(
+        f"site/{site_api.INDEX} and {len(patterns)} pattern file(s) match a rebuild from site/catalog.json; "
+        "each holds as many rows as stats.json's by_pattern counts"
+    )
+
     collections = json.loads((ROOT / "site" / "collections.json").read_text())
     errors = validate_collections(collections, catalog)
     if errors:

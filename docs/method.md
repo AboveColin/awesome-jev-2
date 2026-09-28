@@ -830,6 +830,7 @@ catalogue passed 800, and no build ever went red.
 | Counts and tables about the catalogue | Whenever a row is added or edited | Generated from `catalog.json` — the READMEs by `build_readme.py`, the figures by `build_assets.py`, and every number inside the hand-written docs and `llms.txt` by `build_docs.py`. The site's link-preview tags are written into the Pages artifact at deploy by `assemble_site.py --deploy` and never committed. All numbers share one definition in `scripts/_stats.py`. `lint` regenerates all of them on every run (next row), and `lint_docs.py` rejects a catalogue count typed anywhere else. |
 | Generated files after a merge | Whenever a pull request lands | A pull request need only change the sources. `lint` runs `regenerate.py` on every event, then `check_generated.py` decides: on a pull request each generated file must be untouched since the merge base or byte-identical to the regenerated output, with every verdict in the run's summary; on `main`, drift is handed to the `regenerate` job, which rebuilds from the tip, runs `lint`'s checks again and commits `chore: regenerate from catalog.json` as `github-actions[bot]` — rebasing if `main` moved, leaving a `regenerate/<sha>` branch if that no longer applies, never force-pushing. A dispatched or manual `lint` run is strict: any drift fails. |
 | Images that show data | Same | Rendered from the data on every Pages deploy by `render_images.py` and never committed: the site's `og:image`, and the README and compatibility screenshots. The deploy refuses to publish a page that did not finish loading its data. |
+| Files the site serves to agents | Same | Written into the Pages artifact at deploy by `assemble_site.py` and never committed: `retired.json`, the entry schema and `llms.txt` beside the page's own data, and under `api/v1/` an index plus one JSON file per decision pattern (`site_api.py`), each row shaped and ordered by the MCP server's own `query.py`. `check_site_data.py` refuses to publish a pattern file that differs from a rebuild or holds a different number of rows than `stats.json` counts for its pattern, and an index whose keys are not `patterns.json`'s. `llms.txt` is published with its values refilled from the same stats, so the site's copy never trails the data beside it. |
 | The GitHub social preview | Never | It can only be uploaded by hand, so it is the durable card: its one figure is a floor ("800+") that growth can only make an understatement, never wrong. `description` reports whether one is uploaded. |
 | The repository description | When the count crosses a hundred, or the wording changes | Only an admin can edit it, so it states the count floored to the hundred: `_stats.pitch_public()`, the same sentence as the site's `description` and `og:description`. The `description` workflow compares the whole sentence on every push to `main`; on drift it warns and keeps one open issue, labelled `description`, holding the exact `gh repo edit` command, instead of failing a build nobody but an admin can fix. `lint` prints the would-be sentence on every run, pull requests included. Every other surface — the READMEs, `status.md`, `llms.txt`, the figures — carries the exact count. |
 | Labels for patterns, kinds and flags | When the taxonomy changes | One copy each, in `patterns.json` and `taxonomy.json`, read by the README generators and by the site at runtime. `lint` checks both against the schema; `lint_docs` checks `docs/patterns.md` has a section for each pattern. |
@@ -905,6 +906,27 @@ every tool, called 3,224 ways on the catalogue of that day, returned the same
 bytes before and after, and the real SDK registered the same tools with the
 same schemas. `publish`'s smoke test now also asks that SDK, which nothing
 else here installs, which tools it registered.
+
+Since 2026-09-28, the Pages site also serves, from its own domain, what an
+agent without the MCP server reads: `retired.json`, `schema/entry.schema.json`,
+`llms.txt`, and under `api/v1/` an `index.json` and one file per decision
+pattern (`api/v1/patterns/<key>.json`). Until then `catalog.json` was the only
+way in — 2,773,876 bytes on that day, which no agent reads whole — and
+`llms.txt`, the schema and `retired.json` answered only from
+raw.githubusercontent.com, while `llms.txt` and the agent skill told agents to
+read the catalogue directly. That day the index was 7 KB and the eighteen
+pattern files ran from 1 KB (`recommendation`) to 231 KB (`overview`), median
+23 KB. A row in them is exactly what the MCP server's `search_examples` returns
+for it, in the same order: `assemble_site.py` loads the server's
+`src/awesome_jev_mcp/query.py` by its path. Nothing is filtered: a pattern file
+holds every row filed under its pattern, caveats attached, so its count is the
+catalogue's, and it names the caveats (`not-jev`, `shadow-mode-only`) that mean
+a row is not an example of deciding with Jev, which the server leaves out by
+default. The only date in them is the catalogue's newest successful link check,
+never the time of the build. `llms.txt` and the skill now give the Pages
+addresses first and the raw ones as the fallback; the files under `api/` exist
+only on Pages. A file missing there answers with the site's HTML 404 page, not
+JSON: Pages has one 404 page per site.
 
 Since 2026-09-27, a pull request no longer has to carry generated files, and
 `lint` no longer fails a pull request because one is stale. Every pull request

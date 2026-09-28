@@ -92,6 +92,7 @@ class AssembleTest(unittest.TestCase):
         self.root = pathlib.Path(tmp.name)
         (self.root / "site").mkdir()
         for name in assemble_site.RUNTIME_FILES:
+            (self.root / name).parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(ROOT / name, self.root / name)
         self.index = self.root / "site" / "index.html"
         shutil.copyfile(INDEX, self.index)
