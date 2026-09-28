@@ -96,7 +96,7 @@
 **何时不该用 —— 这一条请仔细读：** 概率性的闸门是**纵深防御，不是安全边界**。任何真正具有破坏性或不可逆的操作，都需要确定性的规则、权限系统或人。用决策模型去拦住粗心，而不是去围堵对抗：输入由攻击者挑选，一个 99% 的情况下都正确的模型，正是攻击者会去试探剩下那 1% 的模型。厂商的能力参差文档把对抗性内容列为已知弱项。
 
 <!-- catalogued-safety-gating:start -->
-目录中的**安全闸门**：共 138 条，[逐条列出并附警示](by-pattern/safety-gating.zh-CN.md) · [站点筛选](https://kydlikebtc.github.io/awesome-jev/?p=safety-gating&lang=zh)。
+目录中的**安全闸门**：共 139 条，[逐条列出并附警示](by-pattern/safety-gating.zh-CN.md) · [站点筛选](https://kydlikebtc.github.io/awesome-jev/?p=safety-gating&lang=zh)。
 <!-- catalogued-safety-gating:end -->
 
 ---
@@ -126,7 +126,7 @@
 **何时不该用：** 错误本身已经是机器可读的时候。一个带 `Retry-After` 头的 HTTP 429 不需要模型；它需要你去读那个头。先走确定性规则，再把那些说不清的情况交给决策模型。
 
 <!-- catalogued-retry-control:start -->
-目录中的**重试控制**：共 6 条，[逐条列出并附警示](by-pattern/retry-control.zh-CN.md) · [站点筛选](https://kydlikebtc.github.io/awesome-jev/?p=retry-control&lang=zh)。
+目录中的**重试控制**：共 7 条，[逐条列出并附警示](by-pattern/retry-control.zh-CN.md) · [站点筛选](https://kydlikebtc.github.io/awesome-jev/?p=retry-control&lang=zh)。
 <!-- catalogued-retry-control:end -->
 
 ---
@@ -142,7 +142,7 @@
 **注：** 挑选阈值是政策决定，不是建模决定。它应该放在配置里，并对照实测结果来复核。见 [`../examples/README.md`](../examples/README.md)。
 
 <!-- catalogued-human-escalation:start -->
-目录中的**人工升级**：共 67 条，[逐条列出并附警示](by-pattern/human-escalation.zh-CN.md) · [站点筛选](https://kydlikebtc.github.io/awesome-jev/?p=human-escalation&lang=zh)。
+目录中的**人工升级**：共 68 条，[逐条列出并附警示](by-pattern/human-escalation.zh-CN.md) · [站点筛选](https://kydlikebtc.github.io/awesome-jev/?p=human-escalation&lang=zh)。
 <!-- catalogued-human-escalation:end -->
 
 ---
@@ -158,7 +158,7 @@
 **何时不该用：** 当你的几个模型区别在于能力而不是成本时。在搭路由器之前，先确认便宜的那条路对简单的请求确实够用。
 
 <!-- catalogued-model-routing:start -->
-目录中的**模型路由**：共 43 条，[逐条列出并附警示](by-pattern/model-routing.zh-CN.md) · [站点筛选](https://kydlikebtc.github.io/awesome-jev/?p=model-routing&lang=zh)。
+目录中的**模型路由**：共 44 条，[逐条列出并附警示](by-pattern/model-routing.zh-CN.md) · [站点筛选](https://kydlikebtc.github.io/awesome-jev/?p=model-routing&lang=zh)。
 <!-- catalogued-model-routing:end -->
 
 ---

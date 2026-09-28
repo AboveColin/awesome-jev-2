@@ -4,7 +4,7 @@
 
 <sub>[awesome-jev](../README.md) · [中文](shape.zh-CN.md)</sub>
 
-Counts that describe this catalogue as a dataset, regenerated from `catalog.json` whenever it changes; the newest link check behind them is dated **2026-09-24**. They describe what the catalogue holds, which is what reached it through the sibling directories, this repository's discovery and its contributors, not the ecosystem at large. A star band is a popularity signal, not a quality verdict, and nothing here was run or reproduced by this repository. `python3 scripts/counts.py` prints the same numbers as text; the headline figures are on [the status page](status.md).
+Counts that describe this catalogue as a dataset, regenerated from `catalog.json` whenever it changes; the newest link check behind them is dated **2026-09-25**. They describe what the catalogue holds, which is what reached it through the sibling directories, this repository's discovery and its contributors, not the ecosystem at large. A star band is a popularity signal, not a quality verdict, and nothing here was run or reproduced by this repository. `python3 scripts/counts.py` prints the same numbers as text; the headline figures are on [the status page](status.md).
 
 ## Evidence by decision pattern
 
@@ -15,11 +15,11 @@ What the catalogue records about the rows filed under each pattern: reports coun
 | [Tool selection](by-pattern/tool-selection.md) | 230 | 3 | 222 | 4 | 0 | 12 | 1 | 4 |
 | [Intent routing](by-pattern/intent-routing.md) | 35 | 3 | 25 | 0 | 0 | 2 | 0 | 10 |
 | [Context compaction](by-pattern/context-compaction.md) | 34 | 0 | 34 | 0 | 0 | 2 | 2 | 0 |
-| [Safety gating](by-pattern/safety-gating.md) | 138 | 2 | 133 | 1 | 0 | 10 | 0 | 4 |
+| [Safety gating](by-pattern/safety-gating.md) | 139 | 2 | 133 | 2 | 0 | 10 | 0 | 4 |
 | [Output validation](by-pattern/output-validation.md) | 134 | 2 | 129 | 1 | 0 | 11 | 0 | 4 |
-| [Retry control](by-pattern/retry-control.md) | 6 | 0 | 6 | 0 | 0 | 0 | 0 | 0 |
-| [Human escalation](by-pattern/human-escalation.md) | 67 | 7 | 53 | 4 | 0 | 9 | 0 | 10 |
-| [Model routing](by-pattern/model-routing.md) | 43 | 2 | 38 | 0 | 0 | 0 | 1 | 5 |
+| [Retry control](by-pattern/retry-control.md) | 7 | 0 | 6 | 1 | 0 | 0 | 0 | 0 |
+| [Human escalation](by-pattern/human-escalation.md) | 68 | 7 | 53 | 5 | 0 | 9 | 0 | 10 |
+| [Model routing](by-pattern/model-routing.md) | 44 | 2 | 38 | 1 | 0 | 0 | 1 | 5 |
 | [Speculative fan-out](by-pattern/fan-out.md) | 32 | 3 | 25 | 1 | 0 | 1 | 0 | 6 |
 | [Search & ranking](by-pattern/search-ranking.md) | 64 | 3 | 60 | 0 | 0 | 6 | 1 | 4 |
 | [Structured extraction](by-pattern/data-extraction.md) | 16 | 4 | 12 | 0 | 0 | 1 | 0 | 4 |
@@ -40,7 +40,7 @@ Rows recording each language (`languages`; a row may record several). 28 rows re
 | Language | Rows |
 | --- | --- |
 | `python` | 456 |
-| `typescript` | 401 |
+| `typescript` | 402 |
 | `javascript` | 152 |
 | `rust` | 52 |
 | `go` | 42 |
@@ -66,7 +66,7 @@ Rows recording each language (`languages`; a row may record several). 28 rows re
 | `typesafe-api` and nothing else | 1090 |
 | At least one value another surface in [the compatibility table](compatibility.md) stands for (a gateway, SDK or framework), and not `self-hosted` | 34 |
 | Besides `typesafe-api`, only values no compatibility surface stands for (a host, tool or framework the example runs in, or a route that table does not describe), and not `self-hosted` | 28 |
-| `self-hosted`, whatever else is recorded | 38 |
+| `self-hosted`, whatever else is recorded | 39 |
 | No value recorded | 17 |
 
 Every value rows record, with the compatibility surfaces that stand for it:
@@ -74,9 +74,9 @@ Every value rows record, with the compatibility surfaces that stand for it:
 | Value | Compatibility surface | Rows |
 | --- | --- | --- |
 | `typesafe-api` | `typesafe-native` | 1116 |
-| `self-hosted` | — | 38 |
+| `self-hosted` | — | 39 |
 | `vercel-ai-gateway` | `vercel-eval`, `vercel-compat` | 15 |
-| `claude-code` | — | 8 |
+| `claude-code` | — | 9 |
 | `openrouter` | `openrouter` | 5 |
 | `github` | — | 4 |
 | `langchain` | `langchain` | 4 |
@@ -125,7 +125,7 @@ Rows of each kind per star band, from GitHub's count at the last weekly refresh;
 | Video (`video`) | 3 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | — |
 | Benchmark (`benchmark`) | 70 | 68 | 54 | 8 | 3 | 1 | 1 | 1 | under 10 |
 | Discussion (`discussion`) | 2 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | — |
-| Jev-like alternative (`alternative`) | 57 | 56 | 17 | 21 | 11 | 5 | 2 | 0 | ★10+ |
+| Jev-like alternative (`alternative`) | 58 | 57 | 18 | 21 | 11 | 5 | 2 | 0 | ★10+ |
 
 ## Languages by decision pattern
 
@@ -136,11 +136,11 @@ Rows per pattern recording each of the 6 most recorded languages; the rest share
 | [Tool selection](by-pattern/tool-selection.md) | 89 | 83 | 45 | 4 | 4 | 5 | 1 |
 | [Intent routing](by-pattern/intent-routing.md) | 18 | 13 | 3 | 0 | 1 | 0 | 1 |
 | [Context compaction](by-pattern/context-compaction.md) | 10 | 20 | 3 | 1 | 0 | 0 | 0 |
-| [Safety gating](by-pattern/safety-gating.md) | 46 | 60 | 20 | 5 | 4 | 0 | 4 |
+| [Safety gating](by-pattern/safety-gating.md) | 46 | 61 | 20 | 5 | 4 | 0 | 4 |
 | [Output validation](by-pattern/output-validation.md) | 45 | 52 | 19 | 8 | 3 | 1 | 4 |
-| [Retry control](by-pattern/retry-control.md) | 2 | 1 | 1 | 0 | 0 | 1 | 1 |
-| [Human escalation](by-pattern/human-escalation.md) | 40 | 21 | 0 | 1 | 0 | 0 | 2 |
-| [Model routing](by-pattern/model-routing.md) | 16 | 18 | 9 | 0 | 0 | 1 | 0 |
+| [Retry control](by-pattern/retry-control.md) | 2 | 2 | 1 | 0 | 0 | 1 | 1 |
+| [Human escalation](by-pattern/human-escalation.md) | 40 | 22 | 0 | 1 | 0 | 0 | 2 |
+| [Model routing](by-pattern/model-routing.md) | 16 | 19 | 9 | 0 | 0 | 1 | 0 |
 | [Speculative fan-out](by-pattern/fan-out.md) | 15 | 12 | 3 | 1 | 1 | 1 | 4 |
 | [Search & ranking](by-pattern/search-ranking.md) | 28 | 19 | 5 | 7 | 2 | 0 | 4 |
 | [Structured extraction](by-pattern/data-extraction.md) | 9 | 3 | 4 | 0 | 0 | 0 | 0 |
@@ -154,7 +154,7 @@ Rows per pattern recording each of the 6 most recorded languages; the rest share
 
 ## Patterns filed together
 
-284 rows are filed under more than one pattern. The 10 pairs most often filed on the same row:
+285 rows are filed under more than one pattern. The 10 pairs most often filed on the same row:
 
 | Patterns | Rows |
 | --- | --- |
@@ -167,11 +167,11 @@ Rows per pattern recording each of the 6 most recorded languages; the rest share
 | [Safety gating](by-pattern/safety-gating.md) + [Content scoring](by-pattern/content-scoring.md) | 22 |
 | [Tool selection](by-pattern/tool-selection.md) + [Output validation](by-pattern/output-validation.md) | 19 |
 | [Tool selection](by-pattern/tool-selection.md) + [Content scoring](by-pattern/content-scoring.md) | 17 |
-| [Safety gating](by-pattern/safety-gating.md) + [Human escalation](by-pattern/human-escalation.md) | 16 |
+| [Safety gating](by-pattern/safety-gating.md) + [Human escalation](by-pattern/human-escalation.md) | 17 |
 
 ## Authors
 
-1089 rows name an author; they name 982 different ones, compared by display name without regard to case. 907 of them have one row here, 60 two, and 15 three or more; the most any one author has is 11. No author is named on this page: it shows how concentrated the catalogue is, not who contributes to it.
+1090 rows name an author; they name 983 different ones, compared by display name without regard to case. 908 of them have one row here, 60 two, and 15 three or more; the most any one author has is 11. No author is named on this page: it shows how concentrated the catalogue is, not who contributes to it.
 
 ## Over time
 

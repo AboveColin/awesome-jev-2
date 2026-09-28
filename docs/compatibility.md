@@ -255,7 +255,7 @@ has, the row is also listed in [review-queue.md](review-queue.md#wire-unread).
 | [simple-jev](https://kydlikebtc.github.io/awesome-jev/?lang=en#simple-jev) <sub>featherless-ai/simple-jev</sub> ★100+ | open weights | — | `POST /v1/systemone` | — | `noul` | `noul` | `confidence` | yes | — | [`hf-server/hf_server.py`](https://github.com/featherless-ai/simple-jev/blob/HEAD/hf-server/hf_server.py) · [`eval/benchmarks/jev-1.13/2026-09-20/RUN.md`](https://github.com/featherless-ai/simple-jev/blob/HEAD/eval/benchmarks/jev-1.13/2026-09-20/RUN.md) (not yet read by a person) | **not Jev itself**: A compatible API does not imply compatible calibration, so thresholds do not transfer. |
 | [von](https://kydlikebtc.github.io/awesome-jev/?lang=en#von) <sub>wfzyx/von</sub> ★100+ | open weights | `wfzyx/von` | `POST /v1/systemone` | top level | `noul` | `noul` | `confidence` | — | [link](https://github.com/wfzyx/von#empirical-benchmark) | [`src/von/server.py`](https://github.com/wfzyx/von/blob/HEAD/src/von/server.py) · [`src/von/types.py`](https://github.com/wfzyx/von/blob/HEAD/src/von/types.py) · [`src/von/backends/option_marker_backend.py`](https://github.com/wfzyx/von/blob/HEAD/src/von/backends/option_marker_backend.py) (not yet read by a person) | **not Jev itself**: A compatible API does not imply compatible calibration, so thresholds do not transfer. |
 
-43 more `alternative` rows carry no `wire` record: no one has recorded an interface from their files yet, or their files show none.
+44 more `alternative` rows carry no `wire` record: no one has recorded an interface from their files yet, or their files show none.
 <!-- alternatives:end -->
 
 ---

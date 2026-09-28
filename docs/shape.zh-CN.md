@@ -6,7 +6,7 @@
 
 > 本页中文说明由模型撰写（机翻），未经人工审校。
 
-把本目录当作一个数据集来描述的计数，每当 `catalog.json` 变化就重新生成；其背后最新一次链接检查的日期是 **2026-09-24**。这些数字描述的是目录收录了什么——即经由兄弟目录、本仓库的发现流程和贡献者进入目录的内容——而不是整个生态。star 区间是热度信号，不是质量结论；这里的一切都没有被本仓库运行或复现。`python3 scripts/counts.py` 以文本形式打印同样的数字；主要数字见[状态页](status.md)。
+把本目录当作一个数据集来描述的计数，每当 `catalog.json` 变化就重新生成；其背后最新一次链接检查的日期是 **2026-09-25**。这些数字描述的是目录收录了什么——即经由兄弟目录、本仓库的发现流程和贡献者进入目录的内容——而不是整个生态。star 区间是热度信号，不是质量结论；这里的一切都没有被本仓库运行或复现。`python3 scripts/counts.py` 以文本形式打印同样的数字；主要数字见[状态页](status.md)。
 
 ## 按决策模式看证据
 
@@ -17,11 +17,11 @@
 | [工具选择](by-pattern/tool-selection.zh-CN.md) | 230 | 3 | 222 | 4 | 0 | 12 | 1 | 4 |
 | [意图路由](by-pattern/intent-routing.zh-CN.md) | 35 | 3 | 25 | 0 | 0 | 2 | 0 | 10 |
 | [上下文压缩](by-pattern/context-compaction.zh-CN.md) | 34 | 0 | 34 | 0 | 0 | 2 | 2 | 0 |
-| [安全闸门](by-pattern/safety-gating.zh-CN.md) | 138 | 2 | 133 | 1 | 0 | 10 | 0 | 4 |
+| [安全闸门](by-pattern/safety-gating.zh-CN.md) | 139 | 2 | 133 | 2 | 0 | 10 | 0 | 4 |
 | [输出校验](by-pattern/output-validation.zh-CN.md) | 134 | 2 | 129 | 1 | 0 | 11 | 0 | 4 |
-| [重试控制](by-pattern/retry-control.zh-CN.md) | 6 | 0 | 6 | 0 | 0 | 0 | 0 | 0 |
-| [人工升级](by-pattern/human-escalation.zh-CN.md) | 67 | 7 | 53 | 4 | 0 | 9 | 0 | 10 |
-| [模型路由](by-pattern/model-routing.zh-CN.md) | 43 | 2 | 38 | 0 | 0 | 0 | 1 | 5 |
+| [重试控制](by-pattern/retry-control.zh-CN.md) | 7 | 0 | 6 | 1 | 0 | 0 | 0 | 0 |
+| [人工升级](by-pattern/human-escalation.zh-CN.md) | 68 | 7 | 53 | 5 | 0 | 9 | 0 | 10 |
+| [模型路由](by-pattern/model-routing.zh-CN.md) | 44 | 2 | 38 | 1 | 0 | 0 | 1 | 5 |
 | [并行扇出](by-pattern/fan-out.zh-CN.md) | 32 | 3 | 25 | 1 | 0 | 1 | 0 | 6 |
 | [检索与排序](by-pattern/search-ranking.zh-CN.md) | 64 | 3 | 60 | 0 | 0 | 6 | 1 | 4 |
 | [结构化抽取](by-pattern/data-extraction.zh-CN.md) | 16 | 4 | 12 | 0 | 0 | 1 | 0 | 4 |
@@ -42,7 +42,7 @@
 | 语言 | 行数 |
 | --- | --- |
 | `python` | 456 |
-| `typescript` | 401 |
+| `typescript` | 402 |
 | `javascript` | 152 |
 | `rust` | 52 |
 | `go` | 42 |
@@ -68,7 +68,7 @@
 | 只有 `typesafe-api` | 1090 |
 | 至少有一个值对应[兼容性表](compatibility.md)中的其他接入面（网关、SDK 或框架），且不含 `self-hosted` | 34 |
 | 除 `typesafe-api` 外只记录没有任何兼容性接入面对应的值（示例运行所在的主机、工具或框架，或该表未描述的路径），且不含 `self-hosted` | 28 |
-| 含 `self-hosted`，无论还记录了什么 | 38 |
+| 含 `self-hosted`，无论还记录了什么 | 39 |
 | 未记录任何值 | 17 |
 
 各行记录的每个值，以及对应它的兼容性接入面：
@@ -76,9 +76,9 @@
 | 值 | 兼容性接入面 | 行数 |
 | --- | --- | --- |
 | `typesafe-api` | `typesafe-native` | 1116 |
-| `self-hosted` | — | 38 |
+| `self-hosted` | — | 39 |
 | `vercel-ai-gateway` | `vercel-eval`, `vercel-compat` | 15 |
-| `claude-code` | — | 8 |
+| `claude-code` | — | 9 |
 | `openrouter` | `openrouter` | 5 |
 | `github` | — | 4 |
 | `langchain` | `langchain` | 4 |
@@ -127,7 +127,7 @@
 | 视频 (`video`) | 3 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | — |
 | 基准测试 (`benchmark`) | 70 | 68 | 54 | 8 | 3 | 1 | 1 | 1 | 不足 10 |
 | 讨论 (`discussion`) | 2 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | — |
-| Jev 替代实现 (`alternative`) | 57 | 56 | 17 | 21 | 11 | 5 | 2 | 0 | ★10+ |
+| Jev 替代实现 (`alternative`) | 58 | 57 | 18 | 21 | 11 | 5 | 2 | 0 | ★10+ |
 
 ## 按决策模式看语言
 
@@ -138,11 +138,11 @@
 | [工具选择](by-pattern/tool-selection.zh-CN.md) | 89 | 83 | 45 | 4 | 4 | 5 | 1 |
 | [意图路由](by-pattern/intent-routing.zh-CN.md) | 18 | 13 | 3 | 0 | 1 | 0 | 1 |
 | [上下文压缩](by-pattern/context-compaction.zh-CN.md) | 10 | 20 | 3 | 1 | 0 | 0 | 0 |
-| [安全闸门](by-pattern/safety-gating.zh-CN.md) | 46 | 60 | 20 | 5 | 4 | 0 | 4 |
+| [安全闸门](by-pattern/safety-gating.zh-CN.md) | 46 | 61 | 20 | 5 | 4 | 0 | 4 |
 | [输出校验](by-pattern/output-validation.zh-CN.md) | 45 | 52 | 19 | 8 | 3 | 1 | 4 |
-| [重试控制](by-pattern/retry-control.zh-CN.md) | 2 | 1 | 1 | 0 | 0 | 1 | 1 |
-| [人工升级](by-pattern/human-escalation.zh-CN.md) | 40 | 21 | 0 | 1 | 0 | 0 | 2 |
-| [模型路由](by-pattern/model-routing.zh-CN.md) | 16 | 18 | 9 | 0 | 0 | 1 | 0 |
+| [重试控制](by-pattern/retry-control.zh-CN.md) | 2 | 2 | 1 | 0 | 0 | 1 | 1 |
+| [人工升级](by-pattern/human-escalation.zh-CN.md) | 40 | 22 | 0 | 1 | 0 | 0 | 2 |
+| [模型路由](by-pattern/model-routing.zh-CN.md) | 16 | 19 | 9 | 0 | 0 | 1 | 0 |
 | [并行扇出](by-pattern/fan-out.zh-CN.md) | 15 | 12 | 3 | 1 | 1 | 1 | 4 |
 | [检索与排序](by-pattern/search-ranking.zh-CN.md) | 28 | 19 | 5 | 7 | 2 | 0 | 4 |
 | [结构化抽取](by-pattern/data-extraction.zh-CN.md) | 9 | 3 | 4 | 0 | 0 | 0 | 0 |
@@ -156,7 +156,7 @@
 
 ## 一起归档的模式
 
-有 284 行归入了不止一个模式。最常出现在同一行上的 10 对模式：
+有 285 行归入了不止一个模式。最常出现在同一行上的 10 对模式：
 
 | 模式 | 行数 |
 | --- | --- |
@@ -169,11 +169,11 @@
 | [安全闸门](by-pattern/safety-gating.zh-CN.md) + [内容评分](by-pattern/content-scoring.zh-CN.md) | 22 |
 | [工具选择](by-pattern/tool-selection.zh-CN.md) + [输出校验](by-pattern/output-validation.zh-CN.md) | 19 |
 | [工具选择](by-pattern/tool-selection.zh-CN.md) + [内容评分](by-pattern/content-scoring.zh-CN.md) | 17 |
-| [安全闸门](by-pattern/safety-gating.zh-CN.md) + [人工升级](by-pattern/human-escalation.zh-CN.md) | 16 |
+| [安全闸门](by-pattern/safety-gating.zh-CN.md) + [人工升级](by-pattern/human-escalation.zh-CN.md) | 17 |
 
 ## 作者
 
-有 1089 行写明了作者，共 982 位不同的作者（按显示名比较，不区分大小写）。其中 907 位在本目录只有一行，60 位有两行，15 位有三行或更多；单个作者最多有 11 行。本页不列出任何作者的名字：它显示的是目录的集中程度，而不是谁在贡献。
+有 1090 行写明了作者，共 983 位不同的作者（按显示名比较，不区分大小写）。其中 908 位在本目录只有一行，60 位有两行，15 位有三行或更多；单个作者最多有 11 行。本页不列出任何作者的名字：它显示的是目录的集中程度，而不是谁在贡献。
 
 ## 随时间的变化
 

@@ -141,7 +141,7 @@ for the other 1%. The vendor's jaggedness doc names adversarial content as a
 known weak spot.
 
 <!-- catalogued-safety-gating:start -->
-**Safety gating** in the catalogue: 138 rows, [each listed with its caveats](by-pattern/safety-gating.md) · [the site's filter](https://kydlikebtc.github.io/awesome-jev/?p=safety-gating&lang=en).
+**Safety gating** in the catalogue: 139 rows, [each listed with its caveats](by-pattern/safety-gating.md) · [the site's filter](https://kydlikebtc.github.io/awesome-jev/?p=safety-gating&lang=en).
 <!-- catalogued-safety-gating:end -->
 
 ---
@@ -178,7 +178,7 @@ critique for the cases it rejects.
 Reach for a decision model for the messy cases, after the deterministic rules.
 
 <!-- catalogued-retry-control:start -->
-**Retry control** in the catalogue: 6 rows, [each listed with its caveats](by-pattern/retry-control.md) · [the site's filter](https://kydlikebtc.github.io/awesome-jev/?p=retry-control&lang=en).
+**Retry control** in the catalogue: 7 rows, [each listed with its caveats](by-pattern/retry-control.md) · [the site's filter](https://kydlikebtc.github.io/awesome-jev/?p=retry-control&lang=en).
 <!-- catalogued-retry-control:end -->
 
 ---
@@ -199,7 +199,7 @@ belongs in config, reviewed against measured outcomes. See
 [`../examples/README.md`](../examples/README.md).
 
 <!-- catalogued-human-escalation:start -->
-**Human escalation** in the catalogue: 67 rows, [each listed with its caveats](by-pattern/human-escalation.md) · [the site's filter](https://kydlikebtc.github.io/awesome-jev/?p=human-escalation&lang=en).
+**Human escalation** in the catalogue: 68 rows, [each listed with its caveats](by-pattern/human-escalation.md) · [the site's filter](https://kydlikebtc.github.io/awesome-jev/?p=human-escalation&lang=en).
 <!-- catalogued-human-escalation:end -->
 
 ---
@@ -218,7 +218,7 @@ tiers in code — the second is easier to re-tune when your tiers change.
 the cheap path is genuinely adequate for the easy cases before building a router.
 
 <!-- catalogued-model-routing:start -->
-**Model routing** in the catalogue: 43 rows, [each listed with its caveats](by-pattern/model-routing.md) · [the site's filter](https://kydlikebtc.github.io/awesome-jev/?p=model-routing&lang=en).
+**Model routing** in the catalogue: 44 rows, [each listed with its caveats](by-pattern/model-routing.md) · [the site's filter](https://kydlikebtc.github.io/awesome-jev/?p=model-routing&lang=en).
 <!-- catalogued-model-routing:end -->
 
 ---
