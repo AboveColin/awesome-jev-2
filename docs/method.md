@@ -441,9 +441,11 @@ missing from the Chinese flagged 839 machine translations and 121 of the
 hand-written summaries, because every English sentence starts with one. A
 name-like word missing from the Chinese, one with a capital after its first
 letter or with letters and digits together (TypeSafe, MCP, OpenRouter, L1),
-flagged 494 machine translations and only 7 hand-written ones, but 236 of the
-494 lacked nothing except "TypeSafe" or "AI" in a sentence that still says Jev
-or 智能体: a translation style, not a loss. So no row shows a signal. The READMEs,
+flagged about 490 machine translations and only 7 or 8 hand-written ones (the
+counts move by a few with how the English is split into words), but about half
+of those machine translations lacked nothing except "TypeSafe" or "AI" in a
+sentence that still says Jev or 智能体: a translation style, not a loss. So no
+row shows a signal. The READMEs,
 the pattern pages and the site show only the (机翻) mark, which records who wrote
 the words, and the generated [translation queue](zh-queue.md) lists every
 machine translation on a row at ★100+ (82 that day, 17 of them at ★1k+), then
