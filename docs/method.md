@@ -421,6 +421,46 @@ existing machine-translation mark; the MCP server returns the field with the
 summary; lint warns about marketing words and emoji only in a summary marked
 `curated`.
 
+Since 2026-09-27, the machine translations are compared with their English, and
+the ones most readers see are listed first for a person to replace. That day
+1,011 of the 1,207 Chinese summaries were machine-translated (`zh_machine`).
+Every Chinese surface marked them, the site's Chinese view since the change
+above, but nothing looked at what they said. `scripts/zh_audit.py` applies three
+rules to each: the Chinese has fewer than 30% as many characters as the English
+(`short`; the median machine translation has 0.38); a number the English gives,
+with digit groups joined, does not appear in the Chinese (`numbers`); more than
+60% of the Chinese is ASCII (`ascii`). They flagged 284, 91 and 152 machine
+translations, 457 in all. The same rules flagged 14, 1 and 16 of the 196
+summaries a person wrote, 31 in all (tsai-sc's "1990s" is 90 年代), which is how
+often they fire on a person's translation. Many hits on machine translations are
+plain losses: jev-seo's Chinese drops "100% free ₹0", jev-phishing-bench's turns
+"Claude Haiku 4.5" into "a lightweight LLM", jev-web-analyzer's leaves out that
+it is "powered by ReplyNodes". Some are not: "Connect 4" is 四子棋 and "24/7" is
+全天候. Names were tried as a fourth rule and dropped. A capitalised English word
+missing from the Chinese flagged 839 machine translations and 121 of the
+hand-written summaries, because every English sentence starts with one. A
+name-like word missing from the Chinese, one with a capital after its first
+letter or with letters and digits together (TypeSafe, MCP, OpenRouter, L1),
+flagged 494 machine translations and only 7 hand-written ones, but 236 of the
+494 lacked nothing except "TypeSafe" or "AI" in a sentence that still says Jev
+or 智能体: a translation style, not a loss. So no row shows a signal. The READMEs,
+the pattern pages and the site show only the (机翻) mark, which records who wrote
+the words, and the generated [translation queue](zh-queue.md) lists every
+machine translation on a row at ★100+ (82 that day, 17 of them at ★1k+), then
+the other flagged ones, most-starred band first, capped at 200 with a count of
+the rest. Only a person's own translation takes `zh_machine` off; one a model
+wrote or drafted keeps it, however carefully edited, and says so in `notes`.
+Nothing was re-translated: replacing 1,011 machine translations with another
+model's would swap one unread text for another. Lint warns, and never fails,
+when a change adds a row whose machine translation drops a number: a row whose
+slug is not in `catalog.json` where the branch left the base the check runs with
+(`lint.py --base`, which takes the merge base; `check.py` passes `HEAD^1` on a
+pull request in CI and `origin/main` with `--fix`). Rows already filed are left
+to the queue, since a warning repeated on hundreds of rows at every run is a log
+nobody reads. The READMEs' "what is verified" section and `llms.txt` now give
+the split, which only `docs/status.md` did before; the repository description
+still says "EN/中文", unchanged.
+
 ### The long tail, 2026-09-22
 
 A third run took the next 700 most-cited repositories and added 401, taking the
@@ -626,6 +666,7 @@ python3 scripts/verify_claims.py # re-read every cited call site
 python3 scripts/review_pr.py     # the review card for this branch's rows against origin/main
 python3 scripts/build_assets.py  # regenerate the README figures
 python3 scripts/build_compat.py  # regenerate the compatibility tables
+python3 scripts/zh_audit.py      # the translation queue; --json: every machine translation measured
 python3 scripts/regenerate.py    # or: every generator above, in order
 ```
 

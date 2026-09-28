@@ -275,7 +275,10 @@ def compute() -> dict:
             for e in catalog
             if e.get("summary_source") in SUMMARY_SOURCES[1:] and e.get("zh_machine")
         ),
+        # Who wrote each Chinese summary: a person, or a model (zh_machine).
+        # scripts/zh_audit.py compares the machine translations with their English.
         "zh_hand": sum(1 for e in catalog if not e.get("zh_machine")),
+        "zh_machine": sum(1 for e in catalog if e.get("zh_machine")),
         "patterns_total": len(patterns),
         "patterns_covered": sum(1 for p in patterns if by_pattern[p["key"]]),
         "empty_kinds": [

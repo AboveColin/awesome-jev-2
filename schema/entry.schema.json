@@ -52,7 +52,7 @@
       "maxLength": 300
     },
     "zh_machine": {
-      "description": "True when summary_zh was machine-translated rather than written by hand. The READMEs report the split rather than claiming every row is hand-written.",
+      "description": "True when summary_zh was machine-translated rather than written by hand. The READMEs report the split rather than claiming every row is hand-written. It records who wrote the words, not how good they are: a translation a model wrote or drafted keeps it however a person edited it, and only a person's own translation clears it. docs/zh-queue.md lists these rows for a person to replace.",
       "type": "boolean"
     },
     "url": {

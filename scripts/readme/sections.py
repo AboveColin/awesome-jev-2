@@ -471,6 +471,10 @@ def what_is_verified(page: Page) -> list[str]:
     )
     if lang == "zh" and "verified_summaries" in ZH_MACHINE:
         summaries += " <sub>(机翻)</sub>"
+    # Who wrote the Chinese: a person, or a model (zh_machine, marked on every row).
+    translations = marked(
+        strings, "verified_translations", hand=stats["zh_hand"], machine=stats["zh_machine"], entries=stats["entries"]
+    )
     # A person's reading and a script's text signal, counted apart.
     primitives = marked(
         strings,
@@ -484,7 +488,10 @@ def what_is_verified(page: Page) -> list[str]:
 
     add(f"## {strings['verified_h']}")
     add("")
-    for text in [strings['verified_yes'].format(**stats), strings['verified_read'], summaries, recheck, primitives, strings['verified_no']]:
+    for text in [
+        strings['verified_yes'].format(**stats), strings['verified_read'], summaries, translations, recheck,
+        primitives, strings['verified_no'],
+    ]:
         add(f"- {text}")
         add("")
     add("")

@@ -19,11 +19,19 @@ schema uses a keyword validate() does not enforce.
 Exit code is 0 when clean, 1 when any error was found. Warnings never fail the
 build; they are advice for a reviewer.
 
+With --base REV, lint also compares catalog.json with the one where this
+history left REV (git merge-base) and warns about a row the change adds whose
+machine-translated Chinese leaves out a number its English gives
+(scripts/zh_audit.py). Rows already filed are left to docs/zh-queue.md.
+check.py passes the base: HEAD^1 on a pull request in CI, origin/main with --fix.
+
 Run: python3 scripts/lint.py
+     python3 scripts/lint.py --base origin/main    # also the warnings about rows added since
 """
 
 from __future__ import annotations
 
+import argparse
 import datetime as dt
 import json
 import pathlib
@@ -35,6 +43,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 
 from sibling_lists import FIX as CITATION_FIX  # noqa: E402
 from sibling_lists import citation_problems, listed_urls, read_lists, unlisted_citations  # noqa: E402
+from zh_audit import new_rows_since  # noqa: E402
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 CATALOG = ROOT / "catalog.json"
@@ -735,7 +744,21 @@ def check_all(schema: dict, catalog: Any, retired: Any) -> Findings:
     return report.findings()
 
 
-def main() -> int:
+def check_new_translations(catalog: list, base: str) -> tuple[Findings, str]:
+    """Rows `catalog` adds since commit `base` whose machine translation drops a
+    number the English gives, and a note for the log. Warnings only: the rule is
+    a text comparison (scripts/zh_audit.py), not a reading."""
+    report = Report()
+    found, note = new_rows_since(catalog, base, ROOT)
+    for where, message in found:
+        report.warn(where, message)
+    return report.findings(), note
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
+    parser.add_argument("--base", metavar="REV", help="also warn about rows added since this commit")
+    args = parser.parse_args([] if argv is None else argv)
     for required_file in (CATALOG, RETIRED, SCHEMA):
         if not required_file.exists():
             print(
@@ -748,6 +771,10 @@ def main() -> int:
     retired = json.loads(RETIRED.read_text())
 
     findings = check_all(schema, catalog, retired)
+    if args.base and isinstance(catalog, list):
+        new, note = check_new_translations(catalog, args.base)
+        print(f"note: {note}")
+        findings = Findings(findings.errors, findings.warnings + new.warnings)
     print_report(findings)
     if isinstance(catalog, list) and isinstance(retired, list):
         print(
@@ -767,4 +794,4 @@ def print_report(findings: Findings) -> None:
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(main(sys.argv[1:]))

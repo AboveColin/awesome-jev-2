@@ -29,7 +29,8 @@ python3 scripts/check.py --fix
 ### Generated files are optional
 
 The READMEs, the pages under `docs/by-pattern/`, the figures in `docs/assets/`,
-[`docs/review-queue.md`](docs/review-queue.md) and the generated numbers in
+[`docs/review-queue.md`](docs/review-queue.md),
+[`docs/zh-queue.md`](docs/zh-queue.md) and the generated numbers in
 `docs/status.md`, `docs/sources.md`, `docs/patterns.md`,
 `docs/compatibility.md` and `llms.txt` are all derived from the JSON files at
 the root. You do not need to regenerate them. CI regenerates everything on
@@ -175,9 +176,15 @@ turns red.
   words the project's old ones. The READMEs, pattern pages and site mark the
   project's own words, and [`docs/sources.md`](docs/sources.md#licences) says
   why: the copyright in them is the project author's, not this catalogue's.
-- **`summary_zh`** — write it yourself if you can. If you machine-translated it,
-  set `zh_machine: true`. The READMEs report the split. This field describes
-  translation provenance, not code quality or runtime testing.
+- **`summary_zh`** — write it yourself if you can. If a model translated it,
+  set `zh_machine: true`, and keep it after you edit the model's text: the flag
+  records who wrote the words, not how good they are (see
+  [Claim a translation](#claim-a-translation)). The READMEs report the split.
+  This field describes translation provenance, not code quality or runtime
+  testing. On a row you add with `zh_machine: true`, `check.py --fix` (and CI
+  on your pull request) warns when the Chinese leaves out a number the English
+  gives. The warning never fails the build; it is a text comparison, and a
+  number that does not belong in the Chinese can stay out.
 - **`kind`** — the form of the thing. Use `alternative` for anything that does
   not call Jev, however Jev-shaped it is.
 - **`patterns`** — which decisions it demonstrates. Read
@@ -408,6 +415,44 @@ That is a useful contribution on its own: the weekly refresh then also records
 which catalogued rows it links. Removing a line? Run
 `python3 scripts/attribute_sources.py --offline --write` in the same pull
 request, or lint fails on the citations of the list you removed.
+
+## Claim a translation
+
+Most Chinese summaries were translated in bulk by a model and carry
+`zh_machine: true`; the Chinese README and pattern pages and the site's
+Chinese view mark each one *(机翻)*. [`docs/zh-queue.md`](docs/zh-queue.md)
+lists them for a person to replace: first every one on a row at ★100+, the
+rows most readers see, then the others a script flags, most-starred band
+first. The flags
+(`short`, `numbers`, `ascii`) are text comparisons between the Chinese and the
+English made by `scripts/zh_audit.py`. They point at likely losses; they are
+not verdicts, and a translation nothing flags can still be wrong.
+
+To take some:
+
+1. Pick about ten from the top of the queue and open a draft pull request
+   naming their slugs, so two people do not translate the same rows. A
+   reviewer who reads both languages can check ten summaries against their
+   English; nobody can check a hundred.
+2. For each row, read the English summary and, where it is unclear, the
+   project, then write the Chinese yourself: every number, name and limit the
+   English gives, and nothing it does not. Change `summary_zh`, `zh_machine`
+   and, as below, `notes`/`notes_zh`; nothing else. If the English is wrong
+   too, fix it in a separate pull request.
+3. Only a translation you wrote yourself takes the flag off: delete
+   `zh_machine`. A translation a model wrote or drafted is still a machine
+   translation, however carefully you corrected it: keep `zh_machine: true`
+   and add a sentence to `notes` (and to `notes_zh`, if the row has one)
+   saying a model translated the Chinese, and who checked it against the
+   English, and when. The *(机翻)* mark stays, because it says who wrote the
+   words.
+4. Run `python3 scripts/check.py --fix` and mark the pull request ready. After
+   the merge the bot regenerates the queue, and a row whose `zh_machine` is
+   gone leaves it.
+
+Please do not re-translate rows in bulk with a model. That swaps one unread
+machine translation for another, the rows keep their flag, and the queue's
+signals stop pointing at anything.
 
 ## Reporting a dead link
 

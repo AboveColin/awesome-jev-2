@@ -16,7 +16,7 @@
 - [ ] `stars` / `repo_license` came from the GitHub API, not a badge, and I left `repo_created_at`, `repo_pushed_at` and `repo_commits` to the weekly refresh
 - [ ] `sources` names where I found the row; I left the sibling-list citations (`{"catalog": "owner/name", …}` items) to the weekly refresh
 - [ ] Caveats are flagged, and any flag needing an explanation has a `notes` line
-- [ ] `summary_zh` is hand-written, or `zh_machine: true` is set
+- [ ] `summary_zh` is Chinese I wrote myself, or `zh_machine: true` is set because a model wrote or drafted it (kept even after my edits; a row claimed from `docs/zh-queue.md` then says in `notes` that a model translated it and who checked it)
 - [ ] `summary_source` is `curated` if I wrote or rewrote the summary, and left out if I pasted the repository's own GitHub description (the weekly refresh labels that)
 - [ ] A row started from a discovery draft (`--drafts`): I read its call site myself, checked the `kind`, `patterns` and `languages` the script guessed, and deleted `_draft`. Leave unticked otherwise.
 - [ ] This is my own project (I wrote or maintain it): its row has a source `{"catalog": "author submission", "url": <this pull request>}` and `self-submitted` in `flags`. Leave unticked otherwise.

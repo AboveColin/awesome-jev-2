@@ -38,6 +38,13 @@ the mode:
               compares the merge commit's two parents, push hands drift to
               the regenerate job, anything else is strict.
 
+The same base, where a mode has one, goes to lint.py as --base: it then also
+warns about a row the change adds whose machine-translated Chinese drops a
+number from the English. A pull request in CI compares with HEAD^1, --fix and
+--base with that base; every other run has no base and gives no such warning,
+so the rows already filed are never warned about run after run
+(docs/zh-queue.md lists those).
+
 Stdlib only, like the rest of scripts/.
 
 Run: python3 scripts/check.py           # every check, strict about generated files
@@ -99,6 +106,7 @@ class Step:
     needs: str = ""
     after: tuple[str, ...] = ()  # skipped when one of these failed in the same run
     verdict: bool = False  # check_generated.py: its arguments depend on the mode
+    base: bool = False  # takes --base REV when the mode has a base to compare with
     shown: str = ""  # how the command is printed, when argv is unreadable
 
     def display(self, extra: Iterable[str] = ()) -> str:
@@ -114,7 +122,9 @@ STEPS = (
         "json", "JSON is parseable", ("python3", "-c", JSON_CHECK),
         shown="python3 -c 'json.load' each of " + ", ".join(JSON_FILES),
     ),
-    Step("lint", "Entries are valid against the schema and each other", ("python3", "scripts/lint.py")),
+    Step(
+        "lint", "Entries are valid against the schema and each other", ("python3", "scripts/lint.py"), base=True,
+    ),
     Step("collections", "Curated entry points resolve", ("python3", "scripts/check_collections.py")),
     # Before regenerating, as in CI: no test may assume the committed
     # generated files are current, because a pull request may leave them stale.
@@ -276,6 +286,24 @@ def generated_args(
     return ["pr", "--base", base], f"judged as CI judges a pull request against {base}"
 
 
+def base_args(
+    opts: Options, event: str, commit_exists: Callable[[str], bool] = is_commit
+) -> tuple[list[str], str]:
+    """--base REV for a step that compares this tree with a base (lint's
+    warnings about new rows), and what that base is; no arguments when this
+    mode has none, which leaves those warnings out rather than failing."""
+    if opts.ci:
+        if event == "pull_request":
+            return ["--base", "HEAD^1"], "rows the pull request adds are those not in HEAD^1"
+        return [], f"no base ({event or 'no event'}): nothing is compared as a new row"
+    base = opts.base or (DEFAULT_BASE if opts.fix else None)
+    if base is None:
+        return [], "no base (--fix or --base gives one): nothing is compared as a new row"
+    if not commit_exists(base):
+        return [], f"{base} is not a commit in this clone: nothing is compared as a new row"
+    return ["--base", base], f"rows this tree adds are those not in {base}"
+
+
 def execute(argv: list[str]) -> int:
     env = {**os.environ, "PYTHONUNBUFFERED": "1"}
     return subprocess.run(argv, cwd=ROOT, env=env).returncode
@@ -326,6 +354,9 @@ class Runner:
         if broken:
             return f"{', '.join(broken)} failed", None, []
         extra: list[str] = []
+        if step.base:
+            extra, meaning = base_args(self.opts, self.event, self.commit_exists)
+            self.say(f"    {step.name} — {meaning}")
         if step.verdict:
             args, meaning = generated_args(self.opts, self.event, self.commit_exists)
             if args is None:

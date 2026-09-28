@@ -323,6 +323,8 @@ def inline_values(s: dict) -> dict[str, object]:
         "patterns_rule_identical": s["patterns_rule_identical"],
         "patterns_reviewed": s["patterns_reviewed"],
         "overview_unindexed": s["overview_unindexed"],
+        "zh_hand": s["zh_hand"],
+        "zh_machine": s["zh_machine"],
         "kinds": ", ".join(s["kinds"]),
         "pattern_keys": ", ".join(s["pattern_keys"]),
         "fields": ", ".join(s["fields"]),

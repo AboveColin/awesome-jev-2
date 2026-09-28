@@ -24,8 +24,8 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 
 # Fully generated: their numbers are checked by the generator that wrote them.
 # docs/by-pattern/ is build_readme.py's output too, one page per pattern;
-# docs/review-queue.md is build_review_queue.py's.
-GENERATED = {"README.md", "README.zh-CN.md", "docs/review-queue.md"}
+# docs/review-queue.md is build_review_queue.py's and docs/zh-queue.md zh_audit.py's.
+GENERATED = {"README.md", "README.zh-CN.md", "docs/review-queue.md", "docs/zh-queue.md"}
 GENERATED_DIRS = ("docs/by-pattern/",)
 # Generated pages that quote other people's files verbatim: the review queue
 # prints each row's `evidence.matched`, which is whatever text a project's code

@@ -149,6 +149,18 @@ EN = {
         "carry no record either way. The weekly refresh compares each summary with its repository's "
         "description and labels a match; only a person marks a summary as written here."
     ),
+    "verified_translations": (
+        "**Who wrote the Chinese** — {hand} of {entries} rows have a Chinese summary a person wrote; a "
+        "model translated the other {machine}, and each of those carries `zh_machine` and is marked "
+        "*(机翻)* in the Chinese README, on the Chinese pattern pages and in the site's Chinese view. "
+        "The [translation queue](docs/zh-queue.md) lists the machine translations for a person to "
+        "replace, most-starred first, beside three text signals a script computes: much shorter than "
+        "the English, a number from the English missing, mostly ASCII. A signal is a comparison, not a "
+        "verdict on a translation, and no row in the READMEs, the pattern pages or the site shows one. "
+        "To take some, see "
+        "[Claim a translation](CONTRIBUTING.md#claim-a-translation); only a translation of your own "
+        "takes `zh_machine` off."
+    ),
     "verified_primitives": (
         "**Which primitives** — {read} rows name in `question_types` the primitives a person read the "
         "code calling. Apart from those, {signal} rows carry `primitives_seen`, a machine text signal: "
@@ -352,6 +364,14 @@ ZH = {
         "{unlabelled} 条未作记录。每周刷新会把每条英文摘要与其仓库描述比对并标出相同者；"
         "只有人才能把摘要标为本目录撰写。"
     ),
+    "verified_translations": (
+        "**中文是谁写的** —— {entries} 行中有 {hand} 行的中文摘要由人撰写；其余 {machine} 行由模型翻译，"
+        "带有 `zh_machine`，并在中文 README、中文模式页面和站点的中文视图中逐条标为 *(机翻)*。"
+        "[翻译队列](docs/zh-queue.md)按星标从高到低列出这些机翻，等待有人替换，并附上脚本计算的三项文本信号："
+        "比英文短得多、缺少英文里的数字、大部分是 ASCII 字符。信号只是对照比较，不是对译文的结论，"
+        "README、模式页面和站点上的各行都不显示信号。认领方法见[认领翻译](CONTRIBUTING.md#claim-a-translation)；"
+        "只有你自己写的译文才能去掉 `zh_machine`。"
+    ),
     "verified_primitives": (
         "**用了哪些原语** —— 有 {read} 行在 `question_types` 中记录了有人读代码时确认调用的原语。"
         "另有 {signal} 行带 `primitives_seen`，这是机器文本信号：每周刷新在该行所引的那一个文件中"
@@ -432,7 +452,7 @@ ZH = {
 ZH_MACHINE = frozenset(
     {
         "stars_note", "verified_recheck", "verified_summaries", "license_summaries", "unindexed_readme",
-        "unindexed_page", "prims_layers", "verified_primitives",
+        "unindexed_page", "prims_layers", "verified_primitives", "verified_translations",
     }
 )
 
