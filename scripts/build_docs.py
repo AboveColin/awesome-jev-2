@@ -352,9 +352,10 @@ def catalogued_block(key: str, n: int, lang: str) -> str:
 
 
 def pattern_blocks(s: dict, patterns: list[dict], lang: str) -> dict[str, str]:
-    """One `catalogued-<key>` block per pattern in patterns.json. A section
-    without its markers fails the build (replace_block), and lint_docs checks
-    each block sits in its own `## key` section."""
+    """One `catalogued-<key>` block per pattern in patterns.json, for
+    docs/patterns.md (`en`) or its Chinese rendering docs/patterns.zh-CN.md
+    (`zh`). A section without its markers fails the build (replace_block), and
+    lint_docs checks each block sits in its own `## key` section."""
     return {f"catalogued-{p['key']}": catalogued_block(p["key"], s["by_pattern"][p["key"]], lang) for p in patterns}
 
 
@@ -417,6 +418,7 @@ def render() -> dict[pathlib.Path, str]:
         },
         "llms.txt": {},
         "docs/patterns.md": pattern_blocks(s, patterns, "en"),
+        "docs/patterns.zh-CN.md": pattern_blocks(s, patterns, "zh"),
     }
 
     out = {}
@@ -458,7 +460,10 @@ def main() -> int:
                 file=sys.stderr,
             )
             return 1
-        print("generated values in docs/status.md, docs/sources.md, docs/patterns.md and llms.txt are up to date")
+        print(
+            "generated values in docs/status.md, docs/sources.md, docs/patterns.md, docs/patterns.zh-CN.md "
+            "and llms.txt are up to date"
+        )
         return 0
 
     print(("rewrote " + ", ".join(rel)) if stale else "nothing to update")

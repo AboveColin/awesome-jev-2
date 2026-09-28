@@ -224,7 +224,9 @@ class CheckPatternDocsTest(unittest.TestCase):
         return f"## {key}\n\n**The decision:** something.\n\n{block}"
 
     def check(self, text: str) -> list[str]:
-        return lint_docs.check_pattern_docs({"docs/patterns.md": text}, self.KEYS)
+        # The English page alone; test_patterns_zh.py holds the Chinese one to the same rules.
+        with unittest.mock.patch.object(lint_docs, "PATTERN_DOCS", ("docs/patterns.md",)):
+            return lint_docs.check_pattern_docs({"docs/patterns.md": text}, self.KEYS)
 
     def test_the_real_pages_pass(self):
         self.assertEqual(lint_docs.check_pattern_docs(), [])

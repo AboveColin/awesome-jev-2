@@ -6,7 +6,7 @@ _选择由哪个下游模型或档位处理请求。_
 
 这个决策的全部已收录例子 —— 共 43 条。同样这些行及其警示也在[索引](../../README.zh-CN.md#模型路由)里；[站点](https://kydlikebtc.github.io/awesome-jev/?p=model-routing&lang=zh)还能按语言、原语和形态进一步筛选。
 
-这个决策的设计说明在英文页面 [docs/patterns.md](../patterns.md#model-routing)：它决定什么、用哪种原语来建模，以及（凡写了的）什么时候不该用决策模型。 <sub>(机翻)</sub>
+这个决策的设计说明见 [docs/patterns.zh-CN.md](../patterns.zh-CN.md#model-routing)：它决定什么、用哪种原语来建模，以及（凡写了的）什么时候不该用决策模型。那一页由模型从[英文版](../patterns.md#model-routing)译写，以英文版为准。 <sub>(机翻)</sub>
 
 本模式各行记录的证据（只是计数，不是结论；一行可能计入多项）：官方文档 2 · 调用点 38 · 接口形态 0 · 仅示例 0 · 独立报告 0 · 负面结果 1 · 未引用文件 5。“独立”指未标 vendor-reported 的基准测试，未经本仓库复现。[各模式并排对照](../shape.zh-CN.md#按决策模式看证据)。 <sub>(机翻)</sub>
 

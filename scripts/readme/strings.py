@@ -560,12 +560,12 @@ ZH = {
         "“独立”指未标 vendor-reported 的基准测试，未经本仓库复现。[各模式并排对照]({shape})。"
     ),
     "design_link": (
-        "这个决策的设计说明在英文页面 [docs/patterns.md]({page})：它决定什么、用哪种原语来建模，"
-        "以及（凡写了的）什么时候不该用决策模型。"
+        "这个决策的设计说明见 [docs/patterns.zh-CN.md]({page})：它决定什么、用哪种原语来建模，"
+        "以及（凡写了的）什么时候不该用决策模型。那一页由模型从[英文版]({en})译写，以英文版为准。"
     ),
     "design_link_overview": (
         "`overview` 在本目录里是什么意思、为什么只归在它下面的带代码项目算作尚未按模式索引，"
-        "见英文页面 [docs/patterns.md]({page})。"
+        "见 [docs/patterns.zh-CN.md]({page})（由模型从[英文版]({en})译写，以英文版为准）。"
     ),
     "official_h": "官方材料",
     "official_intro": (
@@ -683,7 +683,7 @@ REPO_FILES = [
 ]
 
 # A REPO_FILES path the Chinese README links in its Chinese version instead.
-REPO_FILES_ZH = {"docs/shape.md": "docs/shape.zh-CN.md"}
+REPO_FILES_ZH = {"docs/shape.md": "docs/shape.zh-CN.md", "docs/patterns.md": "docs/patterns.zh-CN.md"}
 
 # The data files listed under "Machine-readable data", after catalog.json and
 # retired.json, whose rows carry live counts and are written in sections.py.

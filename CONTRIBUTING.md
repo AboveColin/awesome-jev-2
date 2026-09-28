@@ -35,7 +35,7 @@ The READMEs, the pages under `docs/by-pattern/`,
 figures in `docs/assets/`, [`docs/review-queue.md`](docs/review-queue.md),
 [`docs/zh-queue.md`](docs/zh-queue.md), `examples/index.json` and the
 generated numbers in `docs/status.md`, `docs/sources.md`, `docs/patterns.md`,
-`docs/compatibility.md` and `llms.txt` are all derived from the JSON files at
+`docs/patterns.zh-CN.md`, `docs/compatibility.md` and `llms.txt` are all derived from the JSON files at
 the root (the index from the example files too). You do not need to
 regenerate them. CI regenerates everything on every run, and after your pull
 request is merged, `github-actions[bot]`
@@ -583,7 +583,7 @@ generated file, it may be left to the bot.
 ## Adding a pattern
 
 A pattern earns a heading once **two independent real examples** exist. Adding
-one means editing three places:
+one means editing four places:
 
 1. the enum in `schema/entry.schema.json`
 2. `patterns.json` — the English and Chinese label, the long blurb the README
@@ -593,9 +593,13 @@ one means editing three places:
    ending with a pair of `<!-- catalogued-key:start -->` /
    `<!-- catalogued-key:end -->` markers (key being the pattern's key), which
    `build_docs.py` fills with the count, the pattern's page and the site's filter
+4. `docs/patterns.zh-CN.md`, the same section in Chinese with the same markers.
+   The page says at the top that a model wrote it from the English page and
+   that the English governs; a model's draft of the new section is fine under
+   that line, and a person's is better
 
 `lint.py` fails if the schema and `patterns.json` disagree or a field is
-missing, and `lint_docs.py` fails if `docs/patterns.md` has no section for it
+missing, and `lint_docs.py` fails if either patterns page has no section for it
 or the section has no markers —
 a silent fallback to a raw slug is how a bilingual list starts rotting.
 

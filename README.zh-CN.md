@@ -29,7 +29,7 @@
 <details>
 <summary><b>阅读导航 · 完整目录</b></summary>
 
-[决策模式](docs/patterns.md) · [兼容性](docs/compatibility.md) · [核查指南](docs/vetting.md)
+[决策模式](docs/patterns.zh-CN.md) · [兼容性](docs/compatibility.md) · [核查指南](docs/vetting.md)
 
 - 01 [这是什么](#这是什么)
 - 02 [Jev 返回什么](#jev-返回什么)
@@ -1084,7 +1084,7 @@ _介绍模型或整个领域，而非单一模式。_
 
 | 文件 | 是什么 |
 | --- | --- |
-| [`docs/patterns.md`](docs/patterns.md) | 逐个定义每个模式，并明确写出**什么时候不该用它**。 |
+| [`docs/patterns.zh-CN.md`](docs/patterns.zh-CN.md) | 逐个定义每个模式，并明确写出**什么时候不该用它**。 |
 | [`docs/compatibility.md`](docs/compatibility.md) | 模型串、字段名、请求结构、端点、环境变量 —— 每个平台都不一样。这就是那张对照表。 |
 | [`docs/vetting.md`](docs/vetting.md) | 信任一个条目之前该检查什么，以及大多数人会犯的那一个错。 |
 | [`docs/status.md`](docs/status.md) | 这个生态第一周的真实样貌，包括缺口。 |

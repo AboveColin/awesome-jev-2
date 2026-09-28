@@ -1,5 +1,7 @@
 # Decision patterns
 
+<sub>[中文](patterns.zh-CN.md)</sub>
+
 The catalog is indexed by pattern rather than by resource type, because the blog
 post you read this week is disposable and the pattern is not. This page defines
 each pattern: what decision it makes, why a calibrated decision model suits it,
@@ -415,9 +417,10 @@ keep `overview`, and set `patterns_reviewed` to the date you read it.
 A new pattern earns a heading when there are at least two independent real
 examples of it. Until then it goes under the closest existing one, because a
 taxonomy with empty branches is harder to use than a coarse one. Adding one means
-editing three places — the schema enum, the pattern's entry in
+editing four places — the schema enum, the pattern's entry in
 [`../patterns.json`](../patterns.json) (its labels, blurbs and place in the
-order), and this page, where its `## key` section ends with a pair of
-`catalogued-<key>` markers that `scripts/build_docs.py` fills with the count and
-the links — and the build fails loudly if you miss the labels, the section or
-the markers. See [`../CONTRIBUTING.md`](../CONTRIBUTING.md).
+order), this page, and its Chinese rendering
+[`patterns.zh-CN.md`](patterns.zh-CN.md). On both pages its `## key` section
+ends with a pair of `catalogued-<key>` markers that `scripts/build_docs.py`
+fills with the count and the links, and the build fails loudly if you miss the
+labels, a section or the markers. See [`../CONTRIBUTING.md`](../CONTRIBUTING.md).

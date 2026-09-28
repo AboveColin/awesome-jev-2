@@ -258,7 +258,8 @@ def cover_and_nav(page: Page) -> list[str]:
     toc_label = "阅读导航 · 完整目录" if lang == "zh" else "On this page · full reading map"
     add(f'<summary><b>{toc_label}</b></summary>')
     add("")
-    add(f"[{strings['l_patterns']}](docs/patterns.md) · [{strings['l_compat']}](docs/compatibility.md) · [{strings['l_vetting']}](docs/vetting.md)")
+    patterns_doc = REPO_FILES_ZH.get("docs/patterns.md", "docs/patterns.md") if lang == "zh" else "docs/patterns.md"
+    add(f"[{strings['l_patterns']}]({patterns_doc}) · [{strings['l_compat']}](docs/compatibility.md) · [{strings['l_vetting']}](docs/vetting.md)")
     add("")
     has_measured = any(is_measured(e) for e in catalog)
     for item in section_nav(strings, has_measured=has_measured):

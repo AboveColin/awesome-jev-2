@@ -84,7 +84,7 @@ def render_page(key: str, rows: list[dict], strings: dict) -> str:
         out += [
             unindexed_note(
                 strings, "unindexed_page", n=len(later),
-                patterns="../patterns.md#overview", queue="../review-queue.md#unsorted-overview",
+                patterns=f"{PATTERNS_DOC[lang]}#overview", queue="../review-queue.md#unsorted-overview",
             ),
             "",
         ]
@@ -93,9 +93,10 @@ def render_page(key: str, rows: list[dict], strings: dict) -> str:
     return "\n".join(out)
 
 
-# Where docs/patterns.md, which says how to model each decision, is from a
-# pattern page, per language.
-PATTERNS_DOC = {"en": "../patterns.md", "zh": "../patterns.md"}
+# Where the page saying how to model each decision is, from a pattern page, per
+# language: docs/patterns.md, and docs/patterns.zh-CN.md, a model's Chinese
+# rendering of it, which says the English governs.
+PATTERNS_DOC = {"en": "../patterns.md", "zh": "../patterns.zh-CN.md"}
 
 
 def design_line(key: str, strings: dict) -> str:
@@ -103,7 +104,7 @@ def design_line(key: str, strings: dict) -> str:
     lint_docs requires for every pattern. Overview is a label, not a decision,
     so its line says what the label means instead."""
     name = "design_link_overview" if key == _stats.OVERVIEW else "design_link"
-    return marked(strings, name, page=f"{PATTERNS_DOC[strings['lang_code']]}#{key}")
+    return marked(strings, name, page=f"{PATTERNS_DOC[strings['lang_code']]}#{key}", en=f"{PATTERNS_DOC['en']}#{key}")
 
 
 def highlights(rows: list[dict], strings: dict) -> list[str]:

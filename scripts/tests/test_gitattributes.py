@@ -44,7 +44,8 @@ class GitattributesTest(unittest.TestCase):
 
     def test_hand_written_files_with_marker_blocks_are_not(self):
         paths = [
-            "docs/status.md", "docs/sources.md", "docs/patterns.md", "docs/compatibility.md", "llms.txt",
+            "docs/status.md", "docs/sources.md", "docs/patterns.md", "docs/patterns.zh-CN.md", "docs/compatibility.md",
+            "llms.txt",
             "site/index.html", "examples/README.md", "src/awesome_jev_mcp/README.md",
             "catalog.json", "CONTRIBUTING.md",
         ]

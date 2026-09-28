@@ -162,15 +162,27 @@ def check_count_tables(rel: str, masked: str) -> list[str]:
 # real version drift looks — because `jev-2048` is a catalogued project's name,
 # not a model. And `typesafe/jev…` preceded by a slash is a URL path
 # (github.com/typesafe-ai/jev-…), not a model string.
+#
+# ASCII classes on purpose, not \w: Python's \w matches Chinese characters, so
+# `模型jev-1.13` would have hidden the model string behind its neighbour and
+# `typesafe/jev模型` would have swallowed the neighbour into it. Chinese prose
+# needs no space before a model string, and the Chinese pages are held to
+# compat.json like the English ones.
 MODEL = re.compile(
-    r"(?<![\w/.-])~?typesafe(?:-ai)?[/:]jev[-\w.]*"
-    r"|(?<![\w/.-])jev-(?:latest|preview|\d+\.\d+(?:\.\d+)*)"
+    r"(?<![A-Za-z0-9_/.-])~?typesafe(?:-ai)?[/:]jev[-A-Za-z0-9_.]*"
+    r"|(?<![A-Za-z0-9_/.-])jev-(?:latest|preview|\d+\.\d+(?:\.\d+)*)"
 )
 LIMIT_RULES = (
     # (what, pattern, how to read the captured numbers)
     ("choice options", re.compile(r"\b(?:max(?:imum)?|up to)\s+(\d{2,})\b|\b(\d{2,})\s+options\b", re.I)),
     ("score levels", re.compile(r"\b(\d+)\s*(?:–|-|to)\s*(\d+)\s+(?:ordered\s+)?levels\b", re.I)),
     ("context", re.compile(r"\b(\d+)k\b(?=\s+(?:tokens|for\b|context))", re.I)),
+    # The same limits as the Chinese pages write them: 最多 255 个选项,
+    # 2–10 级 (or 个有序级别), 64k token / 64k 上下文. Narrow like the English
+    # rules: a bare 最多 16 (a project's own batch size) is not a choice limit.
+    ("choice options", re.compile(r"(?<![\d.])(\d{2,})\s*个选项")),
+    ("score levels", re.compile(r"(?<![\d.])(\d+)\s*(?:–|-|到|至)\s*(\d+)\s*个?(?:有序)?(?:等级|级)")),
+    ("context", re.compile(r"(?<![\d.])(\d+)k(?=\s*(?:token\b|上下文|的上下文))", re.I)),
 )
 
 
@@ -298,8 +310,10 @@ def check_compat_prose(compat: dict, facts: tuple, raw: str) -> list[str]:
     return found
 
 
-# The pages that define each pattern.
-PATTERN_DOCS = ("docs/patterns.md",)
+# The pages that define each pattern: the English page, and its Chinese
+# rendering, which a model wrote from it and which says the English governs.
+# Both are held to every pattern in patterns.json.
+PATTERN_DOCS = ("docs/patterns.md", "docs/patterns.zh-CN.md")
 PATTERN_HEAD = re.compile(r"^## ([a-z]+(?:-[a-z]+)*)\s*$", re.M)
 
 
