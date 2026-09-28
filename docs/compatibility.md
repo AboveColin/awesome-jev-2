@@ -196,15 +196,19 @@ but not in CI".
 <!-- notes:end -->
 
 The *Catalogued examples* column counts the catalogue rows whose `platforms`
-record a value the surface lists in compat.json's `catalog_platforms`, and
-links them on the site. A row records how it reaches Jev in the catalogue's own
-words, and some of those words cover more than one surface: a row on Vercel's
-gateway records `vercel-ai-gateway`, not which of the gateway's two routes it
-takes, and `typesafe-api` is recorded both by rows that call the native API
-directly and by rows that reach it through a pass-through recorded beside it.
-Those surfaces are marked *coarse*: a row counted under one may use another. No
-row's value is made finer than the file it cites shows. The MCP server's
-`search_examples(platform=…)` and `compatibility()` count the same rows.
+record a value the surface lists in compat.json's `catalog_platforms`, caveated
+rows included, and links them on the site. A row records how it reaches Jev in
+the catalogue's own words, and some of those words cover more than one surface:
+a row on Vercel's gateway records `vercel-ai-gateway`, not which of the
+gateway's two routes it takes; a row using the AI SDK records `vercel-ai-sdk`
+whether it goes through the gateway or the `@ai-sdk/typesafe-ai` provider; and
+`typesafe-api` is recorded both by rows that call the native API directly and
+by rows that reach it through a pass-through recorded beside it. Those surfaces
+are marked *coarse*: a row counted under one may use another. No row's value is
+made finer than the file it cites shows. The MCP server's `compatibility()`
+gives the same count; its `search_examples(platform=…)` lists the same rows,
+leaving out those flagged as not calling Jev or only in shadow mode unless
+`include_non_jev=True`.
 
 ---
 
