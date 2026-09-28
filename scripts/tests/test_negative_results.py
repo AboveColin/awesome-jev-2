@@ -207,6 +207,14 @@ class StatusBlockTest(unittest.TestCase):
             self.assertTrue(line.endswith("author-stated, not reproduced here."), line)
         self.assertIn("flagged `negative-result`", block)
         self.assertIn("direction is `unfavourable`", block)
+        # Caveat flags travel with the row: a result kept in shadow says so here too.
+        for entry in measurements.negative(CATALOG):
+            (line,) = [line for line in lines if f"#{entry['slug']})" in line]
+            for flag in entry.get("flags") or []:
+                if flag != "negative-result":
+                    self.assertIn(f"`{flag}`", line, entry["slug"])
+        shadow = build_docs.negative_block([{**PLUGIN, "flags": ["no-license", "negative-result", "shadow-mode-only"]}])
+        self.assertIn("(`plugin`; caveats: `shadow-mode-only`, `no-license`)", shadow)
         self.assertEqual(build_docs.negative_block(list(reversed(CATALOG))), block)
         self.assertEqual(build_docs.negative_block(moved_within_bands(CATALOG, "high")), block)
         self.assertEqual(build_docs.negative_block([]), "No row records a negative result yet.")

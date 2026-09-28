@@ -131,9 +131,10 @@ SITE = "https://kydlikebtc.github.io/awesome-jev/"
 
 def negative_block(catalog: list[dict]) -> str:
     """Every negative result, most-starred band first, then by title and slug:
-    the row, its kind, and where the catalogue records that its own author
-    concluded against Jev. Never the file's order, never an exact star count."""
-    from readme.rows import star_band
+    the row, its kind, its other caveat flags (they travel with every row),
+    and where the catalogue records that its own author concluded against Jev.
+    Never the file's order, never an exact star count."""
+    from readme.rows import FLAG_ORDER, star_band
 
     query = load_query()
     rows = sorted(
@@ -144,11 +145,14 @@ def negative_block(catalog: list[dict]) -> str:
     lines = []
     for entry in rows:
         link = f"[{entry['title']}]({SITE}?lang=en#{entry['slug']})"
-        if query.NEGATIVE_FLAG in (entry.get("flags") or []):
+        flags = entry.get("flags") or []
+        if query.NEGATIVE_FLAG in flags:
             how = "flagged `negative-result` (measured, not adopted)"
         else:
             how = "its measurement's direction is `unfavourable`"
-        lines.append(f"- {link} (`{entry['kind']}`): {how}; author-stated, not reproduced here.")
+        others = [f"`{flag}`" for flag in FLAG_ORDER if flag in flags and flag != query.NEGATIVE_FLAG]
+        caveats = f"; caveats: {', '.join(others)}" if others else ""
+        lines.append(f"- {link} (`{entry['kind']}`{caveats}): {how}; author-stated, not reproduced here.")
     return "\n".join(lines)
 
 

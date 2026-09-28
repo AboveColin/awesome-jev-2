@@ -92,7 +92,7 @@ positive examples, and the README's "Measured, not claimed",
 
 <!-- negative:start -->
 - [Hermes Agent: Jev compaction evaluation](https://kydlikebtc.github.io/awesome-jev/?lang=en#hermes-agent-jev-evaluation) (`benchmark`): its measurement's direction is `unfavourable`; author-stated, not reproduced here.
-- [worldmonitor: news threat classification](https://kydlikebtc.github.io/awesome-jev/?lang=en#worldmonitor-shadow-mode) (`benchmark`): its measurement's direction is `unfavourable`; author-stated, not reproduced here.
+- [worldmonitor: news threat classification](https://kydlikebtc.github.io/awesome-jev/?lang=en#worldmonitor-shadow-mode) (`benchmark`; caveats: `shadow-mode-only`): its measurement's direction is `unfavourable`; author-stated, not reproduced here.
 - [no-mistakes: Jev review pre-brief, measured and retired](https://kydlikebtc.github.io/awesome-jev/?lang=en#no-mistakes-review-context) (`benchmark`): its measurement's direction is `unfavourable`; author-stated, not reproduced here.
 - [hermes-jev-skills](https://kydlikebtc.github.io/awesome-jev/?lang=en#hermes-jev-skills) (`plugin`): flagged `negative-result` (measured, not adopted); author-stated, not reproduced here.
 - [jev-skill-router](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-skill-router) (`plugin`): flagged `negative-result` (measured, not adopted); author-stated, not reproduced here.
