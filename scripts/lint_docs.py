@@ -36,10 +36,12 @@ from _github import VERSION, version_parts, version_stem  # noqa: E402
 # docs/review-queue.md is build_review_queue.py's and docs/zh-queue.md zh_audit.py's;
 # docs/benchmarks.md and docs/benchmarks.zh-CN.md are build_benchmarks.py's, every
 # benchmark row's measurement; examples/index.json is build_examples_index.py's,
-# a copy of the examples' code.
+# a copy of the examples' code; docs/shape.md and docs/shape.zh-CN.md are
+# build_shape.py's, the catalogue's shape as a dataset.
 GENERATED = {
     "README.md", "README.zh-CN.md", "docs/measured.md", "docs/measured.zh-CN.md", "docs/review-queue.md",
     "docs/benchmarks.md", "docs/benchmarks.zh-CN.md", "docs/zh-queue.md", "examples/index.json",
+    "docs/shape.md", "docs/shape.zh-CN.md",
 }
 GENERATED_DIRS = ("docs/by-pattern/",)
 # Generated pages that quote other people's files verbatim: the review queue

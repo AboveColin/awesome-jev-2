@@ -1076,7 +1076,7 @@ The parts that are not the catalog.
 <details>
 <summary><b>Preview the searchable catalogue</b></summary>
 
-<a href="https://kydlikebtc.github.io/awesome-jev/?lang=en"><img src="https://kydlikebtc.github.io/awesome-jev/img/site-en.png?v=60a4d3a69c3bfaeb" alt="Searchable Jev catalogue with curated paths, filters, dated source evidence and entry cards" width="760"></a>
+<a href="https://kydlikebtc.github.io/awesome-jev/?lang=en"><img src="https://kydlikebtc.github.io/awesome-jev/img/site-en.png?v=2559b4cedf22a0df" alt="Searchable Jev catalogue with curated paths, filters, dated source evidence and entry cards" width="760"></a>
 
 <sub>Filter by clicking a bar. Two more views: <a href="https://kydlikebtc.github.io/awesome-jev/?view=prims">primitives</a> · <a href="https://kydlikebtc.github.io/awesome-jev/?view=compat">compatibility</a>. Every filter and entry is a shareable URL.</sub>
 
@@ -1088,6 +1088,7 @@ The parts that are not the catalog.
 | [`docs/compatibility.md`](docs/compatibility.md) | Model string, field names, request shape, endpoint and env var differ per platform. This is that table. |
 | [`docs/vetting.md`](docs/vetting.md) | What to check before trusting a row, and the one mistake most people make. |
 | [`docs/status.md`](docs/status.md) | What week one of this ecosystem actually looked like, gaps included. |
+| [`docs/shape.md`](docs/shape.md) | The catalogue as a dataset: languages, how rows reach Jev, star bands by kind, languages by pattern. |
 | [`docs/method.md`](docs/method.md) | How the catalog was built, what was excluded, and where it is weakest. |
 | [`docs/sources.md`](docs/sources.md) | Where every row came from, and the licence position. |
 | [`examples/`](examples/) | Four runnable examples. One deliberately leaves the threshold policy to you. |

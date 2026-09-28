@@ -12,46 +12,68 @@ from __future__ import annotations
 
 import pathlib
 import sys
-from collections import Counter
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 
 import _stats  # noqa: E402
 
 
-def block(title: str, counter: Counter, universe: list[str] | None = None) -> None:
+def block(title: str, counts: dict, universe: list[str] | None = None) -> None:
+    """One breakdown, in the order `counts` gives (shape()'s: most first, then
+    by name), or in `universe`'s with a gap marked."""
     print(f"\n{title}")
     if universe is not None:
         for key in universe:
-            count = counter.get(key, 0)
+            count = counts.get(key, 0)
             bar = "#" * count
             mark = " " if count else "!"
             print(f"  {mark} {key:<24} {count:>3} {bar}")
-        missing = [key for key in universe if not counter.get(key)]
+        missing = [key for key in universe if not counts.get(key)]
         if missing:
             print(f"    no entries yet: {', '.join(missing)}")
     else:
-        for key, count in counter.most_common():
+        for key, count in counts.items():
             print(f"    {key:<24} {count:>3} {'#' * count}")
-        if not counter:
+        if not counts:
             print("    (none)")
 
 
+def shape_lines(shape: dict) -> list[str]:
+    """The breakdowns docs/shape.md publishes that are not a single tally."""
+    from readme.rows import STAR_BANDS
+
+    bands = ["<10", *(name.removeprefix("★") for _, name in STAR_BANDS)]
+    lines = ["", "by platform group (docs/shape.md)"]
+    lines += [f"    {tier:<24} {n:>4}" for tier, n in shape["platform_tiers"].items()]
+    lines += ["", "stars by kind, rows per band (" + " ".join(bands) + "); median band"]
+    for kind, row in shape["stars_by_kind"].items():
+        if row["rows"]:
+            median = "—" if row["median_band"] is None else bands[row["median_band"]]
+            counted = " ".join(str(n) for n in row["bands"])
+            lines.append(f"    {kind:<14} {row['with_stars']:>4} of {row['rows']:<4} {counted:<24} {median}")
+    top = shape["top_languages"]
+    lines += ["", f"languages by pattern ({', '.join(top)}, other)"]
+    for key, langs in shape["languages_by_pattern"].items():
+        cells = [str(langs.get(lang, 0)) for lang in top] + [str(sum(n for k, n in langs.items() if k not in top))]
+        lines.append(f"    {key:<20} {' '.join(f'{c:>4}' for c in cells)}")
+    lines += ["", f"patterns filed together ({shape['multi_pattern_rows']} rows carry more than one)"]
+    lines += [f"    {a} + {b}: {n}" for a, b, n in shape["pattern_pairs"]]
+    a = shape["authors"]
+    lines += [
+        "",
+        f"authors        {a['authors']} named on {a['rows_naming_an_author']} rows: {a['one_row']} with one row, "
+        f"{a['two_rows']} with two, {a['three_or_more_rows']} with three or more (most by one: "
+        f"{a['most_rows_by_one_author']}); no name is published",
+    ]
+    return lines
+
+
 def main() -> int:
-    # The headline numbers are _stats' published ones. The breakdowns below
-    # are tallied here from the rows, for this log only.
-    catalog, _retired, _patterns, _compat, schema = _stats.load()
+    # Every number here is _stats': the headline ones from compute(), the
+    # breakdowns from shape(), which docs/shape.md publishes. Nothing is
+    # counted in this file.
     stats = _stats.compute()
-
-    all_patterns = schema["properties"]["patterns"]["items"]["enum"]
-    all_kinds = schema["properties"]["kind"]["enum"]
-
-    patterns = Counter(pattern for entry in catalog for pattern in entry["patterns"])
-    kinds = Counter(entry["kind"] for entry in catalog)
-    languages = Counter(lang for entry in catalog for lang in entry.get("languages", []))
-    platforms = Counter(item for entry in catalog for item in entry.get("platforms", []))
-    qtypes = Counter(item for entry in catalog for item in entry.get("question_types", []))
-    flags = Counter(flag for entry in catalog for flag in entry.get("flags", []))
+    shape = _stats.current_shape()
 
     print(f"catalog.json   {stats['entries']} entries")
     print(f"retired.json   {stats['retired']} entries")
@@ -110,12 +132,14 @@ def main() -> int:
     )
     print(f"  {_stats.pitch_public(stats)}")
 
-    block("by pattern (! = gap)", patterns, all_patterns)
-    block("by kind (! = gap)", kinds, all_kinds)
-    block("by language", languages)
-    block("by platform", platforms)
-    block("by question type", qtypes)
-    block("flags", flags)
+    block("by pattern (! = gap)", shape["by_pattern"], list(shape["by_pattern"]))
+    block("by kind (! = gap)", shape["kinds"], list(shape["kinds"]))
+    block("by language", shape["languages"])
+    block("by platform", shape["platforms"])
+    block("by question type", shape["question_types"])
+    block("flags", shape["flags"])
+    block("declared licence (repo_license)", shape["licences"])
+    print("\n".join(shape_lines(shape)))
     print()
     return 0
 

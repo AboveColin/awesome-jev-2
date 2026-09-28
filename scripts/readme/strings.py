@@ -575,6 +575,11 @@ REPO_FILES = [
         "这个生态第一周的真实样貌，包括缺口。",
     ),
     (
+        "docs/shape.md",
+        "The catalogue as a dataset: languages, how rows reach Jev, star bands by kind, languages by pattern.",
+        "把目录当作数据集来看：语言、如何接入 Jev、各类型的 star 区间、各模式用的语言。 <sub>(机翻)</sub>",
+    ),
+    (
         "docs/method.md",
         "How the catalog was built, what was excluded, and where it is weakest.",
         "目录是如何建起来的、排除了什么、以及它最弱的地方在哪。",
@@ -620,6 +625,9 @@ REPO_FILES = [
         "从 GitHub API 重新读取 star、许可证与归档状态，并开 PR。",
     ),
 ]
+
+# A REPO_FILES path the Chinese README links in its Chinese version instead.
+REPO_FILES_ZH = {"docs/shape.md": "docs/shape.zh-CN.md"}
 
 # The data files listed under "Machine-readable data", after catalog.json and
 # retired.json, whose rows carry live counts and are written in sections.py.

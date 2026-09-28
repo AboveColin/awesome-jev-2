@@ -30,7 +30,8 @@ python3 scripts/check.py --fix
 
 The READMEs, the pages under `docs/by-pattern/`,
 [`docs/measured.md`](docs/measured.md) and `docs/measured.zh-CN.md`,
-[`docs/benchmarks.md`](docs/benchmarks.md) and `docs/benchmarks.zh-CN.md`, the
+[`docs/benchmarks.md`](docs/benchmarks.md) and `docs/benchmarks.zh-CN.md`,
+[`docs/shape.md`](docs/shape.md) and `docs/shape.zh-CN.md`, the
 figures in `docs/assets/`, [`docs/review-queue.md`](docs/review-queue.md),
 [`docs/zh-queue.md`](docs/zh-queue.md), `examples/index.json` and the
 generated numbers in `docs/status.md`, `docs/sources.md`, `docs/patterns.md`,

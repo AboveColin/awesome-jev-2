@@ -7,7 +7,7 @@
 <!-- Once CI has run, the lint run's summary holds a review card for each row you added or changed: fix what it marks ✗. It matches text; a maintainer still reads the call site. -->
 
 - [ ] `python3 scripts/check.py --fix` passes: it sorts `catalog.json`, then runs every check CI runs
-- [ ] Generated files (READMEs, `docs/by-pattern/`, `docs/measured*.md`, `docs/benchmarks*.md`, `docs/assets/`, `examples/index.json`, generated numbers in docs) are either left out — a bot regenerates them on `main` after the merge — or exactly what `python3 scripts/check.py --fix` wrote, never edited by hand
+- [ ] Generated files (READMEs, `docs/by-pattern/`, `docs/measured*.md`, `docs/benchmarks*.md`, `docs/shape*.md`, `docs/assets/`, `examples/index.json`, generated numbers in docs) are either left out — a bot regenerates them on `main` after the merge — or exactly what `python3 scripts/check.py --fix` wrote, never edited by hand
 - [ ] I opened every link I added and wrote the summaries from what was there; a row with code says in its summary (or `notes`) what it asks Jev to decide
 - [ ] `question_types` reflects the actual call site, not the README, and I left `primitives_seen` to the weekly run (a script's text signal, never a substitute for reading the call)
 - [ ] Each `platforms` value is one `compat.json` lists in a surface's `catalog_platforms` or `taxonomy.json` lists in `platforms_without_surface` (lint checks), and says no more than the cited file shows (a project on Vercel's gateway is `vercel-ai-gateway`, whichever route it takes)

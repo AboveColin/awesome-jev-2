@@ -35,7 +35,7 @@ class GitattributesTest(unittest.TestCase):
         paths = [
             "README.md", "README.zh-CN.md", "docs/measured.md", "docs/measured.zh-CN.md",
             "docs/review-queue.md", "docs/zh-queue.md", "examples/index.json",
-            "docs/benchmarks.md", "docs/benchmarks.zh-CN.md",
+            "docs/benchmarks.md", "docs/benchmarks.zh-CN.md", "docs/shape.md", "docs/shape.zh-CN.md",
             *tracked("docs/by-pattern", "docs/assets"),
         ]
         self.assertGreater(len(paths), 20)

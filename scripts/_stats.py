@@ -120,6 +120,13 @@ def link_ok(entry: dict) -> bool:
     return bool(entry.get("checked")) and 200 <= (entry.get("link_status") or 0) < 300
 
 
+def newest_check(catalog: list[dict]) -> str:
+    """The date of the newest successful link check any row records, or
+    "never": the date the published figures describe."""
+    swept = [e["checked"] for e in catalog if link_ok(e)]
+    return max(swept) if swept else "never"
+
+
 def evidence_kind(entry: dict) -> str | None:
     """What the cited file shows (EVIDENCE_KINDS), or None for a row citing none."""
     evidence = entry.get("evidence")
@@ -231,11 +238,171 @@ def tool_selection_broad_only(entry: dict) -> bool:
     )
 
 
+# ---- the catalogue's shape ---------------------------------------------------
+#
+# Breakdowns of the catalogue as a dataset: languages, how rows reach Jev,
+# licences, star bands per kind, languages per pattern, patterns filed
+# together, and how many authors. docs/shape.md (scripts/build_shape.py) and
+# counts.py print them, history/ snapshots keep them (scripts/
+# snapshot_stats.py), and each is defined once, here. They describe what this
+# catalogue holds, which is what the sibling directories and its own discovery
+# found, not the ecosystem at large.
+
+# How a row reaches Jev, as `platforms` records it, in five groups that
+# partition the catalogue. The default is what a row records when nobody named
+# another route: discovery does not tag platforms, so a row reaching Jev
+# through a pass-through may record it alone (docs/compatibility.md).
+DEFAULT_PLATFORM = "typesafe-api"
+SELF_HOSTED = "self-hosted"
+PLATFORM_TIERS = ("typesafe-api-only", "compat-surface", "no-surface", "self-hosted", "none")
+# Languages given a column of their own in the language-by-pattern table (the
+# rest share one), and how many pattern pairs the co-filing table lists.
+SHAPE_LANGUAGES = 6
+SHAPE_PAIRS = 10
+
+
+def tally(values) -> dict:
+    """Occurrences per value, most first, then by value: never the file's order."""
+    return dict(sorted(Counter(values).items(), key=lambda kv: (-kv[1], kv[0])))
+
+
+def pattern_tally(catalog: list[dict], patterns: list[dict]) -> dict[str, int]:
+    """Rows filed under each pattern, in patterns.json's order (zero included)."""
+    counts = Counter(p for e in catalog for p in e["patterns"])
+    return {p["key"]: counts[p["key"]] for p in patterns}
+
+
+def surface_values(compat: dict) -> set[str]:
+    """The `platforms` values a compat.json surface stands for (its
+    catalog_platforms), the default value excepted."""
+    return {v for s in compat["platforms"] for v in s.get("catalog_platforms") or []} - {DEFAULT_PLATFORM}
+
+
+def platform_tier(entry: dict, surfaces: set[str]) -> str:
+    """Which PLATFORM_TIERS group a row falls in, checked in this order: no
+    value recorded; self-hosted; a value some other compat.json surface stands
+    for (`surfaces`, from surface_values()); the default alone; anything else
+    (hosts, tools, frameworks and routes compat.json describes no surface for,
+    with or without the default)."""
+    values = set(entry.get("platforms") or [])
+    if not values:
+        return "none"
+    if SELF_HOSTED in values:
+        return "self-hosted"
+    if values & surfaces:
+        return "compat-surface"
+    if values == {DEFAULT_PLATFORM}:
+        return "typesafe-api-only"
+    return "no-surface"
+
+
+def stars_by_kind(catalog: list[dict], kinds: list[str]) -> dict[str, dict]:
+    """Per kind: rows, rows with a star count, rows per star band (index 0 is
+    under the lowest band's floor, then readme.rows.STAR_BANDS in order) and
+    the band of the lower median. Bands, never exact counts: a count moving
+    inside its band changes none of it (a quartile of exact counts would move
+    every week). The median is a row's band, so it follows the band counts."""
+    from readme.rows import STAR_BANDS, star_band
+
+    out = {}
+    for kind in kinds:
+        rows = [e for e in catalog if e["kind"] == kind]
+        bands = sorted(star_band(e["stars"]) for e in rows if isinstance(e.get("stars"), int))
+        out[kind] = {
+            "rows": len(rows),
+            "with_stars": len(bands),
+            "bands": [bands.count(b) for b in range(len(STAR_BANDS) + 1)],
+            "median_band": bands[(len(bands) - 1) // 2] if bands else None,
+        }
+    return out
+
+
+def languages_by_pattern(catalog: list[dict], patterns: list[dict]) -> dict[str, dict[str, int]]:
+    """Per pattern, rows recording each language (tally() order)."""
+    return {
+        p["key"]: tally(lang for e in catalog if p["key"] in e["patterns"] for lang in e.get("languages") or [])
+        for p in patterns
+    }
+
+
+def pattern_pairs(catalog: list[dict], patterns: list[dict], top: int = SHAPE_PAIRS) -> list[list]:
+    """The `top` pairs of patterns most often filed on the same row, as
+    [pattern, pattern, rows]: most rows first, then patterns.json's order."""
+    order = {p["key"]: i for i, p in enumerate(patterns)}
+    pairs: Counter = Counter()
+    for entry in catalog:
+        keys = sorted(set(entry["patterns"]), key=lambda k: (order.get(k, len(order)), k))
+        for i, first in enumerate(keys):
+            for second in keys[i + 1:]:
+                pairs[(first, second)] += 1
+    ranked = sorted(
+        pairs.items(), key=lambda kv: (-kv[1], order.get(kv[0][0], len(order)), order.get(kv[0][1], len(order)), kv[0])
+    )
+    return [[first, second, n] for (first, second), n in ranked[:top]]
+
+
+def author_key(entry: dict) -> str | None:
+    """The author a row names, as one key: the display name, trimmed and
+    case-folded (no row records a login). None when the row names nobody."""
+    author = entry.get("author")
+    name = author.get("name") if isinstance(author, dict) else None
+    return name.strip().casefold() if isinstance(name, str) and name.strip() else None
+
+
+def authors(catalog: list[dict]) -> dict[str, int]:
+    """How the rows spread over their authors, as counts only: no author is
+    named, so no count here singles out a person."""
+    per = Counter(key for key in map(author_key, catalog) if key)
+    return {
+        "rows_naming_an_author": sum(per.values()),
+        "authors": len(per),
+        "one_row": sum(1 for n in per.values() if n == 1),
+        "two_rows": sum(1 for n in per.values() if n == 2),
+        "three_or_more_rows": sum(1 for n in per.values() if n >= 3),
+        "most_rows_by_one_author": max(per.values(), default=0),
+    }
+
+
+def shape(catalog: list[dict], patterns: list[dict], compat: dict, schema: dict) -> dict:
+    """Every breakdown docs/shape.md, counts.py and the history/ snapshots
+    print, from the files they are handed."""
+    kinds = schema["properties"]["kind"]["enum"]
+    surfaces = surface_values(compat)
+    tiers = Counter(platform_tier(e, surfaces) for e in catalog)
+    languages = tally(lang for e in catalog for lang in e.get("languages") or [])
+    return {
+        "entries": len(catalog),
+        "by_pattern": pattern_tally(catalog, patterns),
+        "kinds": {kind: sum(1 for e in catalog if e["kind"] == kind) for kind in kinds},
+        "languages": languages,
+        "rows_without_language": sum(1 for e in catalog if not e.get("languages")),
+        "platforms": tally(value for e in catalog for value in e.get("platforms") or []),
+        "platform_tiers": {tier: tiers[tier] for tier in PLATFORM_TIERS},
+        "question_types": {
+            name: sum(1 for e in catalog if name in (e.get("question_types") or [])) for name in PRIMITIVES
+        },
+        "flags": tally(flag for e in catalog for flag in e.get("flags") or []),
+        "licences": tally(e["repo_license"] for e in catalog if e.get("repo_license")),
+        "stars_by_kind": stars_by_kind(catalog, kinds),
+        "top_languages": list(languages)[:SHAPE_LANGUAGES],
+        "languages_by_pattern": languages_by_pattern(catalog, patterns),
+        "multi_pattern_rows": sum(1 for e in catalog if len(set(e["patterns"])) > 1),
+        "pattern_pairs": pattern_pairs(catalog, patterns),
+        "authors": authors(catalog),
+    }
+
+
+def current_shape() -> dict:
+    """shape() of the files in this checkout."""
+    catalog, _retired, patterns, compat, schema = load()
+    return shape(catalog, patterns, compat, schema)
+
+
 def compute() -> dict:
     catalog, retired, patterns, compat, schema = load()
-    by_pattern = Counter(p for e in catalog for p in e["patterns"])
+    by_pattern = pattern_tally(catalog, patterns)
     swept = [e["checked"] for e in catalog if link_ok(e)]
-    last_sweep = max(swept) if swept else "never"
+    last_sweep = newest_check(catalog)
     siblings = [
         line
         for line in (ROOT / "docs" / "sibling-lists.txt").read_text().splitlines()
@@ -345,7 +512,7 @@ def compute() -> dict:
         ],
         "platforms": len(compat["platforms"]),
         "sibling_lists": len(siblings),
-        "by_pattern": {p["key"]: by_pattern[p["key"]] for p in patterns},
+        "by_pattern": by_pattern,
         "kinds": schema["properties"]["kind"]["enum"],
         "fields": list(schema["properties"]),
         "pattern_keys": [p["key"] for p in patterns],

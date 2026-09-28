@@ -43,6 +43,7 @@ GENERATORS = (
     ("build_review_queue.py", "docs/review-queue.md, the rows a script marks for a person to read"),
     ("build_benchmarks.py", "docs/benchmarks.md and docs/benchmarks.zh-CN.md, the benchmark rows' measurements side by side"),
     ("zh_audit.py", "docs/zh-queue.md, the machine-translated Chinese summaries for a person to replace"),
+    ("build_shape.py", "docs/shape.md and docs/shape.zh-CN.md, the catalogue's shape as a dataset"),
     ("build_examples_index.py", "examples/index.json, the examples by decision pattern for the MCP server's prompt"),
 )
 
@@ -65,6 +66,8 @@ OUTPUTS = (
     "docs/benchmarks.md",
     "docs/benchmarks.zh-CN.md",
     "docs/zh-queue.md",
+    "docs/shape.md",
+    "docs/shape.zh-CN.md",
     "llms.txt",
     "examples/index.json",
 )

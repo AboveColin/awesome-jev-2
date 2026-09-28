@@ -796,7 +796,7 @@ python3 scripts/check.py         # every check lint runs, in lint's order; --lis
 python3 scripts/sort_catalog.py  # keep catalog.json and retired.json in slug order
 python3 scripts/lint.py          # schema plus cross-entry invariants
 python3 scripts/build_readme.py  # regenerate both READMEs, docs/by-pattern/ and docs/measured*.md
-python3 scripts/counts.py        # coverage, with gaps marked
+python3 scripts/counts.py        # coverage, with gaps marked, and every breakdown docs/shape.md publishes
 python3 scripts/check_links.py   # sweep every URL, report only
 python3 scripts/verify_claims.py # re-read every cited call site
 python3 scripts/review_pr.py     # the review card for this branch's rows against origin/main
@@ -806,6 +806,7 @@ python3 scripts/verify_compat.py # re-read each platform page for compat.json's 
 python3 scripts/lint_docs.py --simulate-model <version>  # rehearse a model release; writes nothing
 python3 scripts/zh_audit.py      # the translation queue; --json: every machine translation measured
 python3 scripts/build_benchmarks.py  # docs/benchmarks*.md, every benchmark's measurement side by side
+python3 scripts/build_shape.py   # docs/shape*.md, the catalogue's shape as a dataset
 python3 scripts/regenerate.py    # or: every generator above, in order
 ```
 
@@ -827,6 +828,25 @@ orders, so rows that tie on everything else (forks sharing a title and star
 count) no longer fall back to their position in the file. The fixed order exists
 only so that pull requests adding different rows insert at different places
 instead of all appending at the end and conflicting.
+
+Since 2026-09-28, the breakdowns `counts.py` prints (by pattern, kind,
+language, platform, primitive, flag and declared licence) and the ones added
+beside them — how rows reach Jev in five groups that partition the catalogue,
+rows per star band for each kind, languages per decision pattern, the pattern
+pairs most often filed together, and how the rows spread over their authors —
+are computed by one function, `_stats.shape()`, and published on the generated
+`docs/shape.md` and `docs/shape.zh-CN.md`. Until then `counts.py` tallied the
+breakdowns itself, a second definition beside `_stats.py`, and they reached
+nobody but a CI log, which `status.md` sent readers to. Stars are counted in
+the README's bands, with the median as a band, because a quartile of exact
+counts would move every week and a band is a popularity signal either way.
+Authors are compared by display name without regard to case, and only
+aggregate counts are published: 982 names on 1,089 rows that day, 15 of them
+with three rows or more. The platform groups follow `compat.json`'s surfaces
+rather than a bare "other than `typesafe-api`", which would have called
+`claude-code`, `github` and `postgresql` gateways; and the page says what the
+first group is: discovery does not tag `platforms`, so `typesafe-api` is what
+a row records when nobody named another route.
 
 Since 2026-09-27, `scripts/check.py` holds the one list of the checks `lint`
 runs, in its order. The list used to be written out four times — in
@@ -917,7 +937,7 @@ catalogue passed 800, and no build ever went red.
 
 | What changes | When | Kept current by |
 | --- | --- | --- |
-| Counts and tables about the catalogue | Whenever a row is added or edited | Generated from `catalog.json` — the READMEs by `build_readme.py`, the figures by `build_assets.py`, and every number inside the hand-written docs and `llms.txt` by `build_docs.py`. The site's link-preview tags are written into the Pages artifact at deploy by `assemble_site.py --deploy` and never committed. All numbers share one definition in `scripts/_stats.py`. `lint` regenerates all of them on every run (next row), and `lint_docs.py` rejects a catalogue count typed anywhere else. |
+| Counts and tables about the catalogue | Whenever a row is added or edited | Generated from `catalog.json` — the READMEs by `build_readme.py`, the figures by `build_assets.py`, the catalogue's shape (`docs/shape.md`) by `build_shape.py`, and every number inside the hand-written docs and `llms.txt` by `build_docs.py`. The site's link-preview tags are written into the Pages artifact at deploy by `assemble_site.py --deploy` and never committed. All numbers share one definition in `scripts/_stats.py`. `lint` regenerates all of them on every run (next row), and `lint_docs.py` rejects a catalogue count typed anywhere else. |
 | Generated files after a merge | Whenever a pull request lands | A pull request need only change the sources. `lint` runs `regenerate.py` on every event, then `check_generated.py` decides: on a pull request each generated file must be untouched since the merge base or byte-identical to the regenerated output, with every verdict in the run's summary; on `main`, drift is handed to the `regenerate` job, which rebuilds from the tip, runs `lint`'s checks again and commits `chore: regenerate from catalog.json` as `github-actions[bot]` — rebasing if `main` moved, leaving a `regenerate/<sha>` branch if that no longer applies, never force-pushing. A dispatched or manual `lint` run is strict: any drift fails. |
 | What each benchmark's author measured | When a person reads a benchmark's report | Recorded by hand in the row's `measurement` (`kind: benchmark` rows only). `lint` holds it to its rules and its model string to `compat.json`; `build_benchmarks.py` regenerates `docs/benchmarks.md` and its Chinese twin from it; a measurement without `read_on` stays in the review queue until a person reads the report against it. Every direction is the author's, shown as author-stated, not reproduced here. |
 | Images that show data | Same | Rendered from the data on every Pages deploy by `render_images.py` and never committed: the site's `og:image`, and the README and compatibility screenshots. The deploy refuses to publish a page that did not finish loading its data. |

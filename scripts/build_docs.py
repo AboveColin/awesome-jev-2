@@ -272,12 +272,9 @@ def citations_block(catalog: list[dict], listed: list[str]) -> str:
     return table(["Sibling directory", "Catalogued rows whose repository its README links"], rows)
 
 
-def licences_block(catalog: list[dict]) -> str:
-    counts = Counter(e["repo_license"] for e in catalog if e.get("repo_license"))
-    rows = [
-        [LICENCE_LABEL.get(lic, lic), n]
-        for lic, n in sorted(counts.items(), key=lambda kv: (-kv[1], kv[0]))
-    ]
+def licences_block(shape: dict) -> str:
+    """Declared licences, as _stats.shape() counts them (counts.py prints the same)."""
+    rows = [[LICENCE_LABEL.get(lic, lic), n] for lic, n in shape["licences"].items()]
     return table(["Licence", "Repositories"], rows)
 
 
@@ -370,8 +367,9 @@ def inline_values(s: dict) -> dict[str, object]:
 
 
 def render() -> dict[pathlib.Path, str]:
-    catalog, _, patterns, _, _ = _stats.load()
+    catalog, _, patterns, compat, schema = _stats.load()
     s = _stats.compute()
+    shape = _stats.shape(catalog, patterns, compat, schema)
     values = inline_values(s)
 
     blocks = {
@@ -385,7 +383,7 @@ def render() -> dict[pathlib.Path, str]:
         "docs/sources.md": {
             "sources": sources_block(catalog),
             "citations": citations_block(catalog, listed_urls(read_lists(SIBLINGS))),
-            "licences": licences_block(catalog),
+            "licences": licences_block(shape),
             "row-licences": row_licences_block(s, catalog),
         },
         "llms.txt": {},

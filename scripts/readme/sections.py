@@ -48,7 +48,7 @@ from .rows import (
     summary_of,
     unindexed_note,
 )
-from .strings import DATA_FILES, REPO_FILES, ZH_MACHINE
+from .strings import DATA_FILES, REPO_FILES, REPO_FILES_ZH, ZH_MACHINE
 
 # The handful of rows a newcomer should open, in reading order. Curated by hand
 # because "most starred" is not the same as "read this first" — the limitations
@@ -518,7 +518,8 @@ def also_in_this_repo(page: Page) -> list[str]:
     add(f"| {strings['th_file']} | {strings['th_what']} |")
     add("| --- | --- |")
     for path, what_en, what_zh in REPO_FILES:
-        add(f"| [`{path}`]({path}) | {esc(what_zh if lang == 'zh' else what_en)} |")
+        link = REPO_FILES_ZH.get(path, path) if lang == "zh" else path
+        add(f"| [`{link}`]({link}) | {esc(what_zh if lang == 'zh' else what_en)} |")
     add("")
     official = next((e for e in page.catalog if e["slug"] == OFFICIAL_SKILL), None)
     if official:

@@ -121,8 +121,9 @@ Two holes are in the research rather than the ecosystem: **Reddit** produced
 nothing verifiable across four retrieval routes, and **X/Twitter** is barely
 represented for the same reason. Both are gaps, not judgements.
 
-Run `python3 scripts/counts.py` for the full breakdown by kind, language and
-platform.
+The breakdown by language, by how rows reach Jev, by star band per kind and by
+language per pattern is on [the catalogue's shape](shape.md);
+`python3 scripts/counts.py` prints it as text.
 
 Link counts describe dated response records, and evidence counts describe saved
 citations. They are not a count of successful current CI checks. The latest
