@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """The per-pattern JSON files the site serves to agents: site/api/v1/.
 
-catalog.json is over a megabyte, about a third of a million tokens, and no
-agent reads it whole. Without the MCP server an agent's natural way in is one
-small file per decision pattern, so the Pages deploy writes
+catalog.json runs to megabytes (docs/method.md dates its size), and no agent
+reads it whole. Without the MCP server an agent's natural way in is one file
+per decision pattern, so the Pages deploy writes
 
   api/v1/index.json             every pattern: key, name, description, how many
                                 rows file under it, its file's URL and size,

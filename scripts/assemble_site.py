@@ -145,7 +145,7 @@ def main(argv: list[str] | None = None) -> int:
     print(
         f"wrote site/{site_api.API_DIR}/: index.json and {len(sizes)} pattern file(s), "
         f"{sum(stats['by_pattern'].values())} row(s) in all (a row can sit under several patterns); "
-        f"largest {largest.rsplit('/', 1)[1]} at {sizes[largest] // 1024} KB"
+        f"largest {largest.rsplit('/', 1)[1]} at {sizes[largest]:,} bytes"
     )
 
     if args.deploy:
