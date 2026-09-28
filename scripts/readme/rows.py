@@ -289,11 +289,7 @@ def entry_list(
         direction = direction_bit(entry, strings)
         if direction:
             bits.append(direction)
-        flags = [
-            f"`{label(FLAG_LABELS, flag, lang)}`"
-            for flag in FLAG_ORDER
-            if flag in entry.get("flags", [])
-        ]
+        flags = caveat_labels(entry, lang)
         if flags and not readme_layout:
             bits.append("⚠ " + " ".join(flags))
         lines.append(f"  <sub>{' · '.join(bits)}</sub>")
@@ -310,6 +306,34 @@ def entry_list(
                     lines.append(f"  <sub>{esc(note)}</sub>")
         lines.append("")
     return lines
+
+
+def caveat_labels(entry: dict, lang: str) -> list[str]:
+    """The row's caveat flags as a list prints them, in taxonomy order."""
+    return [f"`{label(FLAG_LABELS, flag, lang)}`" for flag in FLAG_ORDER if flag in entry.get("flags", [])]
+
+
+def brief_list(entries: list[dict], strings: dict, *, href=None) -> list[str]:
+    """Rows one line each, in sort_key order: the title, then kind, languages,
+    primitives, the author's direction and the caveat flags, which travel with
+    every row on every list. For the short lists a pattern page gives ahead of
+    its full list, so no summary and no cited file: the full list has both.
+    `href(entry)` gives the title's link; the row's url otherwise."""
+    lang = strings["lang_code"]
+    lines = []
+    for entry in sorted(entries, key=sort_key):
+        bits = [f"`{label(KIND_LABELS, entry['kind'], lang)}`"]
+        bits += [f"`{LANG_LABELS.get(item, item)}`" for item in entry.get("languages", [])]
+        bits += [f"`{item}`" for item in entry.get("question_types", [])]
+        direction = direction_bit(entry, strings)
+        if direction:
+            bits.append(direction)
+        flags = caveat_labels(entry, lang)
+        if flags:
+            bits.append("⚠ " + " ".join(flags))
+        link = md_url(href(entry)) if href else entry["url"]
+        lines.append(f"- [{esc(entry['title'])}]({link}) <sub>{' · '.join(bits)}</sub>")
+    return lines + [""]
 
 
 def split_unindexed(rows: list[dict]) -> tuple[list[dict], list[dict]]:

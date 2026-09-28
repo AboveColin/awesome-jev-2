@@ -6,7 +6,29 @@ _用校准置信度决定哪些情况必须由人来看。_
 
 这个决策的全部已收录例子 —— 共 67 条。同样这些行及其警示也在[索引](../../README.zh-CN.md#人工升级)里；[站点](https://kydlikebtc.github.io/awesome-jev/?p=human-escalation&lang=zh)还能按语言、原语和形态进一步筛选。
 
+这个决策的设计说明在英文页面 [docs/patterns.md](../patterns.md#human-escalation)：它决定什么、用哪种原语来建模，以及（凡写了的）什么时候不该用决策模型。 <sub>(机翻)</sub>
+
 本模式各行记录的证据（只是计数，不是结论；一行可能计入多项）：官方文档 7 · 调用点 53 · 接口形态 4 · 仅示例 0 · 独立报告 9 · 负面结果 0 · 未引用文件 10。“独立”指未标 vendor-reported 的基准测试，未经本仓库复现。[各模式并排对照](../shape.zh-CN.md#按决策模式看证据)。 <sub>(机翻)</sub>
+
+## 官方材料
+
+TypeSafe AI 自己发布、归在这个模式下的材料（标为 `official` 的行）。每一条也都在下方完整列表里，附有摘要。 <sub>(机翻)</sub>
+
+- [Cookbook: Classification using confidence](https://docs.typesafe.ai/cookbooks/classification_using_confidence) <sub>`官方文档` · `Py` · `choice`</sub>
+- [Cookbook: Double-checking citations](https://docs.typesafe.ai/cookbooks/citation_check) <sub>`官方文档` · `Py` · `choice`</sub>
+- [Cookbook: Knowledge graph entity alignment](https://docs.typesafe.ai/cookbooks/entity_alignment) <sub>`官方文档` · `Py` · `score`</sub>
+- [Cookbook: Self-consistency with choices](https://docs.typesafe.ai/cookbooks/consistency_choice_cookbook) <sub>`官方文档` · `Py` · `choice`</sub>
+- [Cookbook: Self-consistency with nouls](https://docs.typesafe.ai/cookbooks/consistency_noul_cookbook) <sub>`官方文档` · `Py` · `noul`</sub>
+- [Pattern: Confidence-gated routing](https://docs.typesafe.ai/patterns/confidence-routing) <sub>`官方文档` · `Py`</sub>
+- [Confidence](https://docs.typesafe.ai/confidence) <sub>`官方文档`</sub>
+
+## 本仓库的示例
+
+本仓库 [`examples/`](../../examples/) 里归在这个模式下的代码。每一条也都在下方完整列表里；[示例的 README](../../examples/README.md) 说明了它们核验到了哪一步。 <sub>(机翻)</sub>
+
+- [Example: confidence-gated escalation](../../examples/02-confidence-gate/main.py) <sub>`代码片段` · `Py` · `choice` · ⚠ `代码未实测`</sub>
+
+## 完整列表
 
 ★ 以区间给出仓库的 GitHub star 数 —— ★10+、★100+、★1k+、★10k+、★100k+；没有仓库或不足 10 星的行不标区间。排序：官方优先，其次是含代码的，再按区间，最后按标题。区间只反映热度，不代表质量；最近一次从 GitHub 读到的精确数字在 [`catalog.json`](../../catalog.json) 和[站点](https://kydlikebtc.github.io/awesome-jev/?lang=zh)上。 <sub>(机翻)</sub>
 

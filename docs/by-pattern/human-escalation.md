@@ -6,7 +6,29 @@ _Use calibrated confidence to decide what a person must see._
 
 Every catalogued example of this decision — 67 of them. The same rows, with caveats, are in [the index](../../README.md#human-escalation); [the site](https://kydlikebtc.github.io/awesome-jev/?p=human-escalation&lang=en) can filter them further by language, primitive and kind.
 
+Design notes for this decision are in [docs/patterns.md](../patterns.md#human-escalation): what it decides and which primitive shapes it, and, where one is written, when not to use a decision model for it.
+
 Evidence recorded for this pattern's rows (reports counted, not a verdict; a row may count more than once): official documentation 7 · call site 53 · wire shape 4 · example only 0 · independent reports 9 · negative results 0 · no file cited 10. “Independent” = a benchmark not flagged vendor-reported, not reproduced by this repository. [Every pattern side by side](../shape.md#evidence-by-decision-pattern).
+
+## Official material
+
+What TypeSafe AI publishes itself (rows marked `official`), filed under this pattern. Each is also in the full list below, with its summary.
+
+- [Cookbook: Classification using confidence](https://docs.typesafe.ai/cookbooks/classification_using_confidence) <sub>`Official docs` · `Py` · `choice`</sub>
+- [Cookbook: Double-checking citations](https://docs.typesafe.ai/cookbooks/citation_check) <sub>`Official docs` · `Py` · `choice`</sub>
+- [Cookbook: Knowledge graph entity alignment](https://docs.typesafe.ai/cookbooks/entity_alignment) <sub>`Official docs` · `Py` · `score`</sub>
+- [Cookbook: Self-consistency with choices](https://docs.typesafe.ai/cookbooks/consistency_choice_cookbook) <sub>`Official docs` · `Py` · `choice`</sub>
+- [Cookbook: Self-consistency with nouls](https://docs.typesafe.ai/cookbooks/consistency_noul_cookbook) <sub>`Official docs` · `Py` · `noul`</sub>
+- [Pattern: Confidence-gated routing](https://docs.typesafe.ai/patterns/confidence-routing) <sub>`Official docs` · `Py`</sub>
+- [Confidence](https://docs.typesafe.ai/confidence) <sub>`Official docs`</sub>
+
+## Examples in this repository
+
+Code under this repository's [`examples/`](../../examples/) filed under this pattern. Each is also in the full list below; [the examples' README](../../examples/README.md) says how far they have been checked.
+
+- [Example: confidence-gated escalation](../../examples/02-confidence-gate/main.py) <sub>`Snippet` · `Py` · `choice` · ⚠ `code untested`</sub>
+
+## The full list
 
 ★ gives a repository's GitHub stars as a band — ★10+, ★100+, ★1k+, ★10k+ and ★100k+; rows with no repository or under 10 stars show no band. Rows run official first, then with code, then by band, then by title. A band is a popularity signal, not a quality verdict; the exact count, as last read from GitHub, is in [`catalog.json`](../../catalog.json) and on [the site](https://kydlikebtc.github.io/awesome-jev/?lang=en).
 

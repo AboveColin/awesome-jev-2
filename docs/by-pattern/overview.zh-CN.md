@@ -6,7 +6,31 @@ _介绍模型或整个领域，而非单一模式。_
 
 这个决策的全部已收录例子 —— 共 451 条。同样这些行及其警示也在[索引](../../README.zh-CN.md#总览)里；[站点](https://kydlikebtc.github.io/awesome-jev/?p=overview&lang=zh)还能按语言、原语和形态进一步筛选。
 
+`overview` 在本目录里是什么意思、为什么只归在它下面的带代码项目算作尚未按模式索引，见英文页面 [docs/patterns.md](../patterns.md#overview)。 <sub>(机翻)</sub>
+
 本模式各行记录的证据（只是计数，不是结论；一行可能计入多项）：官方文档 6 · 调用点 370 · 接口形态 45 · 仅示例 0 · 独立报告 23 · 负面结果 1 · 未引用文件 36。“独立”指未标 vendor-reported 的基准测试，未经本仓库复现。[各模式并排对照](../shape.zh-CN.md#按决策模式看证据)。 <sub>(机翻)</sub>
+
+## 官方材料
+
+TypeSafe AI 自己发布、归在这个模式下的材料（标为 `official` 的行）。每一条也都在下方完整列表里，附有摘要。 <sub>(机翻)</sub>
+
+- [Official agent skill for Claude Code](https://docs.typesafe.ai/agent-skill) <sub>`官方文档` · `sh`</sub>
+- [typesafe-ai/skills](https://github.com/typesafe-ai/skills) <sub>`插件` · `sh`</sub>
+- [@typesafe-ai/sdk (TypeScript / JavaScript)](https://github.com/typesafe-ai/typesafe-sdk-js) <sub>`SDK` · `TS` · `JS` · `choice` · `score` · `noul`</sub>
+- [system-one-adapter-python](https://github.com/typesafe-ai/system-one-adapter-python) <sub>`SDK` · `Py`</sub>
+- [typesafe-sdk (Python)](https://github.com/typesafe-ai/typesafe-sdk-python) <sub>`SDK` · `Py` · `choice` · `score` · `noul`</sub>
+- [API reference](https://docs.typesafe.ai/api) <sub>`官方文档` · `sh` · `Py` · `TS`</sub>
+- [Models, pricing and limits](https://docs.typesafe.ai/models) <sub>`官方文档` · `sh` · `Py` · `TS`</sub>
+- [Primitives: Choice, Score, Noul](https://docs.typesafe.ai/primitives) <sub>`官方文档` · `Py` · `TS` · `choice` · `score` · `noul`</sub>
+- [Introducing System One models and Jev](https://typesafe.ai/blog/introducing-system-one-models-and-jev) <sub>`文章` · ⚠ `厂商自报数据`</sub>
+- [Jev 1.13 known limitations](https://docs.typesafe.ai/model-jaggedness/jev-1.13) <sub>`官方文档`</sub>
+- [Use case map](https://docs.typesafe.ai/concepts/use-case-map) <sub>`官方文档`</sub>
+
+## 本仓库的示例
+
+本仓库没有这个模式的示例；已有的示例见 [`examples/`](../../examples/)。 <sub>(机翻)</sub>
+
+## 完整列表
 
 ★ 以区间给出仓库的 GitHub star 数 —— ★10+、★100+、★1k+、★10k+、★100k+；没有仓库或不足 10 星的行不标区间。排序：官方优先，其次是含代码的，再按区间，最后按标题。区间只反映热度，不代表质量；最近一次从 GitHub 读到的精确数字在 [`catalog.json`](../../catalog.json) 和[站点](https://kydlikebtc.github.io/awesome-jev/?lang=zh)上。 <sub>(机翻)</sub>
 

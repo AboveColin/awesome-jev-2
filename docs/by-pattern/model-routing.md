@@ -6,7 +6,22 @@ _Pick which downstream model or tier should handle a request._
 
 Every catalogued example of this decision — 43 of them. The same rows, with caveats, are in [the index](../../README.md#model-routing); [the site](https://kydlikebtc.github.io/awesome-jev/?p=model-routing&lang=en) can filter them further by language, primitive and kind.
 
+Design notes for this decision are in [docs/patterns.md](../patterns.md#model-routing): what it decides and which primitive shapes it, and, where one is written, when not to use a decision model for it.
+
 Evidence recorded for this pattern's rows (reports counted, not a verdict; a row may count more than once): official documentation 2 · call site 38 · wire shape 0 · example only 0 · independent reports 0 · negative results 1 · no file cited 5. “Independent” = a benchmark not flagged vendor-reported, not reproduced by this repository. [Every pattern side by side](../shape.md#evidence-by-decision-pattern).
+
+## Official material
+
+What TypeSafe AI publishes itself (rows marked `official`), filed under this pattern. Each is also in the full list below, with its summary.
+
+- [Cookbook: Structured data extraction cascade](https://docs.typesafe.ai/cookbooks/sde_cascade) <sub>`Official docs` · `Py`</sub>
+- [Pattern: Intent routing](https://docs.typesafe.ai/patterns/intent-routing) <sub>`Official docs` · `Py` · `choice`</sub>
+
+## Examples in this repository
+
+This repository ships no example of this pattern; [`examples/`](../../examples/) has the ones it does.
+
+## The full list
 
 ★ gives a repository's GitHub stars as a band — ★10+, ★100+, ★1k+, ★10k+ and ★100k+; rows with no repository or under 10 stars show no band. Rows run official first, then with code, then by band, then by title. A band is a popularity signal, not a quality verdict; the exact count, as last read from GitHub, is in [`catalog.json`](../../catalog.json) and on [the site](https://kydlikebtc.github.io/awesome-jev/?lang=en).
 

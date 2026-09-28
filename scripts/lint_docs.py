@@ -298,20 +298,55 @@ def check_compat_prose(compat: dict, facts: tuple, raw: str) -> list[str]:
     return found
 
 
-def check_pattern_docs() -> list[str]:
+# The pages that define each pattern.
+PATTERN_DOCS = ("docs/patterns.md",)
+PATTERN_HEAD = re.compile(r"^## ([a-z]+(?:-[a-z]+)*)\s*$", re.M)
+
+
+def pattern_sections(text: str) -> dict[str, str]:
+    """Each `## key` heading's section: its text up to the next `## ` heading."""
+    heads = list(PATTERN_HEAD.finditer(text))
+    out = {}
+    for m in heads:
+        rest = text[m.end():]
+        following = re.search(r"^## ", rest, re.M)
+        out[m.group(1)] = rest[: following.start()] if following else rest
+    return out
+
+
+def check_pattern_docs(texts: dict[str, str] | None = None, keys: list[str] | None = None) -> list[str]:
     """docs/patterns.md has one `## key` section per pattern, carrying the
     "when NOT to use this" that no generator can write. A pattern added to
     patterns.json without one would ship with its most important caveat
-    missing, and nothing else would notice."""
-    keys = [p["key"] for p in json.loads((ROOT / "patterns.json").read_text())["patterns"]]
-    heads = set(
-        re.findall(r"^## ([a-z]+(?:-[a-z]+)*)\s*$", (ROOT / "docs" / "patterns.md").read_text(), re.M)
-    )
-    return [
-        f"docs/patterns.md: no `## {k}` section for a pattern in patterns.json" for k in keys if k not in heads
-    ] + [
-        f"docs/patterns.md: `## {h}` is not a pattern in patterns.json" for h in sorted(heads - set(keys))
-    ]
+    missing, and nothing else would notice. Each section ends with its
+    `catalogued-<key>` markers, which build_docs.py fills with the count and
+    the links to the pattern's page and the site: markers moved into another
+    section would put one pattern's count under another's heading.
+
+    `texts` stands in for the pages' contents and `keys` for patterns.json's
+    (tests)."""
+    if keys is None:
+        keys = [p["key"] for p in json.loads((ROOT / "patterns.json").read_text())["patterns"]]
+    problems = []
+    for rel in PATTERN_DOCS:
+        text = (texts or {}).get(rel)
+        if text is None:
+            path = ROOT / rel
+            if not path.exists():
+                problems.append(f"{rel}: missing; it defines every pattern in patterns.json")
+                continue
+            text = path.read_text()
+        sections = pattern_sections(text)
+        problems += [f"{rel}: no `## {k}` section for a pattern in patterns.json" for k in keys if k not in sections]
+        problems += [f"{rel}: `## {h}` is not a pattern in patterns.json" for h in sorted(set(sections) - set(keys))]
+        problems += [
+            f"{rel}: the `## {k}` section has no <!-- catalogued-{k}:start --> / <!-- catalogued-{k}:end --> "
+            "markers for build_docs.py to fill"
+            for k in keys
+            if k in sections
+            and not (f"<!-- catalogued-{k}:start -->" in sections[k] and f"<!-- catalogued-{k}:end -->" in sections[k])
+        ]
+    return problems
 
 
 CJK = re.compile(r"[\u3400-\u9fff]")

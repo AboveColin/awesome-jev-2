@@ -10,11 +10,13 @@ from __future__ import annotations
 import pathlib
 
 import _stats
+from build_examples_index import EXAMPLES, own_example
 
 from .rows import (
     PATTERN_LABELS,
     ROOT,
     anchor,
+    brief_list,
     collection_link,
     direction_bit,
     direction_note,
@@ -61,7 +63,12 @@ def render_page(key: str, rows: list[dict], strings: dict) -> str:
             site=site_link(key, lang),
         ),
         "",
+        design_line(key, strings),
+        "",
         evidence_line(key, rows, strings),
+        "",
+        *highlights(rows, strings),
+        f"## {strings['list_h']}",
         "",
         stars_note(strings, catalog="../../catalog.json"),
         "",
@@ -84,6 +91,41 @@ def render_page(key: str, rows: list[dict], strings: dict) -> str:
         out.extend(entry_list(later, strings))
     out += ["---", "", strings["page_footer"], ""]
     return "\n".join(out)
+
+
+# Where docs/patterns.md, which says how to model each decision, is from a
+# pattern page, per language.
+PATTERNS_DOC = {"en": "../patterns.md", "zh": "../patterns.md"}
+
+
+def design_line(key: str, strings: dict) -> str:
+    """The link to the pattern's section of docs/patterns.md: `## key`, which
+    lint_docs requires for every pattern. Overview is a label, not a decision,
+    so its line says what the label means instead."""
+    name = "design_link_overview" if key == _stats.OVERVIEW else "design_link"
+    return marked(strings, name, page=f"{PATTERNS_DOC[strings['lang_code']]}#{key}")
+
+
+def highlights(rows: list[dict], strings: dict) -> list[str]:
+    """The two short lists a pattern page gives before its full list: what
+    TypeSafe AI publishes itself (`official`), and the examples this repository
+    ships (a row citing a file under examples/, as examples/index.json counts
+    them). Each heading stays when its list is empty, saying so."""
+    official = [entry for entry in rows if entry.get("official")]
+    examples = [entry for entry in rows if own_example(entry)]
+    folder = f"../../{EXAMPLES}/"
+    out = [f"## {strings['official_h']}", ""]
+    if official:
+        out += [marked(strings, "official_intro"), "", *brief_list(official, strings)]
+    else:
+        out += [marked(strings, "official_none"), ""]
+    out += [f"## {strings['examples_h']}", ""]
+    if examples:
+        out += [marked(strings, "examples_intro", dir=folder, readme=f"{folder}README.md"), ""]
+        out += brief_list(examples, strings, href=lambda entry: f"../../{entry['evidence']['path']}")
+    else:
+        out += [marked(strings, "examples_none", dir=folder), ""]
+    return out
 
 
 # Where the shape page's evidence matrix is, from a pattern page.

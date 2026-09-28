@@ -329,6 +329,35 @@ def row_licences_block(s: dict, catalog: list[dict]) -> str:
     return "\n\n".join(parts)
 
 
+# ---- patterns.md -----------------------------------------------------------
+
+
+def catalogued_block(key: str, n: int, lang: str) -> str:
+    """The line closing a pattern's section of the patterns page: how many rows
+    the catalogue files under the pattern, the page listing every one of them
+    (docs/by-pattern/, written only while there are rows) and the site's
+    filter, in the page's language."""
+    from readme.rows import PATTERN_LABELS, label, page_name, site_link
+
+    name, site = label(PATTERN_LABELS, key, lang), site_link(key, lang)
+    page = f"by-pattern/{page_name(key, lang)}"
+    if lang == "zh":
+        if not n:
+            return f"目录中的**{name}**：暂无条目 · [站点筛选]({site})。"
+        return f"目录中的**{name}**：共 {n} 条，[逐条列出并附警示]({page}) · [站点筛选]({site})。"
+    if not n:
+        return f"**{name}** in the catalogue: no rows yet · [the site's filter]({site})."
+    rows = "1 row, [listed with its caveats]" if n == 1 else f"{n} rows, [each listed with its caveats]"
+    return f"**{name}** in the catalogue: {rows}({page}) · [the site's filter]({site})."
+
+
+def pattern_blocks(s: dict, patterns: list[dict], lang: str) -> dict[str, str]:
+    """One `catalogued-<key>` block per pattern in patterns.json. A section
+    without its markers fails the build (replace_block), and lint_docs checks
+    each block sits in its own `## key` section."""
+    return {f"catalogued-{p['key']}": catalogued_block(p["key"], s["by_pattern"][p["key"]], lang) for p in patterns}
+
+
 # ---- driver ----------------------------------------------------------------
 
 
@@ -387,7 +416,7 @@ def render() -> dict[pathlib.Path, str]:
             "row-licences": row_licences_block(s, catalog),
         },
         "llms.txt": {},
-        "docs/patterns.md": {},
+        "docs/patterns.md": pattern_blocks(s, patterns, "en"),
     }
 
     out = {}

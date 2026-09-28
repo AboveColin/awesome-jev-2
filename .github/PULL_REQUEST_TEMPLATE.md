@@ -26,7 +26,7 @@
 
 ## If you added a pattern
 
-- [ ] Schema enum, `patterns.json` (both languages, long and short blurb) and a `## key` section in `docs/patterns.md` all updated
+- [ ] Schema enum, `patterns.json` (both languages, long and short blurb) and a `## key` section in `docs/patterns.md`, ending with its `catalogued-<key>` markers, all updated
 - [ ] There are at least two independent real examples of it
 
 ## If you touched any doc

@@ -589,10 +589,14 @@ one means editing three places:
 2. `patterns.json` — the English and Chinese label, the long blurb the README
    uses and the short one the site uses. The README, the figures, the site and
    the MCP server all read this one file.
-3. `docs/patterns.md`, a `## key` section with an explicit *when NOT to use this*
+3. `docs/patterns.md`, a `## key` section with an explicit *when NOT to use this*,
+   ending with a pair of `<!-- catalogued-key:start -->` /
+   `<!-- catalogued-key:end -->` markers (key being the pattern's key), which
+   `build_docs.py` fills with the count, the pattern's page and the site's filter
 
 `lint.py` fails if the schema and `patterns.json` disagree or a field is
-missing, and `lint_docs.py` fails if `docs/patterns.md` has no section for it —
+missing, and `lint_docs.py` fails if `docs/patterns.md` has no section for it
+or the section has no markers —
 a silent fallback to a raw slug is how a bilingual list starts rotting.
 
 A new `kind` or flag is the same, minus the doc section: the schema enum, then

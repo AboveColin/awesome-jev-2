@@ -74,6 +74,10 @@ fall back to the planning model when the choice is close.
 arguments are the hard part. This chooses _which_; something still fills in the
 arguments.
 
+<!-- catalogued-tool-selection:start -->
+**Tool selection** in the catalogue: 230 rows, [each listed with its caveats](by-pattern/tool-selection.md) · [the site's filter](https://kydlikebtc.github.io/awesome-jev/?p=tool-selection&lang=en).
+<!-- catalogued-tool-selection:end -->
+
 ---
 
 ## intent-routing
@@ -90,6 +94,10 @@ parallel against one ingest of the state.
 
 **When not to:** when intents overlap so heavily that a human labeller could not
 agree with themselves. Fix the taxonomy first.
+
+<!-- catalogued-intent-routing:start -->
+**Intent routing** in the catalogue: 35 rows, [each listed with its caveats](by-pattern/intent-routing.md) · [the site's filter](https://kydlikebtc.github.io/awesome-jev/?p=intent-routing&lang=en).
+<!-- catalogued-intent-routing:end -->
 
 ---
 
@@ -109,6 +117,10 @@ lowest-ranked items until you are under budget.
 dropping something that turns out to matter — so do not pay for it until context
 pressure is real.
 
+<!-- catalogued-context-compaction:start -->
+**Context compaction** in the catalogue: 34 rows, [each listed with its caveats](by-pattern/context-compaction.md) · [the site's filter](https://kydlikebtc.github.io/awesome-jev/?p=context-compaction&lang=en).
+<!-- catalogued-context-compaction:end -->
+
 ---
 
 ## safety-gating
@@ -125,6 +137,10 @@ to catch the careless, not to contain the adversarial: an attacker chooses the
 input, and a model that is right 99% of the time is one an attacker will probe
 for the other 1%. The vendor's jaggedness doc names adversarial content as a
 known weak spot.
+
+<!-- catalogued-safety-gating:start -->
+**Safety gating** in the catalogue: 138 rows, [each listed with its caveats](by-pattern/safety-gating.md) · [the site's filter](https://kydlikebtc.github.io/awesome-jev/?p=safety-gating&lang=en).
+<!-- catalogued-safety-gating:end -->
 
 ---
 
@@ -143,6 +159,10 @@ know _which_ rule failed rather than an aggregate.
 says the output is weak; it does not say how to fix it. Pair it with a generative
 critique for the cases it rejects.
 
+<!-- catalogued-output-validation:start -->
+**Output validation** in the catalogue: 134 rows, [each listed with its caveats](by-pattern/output-validation.md) · [the site's filter](https://kydlikebtc.github.io/awesome-jev/?p=output-validation&lang=en).
+<!-- catalogued-output-validation:end -->
+
 ---
 
 ## retry-control
@@ -154,6 +174,10 @@ critique for the cases it rejects.
 **When not to:** when the error is already machine-readable. An HTTP 429 with a
 `Retry-After` header does not need a model; it needs you to read the header.
 Reach for a decision model for the messy cases, after the deterministic rules.
+
+<!-- catalogued-retry-control:start -->
+**Retry control** in the catalogue: 6 rows, [each listed with its caveats](by-pattern/retry-control.md) · [the site's filter](https://kydlikebtc.github.io/awesome-jev/?p=retry-control&lang=en).
+<!-- catalogued-retry-control:end -->
 
 ---
 
@@ -172,6 +196,10 @@ confidence.
 belongs in config, reviewed against measured outcomes. See
 [`../examples/README.md`](../examples/README.md).
 
+<!-- catalogued-human-escalation:start -->
+**Human escalation** in the catalogue: 67 rows, [each listed with its caveats](by-pattern/human-escalation.md) · [the site's filter](https://kydlikebtc.github.io/awesome-jev/?p=human-escalation&lang=en).
+<!-- catalogued-human-escalation:end -->
+
 ---
 
 ## model-routing
@@ -186,6 +214,10 @@ tiers in code — the second is easier to re-tune when your tiers change.
 
 **When not to:** when your models differ in capability rather than cost. Verify
 the cheap path is genuinely adequate for the easy cases before building a router.
+
+<!-- catalogued-model-routing:start -->
+**Model routing** in the catalogue: 43 rows, [each listed with its caveats](by-pattern/model-routing.md) · [the site's filter](https://kydlikebtc.github.io/awesome-jev/?p=model-routing&lang=en).
+<!-- catalogued-model-routing:end -->
 
 ---
 
@@ -205,6 +237,10 @@ latency wins from batching a briefing into one call rather than many.
 **When not to:** when a later question's wording depends on an earlier answer.
 That needs two round trips.
 
+<!-- catalogued-fan-out:start -->
+**Speculative fan-out** in the catalogue: 32 rows, [each listed with its caveats](by-pattern/fan-out.md) · [the site's filter](https://kydlikebtc.github.io/awesome-jev/?p=fan-out&lang=en).
+<!-- catalogued-fan-out:end -->
+
 ---
 
 ## search-ranking
@@ -221,6 +257,10 @@ line-granular search.
 
 **When not to:** as your entire retrieval stack. This re-ranks a shortlist; it
 does not replace an index over a large corpus.
+
+<!-- catalogued-search-ranking:start -->
+**Search & ranking** in the catalogue: 64 rows, [each listed with its caveats](by-pattern/search-ranking.md) · [the site's filter](https://kydlikebtc.github.io/awesome-jev/?p=search-ranking&lang=en).
+<!-- catalogued-search-ranking:end -->
 
 ---
 
@@ -239,6 +279,10 @@ advantage for anything you will store or compare.
 and date comparison are named weak spots — resolve and validate dates in code
 after the model names the parts.
 
+<!-- catalogued-data-extraction:start -->
+**Structured extraction** in the catalogue: 16 rows, [each listed with its caveats](by-pattern/data-extraction.md) · [the site's filter](https://kydlikebtc.github.io/awesome-jev/?p=data-extraction&lang=en).
+<!-- catalogued-data-extraction:end -->
+
 ---
 
 ## classification
@@ -252,6 +296,10 @@ lets you fall back to a coarser level instead of guessing a fine one.
 **Shape:** `choice` per level, read alongside `probabilities` and `confidence`.
 
 **When not to:** when your taxonomy has overlapping leaves. Fix the taxonomy.
+
+<!-- catalogued-classification:start -->
+**Classification** in the catalogue: 119 rows, [each listed with its caveats](by-pattern/classification.md) · [the site's filter](https://kydlikebtc.github.io/awesome-jev/?p=classification&lang=en).
+<!-- catalogued-classification:end -->
 
 ---
 
@@ -268,6 +316,10 @@ without any of the model's text ever being shown to a user.
 **When not to:** when you have enough labelled data to train a supervised model
 on the raw text directly.
 
+<!-- catalogued-feature-extraction:start -->
+**ML feature extraction** in the catalogue: 8 rows, [each listed with its caveats](by-pattern/feature-extraction.md) · [the site's filter](https://kydlikebtc.github.io/awesome-jev/?p=feature-extraction&lang=en).
+<!-- catalogued-feature-extraction:end -->
+
 ---
 
 ## document-triage
@@ -281,6 +333,10 @@ review queues, `noul` per compliance check.
 fills a review queue, not as an approver. Approval stays with a person or a
 deterministic rule.
 
+<!-- catalogued-document-triage:start -->
+**Document triage** in the catalogue: 20 rows, [each listed with its caveats](by-pattern/document-triage.md) · [the site's filter](https://kydlikebtc.github.io/awesome-jev/?p=document-triage&lang=en).
+<!-- catalogued-document-triage:end -->
+
 ---
 
 ## support-triage
@@ -291,6 +347,10 @@ deterministic rule.
 
 **Note:** this is the example the vendor's own quickstart uses, so it is the
 best-documented starting point.
+
+<!-- catalogued-support-triage:start -->
+**Support triage** in the catalogue: 8 rows, [each listed with its caveats](by-pattern/support-triage.md) · [the site's filter](https://kydlikebtc.github.io/awesome-jev/?p=support-triage&lang=en).
+<!-- catalogued-support-triage:end -->
 
 ---
 
@@ -304,6 +364,10 @@ your "scale" is really unordered categories wearing a number.
 **Note:** 2–10 levels only. An ordered scale with calibrated confidence is
 rankable, which makes this the pattern for populating review queues worst-first.
 
+<!-- catalogued-content-scoring:start -->
+**Content scoring** in the catalogue: 164 rows, [each listed with its caveats](by-pattern/content-scoring.md) · [the site's filter](https://kydlikebtc.github.io/awesome-jev/?p=content-scoring&lang=en).
+<!-- catalogued-content-scoring:end -->
+
 ---
 
 ## recommendation
@@ -315,6 +379,10 @@ not stall.
 retrieval step.
 
 **When not to:** as your entire ranking stack — see `search-ranking`.
+
+<!-- catalogued-recommendation:start -->
+**Recommendation** in the catalogue: 1 row, [listed with its caveats](by-pattern/recommendation.md) · [the site's filter](https://kydlikebtc.github.io/awesome-jev/?p=recommendation&lang=en).
+<!-- catalogued-recommendation:end -->
 
 ---
 
@@ -336,6 +404,10 @@ Overview page and the site list them apart under that heading, and the
 suggestion. Read one against the patterns above, give it the ones it shows or
 keep `overview`, and set `patterns_reviewed` to the date you read it.
 
+<!-- catalogued-overview:start -->
+**Overview** in the catalogue: 451 rows, [each listed with its caveats](by-pattern/overview.md) · [the site's filter](https://kydlikebtc.github.io/awesome-jev/?p=overview&lang=en).
+<!-- catalogued-overview:end -->
+
 ---
 
 ## Adding a pattern
@@ -345,5 +417,7 @@ examples of it. Until then it goes under the closest existing one, because a
 taxonomy with empty branches is harder to use than a coarse one. Adding one means
 editing three places — the schema enum, the pattern's entry in
 [`../patterns.json`](../patterns.json) (its labels, blurbs and place in the
-order), and this page — and the build fails loudly if you miss the labels. See
-[`../CONTRIBUTING.md`](../CONTRIBUTING.md).
+order), and this page, where its `## key` section ends with a pair of
+`catalogued-<key>` markers that `scripts/build_docs.py` fills with the count and
+the links — and the build fails loudly if you miss the labels, the section or
+the markers. See [`../CONTRIBUTING.md`](../CONTRIBUTING.md).

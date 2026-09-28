@@ -286,6 +286,27 @@ EN = {
         "{negative_results} · no file cited {no_file_cited}. “Independent” = a benchmark not flagged "
         "vendor-reported, not reproduced by this repository. [Every pattern side by side]({shape})."
     ),
+    "design_link": (
+        "Design notes for this decision are in [docs/patterns.md]({page}): what it decides and which "
+        "primitive shapes it, and, where one is written, when not to use a decision model for it."
+    ),
+    "design_link_overview": (
+        "What `overview` means in this catalogue, and why a project with code filed only under it counts "
+        "as not yet indexed by pattern: [docs/patterns.md]({page})."
+    ),
+    "official_h": "Official material",
+    "official_intro": (
+        "What TypeSafe AI publishes itself (rows marked `official`), filed under this pattern. Each is also "
+        "in the full list below, with its summary."
+    ),
+    "official_none": "The catalogue files nothing TypeSafe AI publishes under this pattern.",
+    "examples_h": "Examples in this repository",
+    "examples_intro": (
+        "Code under this repository's [`examples/`]({dir}) filed under this pattern. Each is also in the "
+        "full list below; [the examples' README]({readme}) says how far they have been checked."
+    ),
+    "examples_none": "This repository ships no example of this pattern; [`examples/`]({dir}) has the ones it does.",
+    "list_h": "The full list",
     "page_other_lang": "[中文]({other})",
     "page_footer": (
         "<sub>Generated from `catalog.json` by `scripts/build_readme.py`. "
@@ -538,6 +559,27 @@ ZH = {
         "独立报告 {independent_reports} · 负面结果 {negative_results} · 未引用文件 {no_file_cited}。"
         "“独立”指未标 vendor-reported 的基准测试，未经本仓库复现。[各模式并排对照]({shape})。"
     ),
+    "design_link": (
+        "这个决策的设计说明在英文页面 [docs/patterns.md]({page})：它决定什么、用哪种原语来建模，"
+        "以及（凡写了的）什么时候不该用决策模型。"
+    ),
+    "design_link_overview": (
+        "`overview` 在本目录里是什么意思、为什么只归在它下面的带代码项目算作尚未按模式索引，"
+        "见英文页面 [docs/patterns.md]({page})。"
+    ),
+    "official_h": "官方材料",
+    "official_intro": (
+        "TypeSafe AI 自己发布、归在这个模式下的材料（标为 `official` 的行）。"
+        "每一条也都在下方完整列表里，附有摘要。"
+    ),
+    "official_none": "目录里没有归在这个模式下的 TypeSafe AI 官方材料。",
+    "examples_h": "本仓库的示例",
+    "examples_intro": (
+        "本仓库 [`examples/`]({dir}) 里归在这个模式下的代码。每一条也都在下方完整列表里；"
+        "[示例的 README]({readme}) 说明了它们核验到了哪一步。"
+    ),
+    "examples_none": "本仓库没有这个模式的示例；已有的示例见 [`examples/`]({dir})。",
+    "list_h": "完整列表",
     "page_other_lang": "[English]({other})",
     "page_footer": (
         "<sub>由 `scripts/build_readme.py` 从 `catalog.json` 生成。"
@@ -560,7 +602,8 @@ ZH_MACHINE = frozenset(
         "stars_note", "verified_recheck", "verified_summaries", "license_summaries", "unindexed_readme",
         "unindexed_page", "prims_layers", "verified_primitives", "verified_translations",
         "call_site_note", "measured_more", "measured_page_intro", "repo_skill_division", "direction_note",
-        "measured_more_negative", "negative_note", "pattern_evidence",
+        "measured_more_negative", "negative_note", "pattern_evidence", "design_link", "design_link_overview",
+        "official_intro", "official_none", "examples_intro", "examples_none",
     }
 )
 

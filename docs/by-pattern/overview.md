@@ -6,7 +6,31 @@ _Surveys the model or the space rather than one pattern._
 
 Every catalogued example of this decision — 451 of them. The same rows, with caveats, are in [the index](../../README.md#overview); [the site](https://kydlikebtc.github.io/awesome-jev/?p=overview&lang=en) can filter them further by language, primitive and kind.
 
+What `overview` means in this catalogue, and why a project with code filed only under it counts as not yet indexed by pattern: [docs/patterns.md](../patterns.md#overview).
+
 Evidence recorded for this pattern's rows (reports counted, not a verdict; a row may count more than once): official documentation 6 · call site 370 · wire shape 45 · example only 0 · independent reports 23 · negative results 1 · no file cited 36. “Independent” = a benchmark not flagged vendor-reported, not reproduced by this repository. [Every pattern side by side](../shape.md#evidence-by-decision-pattern).
+
+## Official material
+
+What TypeSafe AI publishes itself (rows marked `official`), filed under this pattern. Each is also in the full list below, with its summary.
+
+- [Official agent skill for Claude Code](https://docs.typesafe.ai/agent-skill) <sub>`Official docs` · `sh`</sub>
+- [typesafe-ai/skills](https://github.com/typesafe-ai/skills) <sub>`Plugin` · `sh`</sub>
+- [@typesafe-ai/sdk (TypeScript / JavaScript)](https://github.com/typesafe-ai/typesafe-sdk-js) <sub>`SDK` · `TS` · `JS` · `choice` · `score` · `noul`</sub>
+- [system-one-adapter-python](https://github.com/typesafe-ai/system-one-adapter-python) <sub>`SDK` · `Py`</sub>
+- [typesafe-sdk (Python)](https://github.com/typesafe-ai/typesafe-sdk-python) <sub>`SDK` · `Py` · `choice` · `score` · `noul`</sub>
+- [API reference](https://docs.typesafe.ai/api) <sub>`Official docs` · `sh` · `Py` · `TS`</sub>
+- [Models, pricing and limits](https://docs.typesafe.ai/models) <sub>`Official docs` · `sh` · `Py` · `TS`</sub>
+- [Primitives: Choice, Score, Noul](https://docs.typesafe.ai/primitives) <sub>`Official docs` · `Py` · `TS` · `choice` · `score` · `noul`</sub>
+- [Introducing System One models and Jev](https://typesafe.ai/blog/introducing-system-one-models-and-jev) <sub>`Article` · ⚠ `vendor numbers`</sub>
+- [Jev 1.13 known limitations](https://docs.typesafe.ai/model-jaggedness/jev-1.13) <sub>`Official docs`</sub>
+- [Use case map](https://docs.typesafe.ai/concepts/use-case-map) <sub>`Official docs`</sub>
+
+## Examples in this repository
+
+This repository ships no example of this pattern; [`examples/`](../../examples/) has the ones it does.
+
+## The full list
 
 ★ gives a repository's GitHub stars as a band — ★10+, ★100+, ★1k+, ★10k+ and ★100k+; rows with no repository or under 10 stars show no band. Rows run official first, then with code, then by band, then by title. A band is a popularity signal, not a quality verdict; the exact count, as last read from GitHub, is in [`catalog.json`](../../catalog.json) and on [the site](https://kydlikebtc.github.io/awesome-jev/?lang=en).
 
