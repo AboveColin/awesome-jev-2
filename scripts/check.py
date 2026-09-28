@@ -488,7 +488,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--quick", action="store_true", help="skip the steps that need Chrome or the network")
     parser.add_argument(
         "--base", metavar="REV",
-        help=f"judge generated files as CI judges a pull request against REV (--fix: {DEFAULT_BASE})",
+        help=f"judge generated files as CI judges a pull request against REV, and have lint warn about "
+        f"machine-translated rows added since REV that drop a number (--fix: {DEFAULT_BASE})",
     )
     # Repeatable, so a wrapper's --skip and the caller's add up instead of one
     # replacing the other.
