@@ -191,6 +191,15 @@ class ContractTest(unittest.TestCase):
         (served,) = [e for e in tools["entries"] if e["slug"] == "full"]
         self.assertLessEqual(self.ROW, set(served))
 
+    def test_the_index_says_what_the_evidence_counts_are(self):
+        # Every pattern in the index carries list_patterns' `evidence` counts;
+        # the note saying they are reports counted, not a verdict, travels with them.
+        index = parsed(build())[site_api.INDEX]
+        self.assertEqual(index["evidence_note"], site_api.query.EVIDENCE_NOTE)
+        self.assertIn("not a verdict", index["evidence_note"])
+        for item in index["patterns"]:
+            self.assertIn("evidence", item, item["key"])
+
     def test_no_pattern_file_carries_a_build_date(self):
         # Row dates are the catalogue's; outside the rows the only date is
         # last_sweep, so two deploys of the same data serve the same bytes.

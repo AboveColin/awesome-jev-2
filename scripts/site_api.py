@@ -138,6 +138,9 @@ def api_files(
             "about": ABOUT,
             "not_examples": not_examples,
             "note": query.PATTERNS_NOTE,
+            # What each pattern's `evidence` counts are: reports counted, not a
+            # verdict (list_patterns carries the same note).
+            "evidence_note": query.EVIDENCE_NOTE,
             "patterns": listed,
             "files": {name: site_url + name for name in published},
             "repository": REPOSITORY,
