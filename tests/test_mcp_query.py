@@ -129,6 +129,7 @@ class SearchTest(unittest.TestCase):
             ({"pattern": "safety-gating"}, ["gate"]),
             ({"pattern": "human-escalation"}, []),
             ({"kind": "official-docs"}, ["vendor-docs"]),
+            ({"kind": "docs"}, []),
             ({"language": "python"}, ["router"]),
             ({"language": "py"}, []),
             ({"question_type": "choice"}, ["router"]),
@@ -146,6 +147,16 @@ class SearchTest(unittest.TestCase):
         for filters, expected in cases:
             with self.subTest(**filters):
                 self.assertEqual(slugs(self.search(**filters)), expected)
+
+    def test_a_query_reads_the_title_summary_notes_slug_and_platforms(self):
+        rows = [
+            row("a1", title="Alpha", summary="beta", notes="gamma", platforms=["Delta Cloud"]),
+            row("zz-epsilon", title="Other", summary="other"),
+        ]
+        for words, expected in (("alpha", ["a1"]), ("BETA", ["a1"]), ("gamma", ["a1"]), ("delta", ["a1"]),
+                                ("epsilon", ["zz-epsilon"]), ("alpha gamma", ["a1"]), ("alpha other", [])):
+            with self.subTest(query=words):
+                self.assertEqual(slugs(self.search(rows, query=words)), expected)
 
     def test_order_is_official_then_code_then_stars_then_title_then_slug(self):
         rows = [
@@ -262,6 +273,7 @@ class ModelStringTest(unittest.TestCase):
     def test_a_remark_in_the_cell_is_not_part_of_the_string(self):
         self.assertEqual(query.accepted(COMPAT["platforms"][0]), ["acme-latest", "jev-9.1.0"])
         self.assertEqual(query.accepted(COMPAT["platforms"][3]), [])
+        self.assertEqual(query.accepted({"model": "a ·  · b"}), ["a", "b"])
         self.assertIs(query.model_string_check(COMPAT, "acme-latest")["valid"], True)
         self.assertIs(query.model_string_check(COMPAT, "acme-latest (default)")["valid"], False)
 
@@ -287,6 +299,20 @@ class ModelStringTest(unittest.TestCase):
         self.assertEqual(
             query.model_hint(bare),
             "Gateways and SDKs rename it: one or two on Only. "
+            "Pin a version rather than an alias once you have tuned any threshold.",
+        )
+        # Surfaces taking the same strings are named together, in compat.json's
+        # order; an alias with a digit in it is still an alias.
+        shared = {"platforms": [
+            {"name": "Own", "official": True, "model": "acme2-latest · jev-9.1 (pinned)", "endpoint": "e", "env": "k"},
+            {"name": "Beta", "model": "x · y", "endpoint": "e", "env": "k"},
+            {"name": "Alpha", "model": "x ·  · y", "endpoint": "e", "env": "k"},
+            {"name": "Gamma", "model": "z · jev-9.1", "endpoint": "e", "env": "k"},
+        ]}
+        self.assertEqual(
+            query.model_hint(shared),
+            "The versioned id is jev-9.1, with aliases acme2-latest. "
+            "Gateways and SDKs rename it: x or y on Beta and Alpha; z on Gamma. "
             "Pin a version rather than an alias once you have tuned any threshold.",
         )
 
@@ -362,13 +388,18 @@ class ServerWiringTest(unittest.TestCase):
     def test_the_other_tools_answer_with_query_on_the_loaded_data(self):
         s = self.server
         slug = s.CATALOG[0]["slug"]
-        self.assertEqual(s.get_example(slug), self.stamped(query.find_example(s.CATALOG, slug)))
-        self.assertEqual(s.get_example("zzz-none"), self.stamped(query.find_example(s.CATALOG, "zzz-none")))
+        # Padded or upper-cased arguments too, so a server that tidied them
+        # before handing them over would answer differently from query.py.
+        for asked in (slug, "zzz-none", f" {slug.upper()} "):
+            with self.subTest(slug=asked):
+                self.assertEqual(s.get_example(asked), self.stamped(query.find_example(s.CATALOG, asked)))
         self.assertEqual(s.list_patterns(), self.stamped(query.pattern_counts(s.CATALOG, s.PATTERNS)))
-        for surface in ("", "cloudflare", "zzz"):
-            self.assertEqual(s.compatibility(surface), self.stamped(query.compat_lookup(s.COMPAT, surface)))
-        for model in ("typesafe/jev-1", "jev-latest", ""):
-            self.assertEqual(s.check_model_string(model), self.stamped(query.model_string_check(s.COMPAT, model)))
+        for surface in ("", "cloudflare", "zzz", " Cloudflare "):
+            with self.subTest(surface=surface):
+                self.assertEqual(s.compatibility(surface), self.stamped(query.compat_lookup(s.COMPAT, surface)))
+        for model in ("typesafe/jev-1", "jev-latest", "", "  JEV-Latest  "):
+            with self.subTest(model=model):
+                self.assertEqual(s.check_model_string(model), self.stamped(query.model_string_check(s.COMPAT, model)))
 
     def test_every_tool_keeps_its_description(self):
         for name in ("search_examples", "get_example", "list_patterns", "compatibility", "check_model_string"):

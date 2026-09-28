@@ -305,7 +305,8 @@ class ProvenanceTest(unittest.TestCase):
                 self.assertEqual(line, ("STALE — " if stale else "") + "detail · 7 rows · catalogue checked 2026-09-20")
 
     def test_the_date_is_the_catalogues_newest_check(self):
-        catalog, _, patterns, provenance = data._unpack(payload("a", "b", "c", checked=("2026-09-01", "2026-09-20")),
+        # Newest, not last: the rows are in slug order, not date order.
+        catalog, _, patterns, provenance = data._unpack(payload("a", "b", "c", checked=("2026-09-20", "2026-09-01")),
                                                         "network", "d")
         self.assertEqual((provenance.as_of, provenance.rows, patterns), ("2026-09-20", 3, [{"key": "overview"}]))
         self.assertEqual(data._unpack(payload("a"), "network", "d")[3].as_of, "unknown")
