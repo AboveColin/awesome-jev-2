@@ -332,11 +332,12 @@ turn red, and writes nothing (the runbook is in
   are read from), `envelope` (`top-level` or `wrapped`), `weights` (`open`: a
   model you can run yourself; `closed`: one only the project runs; `proxy`:
   another provider's hosted model the server calls), `base_model` (as the file
-  names it; leave it out when the default is a local path or a required
-  argument), `calls_real_jev_as_baseline` (only `true`, when a file sends Jev
-  the same requests to compare), `comparison_url` (where the project publishes
-  a comparison with Jev), and `source`: each file you read, as a `path` and the
-  `matched` strings that back the fields read from it. `lint.py` fails a copied
+  names it; leave it out when the default names no model, such as a local
+  run directory or a required argument), `calls_real_jev_as_baseline` (only
+  `true`, when a file sends Jev the same requests to compare), `comparison_url`
+  (where the project publishes a comparison with Jev), and `source`: each
+  file you read, as a `path` and the `matched` strings that back the fields
+  read from it. `lint.py` fails a copied
   value (the endpoint's path, the spellings and keys, the model) that is in
   none of the matched strings, and a baseline call without a string naming
   `api.typesafe.ai` or a gateway's id for Jev; the weekly `claims` run re-reads

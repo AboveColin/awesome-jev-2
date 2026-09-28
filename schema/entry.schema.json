@@ -369,7 +369,7 @@
           ]
         },
         "base_model": {
-          "description": "The model that answers in that default configuration, as the cited file names it: a checkpoint the project publishes, a model it runs, or another provider's model id. Left out when the default is a local path or a required argument. Written as the cited file writes it; lint requires it inside one of wire.source's matched strings.",
+          "description": "The model that answers in that default configuration, as the cited file names it: a checkpoint the project publishes, a model it runs, or another provider's model id. Left out when the default names no model: a local run directory, or a required argument. A local directory named for a published checkpoint names it. Written as the cited file writes it; lint requires it inside one of wire.source's matched strings.",
           "type": "string",
           "minLength": 1,
           "maxLength": 120

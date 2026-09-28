@@ -394,9 +394,11 @@ maintainer should spot-check the fourteen and decide on the four. Judgement
 calls: laya's `base_model` is its bundle repository, because its router picks
 one of three checkpoints per request; kev, decider, Open-Jev and simple-jev
 leave `base_model` out, their default being a local run path or a required
-argument; razorback16/openjev's is its tokenizer default, the repository its
-vLLM backend serves; simple-jev's baseline call is its committed run record
-through OpenRouter; decider's notes say it calls the API as a baseline, but no
+argument; jeff's and open-jev's is the checkpoint their default local directory
+is named for (`models/gliformer-large-v1`, `models/gemma-3-4b-it`, which their
+READMEs download from Hugging Face); razorback16/openjev's is its tokenizer
+default, the repository its vLLM backend serves; simple-jev's baseline call
+is its committed run record through OpenRouter; decider's notes say it calls the API as a baseline, but no
 file read shows the call, so the field is left out. The alternatives below 100
 stars carry no record yet; they are for a person, in the order discovery
 brings them up.
