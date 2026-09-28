@@ -140,7 +140,11 @@ export function evidenceUrl(entry) {
     if (!candidate) continue;
     try {
       const url = new URL(candidate);
-      const parts = url.pathname.split("/").filter(Boolean);
+      // The URL Standard added ^ to the characters a path percent-encodes;
+      // engines from before that change (Node 22, older browsers) leave it
+      // bare, so one row got a different link on each. Encode it here, so every
+      // engine prints the link scripts/evidence_url.py writes into the READMEs.
+      const parts = url.pathname.split("/").filter(Boolean).map(part => part.replaceAll("^", "%5E"));
       if (url.protocol !== "https:" || url.hostname !== "github.com" || parts.length < 2) continue;
       const path = entry.evidence.path.split("/").map(encodeURIComponent).join("/");
       return `https://github.com/${parts[0]}/${parts[1]}/blob/HEAD/${path}`;
