@@ -52,12 +52,14 @@ two, and whether the cutoff varies by queue are **policy questions, not modellin
 questions** — they depend on what being wrong costs in your system. The docstring
 lays out the trade-offs worth weighing. The Inbox Zero entry in the catalog is
 worth a look first: it chooses a separate threshold for each of its email
-decisions, which is the honest answer to "what threshold should I use". Across
-the <!--n:threshold_rows-->32<!--/n--> catalogued rows whose cited file compares
-a Jev answer with a constant, a `noul` probability is cut anywhere from <!--n:threshold_noul_low-->0.2<!--/n-->
+decisions, which is the honest answer to "what threshold should I use". The
+catalogued rows that so far record a constant their cited file compares a Jev
+answer with, <!--n:threshold_rows-->32<!--/n--> of them (each row's `observed_thresholds`; a
+first reading, not every row whose file has one), cut a `noul` probability
+anywhere from <!--n:threshold_noul_low-->0.2<!--/n-->
 to <!--n:threshold_noul_high-->0.9<!--/n--> and a `choice` confidence from <!--n:threshold_choice_low-->0.3<!--/n-->
-to <!--n:threshold_choice_high-->0.9<!--/n--> (each row's `observed_thresholds`; no person has
-yet checked <!--n:thresholds_unread-->32<!--/n--> of those rows, which a model read). They are
+to <!--n:threshold_choice_high-->0.9<!--/n-->, and no person has yet checked <!--n:thresholds_unread-->32<!--/n--> of
+those rows, which a model read. They are
 what each project chose, not recommendations, and the cutoffs in
 [`04-tool-selection`](04-tool-selection/main.py) are unverified starting points,
 not taken from any of them.

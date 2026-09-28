@@ -261,8 +261,16 @@ class DocsTest(unittest.TestCase):
                             "threshold_choice_low", "threshold_choice_high", "thresholds_unread"):
                     self.assertIn(f"<!--n:{key}-->{values[key]}<!--/n-->", text)
                 self.assertIn("not recommendations", text)
+                # The count is of rows recording a threshold so far, not of every
+                # row whose cited file compares one (the reading was a first pass).
+                self.assertIn("a first reading, not every row whose file has one", " ".join(text.split()))
                 self.assertEqual(lint_docs.check_decimal_ranges(rel, text), [])
                 self.assertEqual(lint_docs.check_leading_markers(rel, text), [])
+
+    def test_llms_txt_counts_the_rows_recorded_so_far(self):
+        text = " ".join(self.rendered()["llms.txt"].split())
+        self.assertIn("<!--n:threshold_rows-->", text)
+        self.assertIn("a first reading, not every row whose file has one", text)
 
     def test_an_empty_group_prints_a_dash_not_none(self):
         s = {**_stats.compute(), "threshold_ranges": {}}

@@ -68,9 +68,9 @@ def select_tool(client: TypeSafeClient, turn: str) -> None:
     #
     # 0.5 and 0.6 below are unverified starting points: not measured here,
     # and not taken from any catalogued project or vendor page. Tune both on
-    # your own turns and pin the model version you tuned against. The
-    # constants catalogued projects use are in examples/README.md, as
-    # observations, not advice.
+    # your own turns and pin the model version you tuned against.
+    # examples/README.md gives the range of constants catalogued projects
+    # use, as observations, not advice.
     if tool.choice == "none" or needs.noul < 0.5:
         print("  -> answer directly, no tool call")
     elif tool.confidence < 0.6:

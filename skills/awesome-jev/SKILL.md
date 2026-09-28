@@ -148,9 +148,10 @@ all must not depend on the list.
 
 **Thresholds are policy, not modelling.** They depend on what being wrong costs.
 One catalogued production system, Inbox Zero, chooses a separate threshold for
-each of its email decisions. Across the <!--n:threshold_rows-->32<!--/n--> rows
-whose cited file compares a Jev answer with a constant, a `noul` probability is
-cut anywhere from <!--n:threshold_noul_low-->0.2<!--/n--> to <!--n:threshold_noul_high-->0.9<!--/n-->
+each of its email decisions. The <!--n:threshold_rows-->32<!--/n--> rows that
+so far record a constant their cited file compares a Jev answer with (a first
+reading, not every row whose file has one) cut a `noul` probability anywhere
+from <!--n:threshold_noul_low-->0.2<!--/n--> to <!--n:threshold_noul_high-->0.9<!--/n-->
 and a `choice` confidence from <!--n:threshold_choice_low-->0.3<!--/n--> to <!--n:threshold_choice_high-->0.9<!--/n-->.
 Those are what each project chose, not recommendations: `get_example` returns a
 row's `observed_thresholds` with the text in its file each one stands on, and no
