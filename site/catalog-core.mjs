@@ -219,6 +219,15 @@ export function wireRemainder(entries) {
   return entries.filter(e => e.kind === WIRE_KIND && !wireOf(e)).length;
 }
 
+// owner/name of the GitHub repository the cited files are read in, as
+// evidenceUrl() spells it in their links; null off GitHub. Alternatives'
+// titles repeat (openjev, OpenJev, open-jev, Open-Jev), so the view prints it
+// beside each title, as docs/compatibility.md does.
+export function wireRepository(entry) {
+  const url = evidenceUrl({ ...entry, evidence: { path: "x" } });
+  return url ? url.split("/").slice(3, 5).join("/") : null;
+}
+
 export function isIndependentReport(entry) {
   return entry.kind === "benchmark" && !(entry.flags || []).includes("vendor-reported");
 }

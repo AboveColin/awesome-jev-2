@@ -999,7 +999,7 @@
     </footer>
 
     <script type="module">
-      import { SORTS, verification, evidenceKind, evidenceUrl, isIndependentReport, compareEntries, matchesEntry, queryFromState, shareUrl, stateFromQuery, summaryMarks, notIndexedByPattern, primitiveLayers, repositoryFacts, siblingCitations, platformRows, resolvePlatform, platformChoices, measurementOf, wireOf, wireSources, wirePersonRead, wireRows, wireRemainder, isNegativeResult } from "./catalog-core.mjs";
+      import { SORTS, verification, evidenceKind, evidenceUrl, isIndependentReport, compareEntries, matchesEntry, queryFromState, shareUrl, stateFromQuery, summaryMarks, notIndexedByPattern, primitiveLayers, repositoryFacts, siblingCitations, platformRows, resolvePlatform, platformChoices, measurementOf, wireOf, wireSources, wirePersonRead, wireRows, wireRemainder, wireRepository, isNegativeResult } from "./catalog-core.mjs";
       const STR = {
         en: {
           eyebrow: "Jev Decision Atlas · community index",
@@ -2010,8 +2010,9 @@
           .map((e) => {
             const w = wireOf(e);
             const link = typeof w.comparison_url === "string" ? `<a href="${esc(w.comparison_url)}" rel="noopener">${S().w_link}</a>` : dash;
+            const repo = wireRepository(e);
             return `<tr>
-              <td class="k"><a href="?lang=${L}#${encodeURIComponent(e.slug)}">${esc(e.title)}</a></td>
+              <td class="k"><a href="?lang=${L}#${encodeURIComponent(e.slug)}">${esc(e.title)}</a>${repo ? ` <sub>${esc(repo)}</sub>` : ""}</td>
               <td class="k">${weights[w.weights] ? esc(weights[w.weights]) : dash}</td>
               <td class="k">${code(w.base_model)}</td>
               <td class="k">${code(w.endpoint)}</td>

@@ -182,12 +182,19 @@ def caveats(entry: dict, flag_labels: dict[str, str]) -> str:
     return text + "".join(f" · {label}" for label in others)
 
 
+def row_repository(entry: dict) -> str | None:
+    """owner/name of the repository the cited files are read in, as their links
+    spell it (site/catalog-core.mjs wireRepository), or None off GitHub."""
+    found = repository(entry.get("repo")) or repository(entry.get("url"))
+    return f"{found[0]}/{found[1]}" if found else None
+
+
 def wire_row(entry: dict, flag_labels: dict[str, str]) -> list[str]:
     record = wire.wire_of(entry)
     # Titles repeat (openjev, OpenJev, open-jev, Open-Jev), so the repository follows.
-    found = repository(entry.get("repo")) or repository(entry.get("url"))
+    found = row_repository(entry)
     title = f"[{entry['title']}]({SITE}?lang=en#{urllib.parse.quote(entry['slug'])})"
-    title += f" <sub>{found[0]}/{found[1]}</sub>" if found else ""
+    title += f" <sub>{found}</sub>" if found else ""
     band = star_label(entry.get("stars"))
     title += f" {band}" if band else ""
     comparison = record.get(wire.COMPARISON)

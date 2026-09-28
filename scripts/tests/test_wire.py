@@ -68,6 +68,21 @@ class DefinitionTest(unittest.TestCase):
             self.assertIn(field, props)
         self.assertEqual(props[wire.BASELINE]["enum"], [True], "only true is recorded")
 
+    def test_the_site_table_prints_weights_caveats_and_the_repository_on_every_row(self):
+        page = (ROOT / "site" / "index.html").read_text()
+        start = page.index("function wireTable()")
+        table = page[start:page.index("\n      }\n", start)]
+        cols = re.search(r"const cols = \[([^\]]*)\]", table).group(1)
+        self.assertEqual(len(cols.split(",")), len(build_compat.WIRE_COLUMNS))
+        self.assertIn('"w_weights"', cols)
+        row = table[table.index("return `<tr>"):]
+        for text in ("${caveats(e)}", "wireRepository(e)", "<sub>${esc(repo)}</sub>"):
+            self.assertIn(text, table)
+        caveats = table[table.index("const caveats"):table.index("const cols")]
+        for text in ('lbl(FLAG, "not-jev")', "S().w_calibration", "isNegativeResult(e)", "S().w_negative"):
+            self.assertIn(text, caveats)
+        self.assertIn("${caveats(e)}", row)
+
     def test_the_calibration_sentence_is_taxonomys_in_both_languages(self):
         self.assertIn(wire.CALIBRATION_NOTE, NOT_JEV["blurb_en"])
         self.assertIn(wire.CALIBRATION_NOTE_ZH, NOT_JEV["blurb_zh"])
@@ -83,6 +98,7 @@ class DefinitionTest(unittest.TestCase):
                 self.assertEqual(case["entry"]["slug"] in wired, case["wired"])
                 self.assertEqual(case["entry"]["slug"] in unwired, case["unwired"])
                 self.assertEqual(wire.person_read(wire.wire_of(case["entry"]) or {}), case["person_read"])
+                self.assertEqual(build_compat.row_repository(case["entry"]), case["repository"])
 
     def test_claims_are_the_well_formed_cited_files(self):
         record = {"weights": "open", "source": [SERVER, {"path": "x.py"}, "text", {"path": "y.py", "matched": ["a1"], "read_on": "2026-09-01"}]}

@@ -6,7 +6,7 @@ import {
   UNINDEXED_KINDS, notIndexedByPattern, PRIMITIVES, primitiveLayers, repositoryFacts, siblingCitations,
   COARSE, platformRows, resolvePlatform, platformChoices, DIRECTIONS, measurementOf,
   NEGATIVE_FLAG, NEGATIVE_DIRECTION, isNegativeResult,
-  WIRE_KIND, WIRE_WEIGHTS, wireOf, wireSources, wirePersonRead, wireRows, wireRemainder,
+  WIRE_KIND, WIRE_WEIGHTS, wireOf, wireSources, wirePersonRead, wireRows, wireRemainder, wireRepository,
 } from "../site/catalog-core.mjs";
 import { readFileSync } from "node:fs";
 
@@ -352,6 +352,7 @@ test("the compatibility view lists the alternatives that record their interface,
   for (const c of cases) {
     assert.equal(listed.has(c.entry.slug), c.wired, c.name);
     assert.equal(wirePersonRead(wireOf(c.entry)), c.person_read, c.name);
+    assert.equal(wireRepository(c.entry), c.repository, c.name);
   }
   assert.equal(wireRemainder(entries), cases.filter(c => c.unwired).length);
   assert.deepEqual(wireSources(null), []);
@@ -364,5 +365,6 @@ test("every wire record in the real catalogue is on an alternative row the view 
   const catalog = JSON.parse(readFileSync(new URL("../catalog.json", import.meta.url)));
   const withWire = catalog.filter(e => "wire" in e);
   assert.deepEqual(wireRows(catalog).map(e => e.slug), withWire.map(e => e.slug));
+  for (const e of withWire) assert.match(wireRepository(e), /^[^/]+\/[^/]+$/, e.slug);
   assert.equal(wireRemainder(catalog), catalog.filter(e => e.kind === "alternative").length - withWire.length);
 });
