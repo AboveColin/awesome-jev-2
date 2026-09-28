@@ -36,6 +36,12 @@ tune a threshold against a substitute and then ship it against the real model.
 
 Run any of them with `python main.py` from its directory.
 
+[`index.json`](index.json) beside them is generated, never edited: each
+example's code with the catalogue row that describes it (patterns, languages,
+flags), written by `scripts/build_examples_index.py` for the MCP server's
+`wire_pattern` prompt, which inlines the one that fits the pattern and language
+it is asked about.
+
 ## About `02-confidence-gate`
 
 That example stops short of a decision on purpose. The model call, the dataclass

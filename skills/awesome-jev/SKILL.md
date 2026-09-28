@@ -88,6 +88,12 @@ It also serves resources, for a client that reads them:
 - `awesome-jev://patterns/{key}` — every row filed under one decision pattern,
   caveated rows included, with a link to that pattern's "when not to" section
 
+And one prompt, `wire_pattern(pattern, language, surface)`: the pattern and its
+"when not to" link, that surface's model strings and request shape, up to five
+cited rows with their caveats, and the repository's own skeleton for the
+pattern in that language when there is one, under a comment saying it was
+never executed. The catalogue runs nothing it lists.
+
 Every result carries a `data` line saying where the catalogue came from and how
 current it is. If it begins `STALE`, the server could not reach GitHub and is
 answering from a cache or from the snapshot it was installed with — say so when

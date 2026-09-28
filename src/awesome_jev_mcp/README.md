@@ -74,6 +74,20 @@ holds the same rows, in the same order, as the catalogue site's
 `api/v1/patterns/<key>.json`, plus a link to the pattern's "when not to"
 section in `docs/patterns.md`.
 
+## Prompt
+
+`wire_pattern(pattern, language, surface)` puts what a coding agent needs to
+wire one decision into a single message: the pattern's description and a link
+to its "when not to use" section; the surface's model strings, request
+envelope, answer field and key variable from `compat.json` (or the surfaces to
+choose from); up to five catalogued rows under the pattern that cite the file
+their code was read in, each linked with its caveats; and, when this
+repository ships one for that pattern and language, the example's code under a
+comment saying it was never executed. Without one it says so rather than
+guessing. The examples come from `examples/index.json`, generated from the
+catalogue rows that describe them, and reach the server by the same ladder as
+the catalogue, the first time the prompt is asked for.
+
 ## Three things it does on purpose
 
 **Caveats are never optional.** Every result carries its flags. An agent that
@@ -117,6 +131,11 @@ five small round trips rather than megabytes.
 Layer 5 is the offline first run. It works, and it is the one source that can be
 arbitrarily old, so it is the loudest.
 
+`examples/index.json`, which only the `wire_pattern` prompt reads, climbs the
+same ladder on its own the first time the prompt is asked for: a source
+without it costs the prompt its skeleton, not the server its catalogue, and
+the prompt names the source that served it.
+
 Three properties worth stating plainly, because two of them are trade-offs:
 
 - **The five files always move together.** A source supplies all of them or it
@@ -141,13 +160,15 @@ imports anything declared in `pyproject.toml`. Hand-rolling stdio JSON-RPC would
 extend that streak to here too, but a subtly broken MCP server is worse than a
 dependency.
 
-The dependency stops at `server.py`, which only registers the tools and
-resources and adds the `data` line. What they answer — which rows count as
-examples, the caveats and what each means, the order, the model-string check —
-is `query.py`, and where the data comes from
-is `data.py`. Both are standard library only, so the repository's CI tests them
-on every pull request without installing `mcp` (`tests/test_mcp_query.py`,
-`tests/test_mcp_resources.py`, `tests/test_mcp_data.py`). The package build in
+The dependency stops at `server.py`, which only registers the tools, the
+resources and the prompt and adds the `data` line. What they answer — which
+rows count as examples, the caveats and what each means, the order, the
+model-string check, the prompt's text — is `query.py` and `prompts.py`, and
+where the data comes from is `data.py`. Every module but `server.py` is
+standard library only, so the repository's CI tests them on every pull request
+without installing
+`mcp` (`tests/test_mcp_query.py`, `tests/test_mcp_resources.py`,
+`tests/test_mcp_prompt.py`, `tests/test_mcp_data.py`). The package build in
 `publish.yml`, which runs on every change to the package, is the one place the
-SDK itself is installed, and it checks there that every tool and resource is
-registered.
+SDK itself is installed, and it checks there that every tool, resource and
+prompt is registered.

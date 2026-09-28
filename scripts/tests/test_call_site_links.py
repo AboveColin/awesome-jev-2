@@ -8,8 +8,10 @@ prints a link named for what `evidence.kind` says the file shows, with the day
 a person last read it: a dated reading, never "verified". The READMEs print
 the link alone; the pattern pages add the path.
 
-The link is built by scripts/evidence_url.py, a copy of the site's
-evidenceUrl(); scripts/tests/evidence_url_cases.json is read by this suite and
+The link is built by src/awesome_jev_mcp/evidence_url.py (which
+scripts/evidence_url.py loads by path, so the MCP server's prompt links the
+same files), a copy of the site's evidenceUrl();
+scripts/tests/evidence_url_cases.json is read by this suite and
 by scripts/test_catalog_core.mjs, and SiteParityTest runs the site's function
 itself beside the copy over the whole catalogue and thousands of made-up
 addresses, so the two cannot drift apart unnoticed.

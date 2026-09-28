@@ -34,11 +34,12 @@
 # the one data-dependent assertion here too, that the fabricated
 # `typesafe/jev-1` is still rejected against compat.json
 # (tests/test_repository_policy.py), on the source tree rather than a wheel.
-# lint also tests what the tools and resources answer (query.py,
-# tests/test_mcp_query.py, tests/test_mcp_resources.py) and where their data
-# comes from (data.py, tests/test_mcp_data.py), with `mcp` stubbed out, since
-# lint installs nothing. What only this job can check is that the real SDK
-# registers the tools and resources, which the smoke step below asks it.
+# lint also tests what the tools, resources and prompt answer (query.py,
+# prompts.py; tests/test_mcp_query.py, tests/test_mcp_resources.py,
+# tests/test_mcp_prompt.py) and where their data comes from (data.py,
+# tests/test_mcp_data.py), with `mcp` stubbed out, since lint installs nothing.
+# What only this job can check is that the real SDK registers the tools,
+# resources and prompt, which the smoke step below asks it.
 #
 # The bundled snapshot inside the wheel is the catalogue as of the tagged
 # commit — the offline last resort. The server fetches the live catalogue from
@@ -116,9 +117,13 @@ jobs:
           assert snapshot, f"no complete bundled snapshot at {data.BUNDLED}"
           for name in data.FILES:
               assert snapshot[name] == json.loads((repo / name).read_text()), f"bundled {name} differs from the repository's"
+          # And the examples index the wire_pattern prompt reads, which is loaded apart.
+          examples = data._read_dir(data.BUNDLED, (data.EXAMPLES,))
+          assert examples and examples[data.EXAMPLES] == json.loads((repo / data.EXAMPLES).read_text()), "bundled examples index differs"
 
-          # And the server itself imports, registers its tools and resources
-          # with the real MCP SDK, which no other check installs, and answers.
+          # And the server itself imports, registers its tools, resources and
+          # prompt with the real MCP SDK, which no other check installs, and
+          # answers.
           import asyncio
           from awesome_jev_mcp import server
           tools = sorted(tool.name for tool in asyncio.run(server.mcp.list_tools()))
@@ -129,6 +134,11 @@ jobs:
           assert templates == ["awesome-jev://collections/{id}", "awesome-jev://patterns/{key}"], templates
           [read] = asyncio.run(server.mcp.read_resource("awesome-jev://patterns/safety-gating"))
           assert json.loads(read.content)["entries"] and read.mime_type == "application/json", read
+          prompts = sorted(p.name for p in asyncio.run(server.mcp.list_prompts()))
+          assert prompts == ["wire_pattern"], prompts
+          said = asyncio.run(server.mcp.get_prompt("wire_pattern", {"pattern": "tool-selection", "language": "python"}))
+          text = said.messages[0].content.text
+          assert "## Skeleton" in text and "No examples index could be read" not in text, text
           assert server.check_model_string(model="typesafe/jev-1")["valid"] is False
           print(f"ok: {got}, {server.PROVENANCE.line()}")
           PY

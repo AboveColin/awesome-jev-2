@@ -94,7 +94,7 @@ class FakeGitHub:
         return f'W/"{name}-{abs(hash(json.dumps(body))) % 10**8}"'
 
     def __call__(self, request, timeout=None):
-        name = request.full_url.rsplit("/", 1)[1]
+        name = request.full_url.removeprefix(data.RAW)
         condition = request.get_header("If-none-match")
         self.requests.append((request.full_url, condition, timeout))
         if name in self.fail:
@@ -311,6 +311,66 @@ class LadderTest(unittest.TestCase):
             self.assertIn(name, str(caught.exception))
 
 
+    # --- the examples index, on the same ladder but on its own -------------------
+
+    INDEX = {"examples": [{"name": "01-x", "patterns": ["overview"], "code": "print(1)\n"}]}
+
+    def write_index(self, directory: pathlib.Path, index: dict) -> pathlib.Path:
+        (directory / "examples").mkdir(parents=True, exist_ok=True)
+        (directory / data.EXAMPLES).write_text(json.dumps(index))
+        return directory
+
+    def test_the_catalogue_never_asks_for_the_index(self):
+        self.github.files[data.EXAMPLES] = self.INDEX
+        self.load()
+        self.assertNotIn(data.RAW + data.EXAMPLES, [url for url, _, _ in self.github.requests])
+
+    def test_the_index_comes_from_the_first_rung_that_has_it(self):
+        repo = self.checkout()
+        override = write(self.tmp / "override", payload("ov"))
+        os.environ["AWESOME_JEV_CATALOG"] = str(override)
+        self.github.files[data.EXAMPLES] = {"examples": ["net"]}
+        # The override has the catalogue but no index, so the checkout's index answers,
+        # while the catalogue itself still comes from the override.
+        self.write_index(repo, self.INDEX)
+        self.assertEqual(data.load_examples(repo), (self.INDEX, f"from the repository at {repo.resolve()}"))
+        self.assertEqual(self.load(repo)[1].source, "override")
+        self.write_index(override, {"examples": ["ov"]})
+        self.assertEqual(data.load_examples(repo), ({"examples": ["ov"]}, f"from AWESOME_JEV_CATALOG={override}"))
+        self.assertEqual(self.github.requests, [])
+
+    def test_the_network_fetches_the_index_alone_and_caches_it_beside_the_catalogue(self):
+        self.load()
+        tags = json.loads((self.cache / "etags.json").read_text())
+        self.github.requests.clear()
+        self.github.files[data.EXAMPLES] = self.INDEX
+        self.assertEqual(data.load_examples(self.outside), (self.INDEX, "fetched from GitHub"))
+        self.assertEqual(self.github.requests, [(data.RAW + data.EXAMPLES, None, data.TIMEOUT)])
+        self.assertEqual(json.loads((self.cache / data.EXAMPLES).read_text()), self.INDEX)
+        etags = json.loads((self.cache / "etags.json").read_text())
+        self.assertEqual({n: etags[n] for n in data.FILES}, {n: tags[n] for n in data.FILES})
+        self.assertIn(data.EXAMPLES, etags)
+        self.assertEqual(data.load_examples(self.outside), (self.INDEX, "revalidated against GitHub"))
+        self.assertEqual(self.github.requests[-1][1], etags[data.EXAMPLES])
+
+    def test_a_degraded_index_says_so(self):
+        self.github.files[data.EXAMPLES] = self.INDEX
+        data.load_examples(self.outside)
+        self.github.fail = {data.EXAMPLES: urllib.error.URLError("offline")}
+        index, line = data.load_examples(self.outside)
+        self.assertEqual(index, self.INDEX)
+        self.assertEqual(line, "STALE — network unreachable, serving the last copy fetched to this machine")
+        (self.cache / data.EXAMPLES).unlink()
+        self.write_index(self.bundled, {"examples": ["snap"]})
+        index, line = data.load_examples(self.outside)
+        self.assertEqual(index, {"examples": ["snap"]})
+        self.assertTrue(line.startswith("STALE — network unreachable and nothing cached"), line)
+
+    def test_no_index_anywhere_is_an_answer_not_an_error(self):
+        self.github.fail = {data.EXAMPLES: urllib.error.URLError("offline")}
+        self.assertEqual(data.load_examples(self.outside), (None, "no source had examples/index.json"))
+
+
 class ProvenanceTest(unittest.TestCase):
     def test_only_the_cache_and_the_snapshot_are_stale(self):
         for source in ("override", "checkout", "network", "cache", "bundled"):
@@ -351,7 +411,7 @@ class PackagingTest(unittest.TestCase):
         import tomllib  # noqa: PLC0415 - Python 3.11+, like the rest of the tests
 
         hatch = tomllib.loads((ROOT / "pyproject.toml").read_text())["tool"]["hatch"]["build"]["targets"]
-        for name in data.FILES:
+        for name in (*data.FILES, data.EXAMPLES):
             with self.subTest(name=name):
                 self.assertIn(f"/{name}", hatch["sdist"]["include"])
                 self.assertEqual(hatch["wheel"]["force-include"][name], f"awesome_jev_mcp/_bundled/{name}")

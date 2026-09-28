@@ -2,8 +2,9 @@
 """Run every generator, so a tree's generated files match its sources.
 
 The sources are catalog.json, retired.json, compat.json, patterns.json,
-taxonomy.json and collections.json. Everything listed in OUTPUTS below is
-derived from them, whole or in marked blocks, and is never edited by hand.
+taxonomy.json and collections.json, and the example code under examples/.
+Everything listed in OUTPUTS below is derived from them, whole or in marked
+blocks, and is never edited by hand.
 
 Since 2026-09-27 a pull request does not have to carry that output. lint.yml
 runs this on every event; on main its `regenerate` job commits the result as
@@ -41,6 +42,7 @@ GENERATORS = (
     ("build_compat.py", "the generated tables in docs/compatibility.md"),
     ("build_review_queue.py", "docs/review-queue.md, the rows a script marks for a person to read"),
     ("zh_audit.py", "docs/zh-queue.md, the machine-translated Chinese summaries for a person to replace"),
+    ("build_examples_index.py", "examples/index.json, the examples by decision pattern for the MCP server's prompt"),
 )
 
 # Every path those generators write: files they own outright and hand-written
@@ -61,6 +63,7 @@ OUTPUTS = (
     "docs/review-queue.md",
     "docs/zh-queue.md",
     "llms.txt",
+    "examples/index.json",
 )
 
 

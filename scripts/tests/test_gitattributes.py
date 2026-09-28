@@ -34,7 +34,8 @@ class GitattributesTest(unittest.TestCase):
     def test_fully_generated_files_are_marked(self):
         paths = [
             "README.md", "README.zh-CN.md", "docs/measured.md", "docs/measured.zh-CN.md",
-            "docs/review-queue.md", "docs/zh-queue.md", *tracked("docs/by-pattern", "docs/assets"),
+            "docs/review-queue.md", "docs/zh-queue.md", "examples/index.json",
+            *tracked("docs/by-pattern", "docs/assets"),
         ]
         self.assertGreater(len(paths), 20)
         unmarked = [path for path, value in attribute(*paths).items() if value != "set"]

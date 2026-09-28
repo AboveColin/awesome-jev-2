@@ -31,7 +31,10 @@ together from several calls: `awesome-jev://flags` (what each caveat means),
 `awesome-jev://collections` and `awesome-jev://collections/{id}` (the curated
 editorial entry points, each pick with a reason and a caution), and
 `awesome-jev://patterns/{key}` (every row filed under one decision pattern, as
-the site's api/v1 file for it holds them).
+the site's api/v1 file for it holds them). One prompt, `wire_pattern`, puts
+what a coding agent needs to wire one decision into a single message: the
+pattern, where its "when not to" is, one surface's compat.json fields, cited
+rows and the repository's own skeleton for it (`prompts.py`).
 
 Unlike the rest of this repository, this file has a dependency. Hand-rolling
 stdio JSON-RPC would keep the zero-dependency streak, but a subtly broken MCP
@@ -62,7 +65,8 @@ from typing import Any, Literal
 
 from mcp.server import MCPServer
 
-from .data import load
+from .data import load, load_examples
+from .prompts import wire_pattern_text
 from .query import (
     collection_detail,
     collection_list,
@@ -344,6 +348,44 @@ def pattern(key: str) -> dict[str, Any]:
     so search_examples with filters is the cheaper way in there.
     """
     return pattern_listing(CATALOG, PATTERNS, FLAGS, key)
+
+
+@functools.cache
+def _examples() -> tuple[dict[str, Any] | None, str]:
+    """examples/index.json and where it came from, read the first time the
+    prompt is asked for rather than at every start (see data.py)."""
+    return load_examples()
+
+
+@mcp.prompt()
+def wire_pattern(pattern: str, language: str = "", surface: str = "") -> str:
+    """Everything needed to wire one decision pattern with Jev, in one message.
+
+    The pattern's description and a link to its "when not to use" section;
+    compat.json's model strings, request envelope, answer field and key
+    variable for the surface; up to five catalogued rows under the pattern
+    that cite the file their code was read in, linked, with their caveats; and
+    this repository's skeleton for the pattern in that language when it ships
+    one, marked as never executed, or a plain statement that it does not.
+
+    pattern: a key from list_patterns(), e.g. "tool-selection". language:
+    e.g. "python" or "typescript"; rows and skeleton in it are preferred.
+    surface: a platform name or part of one, e.g. "cloudflare"; left empty,
+    the prompt lists the surfaces to choose from.
+    """
+    examples, served = _examples()
+    return wire_pattern_text(
+        CATALOG,
+        PATTERNS,
+        COMPAT,
+        TAXONOMY,
+        examples,
+        pattern=pattern,
+        language=language,
+        surface=surface,
+        data=PROVENANCE.line(),
+        served=served,
+    )
 
 
 if __name__ == "__main__":

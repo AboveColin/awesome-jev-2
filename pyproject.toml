@@ -36,7 +36,8 @@ awesome-jev-mcp = "awesome_jev_mcp.__main__:main"
 # workflows, docs, screenshots, the site, the plugin manifests — into a Python
 # package, 115 files where eleven will do. The data files must be here
 # because the wheel snapshots them from the sdist when pip builds from source:
-# the five data.py FILES names (a test holds these lists to it).
+# the five data.py FILES names and its EXAMPLES, the generated examples index
+# the wire_pattern prompt reads (a test holds these lists to data.py).
 [tool.hatch.build.targets.sdist]
 include = [
   "/src/awesome_jev_mcp",
@@ -46,6 +47,7 @@ include = [
   "/patterns.json",
   "/taxonomy.json",
   "/collections.json",
+  "/examples/index.json",
   "/LICENSE",
   "/LICENSE-MIT",
   "/LICENSE-CC0",
@@ -70,3 +72,4 @@ packages = ["src/awesome_jev_mcp"]
 "patterns.json" = "awesome_jev_mcp/_bundled/patterns.json"
 "taxonomy.json" = "awesome_jev_mcp/_bundled/taxonomy.json"
 "collections.json" = "awesome_jev_mcp/_bundled/collections.json"
+"examples/index.json" = "awesome_jev_mcp/_bundled/examples/index.json"

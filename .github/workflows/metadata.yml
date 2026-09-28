@@ -201,7 +201,7 @@ jobs:
           # The same generators, in the same order, as lint.yml runs, so one
           # added to regenerate.py is never missed here.
           python3 scripts/regenerate.py
-          git add -A catalog.json README.md README.zh-CN.md docs llms.txt .discover
+          git add -A catalog.json README.md README.zh-CN.md docs llms.txt examples/index.json .discover
           if git diff --cached --quiet; then
             echo "nothing changed"
             echo "changed=false" >> "$GITHUB_OUTPUT"

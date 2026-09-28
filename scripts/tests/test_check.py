@@ -205,7 +205,7 @@ class MetadataStepsTest(unittest.TestCase):
         files = {
             "catalog.json": "v1\n", "README.md": "generated from v1\n", "README.zh-CN.md": "zh\n",
             "docs/status.md": "status\n", "llms.txt": "llms\n", "scripts/regenerate.py": self.REGENERATE,
-            ".discover/seen.json": "{}\n",
+            ".discover/seen.json": "{}\n", "examples/index.json": "{}\n",
         }
         for rel, body in files.items():
             (seed / rel).parent.mkdir(parents=True, exist_ok=True)

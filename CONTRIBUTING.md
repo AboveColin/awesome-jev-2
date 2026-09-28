@@ -31,11 +31,12 @@ python3 scripts/check.py --fix
 The READMEs, the pages under `docs/by-pattern/`,
 [`docs/measured.md`](docs/measured.md) and `docs/measured.zh-CN.md`, the
 figures in `docs/assets/`, [`docs/review-queue.md`](docs/review-queue.md),
-[`docs/zh-queue.md`](docs/zh-queue.md) and the generated numbers in
-`docs/status.md`, `docs/sources.md`, `docs/patterns.md`,
+[`docs/zh-queue.md`](docs/zh-queue.md), `examples/index.json` and the
+generated numbers in `docs/status.md`, `docs/sources.md`, `docs/patterns.md`,
 `docs/compatibility.md` and `llms.txt` are all derived from the JSON files at
-the root. You do not need to regenerate them. CI regenerates everything on
-every run, and after your pull request is merged, `github-actions[bot]`
+the root (the index from the example files too). You do not need to
+regenerate them. CI regenerates everything on every run, and after your pull
+request is merged, `github-actions[bot]`
 commits the regenerated files to `main` as `chore: regenerate from
 catalog.json`. Leaving them out also keeps two pull requests that add
 different rows from conflicting over the generated files.
@@ -514,6 +515,12 @@ inside this repository. Their coverage is separate from the public resources in
 the catalogue; use [`docs/status.md`](docs/status.md) for current catalogue gaps.
 Say plainly in the file whether you ran it against the live API, and include a
 reproducible test record before claiming that you did.
+
+An example reaches the MCP server's `wire_pattern` prompt through its catalogue
+row: add a row whose `evidence.path` is the example's file (with its patterns
+and languages, and `code-untested` until it has been run), and
+`scripts/build_examples_index.py` indexes it in the generated
+`examples/index.json`. A file no row cites is left out of the index.
 
 ## Ground rules
 
