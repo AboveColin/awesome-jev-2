@@ -51,8 +51,10 @@ from _github import VERSION, version_parts, version_stem  # noqa: E402
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 TIMEOUT = 25
-# A person's reading of every platform page older than this is due again. The
-# vendor and the gateways each changed a model string within weeks of launch.
+# A person's reading of every platform page older than this is due again.
+# A judgement, not a measured release cadence: about six weeks, so the weekly
+# run does not ask every week, yet what a string match cannot see (a renamed
+# field, another envelope) waits at most that long for a person.
 STALE_DAYS = 45
 HEADERS = {
     "User-Agent": (

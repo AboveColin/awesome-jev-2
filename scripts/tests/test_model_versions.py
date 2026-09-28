@@ -332,10 +332,13 @@ class RehearsalTest(unittest.TestCase):
         text = out.getvalue()
         self.assertIn("Release rehearsal: compat.json with jev-99.0.0 in place of ", text)
         self.assertIn("Would fail lint_docs: ", text)
-        listed = [line.strip() for line in text.split("Each is a copy to edit:\n", 1)[1].split("\n\n", 1)[0].splitlines()
-                  if line.startswith("  ") and not line.startswith("    ")]
-        for rel in listed:
+        entries = [line.strip() for line in text.split("Each is a copy to edit:\n", 1)[1].split("\n\n", 1)[0].splitlines()
+                   if line.startswith("  ") and not line.startswith("    ")]
+        listed = [entry.split()[0] for entry in entries]
+        for rel, entry in zip(listed, entries):
             self.assertTrue((ROOT / rel).exists(), rel)
+            # A generated page is fixed through its source, never by hand.
+            self.assertEqual("(generated: fix its source, not this file)" in entry, lint_docs.generated(rel), entry)
         # Derived from compat.json, so never among the copies to edit.
         self.assertNotIn("src/awesome_jev_mcp/server.py", listed)
         self.assertIn("--propose-version-rewrite", text)

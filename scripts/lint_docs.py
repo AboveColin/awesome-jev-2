@@ -487,7 +487,10 @@ def rehearse(model: str, fact_files: list[str]) -> int:
             print(f"  {platform['id']} docs_url: {platform['docs_url']}")
     print(f"\nWould fail lint_docs: {len(red)} problem(s) in {len(files)} file(s). Each is a copy to edit:")
     for rel in files:
-        print(f"  {rel}")
+        # A generated page is never edited: its text comes from catalogue rows
+        # (named under "The catalogue" below) or from its generator.
+        source = "  (generated: fix its source, not this file)" if generated(rel) else ""
+        print(f"  {rel}{source}")
         for problem in red:
             where, _, what = problem.partition(": ")
             if where.split(":", 1)[0] == rel:
