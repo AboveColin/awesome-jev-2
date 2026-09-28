@@ -72,6 +72,12 @@ class GlossaryTest(unittest.TestCase):
         self.assertEqual(list(wide["caveat_glossary"]),
                          ["not-jev", "shadow-mode-only", "single-commit", "vendor-reported"])
 
+    def test_the_order_is_the_taxonomys_not_the_alphabets_or_the_rows(self):
+        rows = [row("late", has_code=True, flags=["archived", "vendor-reported"]),
+                row("early", has_code=True, flags=["not-jev"])]
+        answer = query.search(rows, PATTERNS, FLAGS, include_non_jev=True)
+        self.assertEqual(list(answer["caveat_glossary"]), ["not-jev", "vendor-reported", "archived"])
+
     def test_rows_keep_their_bare_keys(self):
         router = next(r for r in query.search(ROWS, PATTERNS, FLAGS)["results"] if r["slug"] == "router")
         self.assertEqual(router["caveats"], ["vendor-reported", "single-commit"])
