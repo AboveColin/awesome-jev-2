@@ -50,7 +50,7 @@
 
   **注意:** `实测后未采用`
 
-  > 作者于 2026-09-21 实测后公开表示，它不太可能帮到强模型：在一次真实会话的 6 条提示上给出了 3 条错误建议，而且它是一个较弱的判断者，在给本来就能看到全部技能描述的模型提建议。它一直停留在影子模式；作者称这 6 条只是个例，不是比率。https://dev.to/shimo4228/i-added-jevs-skill-router-to-claude-code-and-turned-back-just-before-rewriting-the-skill-listing-34in 本条中文备注由模型撰写。
+  > 作者于 2026-09-21 运行后得出结论：作为路由器，它不太可能帮到本来就能看到全部技能描述的强模型。其 README 记录：0.2.0 版上 6 条脚本化请求全部处理得当，0.1.0 版在一次真实会话的 6 条提示中有 3 条出错，作者称这只是个例，不是比率。它一直停留在影子模式。https://dev.to/shimo4228/i-added-jevs-skill-router-to-claude-code-and-turned-back-just-before-rewriting-the-skill-listing-34in 本条中文备注由模型撰写。
 
 ## 其他独立测量报告
 
