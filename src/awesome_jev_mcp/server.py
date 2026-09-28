@@ -162,6 +162,7 @@ def search_examples(
     comparator: str = "",
     dataset: str = "",
     direction: Literal["", "favourable", "mixed", "unfavourable", "inconclusive"] = "",
+    outcome: Literal["", "negative", "independent"] = "",
     query: str = "",
     official_only: bool = False,
     with_code_only: bool = False,
@@ -203,6 +204,14 @@ def search_examples(
         direction: the benchmark author's own stated conclusion about Jev
             for the task. Author-stated, not reproduced here: every row
             showing it carries `direction_note` saying so
+        outcome: "negative" for rows whose own author measured Jev for the
+            use and concluded against it (a benchmark's direction is
+            unfavourable, or the row carries the negative-result flag). Read
+            them before the positive examples. They are returned even when
+            flagged not-jev or shadow-mode-only (a trial kept in shadow after
+            it lost is such a result), with those caveats. "independent" for
+            benchmarks not flagged vendor-reported. Author-stated, not
+            reproduced here; `outcome_note` in the answer says so
         query: free text matched against title, summary, notes and platforms
         official_only: only material published by TypeSafe AI
         with_code_only: only rows whose link contains adaptable code
@@ -222,6 +231,7 @@ def search_examples(
         comparator=comparator,
         dataset=dataset,
         direction=direction,
+        outcome=outcome,
         query=query,
         official_only=official_only,
         with_code_only=with_code_only,
@@ -288,6 +298,11 @@ def get_example(slug: str) -> dict[str, Any]:
     report against these fields; without it a script or a model filled them
     in. search_examples() carries it too.
 
+    `negative_result: true` marks a row whose own author measured Jev for its
+    use and concluded against it: a benchmark whose `measurement.direction`
+    is unfavourable, or a row of another kind flagged `negative-result`.
+    Author-stated, not reproduced here. search_examples() carries it too.
+
     `caveat_glossary`, after the row's own fields, says in English what each
     of its `flags` means (awesome-jev://flags lists them all).
 
@@ -303,6 +318,10 @@ def list_patterns() -> dict[str, Any]:
 
     A pattern with zero examples is a genuine gap in the ecosystem, not a
     missing row — worth knowing before concluding nobody does something.
+    `negative_results` counts the rows under each pattern whose own author
+    measured Jev for the use and concluded against it (author-stated, not
+    reproduced here); search_examples(pattern=…, outcome="negative") lists
+    them.
     """
     return pattern_counts(CATALOG, PATTERNS)
 

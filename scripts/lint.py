@@ -43,6 +43,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 
 from _stats import shadow_path_unflagged  # noqa: E402
 from measurements import model_problems as measurement_model_problems  # noqa: E402
+from measurements import negative_flag_problems  # noqa: E402
 from measurements import row_problems as measurement_problems  # noqa: E402
 from platform_values import problems as platform_problems  # noqa: E402
 from sibling_lists import FIX as CITATION_FIX  # noqa: E402
@@ -469,9 +470,10 @@ def check_entry_invariants(
 
 
 def check_measurement(entry: dict, path: str, today: dt.date) -> Findings:
-    """A benchmark's `measurement`: its rules live in scripts/measurements.py."""
+    """A benchmark's `measurement`, and the negative-result flag that says the
+    same on a row of any other kind: the rules live in scripts/measurements.py."""
     report = Report()
-    for problem in measurement_problems(entry, today):
+    for problem in [*measurement_problems(entry, today), *negative_flag_problems(entry)]:
         report.err(path, f"{entry.get('slug', '?')}: {problem}")
     return report.findings()
 

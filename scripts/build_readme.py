@@ -68,6 +68,7 @@ from readme.rows import (  # noqa: E402
     entry_list,
     esc,
     group_by_pattern,
+    is_negative,
     label,
     page_name,
     site_link,
@@ -93,7 +94,7 @@ __all__ = [
     "PATTERN_ORDER", "PATTERNS_FILE", "RAW", "REPO", "REPO_FILES", "REPO_URL",
     "RETIRED", "ROOT", "SITE", "START_HERE", "ZH", "anchor", "coverage_note",
     "entry_list", "entry_points", "esc", "group_by_pattern",
-    "is_measured", "label", "main", "page_name", "preview_version", "render",
+    "is_measured", "is_negative", "label", "main", "page_name", "preview_version", "render",
     "render_measured_page", "render_page", "section_nav", "site_link", "sort_key", "summary_of",
     "write_measured_pages", "write_pattern_pages",
 ]
@@ -119,10 +120,12 @@ def main() -> int:
     print(f"wrote README.md and README.zh-CN.md from {len(catalog)} entries")
     print(f"wrote {len(pages)} pattern pages under {PAGES_DIR.relative_to(ROOT)}/")
     reports = sum(1 for entry in catalog if is_measured(entry))
+    negatives = sum(1 for entry in catalog if is_measured(entry) and is_negative(entry))
     if measured:
         print(
             f"wrote {' and '.join(str(path.relative_to(ROOT)) for path in measured)}: {reports} independent "
-            f"measurement reports, of which the READMEs show up to {INLINE_MEASURED}"
+            f"measurement reports and negative results ({negatives} negative, listed first), of which the "
+            f"READMEs show up to {INLINE_MEASURED}"
         )
     else:
         print("no independent measurement report in the catalogue: no Measured section and no docs/measured.md")

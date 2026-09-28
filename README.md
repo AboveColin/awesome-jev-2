@@ -130,17 +130,9 @@ Independent measurement reports in the catalogue, including **negative results**
 
 *Author's conclusion* is the direction a benchmark's own author states for Jev on the task they measured (`measurement.direction`: favourable, mixed, unfavourable or inconclusive), indexed from the author's report: author-stated, not reproduced here, and absent where the author states none in words. [docs/benchmarks.md](docs/benchmarks.md) sets every benchmark's measurement side by side.
 
-- **[An early-access test of TypeSafe's Jev: calibrated judgments for half a cent](https://lindfors.no/blog/a-first-look-at-typesafes-jev/)**<br>
-  The best independent test found: 24 Norwegian documents on one pinned model version, opening with a case the model got wrong while correctly reporting low confidence.<br>
-  <sub>`Benchmark` · Lindfors</sub>
+### Negative results first
 
-  > Methodology is stated cleanly and scoped honestly as a single-day snapshot. Leading with a failure case is what makes it a real calibration test rather than a testimonial.
-
-- **[Testing TypeSafe Jev, Mistral and Gemini for local event validation](https://nearhere.events/blog/typesafe-jev-mistral-gemini-event-validation)**<br>
-  The only three-way head-to-head found, with each model's prompt tuned separately and the scope limited to one task rather than a general ranking.<br>
-  <sub>`Benchmark` · Near Here</sub>
-
-  > Self-limits correctly: a use-case study, not a model leaderboard. That restraint is rarer than the numbers.
+Rows whose own author measured Jev for the use and concluded against it: a benchmark whose measurement's direction is *unfavourable*, or another row flagged *measured, not adopted*. Author-stated, not reproduced here. Read them before the positive examples; [the site lists them](https://kydlikebtc.github.io/awesome-jev/?neg=1&lang=en).
 
 - **[Hermes Agent: Jev compaction evaluation](https://github.com/NousResearch/hermes-agent)**<br>
   Ported the Jev compaction approach, measured it against their shipping summariser, and published the conclusion not to adopt it.<br>
@@ -162,6 +154,36 @@ Independent measurement reports in the catalogue, including **negative results**
 
   > Removed in PR #1165 (2026-09-22). Their offline measurement found the candidate generator excluded changed files by construction while nearly all review findings sit in changed files, and that per-file excerpts made the list less precise at higher token cost. The code is gone from the default branch, so this row cites the change that removed it.
 
+- **[hermes-jev-skills](https://github.com/kerpopule/hermes-jev-skills)**<br>
+  Nine agent skills plus a CLI covering model routing, memory filtering, turn retention, one-of-many skill selection and next-action choice.<br>
+  <sub>`Plugin` · ★100+ · `Py` · `choice` · `score` · `noul` · [call site](https://github.com/kerpopule/hermes-jev-skills/blob/HEAD/jevkit/client.py), read 2026-09-22</sub>
+
+  **Caveats:** `measured, not adopted`
+
+  > Notable for publishing a use it dropped: Jev-summarised handoffs had worse recall than raw transcripts.
+
+- **[jev-skill-router](https://github.com/shimo4228/jev-skill-router)**<br>
+  Claude Code plugin: asks TypeSafe Jev which installed skill fits each prompt and logs the answer (shadow-first). A working reference for the skill-suggestion cookbook on Claude Code — the README records why it is unlikely to help a strong model as a router. <sub>(upstream description)</sub><br>
+  <sub>`Plugin` · shimo4228 · `Py` · [call site](https://github.com/shimo4228/jev-skill-router/blob/HEAD/scripts/jev_client.py), read 2026-09-22</sub>
+
+  **Caveats:** `measured, not adopted`
+
+  > Its author measured it on 2026-09-21 and published that it is unlikely to help a strong model: on six real-session prompts it made three wrong suggestions, and it is a weaker judge advising a model that already sees every skill's description. It stays in shadow mode; the author calls the six an anecdote, not a rate. https://dev.to/shimo4228/i-added-jevs-skill-router-to-claude-code-and-turned-back-just-before-rewriting-the-skill-listing-34in A model wrote this row's Chinese note.
+
+### Other independent reports
+
+- **[An early-access test of TypeSafe's Jev: calibrated judgments for half a cent](https://lindfors.no/blog/a-first-look-at-typesafes-jev/)**<br>
+  The best independent test found: 24 Norwegian documents on one pinned model version, opening with a case the model got wrong while correctly reporting low confidence.<br>
+  <sub>`Benchmark` · Lindfors</sub>
+
+  > Methodology is stated cleanly and scoped honestly as a single-day snapshot. Leading with a failure case is what makes it a real calibration test rather than a testimonial.
+
+- **[Testing TypeSafe Jev, Mistral and Gemini for local event validation](https://nearhere.events/blog/typesafe-jev-mistral-gemini-event-validation)**<br>
+  The only three-way head-to-head found, with each model's prompt tuned separately and the scope limited to one task rather than a general ranking.<br>
+  <sub>`Benchmark` · Near Here</sub>
+
+  > Self-limits correctly: a use-case study, not a model leaderboard. That restraint is rarer than the numbers.
+
 - **[hippo-memory](https://github.com/kitfunso/hippo-memory)**<br>
   Biologically-inspired memory for AI agents. Decay, retrieval strengthening, consolidation. Zero runtime deps, SQLite, MCP. Benchmarked retrieval with an opt-in TypeSafe Jev reranker.<br>
   <sub>`Benchmark` · ★100+ · kitfunso · `TS` · [call site](https://github.com/kitfunso/hippo-memory/blob/HEAD/src/rerankers/jev.ts), read 2026-09-22 · author's conclusion: mixed (author-stated, not reproduced here)</sub>
@@ -174,15 +196,7 @@ Independent measurement reports in the catalogue, including **negative results**
   An introduction to Jev with hands-on tests: Choice, Score and Noul turn natural language into typed judgements for classification, scoring and routing, compared with DeepSeek on comment labelling, speed and results, with CSV import, replay and offline reports.<br>
   <sub>`Benchmark` · ★10+ · nanmicoder · `JS` · [call site](https://github.com/NanmiCoder/jev-arena/blob/HEAD/src/backends/jev.mjs), read 2026-09-24</sub>
 
-- **[jev-benchmarks](https://github.com/AbdelStark/jev-benchmarks)**<br>
-  Probability-aware evaluation for typed decision models: calibration, selective risk, latency, and reproducible benchmarks. <sub>(upstream description)</sub><br>
-  <sub>`Benchmark` · ★10+ · abdelstark · `Py` · [call site](https://github.com/AbdelStark/jev-benchmarks/blob/HEAD/src/jev_benchmarks/adapters/jev.py), read 2026-09-22 · author's conclusion: mixed (author-stated, not reproduced here)</sub>
-
-- **[jev-capability-atlas](https://github.com/Zaious/jev-capability-atlas)**<br>
-  Independent, evidence-based map of when TypeSafe's Jev actually holds up vs. breaks down — real API-call receipts, not a leaderboard. 中文為主的雙語 repo。 <sub>(upstream description)</sub><br>
-  <sub>`Benchmark` · ★10+ · zaious · `Py` · [call site](https://github.com/Zaious/jev-capability-atlas/blob/HEAD/scripts/common/jev_client.py), read 2026-09-22 · author's conclusion: mixed (author-stated, not reproduced here)</sub>
-
-**10 of 70** shown: first the picks of the curated [independent reports](https://kydlikebtc.github.io/awesome-jev/?collection=measured&lang=en) path, in its order, then the first of the others in list order · [all 70 on one page, with every note →](docs/measured.md) · [filter on the site](https://kydlikebtc.github.io/awesome-jev/?indep=1&lang=en)
+**10 of 72** shown: the negative results first, then the picks of the curated [independent reports](https://kydlikebtc.github.io/awesome-jev/?collection=measured&lang=en) path, in its order, then the first of the others in list order · [all 72 on one page, with every note →](docs/measured.md) · [filter on the site](https://kydlikebtc.github.io/awesome-jev/?indep=1&lang=en)
 
 ## By decision pattern
 
@@ -313,6 +327,8 @@ _Decide which tool calls and results still matter so stale context can be droppe
 - **[hermes-jev-skills](https://github.com/kerpopule/hermes-jev-skills)**<br>
   Nine agent skills plus a CLI covering model routing, memory filtering, turn retention, one-of-many skill selection and next-action choice.<br>
   <sub>`Plugin` · ★100+ · `Py` · `choice` · `score` · `noul` · [call site](https://github.com/kerpopule/hermes-jev-skills/blob/HEAD/jevkit/client.py), read 2026-09-22</sub>
+
+  **Caveats:** `measured, not adopted`
 
 - **[jev-pruner](https://github.com/tamaratran/jev-pruner)**<br>
   Trims long shell output before the model sees it, asking one Noul per chunk.<br>
@@ -553,6 +569,8 @@ _Pick which downstream model or tier should handle a request._
 - **[hermes-jev-skills](https://github.com/kerpopule/hermes-jev-skills)**<br>
   Nine agent skills plus a CLI covering model routing, memory filtering, turn retention, one-of-many skill selection and next-action choice.<br>
   <sub>`Plugin` · ★100+ · `Py` · `choice` · `score` · `noul` · [call site](https://github.com/kerpopule/hermes-jev-skills/blob/HEAD/jevkit/client.py), read 2026-09-22</sub>
+
+  **Caveats:** `measured, not adopted`
 
 - **[jev-codex-router](https://github.com/0xNatoshi/jev-codex-router)**<br>
   Judges how hard a coding turn is, then picks the model tier, reasoning depth and speed mode to match.<br>
@@ -1058,7 +1076,7 @@ The parts that are not the catalog.
 <details>
 <summary><b>Preview the searchable catalogue</b></summary>
 
-<a href="https://kydlikebtc.github.io/awesome-jev/?lang=en"><img src="https://kydlikebtc.github.io/awesome-jev/img/site-en.png?v=f06e8dddab255f37" alt="Searchable Jev catalogue with curated paths, filters, dated source evidence and entry cards" width="760"></a>
+<a href="https://kydlikebtc.github.io/awesome-jev/?lang=en"><img src="https://kydlikebtc.github.io/awesome-jev/img/site-en.png?v=87c572888d04032f" alt="Searchable Jev catalogue with curated paths, filters, dated source evidence and entry cards" width="760"></a>
 
 <sub>Filter by clicking a bar. Two more views: <a href="https://kydlikebtc.github.io/awesome-jev/?view=prims">primitives</a> · <a href="https://kydlikebtc.github.io/awesome-jev/?view=compat">compatibility</a>. Every filter and entry is a shareable URL.</sub>
 
@@ -1117,6 +1135,7 @@ The parts that are not the catalog.
 | `paywall` | Behind a paywall or a metered reader. |
 | `archived` | Development has visibly stopped. |
 | `self-submitted` | Proposed by the project's own author or maintainer. Discloses a relationship; it is not a judgement of quality. |
+| `measured, not adopted` | The project's own author measured Jev for this use and concluded against it: they did not adopt it, or removed it. The author's conclusion, not reproduced here; read it before the positive examples. A benchmark row records the same in measurement.direction (unfavourable) instead. |
 
 ### Retired links
 

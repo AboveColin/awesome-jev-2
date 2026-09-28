@@ -26,6 +26,8 @@ from .rows import (
     SITE,
     anchor,
     collection_link,
+    is_negative,
+    negatives_link,
     direction_bit,
     direction_note,
     collection_slugs,
@@ -88,6 +90,12 @@ INLINE_PER_PATTERN = 10
 # pattern's rows are chosen. The number lives here, beside INLINE_PER_PATTERN,
 # not in collections.json: that file is editorial data and
 # check_collections.py holds it to its fields.
+#
+# Since 2026-09-28 the negative results come first, under their own heading
+# (rows.is_negative: a benchmark whose author's direction is unfavourable, or
+# the negative-result flag on another row, which is how a plugin that measured
+# and dropped a use of Jev reaches this section at all), by sort_key, and they
+# count towards the ten.
 INLINE_MEASURED = 10
 
 
@@ -155,15 +163,34 @@ def entry_points(strings: dict) -> list[tuple[str, str]]:
     return [(href, title.replace(" ", "&nbsp;")) for href, title in chips]
 
 
-def inline_measured(measured: list[dict], picked: list[str]) -> tuple[list[dict], list[dict]]:
+def inline_measured(
+    measured: list[dict], picked: list[str], limit: int = INLINE_MEASURED
+) -> tuple[list[dict], list[dict]]:
     """The reports the README prints: `picked` (a collections.json path) that
     are among `measured`, in that order, then the first of the others by
-    sort_key, INLINE_MEASURED in all. Returned apart, as (picks, others)."""
+    sort_key, `limit` in all. Returned apart, as (picks, others)."""
     by_slug = {entry["slug"]: entry for entry in measured}
-    picks = [by_slug[slug] for slug in dict.fromkeys(picked) if slug in by_slug][:INLINE_MEASURED]
+    picks = [by_slug[slug] for slug in dict.fromkeys(picked) if slug in by_slug][:limit]
     taken = {entry["slug"] for entry in picks}
     others = [entry for entry in sorted(measured, key=sort_key) if entry["slug"] not in taken]
-    return picks, others[: INLINE_MEASURED - len(picks)]
+    return picks, others[: max(0, limit - len(picks))]
+
+
+def negative_first(measured: list[dict]) -> tuple[list[dict], list[dict]]:
+    """The negative results among `measured` by sort_key, and the other rows as
+    given: the order every list of measured rows prints them in."""
+    negatives = sorted((entry for entry in measured if is_negative(entry)), key=sort_key)
+    return negatives, [entry for entry in measured if not is_negative(entry)]
+
+
+def measured_selection(measured: list[dict], picked: list[str]) -> tuple[list[dict], list[dict], list[dict]]:
+    """The rows "Measured, not claimed" prints, INLINE_MEASURED in all: the
+    negative results first (negative_first), then inline_measured's picks and
+    others from the rest. Returned apart, as (negatives, picks, others)."""
+    negatives, rest = negative_first(measured)
+    negatives = negatives[:INLINE_MEASURED]
+    picks, others = inline_measured(rest, picked, INLINE_MEASURED - len(negatives))
+    return negatives, picks, others
 
 
 @dataclass(frozen=True)
@@ -370,16 +397,22 @@ def measured_results(page: Page) -> list[str]:
     measured = [entry for entry in page.catalog if is_measured(entry)]
     if not measured:
         return []
-    picks, others = inline_measured(measured, collection_slugs("measured"))
+    negatives, picks, others = measured_selection(measured, collection_slugs("measured"))
     out = [f"## {strings['measured_h']}", "", strings["measured_intro"], ""]
-    if any(direction_bit(entry, strings) for entry in picks + others):
+    if any(direction_bit(entry, strings) for entry in negatives + picks + others):
         out += [direction_note(strings, docs="docs/"), ""]
+    if negatives:
+        out += [f"### {strings['negative_h']}", "", marked(strings, "negative_note", site=negatives_link(lang)), ""]
+        out.extend(entry_list(negatives, strings, notes=True, readme_layout=True, keep_order=True))
+        out += [f"### {strings['others_h']}", ""] if picks or others else []
     out.extend(entry_list(picks, strings, notes=True, readme_layout=True, keep_order=True) if picks else [])
     out.extend(entry_list(others, strings, notes=True, readme_layout=True) if others else [])
-    shown = len(picks) + len(others)
+    shown = len(negatives) + len(picks) + len(others)
     links = {"n": len(measured), "page": f"docs/{measured_page(lang)}", "site": reports_link(lang)}
     if shown == len(measured):
         out.append(strings["pattern_all"].format(**links))
+    elif negatives:
+        out.append(marked(strings, "measured_more_negative", shown=shown, path=collection_link("measured", lang), **links))
     elif picks and others:
         out.append(marked(strings, "measured_more", shown=shown, path=collection_link("measured", lang), **links))
     else:

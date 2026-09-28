@@ -18,7 +18,7 @@ from collections import Counter
 
 from classify import classify_broad, suggest
 from measurements import directions as measurement_directions
-from measurements import measured, unread
+from measurements import measured, negative, unread
 from sibling_lists import citations_of, own_repository
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
@@ -278,6 +278,10 @@ def compute() -> dict:
         "measured_rows": len(measured(catalog)),
         "measurement_directions": measurement_directions(catalog),
         "review_measurement_unread": len(unread(catalog)),
+        # Rows whose own author measured Jev for the use and concluded
+        # against it: a benchmark whose measurement's direction is
+        # unfavourable, or the negative-result flag on any other row.
+        "negative_results": len(negative(catalog)),
         # How patterns were chosen is recorded only by patterns_reviewed. A row
         # whose patterns equal the keyword rules' suggestion shows agreement
         # with the rules and nothing more: the review, if any, was not recorded.

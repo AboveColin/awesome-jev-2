@@ -172,6 +172,20 @@ export function measurementOf(entry) {
   return m && typeof m === "object" && !Array.isArray(m) && Object.keys(m).length ? m : null;
 }
 
+// A negative result: a row whose own author measured Jev for its use and
+// concluded against it. A benchmark says so in its measurement's direction
+// (unfavourable); any other row carries the negative-result flag. The page
+// derives "negative" from either, as src/awesome_jev_mcp/query.py
+// is_negative_result() does for the server and the generated pages; both are
+// held to the cases in scripts/tests/negative_cases.json.
+export const NEGATIVE_FLAG = "negative-result";
+export const NEGATIVE_DIRECTION = "unfavourable";
+
+export function isNegativeResult(entry) {
+  if ((entry.flags || []).includes(NEGATIVE_FLAG)) return true;
+  return (measurementOf(entry) || {}).direction === NEGATIVE_DIRECTION;
+}
+
 export function isIndependentReport(entry) {
   return entry.kind === "benchmark" && !(entry.flags || []).includes("vendor-reported");
 }
@@ -214,6 +228,7 @@ export function matchesEntry(entry, state, collectionSlugs = null, labels = "", 
   if (state.off && !entry.official) return false;
   if (state.noflag && (entry.flags || []).length) return false;
   if (state.indep && !isIndependentReport(entry)) return false;
+  if (state.neg && !isNegativeResult(entry)) return false;
   // question_types and not primitives_seen: a search for a primitive finds the
   // rows a person read calling it, never rows a text match alone suggests.
   const hay = [entry.title, entry.summary, entry.summary_zh, entry.notes, entry.notes_zh,
@@ -229,7 +244,7 @@ export function matchesEntry(entry, state, collectionSlugs = null, labels = "", 
 // comes back. The parameter names are public — links in READMEs, pattern
 // pages and elsewhere already use them — so rename none of them.
 export const VIEWS = ["catalog", "prims", "compat"];
-export const TOGGLES = ["code", "off", "indep", "noflag"];
+export const TOGGLES = ["code", "off", "indep", "noflag", "neg"];
 
 export function queryFromState(state, view, lang) {
   const q = new URLSearchParams();

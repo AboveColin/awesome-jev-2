@@ -78,6 +78,31 @@ MEASUREMENT_NOTE = (
     "these fields; without it a script or a model filled them in and nobody has checked since."
 )
 
+# A negative result: a row whose own author measured Jev for its use and
+# concluded against it. A benchmark says so in its measurement's direction
+# (unfavourable) and nowhere else; a row of any other kind carries the
+# negative-result flag (scripts/measurements.py holds each to its place).
+# Every surface derives "negative" from either through is_negative_result(),
+# and site/catalog-core.mjs isNegativeResult() is the same rule, held to it on
+# the shared cases in scripts/tests/negative_cases.json.
+NEGATIVE_FLAG = "negative-result"
+NEGATIVE_DIRECTION = "unfavourable"
+OUTCOMES = ("", "negative", "independent")
+
+OUTCOME_NOTES = {
+    "negative": (
+        "Negative results: rows whose own author measured Jev for the use and concluded against it "
+        "(a benchmark's measurement.direction is unfavourable; any other row carries the "
+        "negative-result flag). Author-stated, not reproduced here. Rows flagged not-jev or "
+        "shadow-mode-only are included, because a trial kept in shadow after it lost is such a result; "
+        "their caveats say so."
+    ),
+    "independent": (
+        "Independent reports: benchmark rows not flagged vendor-reported. Their measurements are their "
+        "authors', not reproduced here."
+    ),
+}
+
 NOUL_WARNING = (
     "`noul` answers carry no confidence field on any surface — the probability "
     "is the answer. A helper reading .confidence uniformly returns nothing for "
@@ -123,6 +148,8 @@ def compact(entry: dict) -> dict[str, Any]:
     measurement = measurement_of(entry)
     if measurement:
         out["measurement"] = measured_view(measurement)
+    if is_negative_result(entry):
+        out["negative_result"] = True
     return out
 
 
@@ -139,6 +166,16 @@ def measured_view(measurement: dict) -> dict[str, Any]:
     if "direction" in out:
         out["direction_note"] = DIRECTION_NOTE
     return out
+
+
+def is_negative_result(entry: dict) -> bool:
+    """Whether the row's own author measured Jev for its use and concluded
+    against it: the negative-result flag, or a measurement whose direction is
+    unfavourable (a benchmark's only way to say so). Author-stated, never a
+    verdict reached here."""
+    if NEGATIVE_FLAG in (entry.get("flags") or []):
+        return True
+    return (measurement_of(entry) or {}).get("direction") == NEGATIVE_DIRECTION
 
 
 def is_independent_report(entry: dict) -> bool:
@@ -309,6 +346,7 @@ def search(
     comparator: str = "",
     dataset: str = "",
     direction: str = "",
+    outcome: str = "",
     query: str = "",
     official_only: bool = False,
     with_code_only: bool = False,
@@ -323,9 +361,19 @@ def search(
     `comparator` and `dataset` match a name in a row's measurement as a
     fragment, ignoring case; `direction` matches the author's stated one
     exactly. An answer holding a measured row says in `measurement_note`
-    what the fields are. An unknown `pattern`, `platform` or `direction`
-    answers with the valid ones instead."""
+    what the fields are. `outcome` keeps negative results (is_negative_result;
+    rows flagged not-jev or shadow-mode-only are kept, not left out) or
+    independent reports, and the answer says in `outcome_note` what those are.
+    An unknown `pattern`, `platform`, `direction` or `outcome` answers with the
+    valid ones instead."""
     limit = max(1, min(int(limit), MAX_LIMIT))
+    if outcome not in OUTCOMES:
+        return {
+            "error": f"unknown outcome {outcome!r}",
+            "valid_outcomes": [o for o in OUTCOMES if o],
+            "hint": "negative: rows whose own author measured Jev and concluded against it; "
+            "independent: benchmarks not flagged vendor-reported",
+        }
     if direction and direction not in DIRECTIONS:
         return {
             "error": f"unknown direction {direction!r}",
@@ -377,11 +425,17 @@ def search(
         rows = [e for e in rows if _names_match((measurement_of(e) or {}).get("datasets"), dataset)]
     if direction:
         rows = [e for e in rows if (measurement_of(e) or {}).get("direction") == direction]
+    if outcome == "negative":
+        rows = [e for e in rows if is_negative_result(e)]
+    elif outcome == "independent":
+        rows = [e for e in rows if is_independent_report(e)]
     if official_only:
         rows = [e for e in rows if e.get("official")]
     if with_code_only:
         rows = [e for e in rows if e.get("has_code")]
-    if not include_non_jev:
+    # A negative result is kept whatever it is flagged: a trial kept in shadow
+    # after it lost is exactly what an agent asking for one should read.
+    if not include_non_jev and outcome != "negative":
         rows = [e for e in rows if not DISQUALIFYING & set(e.get("flags") or [])]
     if query:
         terms = query.lower().split()
@@ -397,6 +451,8 @@ def search(
     }
     if about:
         answer["platform"] = about
+    if outcome:
+        answer["outcome_note"] = OUTCOME_NOTES[outcome]
     if any(measurement_of(e) for e in shown):
         answer["measurement_note"] = MEASUREMENT_NOTE
     return _with_glossary(answer, flags, (e.get("flags") or [] for e in shown))
@@ -405,11 +461,14 @@ def search(
 def find_example(rows: list[dict], slug: str, flags: list[dict] = ()) -> dict[str, Any]:
     """get_example's answer: the row itself, with the caveat_glossary of its
     flags after its own fields, or up to five slugs containing the one asked
-    for. A measurement's direction gains its direction_note."""
+    for. A measurement's direction gains its direction_note, and a negative
+    result (is_negative_result) gains `negative_result: true`."""
     for entry in rows:
         if entry["slug"] == slug:
             measurement = measurement_of(entry)
             shown = {**entry, "measurement": measured_view(measurement)} if measurement else entry
+            if is_negative_result(entry):
+                shown = {**shown, "negative_result": True}
             return _with_glossary(shown, flags, [entry.get("flags") or []])
     # Sorted rather than taken in file order: the copy that answered may be a
     # checkout mid-edit or an AWESOME_JEV_CATALOG directory, not the sorted file.
@@ -423,11 +482,15 @@ def find_example(rows: list[dict], slug: str, flags: list[dict] = ()) -> dict[st
 
 def pattern_counts(rows: list[dict], patterns: list[dict]) -> dict[str, Any]:
     """list_patterns' answer: the taxonomy in its own order, each pattern with
-    how many rows file under it (every row, caveats or not)."""
+    how many rows file under it (every row, caveats or not) and how many of
+    those are negative results (is_negative_result)."""
     counts: dict[str, int] = {}
+    negative: dict[str, int] = {}
     for entry in rows:
         for key in entry["patterns"]:
             counts[key] = counts.get(key, 0) + 1
+            if is_negative_result(entry):
+                negative[key] = negative.get(key, 0) + 1
     return {
         "patterns": [
             {
@@ -435,6 +498,7 @@ def pattern_counts(rows: list[dict], patterns: list[dict]) -> dict[str, Any]:
                 "name": p["en"],
                 "description": p["blurb_en"],
                 "examples": counts.get(p["key"], 0),
+                "negative_results": negative.get(p["key"], 0),
             }
             for p in patterns
         ],

@@ -19,6 +19,9 @@ from .rows import (
     entry_list,
     group_by_pattern,
     is_measured,
+    is_negative,
+    negatives_link,
+    sort_key,
     label,
     marked,
     measured_page,
@@ -104,11 +107,13 @@ def write_pattern_pages(catalog: list[dict]) -> list[pathlib.Path]:
 
 
 def render_measured_page(rows: list[dict], strings: dict) -> str:
-    """Every independent measurement report, with every note and caveat tag.
+    """Every independent measurement report and negative result, with every
+    note and caveat tag.
 
     Laid out as the README's section used to print them all (the note is why a
-    report is worth reading), in list order, with the section's own caveat that
-    the measurements are their authors'.
+    report is worth reading), with the section's own caveat that the
+    measurements are their authors'. The negative results come first, under
+    their own heading, then the rest, each in list order.
     """
     lang = strings["lang_code"]
     readme = "README.zh-CN.md" if lang == "zh" else "README.md"
@@ -132,7 +137,13 @@ def render_measured_page(rows: list[dict], strings: dict) -> str:
     ]
     if any(direction_bit(entry, strings) for entry in rows):
         out += [direction_note(strings, docs=""), ""]
-    out.extend(entry_list(rows, strings, notes=True, readme_layout=True))
+    negatives = sorted((entry for entry in rows if is_negative(entry)), key=sort_key)
+    rest = sorted((entry for entry in rows if not is_negative(entry)), key=sort_key)
+    if negatives:
+        out += [f"## {strings['negative_h']}", "", marked(strings, "negative_note", site=negatives_link(lang)), ""]
+        out.extend(entry_list(negatives, strings, notes=True, readme_layout=True, keep_order=True))
+        out += [f"## {strings['others_h']}", ""] if rest else []
+    out.extend(entry_list(rest, strings, notes=True, readme_layout=True, keep_order=True) if rest else [])
     out += ["---", "", strings["page_footer"], ""]
     return "\n".join(out)
 

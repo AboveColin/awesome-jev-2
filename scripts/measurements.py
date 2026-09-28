@@ -22,18 +22,38 @@ What lint holds (lint.check_measurement, lint.check_measurement_models):
 * `model_string` is a string compat.json lists on some surface (a string it
   does not list is left out of the row rather than recorded).
 
+A negative result — a row whose own author measured Jev for its use and
+concluded against it — is recorded in exactly one place. A benchmark says so
+in `measurement.direction` (unfavourable); a row of any other kind carries the
+`negative-result` flag, and lint (negative_flag_problems) holds it there: never
+on a benchmark, where the flag and the direction could disagree, and always
+with `notes` that say where the conclusion comes from: a link, a pull request
+or issue number, or the measurement itself. Every surface derives "negative"
+from either through query.is_negative_result().
+
 Stdlib only, like the rest of scripts/.
 """
 
 from __future__ import annotations
 
 import datetime as dt
+import re
 
 from platform_values import load_query
 
 KIND = "benchmark"
 FIELD = "measurement"
 DATED = ("as_of", "read_on")
+NEGATIVE_FLAG = "negative-result"
+# What a negative-result row's notes must hold: a link, a pull request or issue
+# number, or a word naming what was measured. The words are a floor: a note
+# with one can still say little, which a reviewer reads for.
+NEGATIVE_NOTE_SOURCE = re.compile(
+    r"https?://|\b(?:PR|pull request|issue)\s*#?\d+|#\d+"
+    r"|\b(?:measur\w*|recall|accuracy|precision|F1|nDCG|MRR|ECE|Brier|calibrat\w*|latency|cost|tokens?"
+    r"|tied|benchmark\w*|scorecard|evaluat\w*)\b",
+    re.IGNORECASE,
+)
 
 
 def _date(value: object) -> dt.date | None:
@@ -79,6 +99,30 @@ def row_problems(entry: dict, today: dt.date) -> list[str]:
     return found
 
 
+def negative_flag_problems(entry: dict) -> list[str]:
+    """Each way the negative-result flag on one row breaks its rules."""
+    if NEGATIVE_FLAG not in (entry.get("flags") or []):
+        return []
+    if entry.get("kind") == KIND:
+        return [
+            f"flagged {NEGATIVE_FLAG} but kind is 'benchmark': a benchmark records its author's conclusion "
+            "in measurement.direction (unfavourable) and nowhere else, so the two cannot disagree; remove "
+            "the flag"
+        ]
+    notes = entry.get("notes")
+    if not isinstance(notes, str) or not notes.strip():
+        return [
+            f"flagged {NEGATIVE_FLAG} but notes is empty: say what the author measured and where they "
+            "concluded against Jev (a link, a pull request or issue number, or the measurement)"
+        ]
+    if not NEGATIVE_NOTE_SOURCE.search(notes):
+        return [
+            f"flagged {NEGATIVE_FLAG} but notes names no link, pull request or issue number, or measurement: "
+            "say where the author's conclusion can be read"
+        ]
+    return []
+
+
 def accepted_strings(compat: dict) -> list[str]:
     """Every model string compat.json lists on any surface, sorted."""
     query = load_query()
@@ -122,6 +166,12 @@ def unread(catalog: list[dict]) -> list[dict]:
     """Measured rows no person has read against their report (no measurement.read_on)."""
     query = load_query()
     return [entry for entry in measured(catalog) if not query.measurement_of(entry).get("read_on")]
+
+
+def negative(catalog: list[dict]) -> list[dict]:
+    """The negative results (query.is_negative_result), in the order given."""
+    query = load_query()
+    return [entry for entry in catalog if query.is_negative_result(entry)]
 
 
 def directions(catalog: list[dict]) -> dict[str, int]:

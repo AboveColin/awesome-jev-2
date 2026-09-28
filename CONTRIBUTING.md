@@ -362,6 +362,7 @@ Use them generously. A flagged row is more useful than an unflagged one.
 | `early-access-required`                  | needs waitlist access to use                    |
 | `third-party-api-key`                    | needs a key for a service other than TypeSafe   |
 | `self-submitted`                         | its own author or maintainer proposed the row   |
+| `negative-result`                        | its author measured Jev here and did not adopt it (not on a benchmark) |
 
 `ai-generated`, `unverified-claims` and `code-untested` require a `notes` line
 saying why — a flag a reader cannot interpret is worse than no flag.
@@ -369,6 +370,17 @@ saying why — a flag a reader cannot interpret is worse than no flag.
 Lint warns when the path `evidence` cites names a shadow or a dry run and the
 row lacks `shadow-mode-only`: read the call, and add the flag if nothing it
 returns reaches a decision.
+
+`negative-result` ("measured, not adopted") marks a row whose own author
+measured Jev for its use and concluded against it: did not adopt it, or removed
+it. Set it only when the author's own write-up, pull request or results say so,
+never from your own reading of their numbers. A `kind: benchmark` row records
+the same thing in `measurement.direction` (`unfavourable`) instead, and
+`lint.py` fails the flag on a benchmark, so the two can never disagree. It also
+fails the flag without a `notes` line naming a link, a pull request or issue
+number, or what was measured. Every surface derives "negative result" from
+either and lists those rows first; they are the ones to read before the
+positive examples.
 
 `self-submitted` is a disclosure, not a defect: every surface shows it so a
 reader knows the description came from the project's side. It is declared,

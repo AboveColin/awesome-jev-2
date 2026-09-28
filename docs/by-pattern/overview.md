@@ -1144,7 +1144,7 @@ Projects and plugins with code, 252 of them, whose only pattern is `overview` an
   <sub>`Project` · larguesa · `Py` · call site [`jev_search.py`](https://github.com/larguesa/jev-search/blob/HEAD/jev_search.py), read 2026-09-22</sub>
 
 - **[jev-skill-router](https://github.com/shimo4228/jev-skill-router)** — Claude Code plugin: asks TypeSafe Jev which installed skill fits each prompt and logs the answer (shadow-first). A working reference for the skill-suggestion cookbook on Claude Code — the README records why it is unlikely to help a strong model as a router. <sub>(upstream description)</sub>
-  <sub>`Plugin` · shimo4228 · `Py` · call site [`scripts/jev_client.py`](https://github.com/shimo4228/jev-skill-router/blob/HEAD/scripts/jev_client.py), read 2026-09-22</sub>
+  <sub>`Plugin` · shimo4228 · `Py` · call site [`scripts/jev_client.py`](https://github.com/shimo4228/jev-skill-router/blob/HEAD/scripts/jev_client.py), read 2026-09-22 · ⚠ `measured, not adopted`</sub>
 
 - **[jev-skills](https://github.com/laguagu/jev-skills)** — Practical agent skills and examples for building with Jev. API setup, routing, ranking, and evidence checks. <sub>(upstream description)</sub>
   <sub>`Plugin` · laguagu · `JS` · call site [`examples/decisions/run.mjs`](https://github.com/laguagu/jev-skills/blob/HEAD/examples/decisions/run.mjs), read 2026-09-24</sub>

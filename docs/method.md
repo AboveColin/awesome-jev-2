@@ -295,6 +295,42 @@ trial per controller "not success-rate estimates". ahastudio-til-jev-probing
 summarises another author's API probing and states no direction. Benchmark
 rows below five stars carry no measurement yet.
 
+Since 2026-09-28 a negative result, a row whose own author measured Jev for
+its use and concluded against it, is recorded in one place per row and found
+the same way everywhere. A benchmark records it in `measurement.direction`
+(`unfavourable`) and nowhere else; any other row carries the new
+`negative-result` flag ("measured, not adopted"). `lint` fails the flag on a
+benchmark, so a flag and a direction can never disagree, and without a `notes`
+line naming a link, a pull request or issue number, or what was measured. One
+predicate, `is_negative_result` in the MCP package's `query.py`, decides for
+the READMEs, `docs/measured.md`, `docs/status.md` and the server; the site's
+`isNegativeResult` is held to it on shared cases. The README's "Measured, not
+claimed" and `docs/measured.md` now list negative results first, by star band
+and title, never by the file's order, which is also how a plugin that dropped
+a use reaches that section at all. `docs/status.md` lists them in a generated
+block above its dated snapshot, which stays as written. The site gained a
+`?neg=1` toggle and a badge; `search_examples(outcome="negative")` returns
+them, rows flagged `shadow-mode-only` included, which a default search leaves
+out; `list_patterns` counts them per pattern.
+
+Of the seven rows the proposal named, reading each source the same day (a
+model, as above) gave five. hermes-agent-jev-evaluation,
+worldmonitor-shadow-mode and no-mistakes-review-context are benchmarks whose
+authors conclude against Jev, so their direction is `unfavourable`.
+hermes-jev-skills, a plugin, published a handoff use it measured and dropped
+(its README: a handoff written from Jev's digest recalled less than one written
+from the plain transcript), and jev-skill-router, a plugin whose author
+published that it is unlikely to help a strong model and keeps it in shadow
+mode, got the flag, with a `notes` line citing the author's write-up.
+ahastudio-til-jev-probing states no conclusion against Jev (it summarises
+another author's probing), so it has no direction and is not a negative
+result; nearhere-three-way-comparison's post answers only behind a JavaScript
+challenge, so it was not read; jev-orderby-bench, below five stars and mixed
+in its own words, was left for a person. A scan of every other row's summary
+and notes for measurement words found no further row whose author reports
+measuring and not adopting. No flag was set from a reading of an author's
+numbers alone.
+
 ## Discovery is crowdsourced, verification is not
 
 There are dozens of Jev directories. Each is a different person's sweep of the

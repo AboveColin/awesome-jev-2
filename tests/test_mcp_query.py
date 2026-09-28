@@ -513,7 +513,7 @@ class ServerWiringTest(unittest.TestCase):
         # A value per argument that changes the answer on the real catalogue.
         changed = {"pattern": "safety-gating", "kind": "project", "language": "python", "question_type": "choice",
                    "platform": "langchain", "comparator": "Cohere", "dataset": "LongMemEval",
-                   "direction": "unfavourable", "query": "router", "official_only": True, "with_code_only": True,
+                   "direction": "unfavourable", "outcome": "negative", "query": "router", "official_only": True, "with_code_only": True,
                    "include_non_jev": True, "limit": 3}
         s = self.server
         default = query.search(s.CATALOG, s.PATTERNS, s.FLAGS, s.COMPAT)

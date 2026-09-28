@@ -455,7 +455,7 @@
       "maximum": 599
     },
     "flags": {
-      "description": "Honesty markers a reader deserves before clicking. Kept deliberately blunt.",
+      "description": "Honesty markers a reader deserves before clicking. Kept deliberately blunt. `negative-result` marks a row whose own author measured Jev for its use and concluded against it; only on rows that are not kind: benchmark, which record that in measurement.direction instead (scripts/lint.py).",
       "type": "array",
       "maxItems": 6,
       "uniqueItems": true,
@@ -475,7 +475,8 @@
           "shadow-mode-only",
           "no-license",
           "single-commit",
-          "self-submitted"
+          "self-submitted",
+          "negative-result"
         ]
       }
     },

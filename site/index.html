@@ -999,7 +999,7 @@
     </footer>
 
     <script type="module">
-      import { SORTS, verification, evidenceKind, evidenceUrl, isIndependentReport, compareEntries, matchesEntry, queryFromState, shareUrl, stateFromQuery, summaryMarks, notIndexedByPattern, primitiveLayers, repositoryFacts, siblingCitations, platformRows, resolvePlatform, platformChoices, measurementOf } from "./catalog-core.mjs";
+      import { SORTS, verification, evidenceKind, evidenceUrl, isIndependentReport, compareEntries, matchesEntry, queryFromState, shareUrl, stateFromQuery, summaryMarks, notIndexedByPattern, primitiveLayers, repositoryFacts, siblingCitations, platformRows, resolvePlatform, platformChoices, measurementOf, isNegativeResult } from "./catalog-core.mjs";
       const STR = {
         en: {
           eyebrow: "Jev Decision Atlas · community index",
@@ -1018,6 +1018,8 @@
           unindexed_about: "Projects and plugins with code whose only pattern is overview, and whose rows record no reading against the patterns (patterns_reviewed). Overview is also what the keyword rules suggest when nothing matches, so these may never have been placed. A person gives each a pattern, or records the date they read it.",
           unindexed_last: "Projects and plugins with code that nobody has recorded reading against the patterns come last, under “Not yet indexed by pattern” ({n}).",
           third_party: "Third-party report", review_scope: "A dated citation is not a current CI result or a runtime test.",
+          negative: "Negative result",
+          negative_about: "Its own author measured Jev for this use and concluded against it: an unfavourable direction in a benchmark's measurement, or the “measured, not adopted” flag. Author-stated, not reproduced here; read it before the positive examples.",
           signals: "Recorded matching text", added: "Added", stars: "Repository stars", author: "Author", read_context: "Source context",
           prims_read: "Primitives read by a person", prims_signal: "Text signal only",
           repo_created: "Repository created", repo_pushed: "Last push", repo_commits: "Commits on the default branch",
@@ -1050,6 +1052,7 @@
           t_off: "official",
           t_flag: "no caveats",
           t_ind: "third-party reports",
+          t_neg: "negative results",
           shown: "matches",
           more: "show {n} more",
           disc: "An unaffiliated community index of TypeSafe AI’s Jev. Link checks and dated call-site citations are separate records. The catalogue has not executed the listed code or reproduced its performance claims. Third-party reports retain their own limitations.",
@@ -1117,6 +1120,9 @@
           unindexed_about: "带代码的项目或插件：唯一的模式是 overview，且没有任何对照决策模式阅读过的记录（patterns_reviewed）。overview 也是关键词规则什么都没匹配到时给出的建议，所以这些行可能从未被归类。由人为每一行指定模式，或记下阅读日期。",
           unindexed_last: "没有任何人对照决策模式阅读过记录的带代码项目和插件排在最后，列在“尚未按模式索引”之下（{n} 行）。",
           third_party: "第三方评测", review_scope: "带日期的引用不代表最新 CI 已通过，也不代表代码已运行。",
+          // The Chinese of negative and negative_about is model-written; a person who revises it drops this note.
+          negative: "负面结果",
+          negative_about: "项目作者本人针对这一用途测量过 Jev，结论是不采用：基准测试的测量结论为「不利」，或带有「实测后未采用」标记。作者自述，未经本仓库复现；请先读它，再看正面例子。",
           signals: "记录的匹配文本", added: "收录日期", stars: "仓库星标", author: "作者", read_context: "来源说明",
           // The Chinese of the primitive-layer strings here and in the primitives view (p_read … p_layers) is model-written; a person who revises it drops this note.
           prims_read: "人读确认的原语", prims_signal: "仅文本信号",
@@ -1153,6 +1159,8 @@
           t_off: "仅官方",
           t_flag: "无警示",
           t_ind: "第三方评测",
+          // The Chinese of t_neg is model-written; a person who revises it drops this note.
+          t_neg: "负面结果",
           shown: "条匹配",
           more: "展开其余 {n} 条",
           disc: "TypeSafe AI Jev 的非官方社区目录。链接检查和带日期的调用点记录是不同证据；本目录尚未执行收录代码，也未复现其性能结论。第三方评测保留各自的限制。",
@@ -1303,6 +1311,7 @@
         off: false,
         noflag: false,
         indep: false,
+        neg: false,
       };
 
       function esc(s) {
@@ -1444,6 +1453,7 @@
           ["code", "t_code", ""],
           ["off", "t_off", ""],
           ["indep", "t_ind", ""],
+          ["neg", "t_neg", ""],
           ["noflag", "t_flag", "warn"],
         ]
           .map(
@@ -1498,11 +1508,12 @@
       function measured(e) {
         const m = measurementOf(e);
         if (!m) return "";
-        const sep = L === "zh" ? "、" : ", ";
+        const sep = L === "zh" ? "、" : ", ", colon = L === "zh" ? "：" : ": ";
+        const qualifier = L === "zh" ? `（${S().m_qualifier}）` : ` (${S().m_qualifier})`;
         const parts = [`<p>${esc(m.task)}</p>`];
-        if ((m.comparators || []).length) parts.push(`<p>${S().m_compared}: ${esc(m.comparators.join(sep))}</p>`);
-        if ((m.datasets || []).length) parts.push(`<p>${S().m_datasets}: ${esc(m.datasets.join(sep))}</p>`);
-        if (m.direction) parts.push(`<p>${S().m_direction}: <b>${esc(lbl(DIR, m.direction))}</b> (${S().m_qualifier})</p>`);
+        if ((m.comparators || []).length) parts.push(`<p>${S().m_compared}${colon}${esc(m.comparators.join(sep))}</p>`);
+        if ((m.datasets || []).length) parts.push(`<p>${S().m_datasets}${colon}${esc(m.datasets.join(sep))}</p>`);
+        if (m.direction) parts.push(`<p>${S().m_direction}${colon}<b>${esc(lbl(DIR, m.direction))}</b>${qualifier}</p>`);
         if (m.report) parts.push(`<p><a href="${esc(m.report)}" rel="noopener">${S().m_report} ↗</a></p>`);
         const read = m.read_on ? " " + S().m_read.replace("{date}", `<time datetime="${esc(m.read_on)}">${esc(m.read_on)}</time>`) : "";
         return `<dt>${S().m_h}</dt><dd>${parts.join("")}<p class="sig-about">${S().m_about}${read}</p></dd>`;
@@ -1552,6 +1563,7 @@
             ${pick ? `<span class="badge of">${S().picks}</span>` : ""}
             ${e.official ? `<span class="badge kd">${S().official}</span>` : ""}
             ${isIndep(e) ? `<span class="badge kd">${S().third_party}</span>` : ""}
+            ${isNegativeResult(e) ? `<span class="badge kd" title="${esc(S().negative_about)}">${S().negative}</span>` : ""}
             <a class="anchor" href="${permalink}" aria-label="${L === "zh" ? "此条目的永久链接" : "Permalink to this entry"}">#</a>
           </div>
           <p class="sum">${esc(sum)}${summaryMarkup(e)}</p>
@@ -1613,7 +1625,7 @@
         const unindexed = st.pattern === "overview" && !st.entry ? hits.filter(notIndexedByPattern).length : 0;
         const headingNote = selected ? local(selected, "description") : st.pattern ? pdesc(st.pattern) + (unindexed ? (L === "zh" ? "" : " ") + S().unindexed_last.replace("{n}", unindexed) : "") : "";
         document.getElementById("results-heading").innerHTML = `<h2>${esc(st.entry ? S().entry_view : selected ? local(selected, "title") : st.pattern ? lbl(PAT, st.pattern) : S().browse)}</h2>${selected || st.pattern ? `<p>${esc(headingNote)}</p>` : ""}${st.entry ? "" : platformNote(platform)}`;
-        const active = Boolean(st.entry || st.q || st.pattern || st.kind || st.lang || st.platform || st.collection || st.code || st.off || st.noflag || st.indep);
+        const active = Boolean(st.entry || st.q || st.pattern || st.kind || st.lang || st.platform || st.collection || st.code || st.off || st.noflag || st.indep || st.neg);
         document.getElementById("reset").hidden = !active;
         if (!hits.length) {
           out.innerHTML = `<div class="empty"><p>${S().empty}</p><p>${S().empty_help}</p><button class="more" id="empty-reset">${S().reset}</button></div>`;
@@ -1654,7 +1666,7 @@
 
       function resetFilters() {
         for (const key of ["q", "entry", "pattern", "kind", "lang", "platform", "collection"]) st[key] = "";
-        for (const key of ["code", "off", "noflag", "indep"]) st[key] = false;
+        for (const key of ["code", "off", "noflag", "indep", "neg"]) st[key] = false;
         document.getElementById("q").value = "";
       }
       function refresh() {

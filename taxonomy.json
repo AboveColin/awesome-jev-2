@@ -193,6 +193,14 @@
       "blurb_en": "Proposed by the project's own author or maintainer. Discloses a relationship; it is not a judgement of quality.",
       "blurb_zh": "由项目作者或维护者本人提交。这是对关系的披露，不是质量评判。",
       "zh_machine": true
+    },
+    {
+      "key": "negative-result",
+      "en": "measured, not adopted",
+      "zh": "实测后未采用",
+      "blurb_en": "The project's own author measured Jev for this use and concluded against it: they did not adopt it, or removed it. The author's conclusion, not reproduced here; read it before the positive examples. A benchmark row records the same in measurement.direction (unfavourable) instead.",
+      "blurb_zh": "项目作者本人针对这一用途测量过 Jev，结论是不采用或已将其移除。这是作者的结论，未经本仓库复现；请先读它，再看正面例子。基准测试行改用 measurement.direction（不利）记录同一件事。",
+      "zh_machine": true
     }
   ],
   "summary_sources": [

@@ -100,10 +100,24 @@ EN = {
         "in its order, then the first of the others in list order · [all {n} on one page, with every "
         "note →]({page}) · [filter on the site]({site})"
     ),
+    "measured_more_negative": (
+        "**{shown} of {n}** shown: the negative results first, then the picks of the curated "
+        "[independent reports]({path}) path, in its order, then the first of the others in list order · "
+        "[all {n} on one page, with every note →]({page}) · [filter on the site]({site})"
+    ),
+    "negative_h": "Negative results first",
+    "negative_note": (
+        "Rows whose own author measured Jev for the use and concluded against it: a benchmark whose "
+        "measurement's direction is *unfavourable*, or another row flagged *measured, not adopted*. "
+        "Author-stated, not reproduced here. Read them before the positive examples; "
+        "[the site lists them]({site})."
+    ),
+    "others_h": "Other independent reports",
     "measured_page_intro": (
-        "Every independent measurement report in the catalogue — {n} of them — with every note and caveat tag. "
-        "[The README]({readme}) shows the picks of the curated [independent reports]({path}) path and "
-        "the first few others; [the site]({site}) lists the same rows and can filter them further."
+        "Every independent measurement report and negative result in the catalogue — {n} rows — with every "
+        "note and caveat tag, the negative results first. [The README]({readme}) shows those, then the picks "
+        "of the curated [independent reports]({path}) path and the first few others; [the site]({site}) lists "
+        "the same rows and can filter them further."
     ),
     "patterns_h": "By decision pattern",
     "patterns_intro": (
@@ -356,10 +370,21 @@ ZH = {
         "再按列表顺序补上其余条目中靠前的几条 · [在单独页面查看全部 {n} 条及全部备注 →]({page}) · "
         "[在站点上筛选]({site})"
     ),
+    "measured_more_negative": (
+        "已显示 **{shown} / {n}** 条：先是负面结果，再是精选路径[独立测量报告]({path})选出的条目，按该路径的顺序，"
+        "再按列表顺序补上其余条目中靠前的几条 · [在单独页面查看全部 {n} 条及全部备注 →]({page}) · "
+        "[在站点上筛选]({site})"
+    ),
+    "negative_h": "负面结果优先",
+    "negative_note": (
+        "作者本人针对这一用途测量过 Jev 并得出不采用结论的行：基准测试的测量结论为*不利*，或其他行带有"
+        "*实测后未采用*标记。作者自述，未经本仓库复现。请先读它们，再看正面例子；[站点也列出了它们]({site})。"
+    ),
+    "others_h": "其他独立测量报告",
     "measured_page_intro": (
-        "本目录收录的全部独立测量报告 —— 共 {n} 条，附全部备注和警示标记。[README]({readme}) 只显示精选路径"
-        "[独立测量报告]({path})选出的条目和其余条目中靠前的几条；[站点]({site})列出同样这些条目，"
-        "并可进一步筛选。"
+        "本目录收录的全部独立测量报告和负面结果 —— 共 {n} 条，附全部备注和警示标记，负面结果排在最前。"
+        "[README]({readme}) 先显示负面结果，再显示精选路径[独立测量报告]({path})选出的条目和其余条目中靠前的几条；"
+        "[站点]({site})列出同样这些条目，并可进一步筛选。"
     ),
     "patterns_h": "按决策模式",
     "patterns_intro": (
@@ -522,6 +547,7 @@ ZH_MACHINE = frozenset(
         "stars_note", "verified_recheck", "verified_summaries", "license_summaries", "unindexed_readme",
         "unindexed_page", "prims_layers", "verified_primitives", "verified_translations",
         "call_site_note", "measured_more", "measured_page_intro", "repo_skill_division", "direction_note",
+        "measured_more_negative", "negative_note",
     }
 )
 

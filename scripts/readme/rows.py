@@ -355,13 +355,23 @@ def page_name(key: str, lang: str) -> str:
 
 
 def is_measured(entry: dict) -> bool:
-    """An independent measurement report: a benchmark its vendor did not publish.
+    """An independent measurement report (a benchmark its vendor did not
+    publish) or a negative result (is_negative).
 
     One predicate for whether the README section exists, whether the reading
-    map lists it, which rows it and docs/measured.md print. The same rule as
-    the site's isIndependentReport (site/catalog-core.mjs).
+    map lists it, which rows it and docs/measured.md print. The two halves are
+    the MCP package's query.py, the same rules as the site's
+    isIndependentReport and isNegativeResult (site/catalog-core.mjs).
     """
-    return entry["kind"] == "benchmark" and "vendor-reported" not in entry.get("flags", [])
+    query = load_query()
+    return query.is_independent_report(entry) or query.is_negative_result(entry)
+
+
+def is_negative(entry: dict) -> bool:
+    """A negative result: its own author measured Jev for the use and concluded
+    against it, as a benchmark's measurement.direction or the negative-result
+    flag says (query.is_negative_result). Listed first wherever measured rows are."""
+    return load_query().is_negative_result(entry)
 
 
 def measured_page(lang: str) -> str:
@@ -391,6 +401,11 @@ def collection_link(key: str, lang: str) -> str:
 def reports_link(lang: str) -> str:
     """The site filtered to independent measurement reports (its `indep` toggle)."""
     return f"{SITE}?indep=1&lang={lang}"
+
+
+def negatives_link(lang: str) -> str:
+    """The site filtered to negative results (its `neg` toggle)."""
+    return f"{SITE}?neg=1&lang={lang}"
 
 
 def site_link(key: str, lang: str) -> str:

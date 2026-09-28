@@ -5,6 +5,7 @@ import {
   queryFromState, shareUrl, stateFromQuery, TOGGLES, VIEWS, SUMMARY_SOURCES, MARKED_SOURCES, summaryMarks,
   UNINDEXED_KINDS, notIndexedByPattern, PRIMITIVES, primitiveLayers, repositoryFacts, siblingCitations,
   COARSE, platformRows, resolvePlatform, platformChoices, DIRECTIONS, measurementOf,
+  NEGATIVE_FLAG, NEGATIVE_DIRECTION, isNegativeResult,
 } from "../site/catalog-core.mjs";
 import { readFileSync } from "node:fs";
 
@@ -212,7 +213,7 @@ test("every surface in the real compat.json lists its values, and every value ro
 });
 
 // ─── URL state: every view and filter is a shareable link ─────────────────
-const DEFAULTS = {entry: "", collection: "", sort: "curated", pattern: "", kind: "", lang: "", platform: "", q: "", code: false, off: false, indep: false, noflag: false};
+const DEFAULTS = {entry: "", collection: "", sort: "curated", pattern: "", kind: "", lang: "", platform: "", q: "", code: false, off: false, indep: false, noflag: false, neg: false};
 const OPTIONS = {languages: ["en", "zh"], collections: ["first-call", "build", "measured"]};
 const read = (search, hash = "") => stateFromQuery(search, hash, OPTIONS);
 
@@ -234,6 +235,12 @@ test("parameter names and order stay what already-shared links use", () => {
     "collection=build&sort=stars&p=tool-selection&k=project&lang_f=python&platform=cloudflare&q=retry+budget&code=1&off=1&indep=1&noflag=1&lang=en",
   );
   assert.deepEqual(read("?platform=vercel-compat&lang=en").state, {...DEFAULTS, platform: "vercel-compat"});
+  // `neg` joined the toggles on 2026-09-28, after noflag; a link without it reads as before.
+  assert.equal(
+    queryFromState({...state, neg: true}, "catalog", "en").toString(),
+    "collection=build&sort=stars&p=tool-selection&k=project&lang_f=python&q=retry+budget&code=1&off=1&indep=1&noflag=1&neg=1&lang=en",
+  );
+  assert.deepEqual(read("?neg=1&lang=en").state, {...DEFAULTS, neg: true});
 });
 
 test("every view, sort, toggle and filter survives a round trip", () => {
@@ -317,4 +324,21 @@ test("a benchmark's measurement is read as recorded, and its directions are the 
   for (const measurement of [undefined, null, {}, [], "text"]) {
     assert.equal(measurementOf(row("none", {measurement})), null, JSON.stringify(measurement));
   }
+});
+
+test("a negative result is the flag or an unfavourable direction, on the cases the server shares", () => {
+  const {cases} = JSON.parse(readFileSync(new URL("./tests/negative_cases.json", import.meta.url)));
+  assert.ok(cases.length >= 10);
+  for (const c of cases) {
+    assert.equal(isNegativeResult(c.entry), c.negative, c.name);
+    assert.equal(isIndependentReport(c.entry), c.independent, c.name);
+  }
+  const taxonomy = JSON.parse(readFileSync(new URL("../taxonomy.json", import.meta.url)));
+  assert.ok(taxonomy.flags.some(f => f.key === NEGATIVE_FLAG), "the flag has a label");
+  assert.ok(DIRECTIONS.includes(NEGATIVE_DIRECTION));
+  const neg = row("neg", {kind: "plugin", flags: [NEGATIVE_FLAG]});
+  const pos = row("pos", {kind: "benchmark", measurement: {task: "t", direction: "favourable"}});
+  assert.equal(matchesEntry(neg, {...DEFAULTS, neg: true}), true);
+  assert.equal(matchesEntry(pos, {...DEFAULTS, neg: true}), false);
+  assert.equal(matchesEntry(pos, DEFAULTS), true);
 });

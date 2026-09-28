@@ -9,6 +9,11 @@ that path's order, then the first of the others in list order (sort_key: the
 star band, never the exact count). docs/measured.md and docs/measured.zh-CN.md
 list every report with every note, and caveat tags travel with every row on both.
 
+Since 2026-09-28 (I34) the negative results come first on both, under their own
+heading: a benchmark whose author's direction is unfavourable, or any other row
+flagged negative-result (so a plugin can be one). They count towards the
+section's ten, and their order is the band's, never the file's.
+
 Everything here renders in memory: CI runs the unit tests before it
 regenerates, so the committed files need not be current.
 """
@@ -39,6 +44,9 @@ from test_star_bands import copy_tree, moved_within_bands  # noqa: E402
 CATALOG = json.loads((ROOT / "catalog.json").read_text(encoding="utf-8"))
 RETIRED = json.loads((ROOT / "retired.json").read_text(encoding="utf-8"))
 MEASURED = [entry for entry in CATALOG if rows.is_measured(entry)]
+# The catalogue without its negative results, for the picks-and-fill rules alone.
+POSITIVE = [entry for entry in CATALOG if not rows.is_negative(entry)]
+MEASURED_POSITIVE = [entry for entry in POSITIVE if rows.is_measured(entry)]
 PICKED = rows.collection_slugs("measured")
 PACKS = (strings.EN, strings.ZH)
 ROW_HEAD = re.compile(r"^- \*\*\[(.+?)\]\((.+?)\)\*\*", re.M)
@@ -122,22 +130,22 @@ class ReadmeSectionTest(unittest.TestCase):
 
     def test_the_section_prints_the_picks_first_then_fills_to_the_limit(self):
         self.assertGreater(len(MEASURED), sections.INLINE_MEASURED, "the catalogue should need a page")
-        picked, others = sections.inline_measured(MEASURED, PICKED)
-        self.assertTrue(picked)
+        negatives, picked, others = sections.measured_selection(MEASURED, PICKED)
+        self.assertTrue(negatives and picked)
         for pack in PACKS:
             with self.subTest(lang=pack["lang_code"]):
                 text = section(self.readmes[pack["lang_code"]], pack)
-                self.assertEqual(titles(text), [rows.esc(e["title"]) for e in picked + others])
+                self.assertEqual(titles(text), [rows.esc(e["title"]) for e in negatives + picked + others])
                 self.assertEqual(len(titles(text)), sections.INLINE_MEASURED)
 
     def test_it_says_how_the_rows_were_chosen_and_links_the_rest(self):
-        picked, others = sections.inline_measured(MEASURED, PICKED)
+        # The real catalogue has negative results, so the line says they come first.
         for pack, page in ((strings.EN, "docs/measured.md"), (strings.ZH, "docs/measured.zh-CN.md")):
             lang = pack["lang_code"]
             with self.subTest(lang=lang):
                 text = section(self.readmes[lang], pack)
                 line = rows.marked(
-                    pack, "measured_more", shown=sections.INLINE_MEASURED, n=len(MEASURED),
+                    pack, "measured_more_negative", shown=sections.INLINE_MEASURED, n=len(MEASURED),
                     path=rows.collection_link("measured", lang), page=page, site=rows.reports_link(lang),
                 )
                 self.assertIn("\n" + line + "\n", text)
@@ -145,16 +153,17 @@ class ReadmeSectionTest(unittest.TestCase):
                 self.assertIn("?indep=1&lang=" + lang, line)
                 self.assertIn("?collection=measured&lang=" + lang, line)
         self.assertIn("measured_more", strings.ZH_MACHINE)
+        self.assertIn("measured_more_negative", strings.ZH_MACHINE)
         self.assertTrue(rows.marked(strings.ZH, "measured_more", shown=1, n=2, path="", page="", site="").endswith(" <sub>(机翻)</sub>"))
 
     def test_caveats_and_notes_travel_with_every_inline_row(self):
-        picked, others = sections.inline_measured(MEASURED, PICKED)
-        flagged = [e for e in picked + others if e.get("flags")]
-        self.assertTrue(flagged, "worldmonitor is picked and flagged shadow mode")
+        negatives, picked, others = sections.measured_selection(MEASURED, PICKED)
+        flagged = [e for e in negatives + picked + others if e.get("flags")]
+        self.assertTrue(flagged, "worldmonitor is a negative result flagged shadow mode")
         for pack in PACKS:
             lang = pack["lang_code"]
             text = section(self.readmes[lang], pack)
-            for entry in picked + others:
+            for entry in negatives + picked + others:
                 with self.subTest(lang=lang, row=entry["slug"]):
                     for flag in entry.get("flags", []):
                         self.assertIn(f"`{rows.label(rows.FLAG_LABELS, flag, lang)}`", text)
@@ -163,8 +172,7 @@ class ReadmeSectionTest(unittest.TestCase):
                         self.assertIn(f"  > {rows.esc(note)}", text)
 
     def test_the_other_reports_are_not_in_the_readme_section(self):
-        picked, others = sections.inline_measured(MEASURED, PICKED)
-        shown = {e["slug"] for e in picked + others}
+        shown = {e["slug"] for part in sections.measured_selection(MEASURED, PICKED) for e in part}
         text = section(self.readmes["en"], strings.EN)
         for entry in MEASURED:
             if entry["slug"] not in shown:
@@ -179,25 +187,30 @@ class ReadmeSectionTest(unittest.TestCase):
         self.assertEqual(len(titles(text)), 3)
         self.assertIn(strings.EN["pattern_all"].format(n=3, page="docs/measured.md", site=rows.reports_link("en")), text)
 
+    # These two catalogues leave the negative results out (START_HERE names one).
+    @mock.patch.object(sections, "START_HERE", [])
     def test_without_picks_the_plain_more_line_is_used(self):
         with mock.patch.object(sections, "collection_slugs", return_value=[]):
-            text = section(build_readme.render(copy.deepcopy(CATALOG), RETIRED, strings.EN), strings.EN)
+            text = section(build_readme.render(copy.deepcopy(POSITIVE), RETIRED, strings.EN), strings.EN)
         self.assertIn(
             strings.EN["pattern_more"].format(
-                shown=sections.INLINE_MEASURED, n=len(MEASURED), page="docs/measured.md", site=rows.reports_link("en")
+                shown=sections.INLINE_MEASURED, n=len(MEASURED_POSITIVE), page="docs/measured.md",
+                site=rows.reports_link("en"),
             ),
             text,
         )
 
+    @mock.patch.object(sections, "START_HERE", [])
     def test_when_the_picks_fill_the_section_it_does_not_speak_of_others(self):
-        many = [e["slug"] for e in sorted(MEASURED, key=rows.sort_key)][::-1][: sections.INLINE_MEASURED + 2]
+        many = [e["slug"] for e in sorted(MEASURED_POSITIVE, key=rows.sort_key)][::-1][: sections.INLINE_MEASURED + 2]
         with mock.patch.object(sections, "collection_slugs", return_value=many):
-            text = section(build_readme.render(copy.deepcopy(CATALOG), RETIRED, strings.EN), strings.EN)
-        by_slug = {e["slug"]: e for e in MEASURED}
+            text = section(build_readme.render(copy.deepcopy(POSITIVE), RETIRED, strings.EN), strings.EN)
+        by_slug = {e["slug"]: e for e in MEASURED_POSITIVE}
         self.assertEqual(titles(text), [rows.esc(by_slug[s]["title"]) for s in many[: sections.INLINE_MEASURED]])
         self.assertIn(
             strings.EN["pattern_more"].format(
-                shown=sections.INLINE_MEASURED, n=len(MEASURED), page="docs/measured.md", site=rows.reports_link("en")
+                shown=sections.INLINE_MEASURED, n=len(MEASURED_POSITIVE), page="docs/measured.md",
+                site=rows.reports_link("en"),
             ),
             text,
         )
@@ -206,7 +219,7 @@ class ReadmeSectionTest(unittest.TestCase):
     @mock.patch.object(sections, "START_HERE", [])
     def test_one_report_past_the_limit_is_not_called_all(self):
         n = sections.INLINE_MEASURED + 1
-        catalog = [e for e in CATALOG if not rows.is_measured(e)] + MEASURED[:n]
+        catalog = [e for e in CATALOG if not rows.is_measured(e)] + MEASURED_POSITIVE[:n]
         with mock.patch.object(sections, "collection_slugs", return_value=[]):
             text = section(build_readme.render(catalog, RETIRED, strings.EN), strings.EN)
         self.assertEqual(len(titles(text)), sections.INLINE_MEASURED)
@@ -227,10 +240,17 @@ class ReadmeSectionTest(unittest.TestCase):
 
 class PageTest(unittest.TestCase):
     def test_the_page_lists_every_report_once_in_list_order(self):
+        # The negative results first, then the rest, each part in list order.
+        negatives = sorted((e for e in MEASURED if rows.is_negative(e)), key=rows.sort_key)
+        rest = sorted((e for e in MEASURED if not rows.is_negative(e)), key=rows.sort_key)
+        self.assertTrue(negatives)
         for pack in PACKS:
             with self.subTest(lang=pack["lang_code"]):
                 text = pages.render_measured_page(MEASURED, pack)
-                self.assertEqual(titles(text), [rows.esc(e["title"]) for e in sorted(MEASURED, key=rows.sort_key)])
+                self.assertEqual(titles(text), [rows.esc(e["title"]) for e in negatives + rest])
+                head, tail = text.split(f"\n## {pack['others_h']}\n")
+                self.assertIn(f"\n## {pack['negative_h']}\n", head)
+                self.assertEqual(titles(head), [rows.esc(e["title"]) for e in negatives])
 
     def test_every_row_keeps_its_caveats_note_and_cited_file(self):
         for pack in PACKS:

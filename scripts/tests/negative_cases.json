@@ -1,0 +1,21 @@
+{
+  "about": "What counts as a negative result (query.is_negative_result, catalog-core isNegativeResult) and as an independent report (query.is_independent_report, catalog-core isIndependentReport). Both suites read this file: scripts/test_catalog_core.mjs and scripts/tests/test_negative_results.py.",
+  "cases": [
+    {"name": "a benchmark whose author's direction is unfavourable", "entry": {"kind": "benchmark", "measurement": {"task": "t", "direction": "unfavourable"}}, "negative": true, "independent": true},
+    {"name": "the same, flagged vendor-reported", "entry": {"kind": "benchmark", "flags": ["vendor-reported"], "measurement": {"task": "t", "direction": "unfavourable"}}, "negative": true, "independent": false},
+    {"name": "the same, kept in shadow", "entry": {"kind": "benchmark", "flags": ["shadow-mode-only"], "measurement": {"task": "t", "direction": "unfavourable"}}, "negative": true, "independent": true},
+    {"name": "a mixed direction", "entry": {"kind": "benchmark", "measurement": {"task": "t", "direction": "mixed"}}, "negative": false, "independent": true},
+    {"name": "an inconclusive direction", "entry": {"kind": "benchmark", "measurement": {"task": "t", "direction": "inconclusive"}}, "negative": false, "independent": true},
+    {"name": "a measurement stating no direction", "entry": {"kind": "benchmark", "measurement": {"task": "t"}}, "negative": false, "independent": true},
+    {"name": "a benchmark with no measurement", "entry": {"kind": "benchmark"}, "negative": false, "independent": true},
+    {"name": "an empty measurement", "entry": {"kind": "benchmark", "measurement": {}}, "negative": false, "independent": true},
+    {"name": "a measurement that is not an object", "entry": {"kind": "benchmark", "measurement": "unfavourable"}, "negative": false, "independent": true},
+    {"name": "a plugin with the flag", "entry": {"kind": "plugin", "flags": ["negative-result"]}, "negative": true, "independent": false},
+    {"name": "a project with the flag among others", "entry": {"kind": "project", "flags": ["no-license", "negative-result"]}, "negative": true, "independent": false},
+    {"name": "a project without it", "entry": {"kind": "project", "flags": ["no-license"]}, "negative": false, "independent": false},
+    {"name": "flags null", "entry": {"kind": "project", "flags": null}, "negative": false, "independent": false},
+    {"name": "a flag with a direction lint forbids on a benchmark, still negative", "entry": {"kind": "benchmark", "flags": ["negative-result"], "measurement": {"task": "t", "direction": "favourable"}}, "negative": true, "independent": true},
+    {"name": "a direction on a row lint forbids a measurement on, still negative", "entry": {"kind": "article", "measurement": {"task": "t", "direction": "unfavourable"}}, "negative": true, "independent": false},
+    {"name": "a vendor-reported article", "entry": {"kind": "article", "flags": ["vendor-reported"]}, "negative": false, "independent": false}
+  ]
+}

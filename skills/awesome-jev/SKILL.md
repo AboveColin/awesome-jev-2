@@ -72,7 +72,9 @@ If the MCP server is available, prefer it over guessing:
   a specific decision. `comparator=…`, `dataset=…` and `direction=…` find the
   benchmarks whose own authors compared Jev with something or used a dataset;
   a row's `measurement` is what its author reported, and its `direction` is
-  author-stated, not reproduced here
+  author-stated, not reproduced here. `outcome="negative"` returns the rows
+  whose own author measured Jev for that use and concluded against it (read
+  them before the positive examples); `list_patterns()` counts them per pattern
 - `get_example(slug)` — one row in full: its sources, the file its claim was
   read in (`evidence`) and every caveat flag
 - `check_model_string(model)` — before writing any model string
@@ -162,9 +164,12 @@ needs a deterministic rule or a human.
 Nearly every performance figure circulating about this model is the vendor's
 own, produced with reference answers derived from other models' judgements
 rather than human ground truth. The catalogue flags those `vendor-reported`.
-The handful of independent measurements are mostly _negative_ results — one
-large agent framework ported the compaction approach, measured it, and published
-the conclusion not to adopt it. Read those first.
+Several independent measurements are _negative_ results — one large agent
+framework ported the compaction approach, measured it, and published the
+conclusion not to adopt it. Read those first: `search_examples(outcome="negative")`
+returns them, and https://github.com/kydlikebtc/awesome-jev/blob/main/docs/benchmarks.md
+sets every benchmark's measurement side by side, each direction as its author
+states it, not reproduced here.
 
 ## Claiming a candidate from the discovery queue
 

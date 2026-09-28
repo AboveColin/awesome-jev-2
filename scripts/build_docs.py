@@ -40,6 +40,8 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 
 import _stats  # noqa: E402
 from _markers import normalise, replace_block, replace_inline  # noqa: E402
+from measurements import negative as negative_rows  # noqa: E402
+from platform_values import load_query  # noqa: E402
 from sibling_lists import SIBLINGS, citations_of, is_citation, listed_urls, read_lists  # noqa: E402
 
 ROOT = _stats.ROOT
@@ -88,6 +90,7 @@ def shape_block(s: dict) -> str:
             ["Machine signal: rows with code, not TypeSafe AI's own, whose summary names nothing about Jev and that carry no `notes` ([review queue](review-queue.md#generic-summary))", s["review_generic_summary"]],
             ["Benchmark rows indexing their own author's measurement (`measurement`: task, datasets, comparators, the author's direction; author-stated, not reproduced here; [side by side](benchmarks.md))", s["measured_rows"]],
             ["Machine signal: of those, measurements no person has read against the author's report ([review queue](review-queue.md#measurement-unread))", s["review_measurement_unread"]],
+            ["Negative results: rows whose own author measured Jev for the use and concluded against it (a benchmark's `measurement.direction` unfavourable, the `negative-result` flag on any other row; author-stated, not reproduced here; [listed below](#negative-results))", s["negative_results"]],
             ["Patterns covered", f"{s['patterns_covered']} of {s['patterns_total']}"],
             ["Rows whose `patterns` are exactly what the keyword rules suggest for their summary (agreement with the rules, not a review: any review of these rows was not recorded)", f"{s['patterns_rule_identical']} of {s['entries']}"],
             ["Rows whose patterns a person recorded reading (`patterns_reviewed`)", s["patterns_reviewed"]],
@@ -121,6 +124,32 @@ def cited_by_block(s: dict) -> str:
         label = str(low) if low == high else f"{low} or more" if high is None else f"{low}–{high}"
         rows.append([label, n])
     return table(["Sibling directories linking the repository", "Rows"], rows)
+
+
+SITE = "https://kydlikebtc.github.io/awesome-jev/"
+
+
+def negative_block(catalog: list[dict]) -> str:
+    """Every negative result, most-starred band first, then by title and slug:
+    the row, its kind, and where the catalogue records that its own author
+    concluded against Jev. Never the file's order, never an exact star count."""
+    from readme.rows import star_band
+
+    query = load_query()
+    rows = sorted(
+        negative_rows(catalog), key=lambda e: (-star_band(e.get("stars")), e["title"].lower(), e["slug"])
+    )
+    if not rows:
+        return "No row records a negative result yet."
+    lines = []
+    for entry in rows:
+        link = f"[{entry['title']}]({SITE}?lang=en#{entry['slug']})"
+        if query.NEGATIVE_FLAG in (entry.get("flags") or []):
+            how = "flagged `negative-result` (measured, not adopted)"
+        else:
+            how = "its measurement's direction is `unfavourable`"
+        lines.append(f"- {link} (`{entry['kind']}`): {how}; author-stated, not reproduced here.")
+    return "\n".join(lines)
 
 
 def pushed_block(s: dict) -> str:
@@ -319,6 +348,7 @@ def inline_values(s: dict) -> dict[str, object]:
         "primitive_signal_rows": s["primitive_signal_rows"],
         "primitive_signal_only_rows": s["primitive_signal_only_rows"],
         "measured_rows": s["measured_rows"],
+        "negative_results": s["negative_results"],
         "no_licence": s["no_licence"],
         "platforms": s["platforms"],
         "sibling_lists": s["sibling_lists"],
@@ -345,6 +375,7 @@ def render() -> dict[pathlib.Path, str]:
             "shape": shape_block(s),
             "pushed": pushed_block(s),
             "cited-by": cited_by_block(s),
+            "negative": negative_block(catalog),
             "gaps": gaps_block(s, patterns),
         },
         "docs/sources.md": {

@@ -30,6 +30,7 @@ is the point of dating it.
 | Machine signal: rows with code, not TypeSafe AI's own, whose summary names nothing about Jev and that carry no `notes` ([review queue](review-queue.md#generic-summary)) | 102 |
 | Benchmark rows indexing their own author's measurement (`measurement`: task, datasets, comparators, the author's direction; author-stated, not reproduced here; [side by side](benchmarks.md)) | 24 |
 | Machine signal: of those, measurements no person has read against the author's report ([review queue](review-queue.md#measurement-unread)) | 24 |
+| Negative results: rows whose own author measured Jev for the use and concluded against it (a benchmark's `measurement.direction` unfavourable, the `negative-result` flag on any other row; author-stated, not reproduced here; [listed below](#negative-results)) | 5 |
 | Patterns covered | 18 of 18 |
 | Rows whose `patterns` are exactly what the keyword rules suggest for their summary (agreement with the rules, not a review: any review of these rows was not recorded) | 758 of 1207 |
 | Rows whose patterns a person recorded reading (`patterns_reviewed`) | 0 |
@@ -78,6 +79,24 @@ project, and a repository no list links is not thereby worse.
 | 11–20 | 142 |
 | 21 or more | 51 |
 <!-- cited-by:end -->
+
+### Negative results
+
+Rows whose own author measured Jev for the use and concluded against it: a
+`kind: benchmark` row records that in its `measurement` (direction
+`unfavourable`), any other row carries the `negative-result` flag. Each is the
+author's conclusion, not reproduced here. They are the rows to read before the
+positive examples, and the README's "Measured, not claimed",
+[`measured.md`](measured.md), the site (`?neg=1`) and the MCP server
+(`search_examples(outcome="negative")`) list them first or on request.
+
+<!-- negative:start -->
+- [Hermes Agent: Jev compaction evaluation](https://kydlikebtc.github.io/awesome-jev/?lang=en#hermes-agent-jev-evaluation) (`benchmark`): its measurement's direction is `unfavourable`; author-stated, not reproduced here.
+- [worldmonitor: news threat classification](https://kydlikebtc.github.io/awesome-jev/?lang=en#worldmonitor-shadow-mode) (`benchmark`): its measurement's direction is `unfavourable`; author-stated, not reproduced here.
+- [no-mistakes: Jev review pre-brief, measured and retired](https://kydlikebtc.github.io/awesome-jev/?lang=en#no-mistakes-review-context) (`benchmark`): its measurement's direction is `unfavourable`; author-stated, not reproduced here.
+- [hermes-jev-skills](https://kydlikebtc.github.io/awesome-jev/?lang=en#hermes-jev-skills) (`plugin`): flagged `negative-result` (measured, not adopted); author-stated, not reproduced here.
+- [jev-skill-router](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-skill-router) (`plugin`): flagged `negative-result` (measured, not adopted); author-stated, not reproduced here.
+<!-- negative:end -->
 
 ### Coverage gaps
 
