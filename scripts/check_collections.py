@@ -4,6 +4,8 @@
 Collections keep only an entry slug and bilingual editorial guidance. URLs,
 titles and verification records always come from catalog.json. Removing an
 entry from the catalog must also remove or replace its collection reference.
+The `measured` path is also the README's: its entries, in its order, are the
+first rows of "Measured, not claimed" (scripts/readme/sections.py).
 
 Run: python3 scripts/check_collections.py
 """

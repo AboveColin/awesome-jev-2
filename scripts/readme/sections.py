@@ -25,13 +25,19 @@ from .rows import (
     ROOT,
     SITE,
     anchor,
+    collection_link,
+    collection_slugs,
     entry_list,
     esc,
     group_by_pattern,
+    is_measured,
     label,
     marked,
+    measured_page,
     page_name,
+    reports_link,
     site_link,
+    sort_key,
     source_marks,
     split_unindexed,
     stars_note,
@@ -68,6 +74,19 @@ START_HERE = [
 # page, which is a URL worth having for its own sake: "every safety-gating
 # example" can now be linked to.
 INLINE_PER_PATTERN = 10
+
+# "Measured, not claimed" shows this many independent reports and links
+# docs/measured.md, which lists every one with its note.
+#
+# Until 2026-09-27 it printed them all, each with its note: 70 reports, 350 of
+# the README's 1,442 lines, all of them before "By decision pattern", the
+# section the README calls its primary index. The rows shown are the curated
+# `measured` path of collections.json first, in its order, since a person
+# picked them to read first, then the first of the others by sort_key, as a
+# pattern's rows are chosen. The number lives here, beside INLINE_PER_PATTERN,
+# not in collections.json: that file is editorial data and
+# check_collections.py holds it to its fields.
+INLINE_MEASURED = 10
 
 
 def coverage_note(stats: dict, lang: str) -> str:
@@ -134,13 +153,15 @@ def entry_points(strings: dict) -> list[tuple[str, str]]:
     return [(href, title.replace(" ", "&nbsp;")) for href, title in chips]
 
 
-def is_measured(entry: dict) -> bool:
-    """An independent measurement report: a benchmark its vendor did not publish.
-
-    One predicate for both whether the section exists and whether the reading
-    map lists it, so the two cannot disagree.
-    """
-    return entry["kind"] == "benchmark" and "vendor-reported" not in entry.get("flags", [])
+def inline_measured(measured: list[dict], picked: list[str]) -> tuple[list[dict], list[dict]]:
+    """The reports the README prints: `picked` (a collections.json path) that
+    are among `measured`, in that order, then the first of the others by
+    sort_key, INLINE_MEASURED in all. Returned apart, as (picks, others)."""
+    by_slug = {entry["slug"]: entry for entry in measured}
+    picks = [by_slug[slug] for slug in dict.fromkeys(picked) if slug in by_slug][:INLINE_MEASURED]
+    taken = {entry["slug"] for entry in picks}
+    others = [entry for entry in sorted(measured, key=sort_key) if entry["slug"] not in taken]
+    return picks, others[: INLINE_MEASURED - len(picks)]
 
 
 @dataclass(frozen=True)
@@ -338,19 +359,28 @@ def coverage(page: Page) -> list[str]:
 
 
 def measured_results(page: Page) -> list[str]:
-    """Independent measurement reports, surfaced early; absent when there are none."""
-    strings, catalog = page.strings, page.catalog
-    out: list[str] = []
-    add = out.append
+    """Independent measurement reports, surfaced early; absent when there are none.
 
-    measured = [entry for entry in catalog if is_measured(entry)]
-    if measured:
-        add(f"## {strings['measured_h']}")
-        add("")
-        add(strings["measured_intro"])
-        add("")
-        out.extend(entry_list(measured, strings, notes=True, readme_layout=True))
-    return out
+    The first INLINE_MEASURED (see inline_measured), and a link to the page
+    with every one.
+    """
+    strings, lang = page.strings, page.lang
+    measured = [entry for entry in page.catalog if is_measured(entry)]
+    if not measured:
+        return []
+    picks, others = inline_measured(measured, collection_slugs("measured"))
+    out = [f"## {strings['measured_h']}", "", strings["measured_intro"], ""]
+    out.extend(entry_list(picks, strings, notes=True, readme_layout=True, keep_order=True) if picks else [])
+    out.extend(entry_list(others, strings, notes=True, readme_layout=True) if others else [])
+    shown = len(picks) + len(others)
+    links = {"n": len(measured), "page": f"docs/{measured_page(lang)}", "site": reports_link(lang)}
+    if shown == len(measured):
+        out.append(strings["pattern_all"].format(**links))
+    elif picks and others:
+        out.append(marked(strings, "measured_more", shown=shown, path=collection_link("measured", lang), **links))
+    else:
+        out.append(strings["pattern_more"].format(shown=shown, **links))
+    return out + [""]
 
 
 def by_decision_pattern(page: Page) -> list[str]:

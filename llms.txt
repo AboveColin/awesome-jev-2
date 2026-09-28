@@ -26,6 +26,7 @@ English index: https://github.com/kydlikebtc/awesome-jev/blob/main/README.md
 Chinese index: https://github.com/kydlikebtc/awesome-jev/blob/main/README.zh-CN.md
 Decision patterns, with when NOT to use each: https://github.com/kydlikebtc/awesome-jev/blob/main/docs/patterns.md
 Every example of one decision, on its own page: https://github.com/kydlikebtc/awesome-jev/blob/main/docs/by-pattern/<pattern>.md (for example safety-gating.md; append .zh-CN before .md for Chinese). The README shows the first ten of each.
+Every independent measurement report, each with its note, on one page: https://github.com/kydlikebtc/awesome-jev/blob/main/docs/measured.md (docs/measured.zh-CN.md for Chinese). The README's "Measured, not claimed" shows the picks of the curated independent-reports path in collections.json first, then the first few others.
 Cross-platform compatibility table: https://github.com/kydlikebtc/awesome-jev/blob/main/docs/compatibility.md
 What to check before trusting an entry: https://github.com/kydlikebtc/awesome-jev/blob/main/docs/vetting.md
 How the catalog was built: https://github.com/kydlikebtc/awesome-jev/blob/main/docs/method.md

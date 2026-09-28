@@ -95,6 +95,16 @@ EN = {
         "this repository has not independently reproduced them. Check each report's dataset, "
         "method and model version before comparing results."
     ),
+    "measured_more": (
+        "**{shown} of {n}** shown: first the picks of the curated [independent reports]({path}) path, "
+        "in its order, then the first of the others in list order · [all {n}, each with its note, on "
+        "one page →]({page}) · [filter on the site]({site})"
+    ),
+    "measured_page_intro": (
+        "Every independent measurement report in the catalogue — {n} of them — each with its note. "
+        "[The README]({readme}) shows the picks of the curated [independent reports]({path}) path and "
+        "the first few others; [the site]({site}) lists the same rows and can filter them further."
+    ),
     "patterns_h": "By decision pattern",
     "patterns_intro": (
         "The primary index. Each heading is a decision an agent has to make; the rows are examples "
@@ -328,6 +338,16 @@ ZH = {
         "本目录收录的独立测量报告，包括有助于理解适用边界的**负面结果**。这些是原作者的测量，"
         "本仓库没有独立复现。比较结果前，请分别查看数据集、测试方法和模型版本。"
     ),
+    "measured_more": (
+        "已显示 **{shown} / {n}** 条：先是精选路径[独立测量报告]({path})选出的条目，按该路径的顺序，"
+        "再按列表顺序补上其余条目中靠前的几条 · [在单独页面查看全部 {n} 条及各自的备注 →]({page}) · "
+        "[在站点上筛选]({site})"
+    ),
+    "measured_page_intro": (
+        "本目录收录的全部独立测量报告 —— 共 {n} 条，每条附备注。[README]({readme}) 只显示精选路径"
+        "[独立测量报告]({path})选出的条目和其余条目中靠前的几条；[站点]({site})列出同样这些条目，"
+        "并可进一步筛选。"
+    ),
     "patterns_h": "按决策模式",
     "patterns_intro": (
         "主索引。每个标题是智能体必须做的一个决策；下面的行是做这个决策的例子。"
@@ -477,7 +497,7 @@ ZH_MACHINE = frozenset(
     {
         "stars_note", "verified_recheck", "verified_summaries", "license_summaries", "unindexed_readme",
         "unindexed_page", "prims_layers", "verified_primitives", "verified_translations",
-        "call_site_note",
+        "call_site_note", "measured_more", "measured_page_intro",
     }
 )
 

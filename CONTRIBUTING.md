@@ -28,8 +28,9 @@ python3 scripts/check.py --fix
 
 ### Generated files are optional
 
-The READMEs, the pages under `docs/by-pattern/`, the figures in `docs/assets/`,
-[`docs/review-queue.md`](docs/review-queue.md),
+The READMEs, the pages under `docs/by-pattern/`,
+[`docs/measured.md`](docs/measured.md) and `docs/measured.zh-CN.md`, the
+figures in `docs/assets/`, [`docs/review-queue.md`](docs/review-queue.md),
 [`docs/zh-queue.md`](docs/zh-queue.md) and the generated numbers in
 `docs/status.md`, `docs/sources.md`, `docs/patterns.md`,
 `docs/compatibility.md` and `llms.txt` are all derived from the JSON files at

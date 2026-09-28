@@ -6,7 +6,8 @@ import from it. The work lives here:
   strings.py   the two string packs, EN and zh-CN side by side
   rows.py      paths, taxonomy labels, and how one catalogue row is written
   sections.py  README.md and README.zh-CN.md, one function per section
-  pages.py     docs/by-pattern/, one page per decision pattern
+  pages.py     docs/by-pattern/, one page per decision pattern, and
+               docs/measured.md, every independent measurement report
 
 Not every reader-facing word is in the packs yet: coverage_note() and the
 short labels written `"…" if lang == "zh" else "…"` (the reading-map toggle,

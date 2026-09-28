@@ -31,9 +31,13 @@ sys.path.insert(0, str(ROOT / "scripts"))
 from _github import VERSION, version_parts, version_stem  # noqa: E402
 
 # Fully generated: their numbers are checked by the generator that wrote them.
-# docs/by-pattern/ is build_readme.py's output too, one page per pattern;
+# docs/by-pattern/ is build_readme.py's output too, one page per pattern, and so
+# are docs/measured.md and docs/measured.zh-CN.md, every independent report;
 # docs/review-queue.md is build_review_queue.py's and docs/zh-queue.md zh_audit.py's.
-GENERATED = {"README.md", "README.zh-CN.md", "docs/review-queue.md", "docs/zh-queue.md"}
+GENERATED = {
+    "README.md", "README.zh-CN.md", "docs/measured.md", "docs/measured.zh-CN.md", "docs/review-queue.md",
+    "docs/zh-queue.md",
+}
 GENERATED_DIRS = ("docs/by-pattern/",)
 # Generated pages that quote other people's files verbatim: the review queue
 # prints each row's `evidence.matched`, which is whatever text a project's code

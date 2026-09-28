@@ -1,6 +1,8 @@
-"""docs/by-pattern/: every row of one decision pattern on its own page.
+"""The pages a README section links for the rest of its rows.
 
-The README shows the first rows of each pattern and links here for the rest.
+docs/by-pattern/ holds every row of one decision pattern on its own page, and
+docs/measured.md (with docs/measured.zh-CN.md) every independent measurement
+report. The README shows the first rows of each and links here for the rest.
 """
 
 from __future__ import annotations
@@ -11,11 +13,15 @@ from .rows import (
     PATTERN_LABELS,
     ROOT,
     anchor,
+    collection_link,
     entry_list,
     group_by_pattern,
+    is_measured,
     label,
     marked,
+    measured_page,
     page_name,
+    reports_link,
     site_link,
     split_unindexed,
     stars_note,
@@ -23,7 +29,8 @@ from .rows import (
 )
 from .strings import EN, ZH
 
-PAGES_DIR = ROOT / "docs" / "by-pattern"
+DOCS_DIR = ROOT / "docs"
+PAGES_DIR = DOCS_DIR / "by-pattern"
 
 
 def render_page(key: str, rows: list[dict], strings: dict) -> str:
@@ -89,4 +96,53 @@ def write_pattern_pages(catalog: list[dict]) -> list[pathlib.Path]:
         if path not in written:
             path.unlink()
             print(f"removed {path.relative_to(ROOT)}: its pattern has no entries")
+    return written
+
+
+def render_measured_page(rows: list[dict], strings: dict) -> str:
+    """Every independent measurement report, each with its note and caveats.
+
+    Laid out as the README's section used to print them all (the note is why a
+    report is worth reading), in list order, with the section's own caveat that
+    the measurements are their authors'.
+    """
+    lang = strings["lang_code"]
+    readme = "README.zh-CN.md" if lang == "zh" else "README.md"
+    other = measured_page("en" if lang == "zh" else "zh")
+    out = [
+        f"# {strings['measured_h']}",
+        "",
+        f"<sub>[awesome-jev](../{readme}) · {strings['page_other_lang'].format(other=other)}</sub>",
+        "",
+        strings["measured_intro"],
+        "",
+        marked(
+            strings, "measured_page_intro", n=len(rows), readme=f"../{readme}#{anchor(strings['measured_h'])}",
+            path=collection_link("measured", lang), site=reports_link(lang),
+        ),
+        "",
+        stars_note(strings, catalog="../catalog.json"),
+        "",
+        marked(strings, "call_site_note"),
+        "",
+    ]
+    out.extend(entry_list(rows, strings, notes=True, readme_layout=True))
+    out += ["---", "", strings["page_footer"], ""]
+    return "\n".join(out)
+
+
+def write_measured_pages(catalog: list[dict]) -> list[pathlib.Path]:
+    """Write docs/measured.md and docs/measured.zh-CN.md, or remove them when
+    the catalogue holds no independent report (the README then has no section
+    to link them from)."""
+    rows = [entry for entry in catalog if is_measured(entry)]
+    written = []
+    for strings in (EN, ZH):
+        path = DOCS_DIR / measured_page(strings["lang_code"])
+        if rows:
+            path.write_text(render_measured_page(rows, strings))
+            written.append(path)
+        elif path.exists():
+            path.unlink()
+            print(f"removed {path.name} from docs/: the catalogue has no independent measurement report")
     return written

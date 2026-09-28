@@ -235,6 +235,17 @@ whose cited file is `jev-shadow-decision-provider.ts`. Official rows are left
 out of the first signal because `official` is held to the vendor's own hosts,
 so the row is about Jev whatever its summary says.
 
+Since 2026-09-27 the README's "Measured, not claimed" section prints ten of
+the independent measurement reports rather than all of them: first the picks
+of the curated `measured` path in `collections.json`, in that path's order,
+then the first of the others in list order, as each pattern shows its first
+ten. Every report, with its note and caveats, is on `docs/measured.md` and
+`docs/measured.zh-CN.md`, generated with the READMEs. Printed whole, the 70
+reports took 350 of the README's 1,442 lines, all of them ahead of "By decision
+pattern", the section the README calls its primary index. README.md went from
+120,440 to 94,523 bytes and README.zh-CN.md from 117,979 to 93,454, with the
+sections in the same order.
+
 ## Discovery is crowdsourced, verification is not
 
 There are dozens of Jev directories. Each is a different person's sweep of the
@@ -695,7 +706,7 @@ python3 scripts/check.py         # every check lint runs, in lint's order; --lis
 # or one at a time:
 python3 scripts/sort_catalog.py  # keep catalog.json and retired.json in slug order
 python3 scripts/lint.py          # schema plus cross-entry invariants
-python3 scripts/build_readme.py  # regenerate both READMEs and docs/by-pattern/
+python3 scripts/build_readme.py  # regenerate both READMEs, docs/by-pattern/ and docs/measured*.md
 python3 scripts/counts.py        # coverage, with gaps marked
 python3 scripts/check_links.py   # sweep every URL, report only
 python3 scripts/verify_claims.py # re-read every cited call site

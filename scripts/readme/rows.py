@@ -1,7 +1,8 @@
 """Paths, taxonomy labels, and how one catalogue row is written.
 
-Shared by sections.py (the READMEs) and pages.py (docs/by-pattern/), so a row,
-its caveat tags and its display order read the same on both.
+Shared by sections.py (the READMEs) and pages.py (docs/by-pattern/ and
+docs/measured.md), so a row, its caveat tags and its display order read the
+same on all of them.
 """
 
 from __future__ import annotations
@@ -17,6 +18,7 @@ from .strings import ZH_MACHINE
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 CATALOG = ROOT / "catalog.json"
+COLLECTIONS_FILE = ROOT / "collections.json"
 PATTERNS_FILE = ROOT / "patterns.json"
 RETIRED = ROOT / "retired.json"
 
@@ -216,7 +218,9 @@ def sort_key(entry: dict) -> tuple:
     )
 
 
-def entry_list(entries: list[dict], strings: dict, *, notes: bool = False, readme_layout: bool = False) -> list[str]:
+def entry_list(
+    entries: list[dict], strings: dict, *, notes: bool = False, readme_layout: bool = False, keep_order: bool = False
+) -> list[str]:
     """Render rows as a list rather than a table.
 
     Tables lose here. GitHub sizes columns by content, so with 148 rows the
@@ -227,13 +231,15 @@ def entry_list(entries: list[dict], strings: dict, *, notes: bool = False, readm
 
     `notes=True` adds the full note as a third line, for the curated sections
     where there are a handful of rows and the note is why the row is there.
+    `keep_order=True` prints the rows in the order given, for a curated order
+    such as a collections.json path's; otherwise they go by sort_key.
     """
     lang = strings["lang_code"]
     if not entries:
         return [strings["no_entries"], ""]
 
     lines = []
-    for entry in sorted(entries, key=sort_key):
+    for entry in entries if keep_order else sorted(entries, key=sort_key):
         head = f"- **[{esc(entry['title'])}]({entry['url']})**"
         if entry.get("official"):
             head += " ⭐"
@@ -321,6 +327,45 @@ def group_by_pattern(catalog: list[dict]) -> dict[str, list[dict]]:
 def page_name(key: str, lang: str) -> str:
     """File name of a pattern's page, mirroring README.md / README.zh-CN.md."""
     return f"{key}.zh-CN.md" if lang == "zh" else f"{key}.md"
+
+
+def is_measured(entry: dict) -> bool:
+    """An independent measurement report: a benchmark its vendor did not publish.
+
+    One predicate for whether the README section exists, whether the reading
+    map lists it, which rows it and docs/measured.md print. The same rule as
+    the site's isIndependentReport (site/catalog-core.mjs).
+    """
+    return entry["kind"] == "benchmark" and "vendor-reported" not in entry.get("flags", [])
+
+
+def measured_page(lang: str) -> str:
+    """File name, under docs/, of the page listing every independent report."""
+    return "measured.zh-CN.md" if lang == "zh" else "measured.md"
+
+
+def collection_slugs(key: str) -> list[str]:
+    """The slugs of one curated path in collections.json, in its order.
+
+    Read when a README is rendered, not at import. check_collections.py holds
+    the file to its shape and to the catalogue; a path it does not have gives
+    an empty list.
+    """
+    data = json.loads(COLLECTIONS_FILE.read_text())
+    for group in data["collections"]:
+        if group["id"] == key:
+            return [item["slug"] for item in group["entries"]]
+    return []
+
+
+def collection_link(key: str, lang: str) -> str:
+    """The site showing one curated path of collections.json."""
+    return f"{SITE}?collection={key}&lang={lang}"
+
+
+def reports_link(lang: str) -> str:
+    """The site filtered to independent measurement reports (its `indep` toggle)."""
+    return f"{SITE}?indep=1&lang={lang}"
 
 
 def site_link(key: str, lang: str) -> str:
