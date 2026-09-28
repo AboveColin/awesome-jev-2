@@ -12,7 +12,7 @@ Evidence recorded for this pattern's rows (reports counted, not a verdict; a row
 
 ## Official material
 
-What TypeSafe AI publishes itself (rows marked `official`), filed under this pattern. Each is also in the full list below, with its summary.
+What TypeSafe AI publishes itself (rows marked `official`), filed under this pattern. Each is also listed below, with its summary.
 
 - [Cookbook: Double-checking citations](https://docs.typesafe.ai/cookbooks/citation_check) <sub>`Official docs` · `Py` · `choice`</sub>
 - [Cookbook: Guardrails for LLMs](https://docs.typesafe.ai/cookbooks/llm_guardrails) <sub>`Official docs` · `Py` · `noul` · `score`</sub>

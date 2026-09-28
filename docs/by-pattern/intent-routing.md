@@ -12,7 +12,7 @@ Evidence recorded for this pattern's rows (reports counted, not a verdict; a row
 
 ## Official material
 
-What TypeSafe AI publishes itself (rows marked `official`), filed under this pattern. Each is also in the full list below, with its summary.
+What TypeSafe AI publishes itself (rows marked `official`), filed under this pattern. Each is also listed below, with its summary.
 
 - [Demo: Smart home assistant](https://docs.typesafe.ai/demos/smart-home) <sub>`Official docs` · `Py`</sub>
 - [Pattern: Confidence-gated routing](https://docs.typesafe.ai/patterns/confidence-routing) <sub>`Official docs` · `Py`</sub>
@@ -20,7 +20,7 @@ What TypeSafe AI publishes itself (rows marked `official`), filed under this pat
 
 ## Examples in this repository
 
-Code under this repository's [`examples/`](../../examples/) filed under this pattern. Each is also in the full list below; [the examples' README](../../examples/README.md) says how far they have been checked.
+Code under this repository's [`examples/`](../../examples/) filed under this pattern. Each is also listed below, with its summary; [the examples' README](../../examples/README.md) says how far they have been checked.
 
 - [Example: confidence-gated escalation](../../examples/02-confidence-gate/main.py) <sub>`Snippet` · `Py` · `choice` · ⚠ `code untested`</sub>
 

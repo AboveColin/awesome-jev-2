@@ -12,13 +12,13 @@ Evidence recorded for this pattern's rows (reports counted, not a verdict; a row
 
 ## Official material
 
-What TypeSafe AI publishes itself (rows marked `official`), filed under this pattern. Each is also in the full list below, with its summary.
+What TypeSafe AI publishes itself (rows marked `official`), filed under this pattern. Each is also listed below, with its summary.
 
 - [Quickstart](https://docs.typesafe.ai/introduction/quickstart) <sub>`Official docs` · `Py` · `TS` · `sh` · `choice` · `score` · `noul`</sub>
 
 ## Examples in this repository
 
-Code under this repository's [`examples/`](../../examples/) filed under this pattern. Each is also in the full list below; [the examples' README](../../examples/README.md) says how far they have been checked.
+Code under this repository's [`examples/`](../../examples/) filed under this pattern. Each is also listed below, with its summary; [the examples' README](../../examples/README.md) says how far they have been checked.
 
 - [Example: three primitives in one request](../../examples/01-three-primitives/main.py) <sub>`Snippet` · `Py` · `choice` · `score` · `noul` · ⚠ `code untested`</sub>
 

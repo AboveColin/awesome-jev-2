@@ -12,7 +12,7 @@ Evidence recorded for this pattern's rows (reports counted, not a verdict; a row
 
 ## Official material
 
-What TypeSafe AI publishes itself (rows marked `official`), filed under this pattern. Each is also in the full list below, with its summary.
+What TypeSafe AI publishes itself (rows marked `official`), filed under this pattern. Each is also listed below, with its summary.
 
 - [Official agent skill for Claude Code](https://docs.typesafe.ai/agent-skill) <sub>`Official docs` · `sh`</sub>
 - [typesafe-ai/skills](https://github.com/typesafe-ai/skills) <sub>`Plugin` · `sh`</sub>

@@ -12,7 +12,7 @@ _在输出到达用户前，按评分标准检查模型产出。_
 
 ## 官方材料
 
-TypeSafe AI 自己发布、归在这个模式下的材料（标为 `official` 的行）。每一条也都在下方完整列表里，附有摘要。 <sub>(机翻)</sub>
+TypeSafe AI 自己发布、归在这个模式下的材料（标为 `official` 的行）。每一条在下文也都列出，附有摘要。 <sub>(机翻)</sub>
 
 - [Cookbook: Double-checking citations](https://docs.typesafe.ai/cookbooks/citation_check) <sub>`官方文档` · `Py` · `choice`</sub>
 - [Cookbook: Guardrails for LLMs](https://docs.typesafe.ai/cookbooks/llm_guardrails) <sub>`官方文档` · `Py` · `noul` · `score`</sub>

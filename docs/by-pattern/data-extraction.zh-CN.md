@@ -12,7 +12,7 @@ _从杂乱文本中取出类型化字段 —— 靠在候选中选择，而不�
 
 ## 官方材料
 
-TypeSafe AI 自己发布、归在这个模式下的材料（标为 `official` 的行）。每一条也都在下方完整列表里，附有摘要。 <sub>(机翻)</sub>
+TypeSafe AI 自己发布、归在这个模式下的材料（标为 `official` 的行）。每一条在下文也都列出，附有摘要。 <sub>(机翻)</sub>
 
 - [Cookbook: Date extraction](https://docs.typesafe.ai/cookbooks/date_extraction_cookbook) <sub>`官方文档` · `Py`</sub>
 - [Cookbook: Pre-parsed value extraction](https://docs.typesafe.ai/cookbooks/pre_parsed_value_extraction_cookbook) <sub>`官方文档` · `Py` · `choice`</sub>

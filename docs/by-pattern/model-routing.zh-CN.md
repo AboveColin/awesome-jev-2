@@ -12,7 +12,7 @@ _选择由哪个下游模型或档位处理请求。_
 
 ## 官方材料
 
-TypeSafe AI 自己发布、归在这个模式下的材料（标为 `official` 的行）。每一条也都在下方完整列表里，附有摘要。 <sub>(机翻)</sub>
+TypeSafe AI 自己发布、归在这个模式下的材料（标为 `official` 的行）。每一条在下文也都列出，附有摘要。 <sub>(机翻)</sub>
 
 - [Cookbook: Structured data extraction cascade](https://docs.typesafe.ai/cookbooks/sde_cascade) <sub>`官方文档` · `Py`</sub>
 - [Pattern: Intent routing](https://docs.typesafe.ai/patterns/intent-routing) <sub>`官方文档` · `Py` · `choice`</sub>

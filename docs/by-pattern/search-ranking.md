@@ -12,7 +12,7 @@ Evidence recorded for this pattern's rows (reports counted, not a verdict; a row
 
 ## Official material
 
-What TypeSafe AI publishes itself (rows marked `official`), filed under this pattern. Each is also in the full list below, with its summary.
+What TypeSafe AI publishes itself (rows marked `official`), filed under this pattern. Each is also listed below, with its summary.
 
 - [Cookbook: Classifying RAG passages](https://docs.typesafe.ai/cookbooks/classifying_rag_passages) <sub>`Official docs` · `Py`</sub>
 - [Cookbook: Line-by-line search](https://docs.typesafe.ai/cookbooks/semantic_find) <sub>`Official docs` · `Py` · `choice` · `noul`</sub>

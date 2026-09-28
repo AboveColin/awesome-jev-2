@@ -12,7 +12,7 @@ _把大量问题（包括推测性的）打包进一次请求，再由代码挑�
 
 ## 官方材料
 
-TypeSafe AI 自己发布、归在这个模式下的材料（标为 `official` 的行）。每一条也都在下方完整列表里，附有摘要。 <sub>(机翻)</sub>
+TypeSafe AI 自己发布、归在这个模式下的材料（标为 `official` 的行）。每一条在下文也都列出，附有摘要。 <sub>(机翻)</sub>
 
 - [Cookbook: Parallel questions](https://docs.typesafe.ai/cookbooks/parallel_questions) <sub>`官方文档` · `Py`</sub>
 - [Pattern: Speculative fan-out](https://docs.typesafe.ai/patterns/fan-out) <sub>`官方文档` · `Py`</sub>
@@ -20,7 +20,7 @@ TypeSafe AI 自己发布、归在这个模式下的材料（标为 `official` �
 
 ## 本仓库的示例
 
-本仓库 [`examples/`](../../examples/) 里归在这个模式下的代码。每一条也都在下方完整列表里；[示例的 README](../../examples/README.md) 说明了它们核验到了哪一步。 <sub>(机翻)</sub>
+本仓库 [`examples/`](../../examples/) 里归在这个模式下的代码。每一条在下文也都列出，附有摘要；[示例的 README](../../examples/README.md) 说明了它们核验到了哪一步。 <sub>(机翻)</sub>
 
 - [Example: speculative fan-out](../../examples/03-fan-out/main.py) <sub>`代码片段` · `Py` · `choice` · `noul` · ⚠ `代码未实测`</sub>
 - [Example: three primitives in one request](../../examples/01-three-primitives/main.py) <sub>`代码片段` · `Py` · `choice` · `score` · `noul` · ⚠ `代码未实测`</sub>

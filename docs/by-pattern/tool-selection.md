@@ -12,7 +12,7 @@ Evidence recorded for this pattern's rows (reports counted, not a verdict; a row
 
 ## Official material
 
-What TypeSafe AI publishes itself (rows marked `official`), filed under this pattern. Each is also in the full list below, with its summary.
+What TypeSafe AI publishes itself (rows marked `official`), filed under this pattern. Each is also listed below, with its summary.
 
 - [Cookbook: Function calling](https://docs.typesafe.ai/cookbooks/function_calling) <sub>`Official docs` · `Py` · `choice`</sub>
 - [Cookbook: Skill suggestion](https://docs.typesafe.ai/cookbooks/skill_suggestion) <sub>`Official docs` · `Py` · `choice` · `noul`</sub>
@@ -20,7 +20,7 @@ What TypeSafe AI publishes itself (rows marked `official`), filed under this pat
 
 ## Examples in this repository
 
-Code under this repository's [`examples/`](../../examples/) filed under this pattern. Each is also in the full list below; [the examples' README](../../examples/README.md) says how far they have been checked.
+Code under this repository's [`examples/`](../../examples/) filed under this pattern. Each is also listed below, with its summary; [the examples' README](../../examples/README.md) says how far they have been checked.
 
 - [Example: speculative fan-out](../../examples/03-fan-out/main.py) <sub>`Snippet` · `Py` · `choice` · `noul` · ⚠ `code untested`</sub>
 - [Example: tool selection with a none option](../../examples/04-tool-selection/main.py) <sub>`Snippet` · `Py` · `choice` · `noul` · ⚠ `code untested`</sub>

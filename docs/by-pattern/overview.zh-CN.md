@@ -12,7 +12,7 @@ _介绍模型或整个领域，而非单一模式。_
 
 ## 官方材料
 
-TypeSafe AI 自己发布、归在这个模式下的材料（标为 `official` 的行）。每一条也都在下方完整列表里，附有摘要。 <sub>(机翻)</sub>
+TypeSafe AI 自己发布、归在这个模式下的材料（标为 `official` 的行）。每一条在下文也都列出，附有摘要。 <sub>(机翻)</sub>
 
 - [Official agent skill for Claude Code](https://docs.typesafe.ai/agent-skill) <sub>`官方文档` · `sh`</sub>
 - [typesafe-ai/skills](https://github.com/typesafe-ai/skills) <sub>`插件` · `sh`</sub>

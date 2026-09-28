@@ -128,6 +128,33 @@ class ShortListsTest(unittest.TestCase):
             seen.update(e["slug"] for e in own)
         self.assertEqual(seen, set(by_slug))
 
+    def test_examples_follow_the_cited_file_not_the_kind(self):
+        # A snippet hosted elsewhere is not this repository's example; an
+        # example file stays one whatever kind its row records.
+        elsewhere = next(e for e in CATALOG if not build_examples_index.own_example(e) and e["kind"] != "snippet")
+        snippet = {**copy.deepcopy(elsewhere), "slug": "zz-snippet", "kind": "snippet"}
+        example = next(e for e in CATALOG if build_examples_index.own_example(e))
+        project = {**copy.deepcopy(example), "kind": "project"}
+        for pack in PACKS:
+            with self.subTest(lang=pack["lang_code"]):
+                links = short_links(examples_part(pages.render_page("fan-out", [snippet, project], pack), pack))
+                self.assertEqual(links, [f"../../{example['evidence']['path']}"])
+
+    def test_each_short_list_row_is_listed_again_below(self):
+        # On the overview page an official row can sit under "not yet indexed
+        # by pattern" rather than the full list; the intros say "below".
+        for key, members in grouped().items():
+            for pack in PACKS:
+                with self.subTest(page=rows.page_name(key, pack["lang_code"])):
+                    text = pages.render_page(key, members, pack)
+                    below = text.split(f"## {pack['list_h']}\n", 1)[1]
+                    for entry in members:
+                        if entry.get("official") or build_examples_index.own_example(entry):
+                            self.assertIn(f"- **[{rows.esc(entry['title'])}]({entry['url']})**", below)
+                    for name in ("official_intro", "examples_intro"):
+                        self.assertNotIn("full list", pack[name])
+                        self.assertNotIn("完整列表", pack[name])
+
     def test_each_short_list_row_carries_its_caveats_and_the_authors_direction(self):
         with_direction = next(e for e in CATALOG if rows.direction_bit(e, strings.EN))
         flagged = {**copy.deepcopy(with_direction), "slug": "zz-official", "official": True,
