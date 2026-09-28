@@ -13,7 +13,9 @@ from. This assembles, from the data it is handed:
   answer field, key variable — or the surfaces to choose from;
 * up to five rows filed under the pattern that cite the file their code was
   read in, each linked at HEAD as the site links it (evidence_url.py) and
-  dated only by a person's reading, with its caveats and what they mean;
+  dated only by a person's reading, with its caveats and what they mean, and
+  whether its own author measured Jev for the use and concluded against it
+  (query.is_negative_result, the rule every other surface uses);
 * the skeleton from this repository's examples/ for that pattern and language,
   when there is one (examples/index.json), under a comment saying it was never
   executed, or a plain statement that there is none.
@@ -30,10 +32,12 @@ import textwrap
 
 from .evidence_url import evidence_url
 from .query import (
+    DIRECTION_NOTE,
     DISQUALIFYING,
     SEARCH_NOTE,
     caveat_glossary,
     compat_lookup,
+    is_negative_result,
     sort_key,
     when_not_to_use,
 )
@@ -134,6 +138,13 @@ def _row_lines(n: int, entry: dict, labels: dict[str, str]) -> list[str]:
     ]
     if entry.get("flags"):
         lines.append("   Caveats: " + ", ".join(f"`{f}`" for f in entry["flags"]))
+    # A benchmark whose author's direction is unfavourable carries no flag
+    # saying so; this line is how a negative result shows here, whichever
+    # way the row records it.
+    if is_negative_result(entry):
+        lines.append(
+            f"   Negative result: its own author measured Jev for this use and concluded against it ({DIRECTION_NOTE})"
+        )
     return lines
 
 

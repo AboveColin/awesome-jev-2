@@ -226,6 +226,30 @@ class RowsTest(unittest.TestCase):
         self.assertIn("What those caveats mean:\n- `single-commit`: One commit.\n", body)
         self.assertNotIn("no-license", body, "only the caveats of the rows shown are explained")
 
+    def test_a_negative_result_says_so_however_its_row_records_it(self):
+        # I34: a benchmark says it through its measurement's direction, any
+        # other row through the negative-result flag; the prompt marks both.
+        rows = [
+            {**row("lost-bench", stars=30), "kind": "benchmark", "measurement": {"task": "t", "direction": "unfavourable"}},
+            row("dropped", stars=20, flags=["negative-result"], notes="Recall fell; removed."),
+            {**row("mixed-bench", stars=10), "kind": "benchmark", "measurement": {"task": "t", "direction": "mixed"}},
+        ]
+        part = section(prompts.wire_pattern_text(rows, PATTERNS, COMPAT, TAXONOMY, None, pattern="tool-selection"),
+                       "Worked examples")
+        marked = ("   Negative result: its own author measured Jev for this use and concluded against it "
+                  "(author-stated, not reproduced here)")
+        blocks = {}
+        for line in part.splitlines():
+            if line[:3] in {"1. ", "2. ", "3. "}:
+                slug = line.split("(`", 1)[1].split("`", 1)[0]
+                blocks[slug] = []
+            elif blocks and line.startswith("   "):
+                blocks[slug].append(line)
+        self.assertEqual(set(blocks), {"lost-bench", "dropped", "mixed-bench"})
+        for slug, lines in blocks.items():
+            with self.subTest(slug=slug):
+                self.assertIs(marked in lines, slug != "mixed-bench")
+
     def test_a_pattern_without_a_cited_row_says_so(self):
         part = section(text("safety-gating"), "Worked examples")
         self.assertIn("No catalogued `safety-gating` row cites the file its code was read in", part)
