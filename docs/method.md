@@ -225,15 +225,15 @@ The link alone, without the date, would have been about 18% on README.md.
 Two text signals about what a row says came with it, and neither is a finding.
 A row with code, not TypeSafe AI's own, with no `notes` and an English summary
 that names none of jev, typesafe, System One, choice, score, noul, decision and
-confidence is listed in the review queue: 102 rows, 75 of them the project's
-own GitHub description, 13 at ★1k+, led by langchain ("The agent engineering
-platform.") and litellm; every one cites a file, which the queue links. At over a
-hundred rows, a lint warning each would be noise, so lint does not warn. A cited
-path naming a shadow or a dry run on a row without `shadow-mode-only` is a lint
-warning instead: it matched one row, latitude-llm, whose cited file is
-`jev-shadow-decision-provider.ts`. Official rows are left out of the first
-signal because `official` is held to the vendor's own hosts, so the row is
-about Jev whatever its summary says.
+confidence is listed in the review queue: 102 rows when it was added, 75 of
+them the project's own GitHub description, 13 at ★1k+, led by langchain ("The
+agent engineering platform.") and litellm; every one cites a file, which the
+queue links. At over a hundred rows, a lint warning each would be noise, so
+lint does not warn. A cited path naming a shadow or a dry run on a row without
+`shadow-mode-only` is a lint warning instead: it matched one row, latitude-llm,
+whose cited file is `jev-shadow-decision-provider.ts`. Official rows are left
+out of the first signal because `official` is held to the vendor's own hosts,
+so the row is about Jev whatever its summary says.
 
 ## Discovery is crowdsourced, verification is not
 

@@ -116,9 +116,10 @@ the repository's default branch, not at the commit a person read. Like the
 weekly text check, it is deliberately not pinned (see
 [method.md](method.md#call-site-text-is-re-checked-separately-from-human-review)):
 the file may have changed since the `read_on` date shown with it, and the link
-can return 404 once the file moves or the repository goes. A 404 there means
-the file is no longer at that path, not that the row was wrong; the weekly
-claims check reports it for a person to re-read.
+can return 404 once the file moves or the repository goes. A 404 there says
+only that the file is no longer at that path: it may have moved, or the
+integration may have been removed, and the weekly claims check reports it for
+a person to re-read.
 
 ## Reporting a problem
 
