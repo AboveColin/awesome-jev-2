@@ -259,8 +259,12 @@ def queue_order(entries: list[dict]) -> list[dict]:
 def two_places(value: float, *, up: bool) -> str:
     """A share to two places, rounded away from its rule's threshold, so a
     0.2996 flagged as below 0.3 never prints as 0.30 (nor a 0.6004 above 0.6
-    as 0.60)."""
-    scaled = value * 100
+    as 0.60). The product is rounded to six places before floor or ceiling:
+    29/100 * 100 is 28.999999999999996 in floating point and would print as
+    0.28, and 7/100 * 100 is 7.000000000000001. A share of two summary lengths
+    (a few hundred characters at most) is never that close to a hundredth
+    without being one."""
+    scaled = round(value * 100, 6)
     return f"{(math.ceil(scaled) if up else math.floor(scaled)) / 100:.2f}"
 
 

@@ -110,6 +110,26 @@ class AuditTest(unittest.TestCase):
         self.assertEqual(zh_audit.two_places(0.2996, up=False), "0.29")
         self.assertEqual(zh_audit.two_places(0.6004, up=True), "0.61")
         self.assertEqual(zh_audit.two_places(0.25, up=False), "0.25")
+        # Exact hundredths print as themselves, whatever floating point makes of them.
+        self.assertEqual(zh_audit.two_places(29 / 100, up=False), "0.29")
+        self.assertEqual(zh_audit.two_places(57 / 100, up=False), "0.57")
+        self.assertEqual(zh_audit.two_places(7 / 100, up=True), "0.07")
+
+    def test_every_share_on_the_real_page_is_the_exact_one(self):
+        # floor/ceiling of the exact fraction, the way two_places means it.
+        from fractions import Fraction
+
+        for e in zh_audit.machine(CATALOG):
+            found = zh_audit.audit(e)
+            english, chinese = e.get("summary", ""), e.get("summary_zh", "")
+            ratio = Fraction(len(chinese), max(len(english), 1)) * 100
+            share = Fraction(sum(ord(ch) < 128 for ch in chinese), max(len(chinese), 1)) * 100
+            floor, ceiling = ratio.numerator // ratio.denominator, -(-share.numerator // share.denominator)
+            with self.subTest(slug=found.slug):
+                if "short" in found.signals:
+                    self.assertEqual(zh_audit.two_places(found.ratio, up=False), f"{floor / 100:.2f}")
+                if "ascii" in found.signals:
+                    self.assertEqual(zh_audit.two_places(found.ascii, up=True), f"{ceiling / 100:.2f}")
 
     def test_the_real_split_is_the_one_stats_publishes(self):
         s = _stats.compute()
@@ -135,6 +155,15 @@ class QueueTest(unittest.TestCase):
         top, rest = zh_audit.split(QUEUE)
         self.assertEqual([e["slug"] for e in top], ["alpha", "bravo"])
         self.assertEqual([e["slug"] for e in rest], ["delta", "echo"])
+
+    def test_within_a_band_more_signals_come_first_then_the_title(self):
+        rows = [
+            entry("a-one", "Beats 2 models by far.", "胜过 2 个模型，差距很大。", stars=40),
+            entry("b-three", SEO_EN, SEO_ZH, stars=11),
+            entry("c-one", "Beats 3 models by far.", "胜过三个模型，差距很大。", stars=99),
+            entry("d-two", PHISHING_EN, "对比 Jev 与一个轻量模型。", stars=10),
+        ]
+        self.assertEqual([e["slug"] for e in zh_audit.queue_order(rows)], ["b-three", "d-two", "c-one", "a-one"])
 
     def test_the_page_lists_rows_by_band_and_never_a_count(self):
         page = zh_audit.render(QUEUE)
