@@ -50,6 +50,24 @@ EXAMPLES_DIR = re.compile(r"(^|/)examples?/")
 MODEL_NAMES_AND_HOST = ("jev-latest", "typesafe-ai/jev", "typesafe/jev", "api.typesafe.ai")
 PINNED_MODEL_VERSION = re.compile(r"jev-\d+(?:\.\d+)+")
 
+# A row with code whose English summary names nothing about Jev, and no note
+# that does: a reader of the list cannot tell what the project asks Jev to
+# decide. Most are the project's own GitHub description (summary_source),
+# which has no reason to mention Jev. The words are a floor, not a test: they
+# match inside longer words, a summary without them may still say it, and one
+# with them may say little. TypeSafe AI's own rows (`official`, which lint
+# holds to the vendor's hosts) are about Jev by construction and left out.
+# Over a hundred rows match, so they are listed in docs/review-queue.md rather
+# than warned about on every lint run.
+JEV_WORDS = re.compile(r"jev|typesafe|system[\s-]?one|choice|score|noul|decision|confidence", re.IGNORECASE)
+# A cited file whose path names a shadow or dry run, on a row without the
+# shadow-mode-only flag: the call may be wired in on purpose so that nothing it
+# returns reaches a decision, which is what the flag tells a reader. Only a
+# person reading the call can say. One row matched when the rule was added, so
+# lint warns about it (lint.py) instead of listing it in the review queue.
+SHADOW_PATH = re.compile(r"shadow|dry.?run", re.IGNORECASE)
+SHADOW_FLAG = "shadow-mode-only"
+
 # A row filed under tool-selection that only the keyword rules' broad words
 # suggest: "control", "harness" or "screen" on their own, or a robot, an
 # autonomous system or "drive" with no word for deciding or acting. Those words
@@ -121,6 +139,25 @@ def single_model_name(entry: dict) -> bool:
     return len(matched) == 1 and (
         matched[0] in MODEL_NAMES_AND_HOST or PINNED_MODEL_VERSION.fullmatch(matched[0]) is not None
     )
+
+
+def generic_summary(entry: dict) -> bool:
+    """Machine signal: a row with code, not TypeSafe AI's own, with no notes and
+    an English summary that names none of JEV_WORDS."""
+    return (
+        bool(entry.get("has_code"))
+        and not entry.get("official")
+        and not entry.get("notes")
+        and not JEV_WORDS.search(entry.get("summary") or "")
+    )
+
+
+def shadow_path_unflagged(entry: dict) -> bool:
+    """Machine signal: the cited file's path names a shadow or dry run and the
+    row does not carry the shadow-mode-only flag."""
+    evidence = entry.get("evidence")
+    path = evidence.get("path") if isinstance(evidence, dict) else None
+    return isinstance(path, str) and bool(SHADOW_PATH.search(path)) and SHADOW_FLAG not in (entry.get("flags") or [])
 
 
 def signal_only(entry: dict) -> list[str]:
@@ -231,6 +268,7 @@ def compute() -> dict:
         "review_examples_dir": sum(1 for e in catalog if examples_unjudged(e)),
         "review_single_model_name": sum(1 for e in catalog if single_model_name(e)),
         "review_tool_selection_broad": sum(1 for e in catalog if tool_selection_broad_only(e)),
+        "review_generic_summary": sum(1 for e in catalog if generic_summary(e)),
         # How patterns were chosen is recorded only by patterns_reviewed. A row
         # whose patterns equal the keyword rules' suggestion shows agreement
         # with the rules and nothing more: the review, if any, was not recorded.

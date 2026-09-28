@@ -27,6 +27,7 @@ is the point of dating it.
 | Machine signal: evidence under an examples directory, not yet judged ([review queue](review-queue.md#examples-dir)) | 22 |
 | Machine signal: evidence resting on one model name or the API host ([review queue](review-queue.md#single-model-name)) | 76 |
 | Machine signal: `tool-selection` suggested only by keyword-rule words dropped on 2026-09-27 ([review queue](review-queue.md#tool-selection-broad-words)) | 65 |
+| Machine signal: rows with code, not TypeSafe AI's own, whose summary names nothing about Jev and that carry no `notes` ([review queue](review-queue.md#generic-summary)) | 102 |
 | Patterns covered | 18 of 18 |
 | Rows whose `patterns` are exactly what the keyword rules suggest for their summary (agreement with the rules, not a review: any review of these rows was not recorded) | 758 of 1207 |
 | Rows whose patterns a person recorded reading (`patterns_reviewed`) | 0 |

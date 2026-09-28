@@ -201,6 +201,40 @@ server's `question_type` filter and the published claim counts read
 `llms.txt` and the site show the two side by side under separate names, read by
 a person and text signal only, and never add them.
 
+Since 2026-09-27, the READMEs and the pattern pages link each row's cited file,
+as the site already did. A README row such as ai-hedge-fund's, whose summary is
+the project's own description ("An AI Hedge Fund Team"), said nothing about what
+the project does with Jev, while the catalogue held the exact file
+(`hedge_fund/llm/client.py`). The link is named for what `evidence.kind` says
+the file shows (*call site*, or *cited file* for a wire-shape or example-only
+file) and followed by `read_on`, the day a person last read it, so it reads as
+a dated reading and never as a check that passed; a row with no dated reading
+gets the link alone. The pattern pages also print the path. Like the weekly text
+check, the link is deliberately unpinned: it opens the file at `HEAD`, as it is
+now, and returns 404 once the file moves. `scripts/evidence_url.py` builds it
+the way `site/catalog-core.mjs` does in the browser, following the URL
+Standard's parsing of an https address; one file of cases is run by both test
+suites, and a test runs the site's own function beside the Python one over every
+row and 4,000 made-up addresses, which agreed on all of them.
+`docs/review-queue.md` now links cited files the same way (no link changed). The
+cost is size, almost all of it the URL: README.md grew from 99,377 to 120,440
+bytes (+21%), README.zh-CN.md from 96,326 to 117,979 (+22%), and the 36 pattern
+pages from 900,394 to 1,322,000 (+47%; the largest, overview, 118,534 to 175,946).
+The link alone, without the date, would have been about 18% on README.md.
+
+Two text signals about what a row says came with it, and neither is a finding.
+A row with code, not TypeSafe AI's own, with no `notes` and an English summary
+that names none of jev, typesafe, System One, choice, score, noul, decision and
+confidence is listed in the review queue: 102 rows, 75 of them the project's
+own GitHub description, 13 at ★1k+, led by langchain ("The agent engineering
+platform.") and litellm; every one cites a file, which the queue links. At over a
+hundred rows, a lint warning each would be noise, so lint does not warn. A cited
+path naming a shadow or a dry run on a row without `shadow-mode-only` is a lint
+warning instead: it matched one row, latitude-llm, whose cited file is
+`jev-shadow-decision-provider.ts`. Official rows are left out of the first
+signal because `official` is held to the vendor's own hosts, so the row is
+about Jev whatever its summary says.
+
 ## Discovery is crowdsourced, verification is not
 
 There are dozens of Jev directories. Each is a different person's sweep of the

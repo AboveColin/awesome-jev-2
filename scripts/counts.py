@@ -70,7 +70,8 @@ def main() -> int:
     print(
         f"review queue   {stats['review_examples_dir']} under examples/, "
         f"{stats['review_single_model_name']} on one model name or host, "
-        f"{stats['review_tool_selection_broad']} tool-selection on dropped keywords (docs/review-queue.md)"
+        f"{stats['review_tool_selection_broad']} tool-selection on dropped keywords, "
+        f"{stats['review_generic_summary']} summaries naming nothing about Jev (docs/review-queue.md)"
     )
     print(
         f"patterns       {stats['patterns_rule_identical']} equal the keyword rules' suggestion (no review recorded), "

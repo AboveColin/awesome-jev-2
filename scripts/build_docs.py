@@ -85,6 +85,7 @@ def shape_block(s: dict) -> str:
             ["Machine signal: evidence under an examples directory, not yet judged ([review queue](review-queue.md#examples-dir))", s["review_examples_dir"]],
             ["Machine signal: evidence resting on one model name or the API host ([review queue](review-queue.md#single-model-name))", s["review_single_model_name"]],
             ["Machine signal: `tool-selection` suggested only by keyword-rule words dropped on 2026-09-27 ([review queue](review-queue.md#tool-selection-broad-words))", s["review_tool_selection_broad"]],
+            ["Machine signal: rows with code, not TypeSafe AI's own, whose summary names nothing about Jev and that carry no `notes` ([review queue](review-queue.md#generic-summary))", s["review_generic_summary"]],
             ["Patterns covered", f"{s['patterns_covered']} of {s['patterns_total']}"],
             ["Rows whose `patterns` are exactly what the keyword rules suggest for their summary (agreement with the rules, not a review: any review of these rows was not recorded)", f"{s['patterns_rule_identical']} of {s['entries']}"],
             ["Rows whose patterns a person recorded reading (`patterns_reviewed`)", s["patterns_reviewed"]],

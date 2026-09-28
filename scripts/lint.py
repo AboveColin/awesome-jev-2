@@ -41,6 +41,7 @@ from typing import Any, NamedTuple
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 
+from _stats import shadow_path_unflagged  # noqa: E402
 from sibling_lists import FIX as CITATION_FIX  # noqa: E402
 from sibling_lists import citation_problems, listed_urls, read_lists, unlisted_citations  # noqa: E402
 from zh_audit import new_rows_since  # noqa: E402
@@ -369,6 +370,12 @@ def check_entry_invariants(
             f"project building on Jev; set evidence.kind to {ALTERNATIVE_EVIDENCE_KIND!r}",
         )
 
+    if shadow_path_unflagged(entry):
+        report.warn(
+            path,
+            f"{slug}: evidence.path {evidence['path']!r} names a shadow or dry run but the row lacks the "
+            "shadow-mode-only flag: read the call, and flag it if nothing it returns reaches a decision",
+        )
     report.add(check_curated_summary(entry, path))
 
     # `official` is a factual claim about who published the thing, so it is

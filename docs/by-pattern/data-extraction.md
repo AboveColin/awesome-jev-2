@@ -8,6 +8,8 @@ Every catalogued example of this decision — 16 of them. The same rows, with ca
 
 ★ gives a repository's GitHub stars as a band — ★10+, ★100+, ★1k+, ★10k+ and ★100k+; rows with no repository or under 10 stars show no band. Rows run official first, then with code, then by band, then by title. A band is a popularity signal, not a quality verdict; the exact count, as last read from GitHub, is in [`catalog.json`](../../catalog.json) and on [the site](https://kydlikebtc.github.io/awesome-jev/?lang=en).
 
+A *call site* link opens the one file a row cites (`evidence.path`) at `HEAD` of the repository's default branch; the date after it is the day a person last read that file (`evidence.read_on`): a reading, not a run of the code. A *cited file* link is the same for a file that shows the project speaking Jev's request shape rather than building on Jev, or only an example it ships (`evidence.kind`). Neither is pinned to a commit, so it opens the file as it is now, which may differ from what was read, and stops resolving once the file moves; the weekly claims check reports that.
+
 - **[Cookbook: Date extraction](https://docs.typesafe.ai/cookbooks/date_extraction_cookbook)** ⭐ — Extracts absolute and relative dates by asking for the parts a document names, then resolving and validating them in code with confidence-based review.
   <sub>`Official docs` · `Py`</sub>
 
@@ -21,40 +23,40 @@ Every catalogued example of this decision — 16 of them. The same rows, with ca
   <sub>`Official docs` · `Py`</sub>
 
 - **[jev-macos-loop](https://github.com/jcpsimmons/jev-macos-loop)** — Open-source macOS AI computer use and native GUI automation on Apple silicon. Jev + OmniParser CoreML + Apple Vision OCR. Bring your own OpenRouter, Vercel AI Gateway, or TypesafeAI token. <sub>(upstream description)</sub>
-  <sub>`Project` · ★10+ · jcpsimmons · `JS`</sub>
+  <sub>`Project` · ★10+ · jcpsimmons · `JS` · call site [`src/providers.mjs`](https://github.com/jcpsimmons/jev-macos-loop/blob/HEAD/src/providers.mjs), read 2026-09-22</sub>
 
 - **[jev-reviewer](https://github.com/choxos/jev-reviewer)** — Data extraction for systematic reviews, quoted from the papers. Ask a trial report and its supplements your extraction form or a RoB 2, ROBINS-I, QUADAS-2 or TIDieR template; Jev points at the lines, every answer is a verbatim quote with its page, you check it and export the table. Files stay i
-  <sub>`Project` · ★10+ · choxos · `JS`</sub>
+  <sub>`Project` · ★10+ · choxos · `JS` · call site [`docs/jev.js`](https://github.com/choxos/jev-reviewer/blob/HEAD/docs/jev.js), read 2026-09-22</sub>
 
 - **[jevfill](https://github.com/imohitmayank/jevfill)** — A Chrome extension that fills web forms from unstructured notes with Jev: paste your details once as plain text, with no structured profile, then fill forms on demand.
-  <sub>`Plugin` · ★10+ · imohitmayank · `TS`</sub>
+  <sub>`Plugin` · ★10+ · imohitmayank · `TS` · call site [`src/jev/client.ts`](https://github.com/imohitmayank/jevfill/blob/HEAD/src/jev/client.ts), read 2026-09-24</sub>
 
 - **[smart-paste](https://github.com/nomanjack/smart-paste)** — Fills form fields from pasted text: the form's heading, labels and your text go to TypeSafe, and it inserts the values it matches for you to review before submitting.
-  <sub>`Plugin` · ★10+ · nomanjack · `JS`</sub>
+  <sub>`Plugin` · ★10+ · nomanjack · `JS` · call site [`worker.js`](https://github.com/nomanjack/smart-paste/blob/HEAD/worker.js), read 2026-09-24</sub>
 
 - **[ask-jev](https://github.com/logicrw/ask-jev)** — Ultra-fast, fail-open advisory decisions and verbatim extractive reading view for AI coding agents and CLI pipelines <sub>(upstream description)</sub>
-  <sub>`Project` · logicrw · `Py`</sub>
+  <sub>`Project` · logicrw · `Py` · call site [`scripts/jev_context.py`](https://github.com/logicrw/ask-jev/blob/HEAD/scripts/jev_context.py), read 2026-09-24</sub>
 
 - **[jev-data-questions](https://github.com/narulaskaran/jev-data-questions)** — Bring a dataset and see the right chart: the UI inspects the CSV's shape and proposes insights, and Jev fills in the values.
-  <sub>`Project` · narulaskaran · `TS` · ⚠ `no licence`</sub>
+  <sub>`Project` · narulaskaran · `TS` · call site [`src/server/jev.ts`](https://github.com/narulaskaran/jev-data-questions/blob/HEAD/src/server/jev.ts), read 2026-09-24 · ⚠ `no licence`</sub>
 
 - **[jev-information-extraction](https://github.com/abhishekmamdapure/jev-information-extraction)** — Parsing the PDF and extracting the relevant information <sub>(upstream description)</sub>
-  <sub>`Project` · abhishekmamdapure · `Py` · ⚠ `no licence`</sub>
+  <sub>`Project` · abhishekmamdapure · `Py` · call site [`backend/main.py`](https://github.com/abhishekmamdapure/jev-information-extraction/blob/HEAD/backend/main.py), read 2026-09-22 · ⚠ `no licence`</sub>
 
 - **[jev-mcp-dispatcher](https://github.com/abhishekashokvkumar/jev-mcp-dispatcher)** — Natural-language MCP tool dispatcher powered entirely by TypeSafe's Jev — no general-purpose LLM. Discovers a simple MCP server's tool signatures at runtime and uses Jev's typed primitives (Choice/Noul) to pick the right tool and extract its arguments straight out of the sentence. <sub>(upstream description)</sub>
-  <sub>`Plugin` · abhishekashokvkumar · `Py` · ⚠ `no licence`</sub>
+  <sub>`Plugin` · abhishekashokvkumar · `Py` · call site [`jev_mcp_dispatcher.py`](https://github.com/abhishekashokvkumar/jev-mcp-dispatcher/blob/HEAD/jev_mcp_dispatcher.py), read 2026-09-22 · ⚠ `no licence`</sub>
 
 - **[jeveryword](https://github.com/jkrup/jeveryword)** — Text extraction with Jev: field extraction, PII detection and exact quotes, built on TypeSafe's Jev. <sub>(upstream description)</sub>
-  <sub>`Project` · jkrup · `JS`</sub>
+  <sub>`Project` · jkrup · `JS` · call site [`src/client.mjs`](https://github.com/jkrup/jeveryword/blob/HEAD/src/client.mjs), read 2026-09-22</sub>
 
 - **[jevsume](https://github.com/unownone/jevsume)** — ATS-friendly resume review powered by Jev (TypeSafe System One). The frontend extracts resume text the way a parser would, then a Cloudflare Worker runs typed JEV questions and composes a JevScore. <sub>(upstream description)</sub>
-  <sub>`Project` · unownone · `TS` · ⚠ `no licence`</sub>
+  <sub>`Project` · unownone · `TS` · call site [`packages/jev/http.ts`](https://github.com/unownone/jevsume/blob/HEAD/packages/jev/http.ts), read 2026-09-22 · ⚠ `no licence`</sub>
 
 - **[smoking-extraction-benchmark](https://github.com/vclic/smoking-extraction-benchmark)** — Synthetic smoking-history extraction benchmark comparing TypeSafe Jev and OpenAI structured outputs, with reproducible accuracy, cost, and latency results. <sub>(upstream description)</sub>
-  <sub>`Benchmark` · vclic · `Py` · ⚠ `one commit` `no licence`</sub>
+  <sub>`Benchmark` · vclic · `Py` · call site [`smoking_eval/providers.py`](https://github.com/vclic/smoking-extraction-benchmark/blob/HEAD/smoking_eval/providers.py), read 2026-09-22 · ⚠ `one commit` `no licence`</sub>
 
 - **[typesafe-ai-jev-example](https://github.com/ItBayMax/typesafe-ai-jev-example)** — Hands-on demos for TypeSafe's Jev (System One) model: six runnable examples and four field notes. Runs offline with no API key; samples/ holds real measured output from jev-1.13.0. <sub>(upstream description)</sub>
-  <sub>`Project` · itbaymax · `Py` · ⚠ `one commit`</sub>
+  <sub>`Project` · itbaymax · `Py` · call site [`lib/typesafe_client.py`](https://github.com/ItBayMax/typesafe-ai-jev-example/blob/HEAD/lib/typesafe_client.py), read 2026-09-22 · ⚠ `one commit`</sub>
 
 ---
 

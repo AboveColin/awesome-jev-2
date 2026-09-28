@@ -11,6 +11,7 @@ import pathlib
 
 import _stats
 from _github import SELF as REPO
+from evidence_url import evidence_url
 
 from .strings import ZH_MACHINE
 
@@ -159,6 +160,42 @@ def stars_note(strings: dict, *, catalog: str) -> str:
     return note
 
 
+def md_code(text: str) -> str:
+    """Outside text as an inline code span on one line: a backtick in it cannot
+    close the span early, and a newline cannot end the list item."""
+    return "`" + " ".join(text.replace("`", "'").splitlines()) + "`"
+
+
+def md_url(url: str) -> str:
+    """A URL as a Markdown link destination. evidence_url() percent-encodes
+    spaces and angle brackets but, like encodeURIComponent(), keeps parentheses,
+    and an unbalanced one would end the destination early."""
+    return url.replace("(", "\\(").replace(")", "\\)")
+
+
+def call_site(entry: dict, strings: dict, *, with_path: bool = False) -> str:
+    """The link to the one file the row cites, or "" when there is none to link.
+
+    Named by what evidence.kind says the file shows: a call site only where the
+    project calls Jev; a wire-shape or example-only file is a "cited file". Then
+    the day a person last read it (evidence.read_on): a dated reading, never a
+    verdict, and nothing when no reading is dated. The link opens the file at
+    HEAD (evidence_url), so it can stop resolving after the file moves. The
+    READMEs print the link alone; the pattern pages also print the path.
+    """
+    url = evidence_url(entry)
+    if not url:
+        return ""
+    evidence = entry["evidence"]
+    name = strings["call_site"] if _stats.evidence_kind(entry) == "call-site" else strings["cited_file"]
+    if with_path:
+        link = f"{name} [{md_code(evidence['path'])}]({md_url(url)})"
+    else:
+        link = f"[{name}]({md_url(url)})"
+    read_on = evidence.get("read_on")
+    return link + strings["read_on"].format(date=read_on) if read_on else link
+
+
 def sort_key(entry: dict) -> tuple:
     """Official first, then rows with code, then star band, then title.
 
@@ -206,7 +243,8 @@ def entry_list(entries: list[dict], strings: dict, *, notes: bool = False, readm
             lines.append(f"{head} — {summary_of(entry, lang)}")
 
         # Signals go on a dim second line: kind, popularity, author, language,
-        # primitives, then caveats last so they read as the final word.
+        # primitives, the cited file, then caveats last so they read as the
+        # final word.
         bits = [f"`{label(KIND_LABELS, entry['kind'], lang)}`"]
         stars = star_label(entry.get("stars"))
         if stars:
@@ -217,6 +255,9 @@ def entry_list(entries: list[dict], strings: dict, *, notes: bool = False, readm
             bits.append(f"`{LANG_LABELS.get(item, item)}`")
         for item in entry.get("question_types", []):
             bits.append(f"`{item}`")
+        cited = call_site(entry, strings, with_path=not readme_layout)
+        if cited:
+            bits.append(cited)
         flags = [
             f"`{label(FLAG_LABELS, flag, lang)}`"
             for flag in FLAG_ORDER

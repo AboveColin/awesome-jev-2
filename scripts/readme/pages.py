@@ -14,6 +14,7 @@ from .rows import (
     entry_list,
     group_by_pattern,
     label,
+    marked,
     page_name,
     site_link,
     split_unindexed,
@@ -47,6 +48,8 @@ def render_page(key: str, rows: list[dict], strings: dict) -> str:
         ),
         "",
         stars_note(strings, catalog="../../catalog.json"),
+        "",
+        marked(strings, "call_site_note"),
         "",
     ]
     indexed, later = split_unindexed(rows)

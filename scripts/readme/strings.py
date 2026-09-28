@@ -109,6 +109,18 @@ EN = {
     ),
     "list_sep": ", ",
     "list_and": " and ",
+    "call_site": "call site",
+    "cited_file": "cited file",
+    "read_on": ", read {date}",
+    "call_site_note": (
+        "A *call site* link opens the one file a row cites (`evidence.path`) at `HEAD` of the "
+        "repository's default branch; the date after it is the day a person last read that file "
+        "(`evidence.read_on`): a reading, not a run of the code. A *cited file* link is the same for "
+        "a file that shows the project speaking Jev's request shape rather than building on Jev, or "
+        "only an example it ships (`evidence.kind`). Neither is pinned to a commit, so it opens the "
+        "file as it is now, which may differ from what was read, and stops resolving once the file "
+        "moves; the weekly claims check reports that."
+    ),
     "kinds_h": "By resource kind",
     "kinds_intro": "The same rows grouped by what you will find when you open the link.",
     "th_find": "What you will find",
@@ -328,6 +340,16 @@ ZH = {
     ),
     "list_sep": "、",
     "list_and": "、",
+    "call_site": "调用点",
+    "cited_file": "引用文件",
+    "read_on": "，{date} 阅读",
+    "call_site_note": (
+        "*调用点*链接打开该行引用的那一个文件（`evidence.path`）在仓库默认分支 `HEAD` 上的版本；"
+        "其后的日期是有人最近一次阅读该文件的日期（`evidence.read_on`）：这是阅读记录，不是运行过代码。"
+        "*引用文件*链接同理，只是该文件表明项目采用了 Jev 的请求结构、并非基于 Jev 构建，"
+        "或只是项目附带的示例（`evidence.kind`）。两种链接都没有固定到某个提交，打开的是文件的当前版本，"
+        "可能与当时读到的不同；文件移动后链接就会失效，每周的 claims 检查会报告这种情况。"
+    ),
     "kinds_h": "按资源形态",
     "kinds_intro": "同样这些行，按你点开链接后会看到什么来分组。",
     "th_find": "点开会看到",
@@ -455,6 +477,7 @@ ZH_MACHINE = frozenset(
     {
         "stars_note", "verified_recheck", "verified_summaries", "license_summaries", "unindexed_readme",
         "unindexed_page", "prims_layers", "verified_primitives", "verified_translations",
+        "call_site_note",
     }
 )
 

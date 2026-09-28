@@ -110,6 +110,16 @@ A row without a dated success record is not counted as link-checked. A past
 response does not guarantee availability today or prove that protected content
 was read. Do not present any row here as runtime-tested, recommended, or safe.
 
+The *call site* (or *cited file*) link printed on a row in the READMEs, on the
+pattern pages and on the site opens the file `evidence.path` names at `HEAD` of
+the repository's default branch, not at the commit a person read. Like the
+weekly text check, it is deliberately not pinned (see
+[method.md](method.md#call-site-text-is-re-checked-separately-from-human-review)):
+the file may have changed since the `read_on` date shown with it, and the link
+can return 404 once the file moves or the repository goes. A 404 there means
+the file is no longer at that path, not that the row was wrong; the weekly
+claims check reports it for a person to re-read.
+
 ## Reporting a problem
 
 Open an issue with the slug. Corrections are the most valuable contribution to

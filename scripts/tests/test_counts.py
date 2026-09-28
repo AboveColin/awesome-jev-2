@@ -52,6 +52,7 @@ class CountsTest(unittest.TestCase):
             "review_examples_dir": 7009,
             "review_single_model_name": 7010,
             "review_tool_selection_broad": 7016,
+            "review_generic_summary": 7029,
             "patterns_rule_identical": 7017,
             "patterns_reviewed": 7018,
             "overview_unindexed": 7019,
@@ -79,7 +80,7 @@ class CountsTest(unittest.TestCase):
             "zh hand-written 7003/7004",
             "evidence       7006 call-site, 7007 wire-shape, 7008 example-only",
             "review queue   7009 under examples/, 7010 on one model name or host, "
-            "7016 tool-selection on dropped keywords (docs/review-queue.md)",
+            "7016 tool-selection on dropped keywords, 7029 summaries naming nothing about Jev (docs/review-queue.md)",
             "code, no cite  7011 (neither evidence nor evidence_none)",
             "primitives     7020 read by a person (question_types), 7021 with a text signal in the cited file "
             "(primitives_seen), 7022 of them with no question_types",

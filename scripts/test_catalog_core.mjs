@@ -100,6 +100,14 @@ test("evidence links preserve repository overrides and encoded file paths", () =
   assert.equal(evidenceUrl(row("x", {url: "https://github.com.evil.example/o/r", evidence: {path: "x"}})), null);
 });
 
+test("evidence links agree with scripts/evidence_url.py on the cases both suites read", () => {
+  // The READMEs and pattern pages build the same link in Python; this file is
+  // the one list of cases both must pass (scripts/tests/test_call_site_links.py).
+  const cases = JSON.parse(readFileSync(new URL("./tests/evidence_url_cases.json", import.meta.url)));
+  assert.ok(cases.length >= 40);
+  for (const { about, entry, url } of cases) assert.equal(evidenceUrl(entry), url, about);
+});
+
 test("editorial ranking can surface a useful small project ahead of stars", () => {
   const rows = [row("popular", {stars: 200000}), row("selected", {stars: 1})];
   assert.equal(rows.toSorted(compareEntries("curated", new Map([["selected", 0]])))[0].slug, "selected");

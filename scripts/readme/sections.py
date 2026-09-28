@@ -366,6 +366,8 @@ def by_decision_pattern(page: Page) -> list[str]:
     add("")
     add(stars_note(strings, catalog="catalog.json"))
     add("")
+    add(marked(strings, "call_site_note"))
+    add("")
     for key in live_patterns:
         name = label(PATTERN_LABELS, key, lang)
         blurb = label(PATTERN_LABELS, key, lang, field=2)

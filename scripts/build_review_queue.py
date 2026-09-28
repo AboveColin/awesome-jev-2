@@ -33,9 +33,9 @@ from dataclasses import dataclass
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 
 import _stats  # noqa: E402
-from _github import repo_of  # noqa: E402
 from classify import classify_broad, suggest  # noqa: E402
-from readme.rows import star_band, star_label  # noqa: E402
+from evidence_url import evidence_url  # noqa: E402
+from readme.rows import esc, md_url, star_band, star_label  # noqa: E402
 
 ROOT = _stats.ROOT
 OUT = ROOT / "docs" / "review-queue.md"
@@ -70,11 +70,10 @@ def row_link(entry: dict) -> str:
 
 
 def file_link(entry: dict) -> str:
+    """The cited path, linked as the READMEs and the site link it (evidence_url)."""
     path = entry["evidence"]["path"]
-    repo = repo_of(entry)
-    if not repo:
-        return cell(path)
-    return f"[{cell(path)}](https://github.com/{repo}/blob/HEAD/{urllib.parse.quote(path, safe='/')})"
+    url = evidence_url(entry)
+    return f"[{cell(path)}]({md_url(url)})" if url else cell(path)
 
 
 EVIDENCE_COLUMNS = (("Row", "行"), ("Kind", "类型"), ("Cited file", "引用的文件"), ("Matched", "匹配文本"))
@@ -265,7 +264,64 @@ def unsorted_overview(catalog: list[dict]) -> Section:
     )
 
 
-SECTIONS = (examples_dir, single_model_name, tool_selection_broad_words, unsorted_overview)
+def generic_summary(catalog: list[dict]) -> Section:
+    marked = by_band(e for e in catalog if _stats.generic_summary(e))
+    listed = [cell(word) for word in ("jev", "typesafe", "System One", "choice", "score", "noul", "decision", "confidence")]
+    words, words_zh = ", ".join(listed), "、".join(listed)
+    return Section(
+        key="generic-summary",
+        title_en="Rows with code whose summary names nothing about Jev",
+        title_zh="带代码、摘要没有提到 Jev 的行",
+        about_en=(
+            "The row has code, is not TypeSafe AI's own (`official`), has no `notes`, and its English "
+            f"summary contains none of {words} (in any case, also inside a longer word). Most are the "
+            "project's own GitHub description (`summary_source`), which has no reason to mention Jev, "
+            "so a reader of the list cannot tell what the project asks Jev to decide. The words are a "
+            "floor, not a test: a summary without them may still say it, and one with them may say "
+            "little. The last column links the file the row cites, as the READMEs and the pattern "
+            "pages do."
+        ),
+        about_zh=(
+            "该行带代码，不是 TypeSafe AI 自己发布的（`official`），没有 `notes`，而且英文摘要里"
+            f"没有 {words_zh} 中的任何一个（不分大小写，出现在更长的词里也算）。其中多数是项目自己在 GitHub 上的描述"
+            "（`summary_source`），它没有理由提到 Jev，于是读列表的人看不出这个项目让 Jev 做什么决策。"
+            "这些词只是底线，不是检验：没有这些词的摘要也可能说清楚了，有这些词的也可能什么都没说。"
+            "最后一列链接到该行引用的文件，与 README 和模式页面一样。"
+        ),
+        leave_en=(
+            "To take a row off, read the cited file and write a summary that says what the project asks "
+            "Jev to decide, with `summary_source` set to `curated` and `summary_zh` to match (see the "
+            "`summary` field rules in [CONTRIBUTING](../CONTRIBUTING.md#field-rules)); or keep the "
+            "summary and add a `notes` line that says it."
+        ),
+        leave_zh=(
+            "移出方法：读引用的文件，写一条说明该项目让 Jev 决定什么的摘要，把 `summary_source` 设为 `curated`，"
+            "并相应更新 `summary_zh`（见 [CONTRIBUTING](../CONTRIBUTING.md#field-rules) 中关于 `summary` 的字段规则）；"
+            "或者保留摘要，加一行 `notes` 说明这一点。"
+        ),
+        columns=(
+            ("Row", "行"),
+            ("Kind", "类型"),
+            ("Stars", "星标"),
+            ("Summary", "摘要"),
+            ("Summary source", "摘要来源"),
+            ("Cited file", "引用的文件"),
+        ),
+        rows=tuple(
+            (
+                row_link(e),
+                cell(e["kind"]),
+                star_label(e.get("stars")),
+                esc(e["summary"]),
+                cell(e["summary_source"]) if e.get("summary_source") else "—",
+                file_link(e) if e.get("evidence") else "—",
+            )
+            for e in marked
+        ),
+    )
+
+
+SECTIONS = (examples_dir, single_model_name, tool_selection_broad_words, unsorted_overview, generic_summary)
 
 HEADER = "<!-- Written by scripts/build_review_queue.py from catalog.json. Edit those, not this file. -->"
 PROVENANCE = (

@@ -171,7 +171,11 @@ turn red, and writes nothing (the runbook is in
   on-page heading disagree, use the heading a reader sees, and say so in `notes`.
 - **`summary`** — what the example _actually demonstrates_, not what its README
   claims. "Routes support tickets with a choice and a score" beats "revolutionary
-  AI-powered triage".
+  AI-powered triage". On a row with code, say what the project asks Jev to
+  decide: a project's own GitHub description rarely does, and a row with code
+  whose summary names nothing about Jev and that has no `notes` is listed in
+  the [review queue](docs/review-queue.md#generic-summary) (TypeSafe AI's own
+  rows aside).
 - **`summary_source`** — whose words `summary` is. Wrote it yourself? Set
   `curated`; lint then warns about marketing words and emoji in it. Pasted the
   repository's own GitHub description? Leave the field out: the weekly refresh
@@ -240,7 +244,10 @@ turn red, and writes nothing (the runbook is in
   `python3 scripts/verify_claims.py --propose-version-rewrite --only <slug>`
   prints `matched` rewritten to the file as it reads; apply it and leave
   `read_on` as it is. An `evidence` record is a
-  citation, not a stored CI pass or proof that the integration executes.
+  citation, not a stored CI pass or proof that the integration executes. The
+  READMEs, the pattern pages and the site link the file at `HEAD` with the
+  `read_on` date beside it (the pattern pages also print the path), so a wrong
+  path is visible to every reader.
   `evidence.kind` says what the file shows: leave it out (or write
   `call-site`) when the project calls Jev there; write `wire-shape` when it only
   speaks Jev's request shape — lint requires this on every `alternative` — and
@@ -317,6 +324,10 @@ Use them generously. A flagged row is more useful than an unflagged one.
 
 `ai-generated`, `unverified-claims` and `code-untested` require a `notes` line
 saying why — a flag a reader cannot interpret is worse than no flag.
+
+Lint warns when the path `evidence` cites names a shadow or a dry run and the
+row lacks `shadow-mode-only`: read the call, and add the flag if nothing it
+returns reaches a decision.
 
 `self-submitted` is a disclosure, not a defect: every surface shows it so a
 reader knows the description came from the project's side. It is declared,

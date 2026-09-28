@@ -294,6 +294,30 @@ class EntryInvariantTest(FindingsAssertions):
             "gone-row: kind is 'alternative'",
         )
 
+    def test_a_shadow_or_dry_run_path_without_the_flag_is_warned_about(self):
+        # I28: a file named for a shadow or a dry run may be wired in on purpose
+        # so that nothing it returns reaches a decision; only a reader can say.
+        for path in ("src/jev-shadow-decision-provider.ts", "lib/ShadowMode.py", "dry_run.py", "cmd/dry-run/main.go",
+                     "DRYRUN.md", "scripts/dry run.sh"):
+            with self.subTest(path=path):
+                shadow = row(FULL, evidence={**FULL["evidence"], "path": path})
+                self.assertOnly(
+                    lint_row(shadow),
+                    "warning",
+                    f"demo-row: evidence.path {path!r} names a shadow or dry run but the row lacks the "
+                    "shadow-mode-only flag",
+                )
+                self.assertClean(lint_row(row(shadow, flags=["unverified-claims", "shadow-mode-only"])))
+        for path in ("src/shade.py", "src/dry.py", "run/jev.py"):
+            with self.subTest(path=path):
+                self.assertClean(lint_row(row(FULL, evidence={**FULL["evidence"], "path": path})))
+        # Neither the flag nor the rule applies without a cited file, and a
+        # malformed `evidence` is the schema's to report, not a crash here.
+        self.assertClean(lint_row(row(MINIMAL, flags=["shadow-mode-only"])))
+        errors, warnings = lint_row(row(FULL, evidence="shadow.py", primitives_seen=DROP))
+        self.assertTrue(errors)
+        self.assertFalse([w for w in warnings if "shadow" in w], warnings)
+
     def test_official_rejects_anything_the_vendor_did_not_publish(self):
         for url in (
             "https://github.com/someone/demo-row",

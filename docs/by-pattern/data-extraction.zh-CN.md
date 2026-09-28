@@ -8,6 +8,8 @@ _从杂乱文本中取出类型化字段 —— 靠在候选中选择，而不�
 
 ★ 以区间给出仓库的 GitHub star 数 —— ★10+、★100+、★1k+、★10k+、★100k+；没有仓库或不足 10 星的行不标区间。排序：官方优先，其次是含代码的，再按区间，最后按标题。区间只反映热度，不代表质量；最近一次从 GitHub 读到的精确数字在 [`catalog.json`](../../catalog.json) 和[站点](https://kydlikebtc.github.io/awesome-jev/?lang=zh)上。 <sub>(机翻)</sub>
 
+*调用点*链接打开该行引用的那一个文件（`evidence.path`）在仓库默认分支 `HEAD` 上的版本；其后的日期是有人最近一次阅读该文件的日期（`evidence.read_on`）：这是阅读记录，不是运行过代码。*引用文件*链接同理，只是该文件表明项目采用了 Jev 的请求结构、并非基于 Jev 构建，或只是项目附带的示例（`evidence.kind`）。两种链接都没有固定到某个提交，打开的是文件的当前版本，可能与当时读到的不同；文件移动后链接就会失效，每周的 claims 检查会报告这种情况。 <sub>(机翻)</sub>
+
 - **[Cookbook: Date extraction](https://docs.typesafe.ai/cookbooks/date_extraction_cookbook)** ⭐ — 抽取绝对与相对日期：先问文档里点明了哪些部分，再在代码里做解析与校验，并按置信度决定是否送审。
   <sub>`官方文档` · `Py`</sub>
 
@@ -21,40 +23,40 @@ _从杂乱文本中取出类型化字段 —— 靠在候选中选择，而不�
   <sub>`官方文档` · `Py`</sub>
 
 - **[jev-macos-loop](https://github.com/jcpsimmons/jev-macos-loop)** — 开源的 macOS computer use 与原生 GUI 自动化，运行在 Apple 芯片上。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`开源项目` · ★10+ · jcpsimmons · `JS`</sub>
+  <sub>`开源项目` · ★10+ · jcpsimmons · `JS` · 调用点 [`src/providers.mjs`](https://github.com/jcpsimmons/jev-macos-loop/blob/HEAD/src/providers.mjs)，2026-09-22 阅读</sub>
 
 - **[jev-reviewer](https://github.com/choxos/jev-reviewer)** — 系统综述的数据抽取：让 Jev 从论文及其补充材料里按抽取表取值，并附原文引用。 <sub>(机翻)</sub>
-  <sub>`开源项目` · ★10+ · choxos · `JS`</sub>
+  <sub>`开源项目` · ★10+ · choxos · `JS` · 调用点 [`docs/jev.js`](https://github.com/choxos/jev-reviewer/blob/HEAD/docs/jev.js)，2026-09-22 阅读</sub>
 
 - **[jevfill](https://github.com/imohitmayank/jevfill)** — 一个 Chrome 扩展：用 Jev 根据零散的文字笔记自动填写网页表单。把个人信息以纯文本粘贴一次即可，无需结构化档案，随时按需填表。 <sub>(机翻)</sub>
-  <sub>`插件` · ★10+ · imohitmayank · `TS`</sub>
+  <sub>`插件` · ★10+ · imohitmayank · `TS` · 调用点 [`src/jev/client.ts`](https://github.com/imohitmayank/jevfill/blob/HEAD/src/jev/client.ts)，2026-09-24 阅读</sub>
 
 - **[smart-paste](https://github.com/nomanjack/smart-paste)** — 根据粘贴的文本自动填写表单：把表单标题、字段标签和你的文字交给 TypeSafe，插入匹配到的值，提交前由你检查。 <sub>(机翻)</sub>
-  <sub>`插件` · ★10+ · nomanjack · `JS`</sub>
+  <sub>`插件` · ★10+ · nomanjack · `JS` · 调用点 [`worker.js`](https://github.com/nomanjack/smart-paste/blob/HEAD/worker.js)，2026-09-24 阅读</sub>
 
 - **[ask-jev](https://github.com/logicrw/ask-jev)** — 极快、失败即放行的建议式决策，以及面向 AI 编码智能体和 CLI 管道的逐字抽取式阅读视图。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`开源项目` · logicrw · `Py`</sub>
+  <sub>`开源项目` · logicrw · `Py` · 调用点 [`scripts/jev_context.py`](https://github.com/logicrw/ask-jev/blob/HEAD/scripts/jev_context.py)，2026-09-24 阅读</sub>
 
 - **[jev-data-questions](https://github.com/narulaskaran/jev-data-questions)** — 带上数据集，看到合适的图表：界面检查 CSV 的结构并提出洞察，由 Jev 填入具体数值。 <sub>(机翻)</sub>
-  <sub>`开源项目` · narulaskaran · `TS` · ⚠ `无许可证`</sub>
+  <sub>`开源项目` · narulaskaran · `TS` · 调用点 [`src/server/jev.ts`](https://github.com/narulaskaran/jev-data-questions/blob/HEAD/src/server/jev.ts)，2026-09-24 阅读 · ⚠ `无许可证`</sub>
 
 - **[jev-information-extraction](https://github.com/abhishekmamdapure/jev-information-extraction)** — 解析 PDF 并抽取相关信息。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`开源项目` · abhishekmamdapure · `Py` · ⚠ `无许可证`</sub>
+  <sub>`开源项目` · abhishekmamdapure · `Py` · 调用点 [`backend/main.py`](https://github.com/abhishekmamdapure/jev-information-extraction/blob/HEAD/backend/main.py)，2026-09-22 阅读 · ⚠ `无许可证`</sub>
 
 - **[jev-mcp-dispatcher](https://github.com/abhishekashokvkumar/jev-mcp-dispatcher)** — 完全由 Jev 驱动的自然语言 MCP 工具分发器，不用通用 LLM。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`插件` · abhishekashokvkumar · `Py` · ⚠ `无许可证`</sub>
+  <sub>`插件` · abhishekashokvkumar · `Py` · 调用点 [`jev_mcp_dispatcher.py`](https://github.com/abhishekashokvkumar/jev-mcp-dispatcher/blob/HEAD/jev_mcp_dispatcher.py)，2026-09-22 阅读 · ⚠ `无许可证`</sub>
 
 - **[jeveryword](https://github.com/jkrup/jeveryword)** — 用 Jev 做文本抽取：字段抽取、PII 检测与逐字引文。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`开源项目` · jkrup · `JS`</sub>
+  <sub>`开源项目` · jkrup · `JS` · 调用点 [`src/client.mjs`](https://github.com/jkrup/jeveryword/blob/HEAD/src/client.mjs)，2026-09-22 阅读</sub>
 
 - **[jevsume](https://github.com/unownone/jevsume)** — 由 Jev 驱动的 ATS 友好简历评审。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`开源项目` · unownone · `TS` · ⚠ `无许可证`</sub>
+  <sub>`开源项目` · unownone · `TS` · 调用点 [`packages/jev/http.ts`](https://github.com/unownone/jevsume/blob/HEAD/packages/jev/http.ts)，2026-09-22 阅读 · ⚠ `无许可证`</sub>
 
 - **[smoking-extraction-benchmark](https://github.com/vclic/smoking-extraction-benchmark)** — 合成的吸烟史抽取基准：对比 Jev 与 OpenAI 结构化输出。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`基准测试` · vclic · `Py` · ⚠ `仅一次提交` `无许可证`</sub>
+  <sub>`基准测试` · vclic · `Py` · 调用点 [`smoking_eval/providers.py`](https://github.com/vclic/smoking-extraction-benchmark/blob/HEAD/smoking_eval/providers.py)，2026-09-22 阅读 · ⚠ `仅一次提交` `无许可证`</sub>
 
 - **[typesafe-ai-jev-example](https://github.com/ItBayMax/typesafe-ai-jev-example)** — Jev 的动手演示：六个可运行示例与四则实战笔记。 <sub>(项目自述)</sub> <sub>(机翻)</sub>
-  <sub>`开源项目` · itbaymax · `Py` · ⚠ `仅一次提交`</sub>
+  <sub>`开源项目` · itbaymax · `Py` · 调用点 [`lib/typesafe_client.py`](https://github.com/ItBayMax/typesafe-ai-jev-example/blob/HEAD/lib/typesafe_client.py)，2026-09-22 阅读 · ⚠ `仅一次提交`</sub>
 
 ---
 
