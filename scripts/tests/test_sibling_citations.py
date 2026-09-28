@@ -377,6 +377,13 @@ class LintTest(unittest.TestCase):
                 self.assertEqual(len(errors), 1, errors)
                 self.assertIn(words, errors[0])
 
+    def test_a_found_in_source_shaped_like_a_citation_is_told_how_to_write_it(self):
+        # "Name where you found it" invites {"catalog": "owner/name", ...}: the reserved shape.
+        errors = self.errors(row("t", "https://github.com/acme/tool", sl.citation(A)))
+        self.assertIn("name it in words", errors[0])
+        contributing = (ROOT / "CONTRIBUTING.md").read_text(encoding="utf-8")
+        self.assertIn("That shape is reserved", contributing)
+
     def test_every_row_is_held_to_them_in_both_files(self):
         broken = row("t", "https://github.com/acme/tool", AGGREGATE, sl.citation(B), sl.citation(A))
         for retired in (False, True):

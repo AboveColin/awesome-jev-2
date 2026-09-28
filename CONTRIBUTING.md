@@ -271,10 +271,13 @@ turns red.
   `docs/sibling-lists.txt` whose README links the row's repository:
   `{"catalog": "owner/name", "url": "https://github.com/owner/name"}`, the
   list's name and URL, sorted by URL. Leave those to it: do not add, edit or
-  copy them into a new row. `lint.py` fails a row whose citations are out of
-  order, come before a source you wrote, are all it has, or name a list the
-  file does not; `python3 scripts/attribute_sources.py --offline --write` puts
-  them right without reading anything.
+  copy them into a new row. That shape is reserved: if you found the row in
+  one of those directories, name it in words (`"heyjunpenn's awesome-jev"`,
+  with its URL), or it is read as a citation. `lint.py` fails a row whose
+  citations are out of order, come before a source you wrote, are all it has,
+  or name a list the file does not;
+  `python3 scripts/attribute_sources.py --offline --write` puts them right
+  without reading anything.
 
 ## Flags are the point
 

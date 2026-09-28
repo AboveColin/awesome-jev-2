@@ -165,7 +165,9 @@ def citation_problems(entry: dict) -> list[str]:
     if all(marks):
         problems.append(
             "every source is a sibling-list citation; keep the source saying where the row was "
-            "found (a citation only records which lists link the repository)"
+            "found (a citation only records which lists link the repository). A source shaped "
+            '{"catalog": "owner/name", "url": "https://github.com/owner/name"} is read as a citation: '
+            "if you found the row in that directory, name it in words, e.g. \"owner's awesome-jev\""
         )
     if marks != sorted(marks) or urls != in_citation_order(urls):
         problems.append(
