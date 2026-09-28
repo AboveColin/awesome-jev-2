@@ -205,6 +205,10 @@ class SiteTest(unittest.TestCase):
         self.assertIn('fetch("picker.json")', self.PAGE)
         self.assertIn("pickerSteps, pickerCounts, isNegativeResult } from \"./catalog-core.mjs\"", self.PAGE)
         self.assertIn("pickerCounts(STATS, x)", self.PAGE)
+        # Each layer fills its own placeholder, as the figure's counts line does.
+        body = self.PAGE.split("function renderPicker()", 1)[1].split("\n      }\n", 1)[0]
+        self.assertIn('.replace("{read}", Number(counts.read)', body)
+        self.assertIn('.replace("{signal}", Number(counts.signal_only)', body)
         self.assertIn("${renderPicker()}", self.PAGE)
 
     def test_every_picker_string_exists_once_per_language(self):

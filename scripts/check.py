@@ -86,6 +86,7 @@ JSON_FILES = (
     "patterns.json",
     "taxonomy.json",
     "collections.json",
+    "picker.json",
     "schema/entry.schema.json",
 )
 JSON_CHECK = (

@@ -2,8 +2,8 @@
 """Run every generator, so a tree's generated files match its sources.
 
 The sources are catalog.json, retired.json, compat.json, patterns.json,
-taxonomy.json, collections.json and watch.json, the example code under
-examples/, and the weekly refresh's snapshots in history/.
+taxonomy.json, collections.json, watch.json and picker.json, the example
+code under examples/, and the weekly refresh's snapshots in history/.
 Everything listed in OUTPUTS below is derived from them, whole or in marked
 blocks, and is never edited by hand.
 
@@ -38,7 +38,7 @@ GENERATORS = (
         "build_readme.py",
         "README.md, README.zh-CN.md, docs/by-pattern/, docs/measured.md, docs/measured.zh-CN.md and the README covers",
     ),
-    ("build_assets.py", "the coverage and primitive figures in docs/assets/"),
+    ("build_assets.py", "the coverage, primitive and primitive-picker figures in docs/assets/"),
     (
         "build_docs.py",
         "the generated values in docs/status.md, docs/sources.md, docs/patterns.md, docs/patterns.zh-CN.md and llms.txt",
