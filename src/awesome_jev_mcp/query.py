@@ -364,6 +364,8 @@ def search(
     what the fields are. `outcome` keeps negative results (is_negative_result;
     rows flagged not-jev or shadow-mode-only are kept, not left out) or
     independent reports, and the answer says in `outcome_note` what those are.
+    `direction="unfavourable"` asks for negative results too, so it keeps
+    those flagged rows in the same way.
     An unknown `pattern`, `platform`, `direction` or `outcome` answers with the
     valid ones instead."""
     limit = max(1, min(int(limit), MAX_LIMIT))
@@ -434,8 +436,10 @@ def search(
     if with_code_only:
         rows = [e for e in rows if e.get("has_code")]
     # A negative result is kept whatever it is flagged: a trial kept in shadow
-    # after it lost is exactly what an agent asking for one should read.
-    if not include_non_jev and outcome != "negative":
+    # after it lost is exactly what an agent asking for one should read, by
+    # either route (an unfavourable direction is what makes a benchmark one).
+    asks_negative = outcome == "negative" or direction == NEGATIVE_DIRECTION
+    if not include_non_jev and not asks_negative:
         rows = [e for e in rows if not DISQUALIFYING & set(e.get("flags") or [])]
     if query:
         terms = query.lower().split()

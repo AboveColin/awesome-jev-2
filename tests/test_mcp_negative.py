@@ -68,6 +68,19 @@ class OutcomeTest(unittest.TestCase):
                 expected = result["slug"] in {"lost-bench", "shadow-bench", "dropped-plugin"}
                 self.assertIs(result.get("negative_result", False), expected)
 
+    def test_an_unfavourable_direction_finds_the_same_benchmarks(self):
+        # The other route to a negative result keeps the shadow row as well, so
+        # asking by direction never returns fewer benchmarks than outcome does.
+        by_direction = self.search(direction="unfavourable")
+        self.assertEqual(slugs(by_direction), ["lost-bench", "shadow-bench"])
+        negative_benchmarks = [r["slug"] for r in self.search(outcome="negative")["results"] if r["kind"] == "benchmark"]
+        self.assertEqual(slugs(by_direction), negative_benchmarks)
+        # Any other direction leaves shadow rows out, like every other filter.
+        shadow_mixed = row("shadow-mixed", kind="benchmark", flags=["shadow-mode-only"],
+                           measurement={"task": "t", "direction": "mixed"})
+        answer = query.search(ROWS + [shadow_mixed], PATTERNS, FLAGS, direction="mixed")
+        self.assertEqual(slugs(answer), [])
+
     def test_independent_is_a_benchmark_not_flagged_vendor_reported(self):
         self.assertEqual(slugs(self.search(outcome="independent")), ["lost-bench", "won-bench"])
         self.assertEqual(slugs(self.search(outcome="independent", include_non_jev=True)),

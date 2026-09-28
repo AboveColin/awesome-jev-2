@@ -203,7 +203,8 @@ def search_examples(
             e.g. "LongMemEval", "BEIR", "AG News" (a fragment, ignoring case)
         direction: the benchmark author's own stated conclusion about Jev
             for the task. Author-stated, not reproduced here: every row
-            showing it carries `direction_note` saying so
+            showing it carries `direction_note` saying so. "unfavourable"
+            keeps rows flagged shadow-mode-only, as outcome="negative" does
         outcome: "negative" for rows whose own author measured Jev for the
             use and concluded against it (a benchmark's direction is
             unfavourable, or the row carries the negative-result flag). Read
