@@ -25,9 +25,11 @@ Three design choices worth knowing:
 
 Unlike the rest of this repository, this file has a dependency. Hand-rolling
 stdio JSON-RPC would keep the zero-dependency streak, but a subtly broken MCP
-server is worse than a dependency, and the catalogue's own CI imports this
-module only in tests that stub `mcp` out — the dependency-free build pipeline
-is untouched.
+server is worse than a dependency. The dependency stops at this file: it
+registers the tools and stamps where the data came from, and what each tool
+answers is `query.py`, standard library only like `data.py`. The catalogue's
+own CI tests those two directly and imports this module only in tests that
+stub `mcp` out — the dependency-free build pipeline is untouched.
 
 Run:
     pip install awesome-jev-mcp
@@ -44,13 +46,23 @@ from __future__ import annotations
 
 import functools
 import importlib.metadata
-import re
 
 from typing import Any, Literal
 
 from mcp.server import MCPServer
 
 from .data import load
+from .query import (
+    compat_lookup,
+    find_example,
+    model_string_check,
+    pattern_counts,
+    search,
+)
+
+# Also read on this module by name (tests, and anyone who imported them from
+# here before they moved to query.py).
+from .query import DISQUALIFYING, accepted as _accepted, compact as _compact  # noqa: F401
 
 CATALOG, COMPAT, PATTERNS, PROVENANCE = load()
 
@@ -100,51 +112,6 @@ def tool(fn):
     return mcp.tool()(wrapper)
 
 
-# Flags that change whether a row is an example at all, as opposed to a caveat
-# about its quality. An agent looking for "how do I do X" should not be handed
-# a reimplementation that never calls the API. `self-submitted` is deliberately
-# not here: it discloses who proposed a row, says nothing about whether the row
-# is an example, and reaches the agent in `caveats` like every other flag.
-DISQUALIFYING = {"not-jev", "shadow-mode-only"}
-
-
-def _compact(entry: dict) -> dict[str, Any]:
-    """The fields worth spending tokens on in a list of results."""
-    out: dict[str, Any] = {
-        "slug": entry["slug"],
-        "title": entry["title"],
-        "url": entry["url"],
-        "summary": entry["summary"],
-        "kind": entry["kind"],
-        "patterns": entry["patterns"],
-    }
-    # Whose words the summary is travels with it, like the caveats: an agent
-    # quoting an `upstream-description` summary is quoting the project itself.
-    if entry.get("summary_source"):
-        out["summary_source"] = entry["summary_source"]
-    # How far to trust `patterns`: the date a person read the row against them.
-    # Absent means no reading is recorded, and an `overview` project or plugin
-    # with code then means "not yet indexed by pattern", not "surveys the space".
-    if entry.get("patterns_reviewed"):
-        out["patterns_reviewed"] = entry["patterns_reviewed"]
-    # GitHub's facts about the repository, as the weekly refresh last read
-    # them: an agent judging upkeep gets the dates, not a verdict.
-    for key in (
-        "question_types", "languages", "platforms", "stars", "repo_license",
-        "repo_created_at", "repo_pushed_at", "repo_commits",
-    ):
-        if entry.get(key) is not None:
-            out[key] = entry[key]
-    if entry.get("official"):
-        out["official"] = True
-    # Always. See the module docstring.
-    if entry.get("flags"):
-        out["caveats"] = entry["flags"]
-    if entry.get("notes"):
-        out["note"] = entry["notes"]
-    return out
-
-
 @tool
 def search_examples(
     pattern: str = "",
@@ -182,78 +149,20 @@ def search_examples(
         include_non_jev: include reimplementations and shadow-mode rows
         limit: maximum rows to return, 1-50
     """
-    limit = max(1, min(int(limit), 50))
-    rows = CATALOG
-
-    if pattern:
-        keys = {p["key"] for p in PATTERNS}
-        if pattern not in keys:
-            return {
-                "error": f"unknown pattern {pattern!r}",
-                "valid_patterns": sorted(keys),
-                "hint": "call list_patterns() for what each one means",
-            }
-        rows = [e for e in rows if pattern in e["patterns"]]
-    if kind:
-        rows = [e for e in rows if e["kind"] == kind]
-    if language:
-        rows = [e for e in rows if language in (e.get("languages") or [])]
-    if question_type:
-        rows = [e for e in rows if question_type in (e.get("question_types") or [])]
-    if platform:
-        rows = [
-            e
-            for e in rows
-            if any(platform.lower() in p.lower() for p in (e.get("platforms") or []))
-        ]
-    if official_only:
-        rows = [e for e in rows if e.get("official")]
-    if with_code_only:
-        rows = [e for e in rows if e.get("has_code")]
-    if not include_non_jev:
-        rows = [e for e in rows if not DISQUALIFYING & set(e.get("flags") or [])]
-    if query:
-        terms = query.lower().split()
-
-        def hay(e: dict) -> str:
-            return " ".join(
-                str(x)
-                for x in (
-                    e["title"],
-                    e["summary"],
-                    e.get("notes", ""),
-                    e["slug"],
-                    " ".join(e.get("platforms") or []),
-                )
-            ).lower()
-
-        rows = [e for e in rows if all(t in hay(e) for t in terms)]
-
-    # Official first, then rows with code, then popularity — the README's order,
-    # so a reader and an agent see much the same thing first. The README compares
-    # stars by band (★10+, ★100+, …) and then goes by title; here the exact count
-    # decides, as on the site. Slug last, as in the README, so rows that tie on
-    # everything else (forks sharing a title and star count) do not fall back to
-    # their position in the file.
-    rows = sorted(
-        rows,
-        key=lambda e: (
-            not e.get("official", False),
-            not e.get("has_code", False),
-            -(e.get("stars") or 0),
-            e["title"].lower(),
-            e["slug"],
-        ),
+    return search(
+        CATALOG,
+        PATTERNS,
+        pattern=pattern,
+        kind=kind,
+        language=language,
+        question_type=question_type,
+        platform=platform,
+        query=query,
+        official_only=official_only,
+        with_code_only=with_code_only,
+        include_non_jev=include_non_jev,
+        limit=limit,
     )
-    return {
-        "total_matching": len(rows),
-        "returned": min(len(rows), limit),
-        "results": [_compact(e) for e in rows[:limit]],
-        "note": (
-            "Rows report what a person read at the source. Nothing here has been "
-            "executed; performance figures in this space are mostly vendor-reported."
-        ),
-    }
 
 
 @tool
@@ -308,17 +217,7 @@ def get_example(slug: str) -> dict[str, Any]:
     Args:
         slug: the row's stable id, as returned by search_examples
     """
-    for entry in CATALOG:
-        if entry["slug"] == slug:
-            return entry
-    # Sorted rather than taken in file order: the copy that answered may be a
-    # checkout mid-edit or an AWESOME_JEV_CATALOG directory, not the sorted file.
-    close = sorted(e["slug"] for e in CATALOG if slug.lower() in e["slug"].lower())[:5]
-    return {
-        "error": f"no entry with slug {slug!r}",
-        "did_you_mean": close or None,
-        "hint": "use search_examples() to find a slug",
-    }
+    return find_example(CATALOG, slug)
 
 
 @tool
@@ -328,26 +227,7 @@ def list_patterns() -> dict[str, Any]:
     A pattern with zero examples is a genuine gap in the ecosystem, not a
     missing row — worth knowing before concluding nobody does something.
     """
-    counts: dict[str, int] = {}
-    for entry in CATALOG:
-        for key in entry["patterns"]:
-            counts[key] = counts.get(key, 0) + 1
-    return {
-        "patterns": [
-            {
-                "key": p["key"],
-                "name": p["en"],
-                "description": p["blurb_en"],
-                "examples": counts.get(p["key"], 0),
-            }
-            for p in PATTERNS
-        ],
-        "note": (
-            "docs/patterns.md gives each pattern an explicit 'when NOT to use this'. "
-            "For safety-gating in particular: a probabilistic gate is defence in depth, "
-            "never a security boundary."
-        ),
-    }
+    return pattern_counts(CATALOG, PATTERNS)
 
 
 @tool
@@ -361,64 +241,7 @@ def compatibility(surface: str = "") -> dict[str, Any]:
     Args:
         surface: filter to one platform by name fragment, e.g. "cloudflare"
     """
-    rows = COMPAT["platforms"]
-    if surface:
-        rows = [p for p in rows if surface.lower() in p["name"].lower()]
-        if not rows:
-            return {
-                "error": f"no surface matching {surface!r}",
-                "known_surfaces": [p["name"] for p in COMPAT["platforms"]],
-            }
-    return {
-        "as_of": COMPAT["as_of"],
-        "surfaces": rows,
-        "limits": COMPAT["limits"],
-        "warning": (
-            "`noul` answers carry no confidence field on any surface — the probability "
-            "is the answer. A helper reading .confidence uniformly returns nothing for "
-            "a third of your questions."
-        ),
-    }
-
-
-def _accepted(platform: dict) -> list[str]:
-    """The individual strings a surface accepts, from its `·`-joined cell. A
-    parenthetical is a remark about the string (`jev-latest (default)`), not
-    part of it; scripts/lint_docs.py reads the cell the same way."""
-    return [
-        re.sub(r"\s*\(.*\)$", "", part.strip())
-        for part in platform["model"].split("·")
-        if part.strip() not in ("—", "")
-    ]
-
-
-def _model_hint() -> str:
-    """What to send instead, built from compat.json and nothing else, so a
-    release changes compat.json alone. Until 2026-09-27 this was a sentence
-    with the versioned ids typed in, which nothing checked."""
-    official = [p for p in COMPAT["platforms"] if p.get("official")]
-    own = [m for p in official for m in _accepted(p)]
-    versioned = [m for m in own if re.search(r"\d\.\d", m)]
-    aliases = [m for m in own if m not in versioned]
-    parts = []
-    if versioned:
-        tail = f", with aliases {' and '.join(aliases)}" if aliases else ""
-        parts.append(f"The versioned id is {' and '.join(versioned)}{tail}.")
-    # Surfaces that take the same strings are named together, in compat.json's order.
-    renamed: dict[tuple[str, ...], list[str]] = {}
-    for platform in COMPAT["platforms"]:
-        theirs = tuple(m for m in _accepted(platform) if m not in own)
-        if theirs:
-            renamed.setdefault(theirs, []).append(platform["name"])
-    if renamed:
-        parts.append(
-            "Gateways and SDKs rename it: "
-            + "; ".join(f"{' or '.join(ms)} on {' and '.join(names)}" for ms, names in renamed.items())
-            + "."
-        )
-    parts += [f"`{item['s']}`: {item['why']}" for item in COMPAT.get("not_model_strings", [])]
-    parts.append("Pin a version rather than an alias once you have tuned any threshold.")
-    return " ".join(parts)
+    return compat_lookup(COMPAT, surface)
 
 
 @tool
@@ -432,37 +255,7 @@ def check_model_string(model: str) -> dict[str, Any]:
     Args:
         model: the string you are about to send, e.g. "typesafe-ai/jev"
     """
-    needle = model.strip()
-
-    # Exact match, deliberately. A substring test reports `typesafe/jev-1` as
-    # valid because it is a prefix of OpenRouter's versioned string — and
-    # catching that exact fabrication is the only reason this tool exists.
-    hits = [
-        {
-            "surface": p["name"],
-            "accepts": _accepted(p),
-            "endpoint": p["endpoint"],
-            "env": p["env"],
-        }
-        for p in COMPAT["platforms"]
-        if needle and needle in _accepted(p)
-    ]
-    if hits:
-        return {"model": needle, "valid": True, "surfaces": hits}
-
-    every = sorted({m for p in COMPAT["platforms"] for m in _accepted(p)})
-    # A near miss is the common case, so name it rather than just saying no.
-    near = [
-        m for m in every if needle and (m.startswith(needle) or needle.startswith(m))
-    ]
-    return {
-        "model": needle,
-        "valid": False,
-        "reason": "matches no model string on any documented surface",
-        "close_but_wrong": near or None,
-        "valid_strings": every,
-        "hint": _model_hint(),
-    }
+    return model_string_check(COMPAT, model)
 
 
 if __name__ == "__main__":

@@ -123,3 +123,12 @@ CI stays `setup-python` with no install step, and nothing under `scripts/`
 imports anything declared in `pyproject.toml`. Hand-rolling stdio JSON-RPC would
 extend that streak to here too, but a subtly broken MCP server is worse than a
 dependency.
+
+The dependency stops at `server.py`, which only registers the tools and adds the
+`data` line. What the tools answer — which rows count as examples, the caveats,
+the order, the model-string check — is `query.py`, and where the data comes from
+is `data.py`. Both are standard library only, so the repository's CI tests them
+on every pull request without installing `mcp` (`tests/test_mcp_query.py`,
+`tests/test_mcp_data.py`). The package build in `publish.yml`, which runs on
+every change to the package, is the one place the SDK itself is installed, and
+it checks there that every tool is registered.

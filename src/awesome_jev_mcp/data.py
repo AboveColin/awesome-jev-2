@@ -105,9 +105,11 @@ def _read_dir(path: pathlib.Path) -> dict[str, Any] | None:
         return None
 
 
-def _find_checkout() -> pathlib.Path | None:
-    """A repository working tree above us, if this is running from source."""
-    for parent in pathlib.Path(__file__).resolve().parents:
+def _find_checkout(start: pathlib.Path | str | None = None) -> pathlib.Path | None:
+    """A repository working tree at or above `start` — by default this file,
+    so one is found only when this is running from source."""
+    here = pathlib.Path(__file__ if start is None else start).resolve()
+    for parent in (here, *here.parents):
         if (parent / ".git").exists() and (parent / "catalog.json").exists():
             return parent
     return None
@@ -177,8 +179,15 @@ def _as_of(catalog: list[dict]) -> str:
     return max(dates) if dates else "unknown"
 
 
-def load() -> tuple[list[dict], dict[str, Any], list[dict], Provenance]:
-    """Walk the ladder and return the first complete answer, with its provenance."""
+def load(
+    checkout_from: pathlib.Path | str | None = None,
+) -> tuple[list[dict], dict[str, Any], list[dict], Provenance]:
+    """Walk the ladder and return the first complete answer, with its provenance.
+
+    `checkout_from` is where the search for a checkout (layer 2) starts: this
+    file unless given. The tests give a directory outside any repository,
+    because they run inside one and would otherwise never reach layers 3 to 5.
+    """
     attempts: list[tuple[str, str, dict[str, Any] | None]] = []
 
     if override := os.environ.get("AWESOME_JEV_CATALOG"):
@@ -190,7 +199,7 @@ def load() -> tuple[list[dict], dict[str, Any], list[dict], Provenance]:
             )
         )
 
-    if checkout := _find_checkout():
+    if checkout := _find_checkout(checkout_from):
         attempts.append(
             ("checkout", f"from the repository at {checkout}", _read_dir(checkout))
         )

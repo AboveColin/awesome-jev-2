@@ -1,0 +1,397 @@
+"""What the MCP server's tools answer, tested on a handful of rows (I33).
+
+src/awesome_jev_mcp/query.py holds every decision the five tools make — which
+rows count as examples, which caveats travel, the order, the model-string
+check — as functions over the data they are handed. It is standard library
+only, so these tests import it directly: no `mcp`, no network, no catalogue
+file. The last class checks that server.py hands its tools' arguments and data
+to these functions unchanged, through the stubbed loader in
+test_mcp_caveats.py.
+"""
+
+from __future__ import annotations
+
+import ast
+import copy
+import inspect
+import json
+import pathlib
+import subprocess
+import sys
+import unittest
+
+ROOT = pathlib.Path(__file__).resolve().parents[1]
+PACKAGE = ROOT / "src" / "awesome_jev_mcp"
+sys.path.insert(0, str(ROOT / "tests"))
+sys.path.insert(0, str(ROOT / "src"))
+
+from awesome_jev_mcp import query  # noqa: E402
+from test_mcp_caveats import load_server  # noqa: E402
+
+PATTERNS = [
+    {"key": "tool-selection", "en": "Tool selection", "blurb_en": "Which tool to call next."},
+    {"key": "safety-gating", "en": "Safety gating", "blurb_en": "Whether to let an action through."},
+    {"key": "human-escalation", "en": "Human escalation", "blurb_en": "When to ask a person."},
+    {"key": "overview", "en": "Overview", "blurb_en": "Surveys the space."},
+]
+
+
+def row(slug: str, **fields) -> dict:
+    base = {
+        "slug": slug,
+        "title": slug.title(),
+        "url": f"https://github.com/o/{slug}",
+        "summary": f"{slug} summary",
+        "kind": "project",
+        "patterns": ["tool-selection"],
+    }
+    return {**base, **fields}
+
+
+ROWS = [
+    row("router", title="Router", has_code=True, stars=40, languages=["python"], question_types=["choice"],
+        platforms=["typesafe-api"], flags=["vendor-reported", "single-commit"], notes="Routes by cost."),
+    row("gate", title="gate", has_code=True, stars=400, patterns=["tool-selection", "safety-gating"],
+        languages=["typescript"], platforms=["Cloudflare Workers AI"]),
+    row("vendor-docs", title="Vendor docs", kind="official-docs", official=True, patterns=["overview"]),
+    row("clone", title="Clone", kind="alternative", has_code=True, stars=4000, flags=["not-jev"]),
+    row("dry-run", title="Dry run", has_code=True, stars=90, flags=["shadow-mode-only"], primitives_seen=["noul"]),
+]
+
+# A made-up compat.json: its strings are fixtures, not claims about any vendor.
+COMPAT = {
+    "as_of": "2031-01-01",
+    "platforms": [
+        {"name": "Vendor API", "official": True, "model": "acme-latest (default) · jev-9.1.0",
+         "endpoint": "POST /v1/decide", "env": "ACME_KEY"},
+        {"name": "Gate Router", "model": "acme/jev-9.1 · ~acme/jev", "endpoint": "POST /gate/v1", "env": "GATE_KEY"},
+        {"name": "Cloud Workers", "model": "@cf/acme/jev-9.1", "endpoint": "env.AI.run()", "env": "binding"},
+        {"name": "Docs only", "model": "—", "endpoint": "—", "env": "—"},
+    ],
+    "limits": [{"k": "choice options", "n": {"max": 3}}],
+    "not_model_strings": [{"s": "acme/jev-9", "why": "Nobody documents it."}],
+}
+
+
+def slugs(result: dict) -> list[str]:
+    return [r["slug"] for r in result["results"]]
+
+
+class SearchTest(unittest.TestCase):
+    def search(self, rows=ROWS, **filters) -> dict:
+        return query.search(rows, PATTERNS, **filters)
+
+    def test_rows_that_are_not_examples_are_left_out_unless_asked_for(self):
+        self.assertEqual(slugs(self.search()), ["vendor-docs", "gate", "router"])
+        self.assertEqual(slugs(self.search(include_non_jev=True)), ["vendor-docs", "clone", "gate", "dry-run", "router"])
+        self.assertEqual(query.DISQUALIFYING, {"not-jev", "shadow-mode-only"})
+        # Each disqualifying flag on its own is enough.
+        for flag in sorted(query.DISQUALIFYING):
+            with self.subTest(flag=flag):
+                lone = [row("only", has_code=True, flags=["vendor-reported", flag])]
+                self.assertEqual(self.search(lone)["total_matching"], 0)
+                self.assertEqual(slugs(self.search(lone, include_non_jev=True)), ["only"])
+
+    def test_caveats_are_exactly_the_rows_flags(self):
+        by_slug = {r["slug"]: r for r in ROWS}
+        results = self.search(include_non_jev=True, limit=50)["results"]
+        self.assertEqual(len(results), len(ROWS))
+        for result in results:
+            with self.subTest(slug=result["slug"]):
+                flags = by_slug[result["slug"]].get("flags")
+                if flags:
+                    self.assertEqual(result["caveats"], flags)
+                else:
+                    self.assertNotIn("caveats", result)
+
+    def test_limit_is_clamped_between_one_and_fifty(self):
+        many = [row(f"r{i:02}", has_code=True) for i in range(60)]
+        for limit, returned in ((-3, 1), (0, 1), (1, 1), ("5", 5), (50, 50), (51, 50), (1000, 50)):
+            with self.subTest(limit=limit):
+                result = self.search(many, limit=limit)
+                self.assertEqual(result["total_matching"], 60)
+                self.assertEqual(result["returned"], returned)
+                self.assertEqual(len(result["results"]), returned)
+        self.assertEqual(self.search(limit=50)["returned"], 3, "returned counts rows, not the limit")
+
+    def test_an_unknown_pattern_lists_the_valid_ones(self):
+        self.assertEqual(
+            self.search(pattern="nope"),
+            {
+                "error": "unknown pattern 'nope'",
+                "valid_patterns": ["human-escalation", "overview", "safety-gating", "tool-selection"],
+                "hint": "call list_patterns() for what each one means",
+            },
+        )
+
+    def test_filters(self):
+        cases = [
+            ({"pattern": "safety-gating"}, ["gate"]),
+            ({"pattern": "human-escalation"}, []),
+            ({"kind": "official-docs"}, ["vendor-docs"]),
+            ({"language": "python"}, ["router"]),
+            ({"language": "py"}, []),
+            ({"question_type": "choice"}, ["router"]),
+            # primitives_seen is a script's text signal, never a person's reading.
+            ({"question_type": "noul", "include_non_jev": True}, []),
+            ({"platform": "cloudflare"}, ["gate"]),
+            ({"platform": "TYPESAFE"}, ["router"]),
+            ({"official_only": True}, ["vendor-docs"]),
+            ({"with_code_only": True}, ["gate", "router"]),
+            ({"query": "routes COST"}, ["router"]),
+            ({"query": "workers"}, ["gate"]),
+            ({"query": "gate router"}, []),
+            ({"query": "dry", "include_non_jev": True}, ["dry-run"]),
+        ]
+        for filters, expected in cases:
+            with self.subTest(**filters):
+                self.assertEqual(slugs(self.search(**filters)), expected)
+
+    def test_order_is_official_then_code_then_stars_then_title_then_slug(self):
+        rows = [
+            row("b-slug", title="Same", has_code=True, stars=5),
+            row("a-slug", title="Same", has_code=True, stars=5),
+            row("lower", title="apple", has_code=True, stars=5),
+            row("upper", title="Banana", has_code=True, stars=5),
+            row("no-stars", title="Aardvark", has_code=True),
+            row("zero-stars", title="Aardwolf", has_code=True, stars=0),
+            row("popular", title="Zed", has_code=True, stars=900),
+            row("docs", title="Docs", has_code=False, stars=10_000),
+            row("official", title="Official", official=True),
+        ]
+        expected = ["official", "popular", "lower", "upper", "a-slug", "b-slug", "no-stars", "zero-stars", "docs"]
+        self.assertEqual(slugs(self.search(rows, limit=50)), expected)
+        self.assertEqual(slugs(self.search(rows[::-1], limit=50)), expected, "order must not depend on the file")
+
+    def test_the_answer_says_what_the_rows_are(self):
+        result = self.search()
+        self.assertEqual(list(result), ["total_matching", "returned", "results", "note"])
+        self.assertIn("Nothing here has been executed", result["note"])
+
+    def test_the_data_it_is_handed_is_not_changed(self):
+        rows, patterns = copy.deepcopy(ROWS), copy.deepcopy(PATTERNS)
+        self.search(rows, include_non_jev=True, query="gate")
+        query.find_example(rows, "router")
+        query.pattern_counts(rows, patterns)
+        self.assertEqual((rows, patterns), (ROWS, PATTERNS))
+
+
+class CompactTest(unittest.TestCase):
+    def test_a_full_row_keeps_its_fields_in_order(self):
+        entry = row(
+            "full", has_code=True, summary_source="curated", patterns_reviewed="2026-09-27",
+            question_types=["choice"], languages=["python"], platforms=["typesafe-api"], stars=0,
+            repo_license="MIT", repo_created_at="2026-01-01T00:00:00Z", repo_pushed_at="2026-02-01T00:00:00Z",
+            repo_commits=3, official=True, flags=["vendor-reported"], notes="n",
+            evidence={"path": "x.py", "matched": ["noul"]}, primitives_seen=["noul"], sources=[{"catalog": "a/b"}],
+        )
+        compact = query.compact(entry)
+        self.assertEqual(
+            list(compact),
+            ["slug", "title", "url", "summary", "kind", "patterns", "summary_source", "patterns_reviewed",
+             "question_types", "languages", "platforms", "stars", "repo_license", "repo_created_at",
+             "repo_pushed_at", "repo_commits", "official", "caveats", "note"],
+        )
+        self.assertEqual(compact["stars"], 0, "a zero is a count, not an absence")
+        self.assertEqual(compact["caveats"], ["vendor-reported"])
+        self.assertEqual(compact["note"], "n")
+
+    def test_a_bare_row_gets_only_the_core_fields(self):
+        entry = row("bare", official=False, flags=[], notes="", stars=None, has_code=True)
+        self.assertEqual(list(query.compact(entry)), ["slug", "title", "url", "summary", "kind", "patterns"])
+
+
+class FindExampleTest(unittest.TestCase):
+    def test_a_known_slug_returns_the_whole_row(self):
+        self.assertEqual(query.find_example(ROWS, "router"), ROWS[0])
+
+    def test_an_unknown_slug_suggests_up_to_five_sorted_slugs(self):
+        many = [row(f"r{i:02}") for i in range(60)][::-1]
+        answer = query.find_example(many, "R0")
+        self.assertEqual(answer["did_you_mean"], ["r00", "r01", "r02", "r03", "r04"])
+        self.assertEqual(answer["error"], "no entry with slug 'R0'")
+        self.assertEqual(query.find_example(ROWS, "e")["did_you_mean"], ["clone", "gate", "router", "vendor-docs"])
+        self.assertIsNone(query.find_example(ROWS, "zzz")["did_you_mean"])
+        self.assertEqual(query.find_example(ROWS, "zzz")["hint"], "use search_examples() to find a slug")
+
+
+class PatternCountsTest(unittest.TestCase):
+    def test_every_pattern_in_taxonomy_order_with_its_count(self):
+        rows = ROWS + [row("stray", patterns=["not-in-the-taxonomy"])]
+        answer = query.pattern_counts(rows, PATTERNS)
+        self.assertEqual(
+            [(p["key"], p["name"], p["examples"]) for p in answer["patterns"]],
+            [("tool-selection", "Tool selection", 4), ("safety-gating", "Safety gating", 1),
+             ("human-escalation", "Human escalation", 0), ("overview", "Overview", 1)],
+        )
+        self.assertEqual(answer["patterns"][0]["description"], "Which tool to call next.")
+        self.assertIn("never a security boundary", answer["note"])
+
+
+class CompatLookupTest(unittest.TestCase):
+    def test_every_surface_by_default(self):
+        answer = query.compat_lookup(COMPAT)
+        self.assertEqual(list(answer), ["as_of", "surfaces", "limits", "warning"])
+        self.assertEqual(answer["surfaces"], COMPAT["platforms"])
+        self.assertEqual((answer["as_of"], answer["limits"]), ("2031-01-01", COMPAT["limits"]))
+        self.assertIn("`noul`", answer["warning"])
+
+    def test_a_fragment_matches_names_ignoring_case(self):
+        self.assertEqual([p["name"] for p in query.compat_lookup(COMPAT, "cloud")["surfaces"]], ["Cloud Workers"])
+        self.assertEqual([p["name"] for p in query.compat_lookup(COMPAT, "ROUTER")["surfaces"]], ["Gate Router"])
+
+    def test_no_match_names_every_surface(self):
+        self.assertEqual(
+            query.compat_lookup(COMPAT, "zzz"),
+            {"error": "no surface matching 'zzz'", "known_surfaces": [p["name"] for p in COMPAT["platforms"]]},
+        )
+
+
+class ModelStringTest(unittest.TestCase):
+    EVERY = ["@cf/acme/jev-9.1", "acme-latest", "acme/jev-9.1", "jev-9.1.0", "~acme/jev"]
+
+    def test_a_listed_string_names_its_surfaces(self):
+        answer = query.model_string_check(COMPAT, "  acme/jev-9.1  ")
+        self.assertEqual(
+            answer,
+            {"model": "acme/jev-9.1", "valid": True, "surfaces": [
+                {"surface": "Gate Router", "accepts": ["acme/jev-9.1", "~acme/jev"],
+                 "endpoint": "POST /gate/v1", "env": "GATE_KEY"}]},
+        )
+
+    def test_a_remark_in_the_cell_is_not_part_of_the_string(self):
+        self.assertEqual(query.accepted(COMPAT["platforms"][0]), ["acme-latest", "jev-9.1.0"])
+        self.assertEqual(query.accepted(COMPAT["platforms"][3]), [])
+        self.assertIs(query.model_string_check(COMPAT, "acme-latest")["valid"], True)
+        self.assertIs(query.model_string_check(COMPAT, "acme-latest (default)")["valid"], False)
+
+    def test_a_prefix_of_a_real_string_is_not_valid_but_is_named(self):
+        for needle, near in (("acme/jev-9", ["acme/jev-9.1"]), ("acme/jev-9.1.0", ["acme/jev-9.1"]),
+                             ("x", None), ("", None)):
+            with self.subTest(needle=needle):
+                answer = query.model_string_check(COMPAT, needle)
+                self.assertIs(answer["valid"], False)
+                self.assertEqual(answer["close_but_wrong"], near)
+                self.assertEqual(answer["valid_strings"], self.EVERY)
+                self.assertEqual(answer["reason"], "matches no model string on any documented surface")
+
+    def test_the_hint_is_built_from_compat_json_alone(self):
+        self.assertEqual(
+            query.model_hint(COMPAT),
+            "The versioned id is jev-9.1.0, with aliases acme-latest. Gateways and SDKs rename it: "
+            "acme/jev-9.1 or ~acme/jev on Gate Router; @cf/acme/jev-9.1 on Cloud Workers. "
+            "`acme/jev-9`: Nobody documents it. Pin a version rather than an alias once you have tuned any threshold.",
+        )
+        self.assertEqual(query.model_string_check(COMPAT, "nope")["hint"], query.model_hint(COMPAT))
+        bare = {"platforms": [{"name": "Only", "model": "one · two", "endpoint": "e", "env": "k"}]}
+        self.assertEqual(
+            query.model_hint(bare),
+            "Gateways and SDKs rename it: one or two on Only. "
+            "Pin a version rather than an alias once you have tuned any threshold.",
+        )
+
+    def test_the_fabrication_is_refused_against_the_real_compat_json(self):
+        compat = json.loads((ROOT / "compat.json").read_text())
+        every = sorted({m for p in compat["platforms"] for m in query.accepted(p)})
+        fabricated = "typesafe/jev-1"
+        answer = query.model_string_check(compat, fabricated)
+        self.assertIs(answer["valid"], False)
+        near = [m for m in every if m.startswith(fabricated) or fabricated.startswith(m)]
+        self.assertTrue(near, "the real strings no longer start with the fabrication; the prefix trap is untested")
+        self.assertEqual(answer["close_but_wrong"], near)
+        for model in every:
+            with self.subTest(model=model):
+                self.assertIs(query.model_string_check(compat, model)["valid"], True)
+
+
+class StandaloneTest(unittest.TestCase):
+    def test_query_imports_only_the_standard_library(self):
+        tree = ast.parse((PACKAGE / "query.py").read_text())
+        imported = set()
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Import):
+                imported |= {alias.name.split(".")[0] for alias in node.names}
+            elif isinstance(node, ast.ImportFrom):
+                self.assertEqual(node.level, 0, "query.py must not import the package's data or server modules")
+                imported.add(node.module.split(".")[0])
+        self.assertEqual(imported - set(sys.stdlib_module_names), set())
+
+    def test_query_holds_no_catalogue_of_its_own(self):
+        for name in ("CATALOG", "COMPAT", "PATTERNS", "PROVENANCE"):
+            self.assertFalse(hasattr(query, name), name)
+
+    def test_importing_it_needs_no_mcp_and_reaches_no_network(self):
+        code = (
+            "import sys, urllib.request\n"
+            "urllib.request.urlopen = None\n"
+            "import awesome_jev_mcp.query\n"
+            "assert 'mcp' not in sys.modules and 'awesome_jev_mcp.server' not in sys.modules\n"
+        )
+        done = subprocess.run([sys.executable, "-c", code], cwd=ROOT / "src", capture_output=True, text=True)
+        self.assertEqual(done.returncode, 0, done.stderr)
+
+
+class ServerWiringTest(unittest.TestCase):
+    """server.py registers the tools and adds the `data` line; the answers are
+    query.py's, on the data the server loaded."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.server = load_server()
+        cls.line = cls.server.PROVENANCE.line()
+
+    def stamped(self, answer: dict) -> dict:
+        return {**answer, "data": self.line}
+
+    def test_search_examples_passes_every_argument_through(self):
+        params = inspect.signature(self.server.search_examples).parameters
+        wanted = {name: p.default for name, p in inspect.signature(query.search).parameters.items()
+                  if p.kind is p.KEYWORD_ONLY}
+        self.assertEqual({name: p.default for name, p in params.items()}, wanted)
+        # A value per argument that changes the answer on the real catalogue.
+        changed = {"pattern": "safety-gating", "kind": "project", "language": "python", "question_type": "choice",
+                   "platform": "langchain", "query": "router", "official_only": True, "with_code_only": True,
+                   "include_non_jev": True, "limit": 3}
+        default = query.search(self.server.CATALOG, self.server.PATTERNS)
+        for name, value in changed.items():
+            with self.subTest(argument=name):
+                expected = query.search(self.server.CATALOG, self.server.PATTERNS, **{name: value})
+                self.assertNotEqual(expected, default, "this value does not exercise the argument")
+                self.assertEqual(self.server.search_examples(**{name: value}), self.stamped(expected))
+
+    def test_the_other_tools_answer_with_query_on_the_loaded_data(self):
+        s = self.server
+        slug = s.CATALOG[0]["slug"]
+        self.assertEqual(s.get_example(slug), self.stamped(query.find_example(s.CATALOG, slug)))
+        self.assertEqual(s.get_example("zzz-none"), self.stamped(query.find_example(s.CATALOG, "zzz-none")))
+        self.assertEqual(s.list_patterns(), self.stamped(query.pattern_counts(s.CATALOG, s.PATTERNS)))
+        for surface in ("", "cloudflare", "zzz"):
+            self.assertEqual(s.compatibility(surface), self.stamped(query.compat_lookup(s.COMPAT, surface)))
+        for model in ("typesafe/jev-1", "jev-latest", ""):
+            self.assertEqual(s.check_model_string(model), self.stamped(query.model_string_check(s.COMPAT, model)))
+
+    def test_every_tool_keeps_its_description(self):
+        for name in ("search_examples", "get_example", "list_patterns", "compatibility", "check_model_string"):
+            with self.subTest(tool=name):
+                self.assertGreater(len(inspect.getdoc(getattr(self.server, name)) or ""), 80)
+
+
+class PublishSmokeTest(unittest.TestCase):
+    """CI never installs `mcp`, so only publish's smoke step sees the real SDK
+    register the tools; its list must be every tool server.py defines."""
+
+    def test_the_smoke_step_expects_every_registered_tool(self):
+        tree = ast.parse((PACKAGE / "server.py").read_text())
+        tools = sorted(
+            node.name for node in tree.body
+            if isinstance(node, ast.FunctionDef)
+            and any(isinstance(d, ast.Name) and d.id == "tool" for d in node.decorator_list)
+        )
+        self.assertIn("search_examples", tools)
+        workflow = (ROOT / ".github" / "workflows" / "publish.yml").read_text()
+        self.assertIn(f"assert tools == {json.dumps(tools)}, tools", workflow)
+        self.assertIn("asyncio.run(server.mcp.list_tools())", workflow)
+
+
+if __name__ == "__main__":
+    unittest.main()

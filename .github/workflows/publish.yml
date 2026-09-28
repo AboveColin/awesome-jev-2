@@ -34,6 +34,10 @@
 # the one data-dependent assertion here too, that the fabricated
 # `typesafe/jev-1` is still rejected against compat.json
 # (tests/test_repository_policy.py), on the source tree rather than a wheel.
+# lint also tests what the tools answer (query.py, tests/test_mcp_query.py) and
+# where their data comes from (data.py, tests/test_mcp_data.py), with `mcp`
+# stubbed out, since lint installs nothing. What only this job can check is
+# that the real SDK registers the tools, which the smoke step below asks it.
 #
 # The bundled snapshot inside the wheel is the catalogue as of the tagged
 # commit — the offline last resort. The server fetches the live catalogue from
@@ -112,8 +116,12 @@ jobs:
           for name in data.FILES:
               assert snapshot[name] == json.loads((repo / name).read_text()), f"bundled {name} differs from the repository's"
 
-          # And the server itself imports, registers its tools and answers.
+          # And the server itself imports, registers its tools with the real
+          # MCP SDK, which no other check installs, and answers.
+          import asyncio
           from awesome_jev_mcp import server
+          tools = sorted(tool.name for tool in asyncio.run(server.mcp.list_tools()))
+          assert tools == ["check_model_string", "compatibility", "get_example", "list_patterns", "search_examples"], tools
           assert server.check_model_string(model="typesafe/jev-1")["valid"] is False
           print(f"ok: {got}, {server.PROVENANCE.line()}")
           PY

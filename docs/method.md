@@ -888,6 +888,24 @@ is `skipped`. The same three documents now also give
 `pip install git+https://github.com/kydlikebtc/awesome-jev`, which builds the
 same package from the repository.
 
+Since 2026-09-28, `lint` tests each decision the MCP server's tools make, on
+every pull request. The filters, the order, the `limit` clamp, which flags keep
+a row out by default, the caveats each result carries and the model-string
+check moved out of `server.py`, the one file that needs the `mcp` package, into
+`src/awesome_jev_mcp/query.py`, standard library only, where
+`tests/test_mcp_query.py` tests them on a handful of made-up rows and a made-up
+`compat.json`. `tests/test_mcp_data.py` walks `data.py`'s ladder (override,
+checkout, GitHub with the cached ETags, cache, bundled snapshot) against a fake
+GitHub: a 304 is served from the cache, one failed file discards the whole
+fetch, and only the cache and the snapshot are labelled stale. Until then tests
+reached the server only through `server.py` with `mcp` stubbed out, for
+particular fields (caveats, evidence kind, summary source, the model-string
+hint), and nothing tested the ladder. The move changed no answer:
+every tool, called 3,224 ways on the catalogue of that day, returned the same
+bytes before and after, and the real SDK registered the same tools with the
+same schemas. `publish`'s smoke test now also asks that SDK, which nothing
+else here installs, which tools it registered.
+
 Since 2026-09-27, a pull request no longer has to carry generated files, and
 `lint` no longer fails a pull request because one is stale. Every pull request
 that added a row used to change twenty-odd generated files, so any two open at

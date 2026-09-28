@@ -99,7 +99,8 @@ class SignalsTest(unittest.TestCase):
             with self.subTest(module=module.__name__):
                 self.assertFalse(hasattr(module, "STRONG"))
         for path in (SCRIPTS / "verify_claims.py", SCRIPTS / "discover_candidates.py", SCRIPTS / "_stats.py",
-                     SCRIPTS / "_github.py", ROOT / "src" / "awesome_jev_mcp" / "server.py"):
+                     SCRIPTS / "_github.py", ROOT / "src" / "awesome_jev_mcp" / "server.py",
+                     ROOT / "src" / "awesome_jev_mcp" / "query.py"):
             with self.subTest(path=path.name):
                 typed = [s for s in string_constants(path) if _github.VERSION.search(s)]
                 self.assertEqual(typed, [], "a model version typed into code goes stale with the next release")
