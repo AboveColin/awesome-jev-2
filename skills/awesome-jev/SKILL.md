@@ -88,7 +88,7 @@ package, install it from the repository instead:
 Without it, start from
 [`api/v1/index.json`](https://kydlikebtc.github.io/awesome-jev/api/v1/index.json)
 on the catalogue's site. It lists every decision pattern with its row count and
-the address of a small file holding that pattern's rows, shaped as
+the address and size of a file holding that pattern's rows, shaped as
 `search_examples` returns them, caveat flags included: read the one pattern you
 need rather than the whole catalogue, and skip rows flagged `not-jev` or
 `shadow-mode-only`, as the server does. Read

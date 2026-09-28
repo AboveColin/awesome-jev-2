@@ -110,6 +110,7 @@ class ShapeTest(unittest.TestCase):
             self.assertEqual(body["entries"], [package_query.compact(e) for e in rows], p["key"])
             self.assertEqual(body["examples"], len(rows))
             self.assertEqual(body["pattern"], p["key"])
+            self.assertEqual((body["name"], body["description"]), (p["en"], p["blurb_en"]), p["key"])
             self.assertEqual(body["note"], package_query.SEARCH_NOTE)
 
     def test_caveated_rows_stay_with_their_caveats(self):
@@ -156,6 +157,55 @@ class ShapeTest(unittest.TestCase):
         self.assertEqual(
             (ROOT / site_api.BY_PATH[0]).read_text(), pathlib.Path(package_query.__file__).read_text()
         )
+
+
+class ContractTest(unittest.TestCase):
+    """What api_version 1 promises (site_api.ABOUT, docs/method.md): fields
+    may be added, none removed or renamed, and no file carries the time it was
+    built. A change that fails here belongs at api/v2, a new path, rather than
+    in these lists."""
+
+    INDEX = {"api_version", "last_sweep", "entries", "retired", "about", "not_examples", "note", "patterns",
+             "files", "repository"}
+    INDEX_PATTERN = {"key", "name", "description", "examples", "url", "bytes"}
+    PATTERN_FILE = {"api_version", "pattern", "name", "description", "last_sweep", "examples", "not_examples",
+                    "note", "entries"}
+    ROW = {"slug", "title", "url", "summary", "kind", "patterns", "summary_source", "patterns_reviewed",
+           "question_types", "languages", "platforms", "stars", "repo_license", "repo_created_at",
+           "repo_pushed_at", "repo_commits", "official", "caveats", "note"}
+
+    def test_no_v1_field_is_dropped(self):
+        full = row("full", has_code=True, official=True, stars=7, summary_source="curated",
+                   patterns_reviewed="2001-01-01", question_types=["choice"], languages=["python"],
+                   platforms=["typesafe-api"], repo_license="MIT", repo_created_at="2001-01-01T00:00:00Z",
+                   repo_pushed_at="2001-01-02T00:00:00Z", repo_commits=3, flags=["vendor-reported"], notes="n")
+        files = parsed(build([*ROWS, full]))
+        index = files[site_api.INDEX]
+        self.assertLessEqual(self.INDEX, set(index))
+        for item in index["patterns"]:
+            self.assertLessEqual(self.INDEX_PATTERN, set(item), item["key"])
+        tools = files["api/v1/patterns/tool-selection.json"]
+        for rel, body in files.items():
+            if rel != site_api.INDEX:
+                self.assertLessEqual(self.PATTERN_FILE, set(body), rel)
+        (served,) = [e for e in tools["entries"] if e["slug"] == "full"]
+        self.assertLessEqual(self.ROW, set(served))
+
+    def test_no_pattern_file_carries_a_build_date(self):
+        # Row dates are the catalogue's; outside the rows the only date is
+        # last_sweep, so two deploys of the same data serve the same bytes.
+        for rel, text in build().items():
+            if rel == site_api.INDEX:
+                continue
+            head = {k: v for k, v in json.loads(text).items() if k != "entries"}
+            self.assertEqual(re.findall(r"\d{4}-\d{2}-\d{2}", json.dumps(head)), ["2001-02-03"], rel)
+
+    def test_pattern_files_are_compact(self):
+        # An agent pays for every byte of a pattern file; only the index is
+        # indented for a person.
+        for rel, text in build().items():
+            if rel != site_api.INDEX:
+                self.assertEqual(text, json.dumps(json.loads(text), ensure_ascii=False, separators=(",", ":")) + "\n", rel)
 
 
 class RealCatalogueTest(unittest.TestCase):

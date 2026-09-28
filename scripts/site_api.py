@@ -64,7 +64,7 @@ ABOUT = (
     "can sit under several), shaped and ordered as the awesome-jev MCP server's "
     "search_examples returns them: official rows first, then rows with code, then by stars. "
     "A row whose caveats include one of not_examples is not an example of deciding with Jev "
-    "(not-jev: it never calls Jev; shadow-mode-only: nothing Jev returns reaches a decision); "
+    "(not-jev: it never calls Jev; shadow-mode-only: nothing Jev returns reaches a user-visible decision); "
     "the MCP server leaves such rows out by default, these files keep them, caveats attached, "
     "so the counts match the catalogue. last_sweep is the newest dated successful link check in the catalogue, "
     "not the time these files were built. Within api_version 1 fields may be added; none "
