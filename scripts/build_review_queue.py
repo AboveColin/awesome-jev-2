@@ -290,12 +290,13 @@ def generic_summary(catalog: list[dict]) -> Section:
         ),
         leave_en=(
             "To take a row off, read the cited file and write a summary that says what the project asks "
-            "Jev to decide, with `summary_source` set to `curated` and `summary_zh` to match (see the "
+            "Jev to decide, in words that include one of those above (naming Jev is enough; the rule reads "
+            "only the words), with `summary_source` set to `curated` and `summary_zh` to match (see the "
             "`summary` field rules in [CONTRIBUTING](../CONTRIBUTING.md#field-rules)); or keep the "
             "summary and add a `notes` line that says it."
         ),
         leave_zh=(
-            "移出方法：读引用的文件，写一条说明该项目让 Jev 决定什么的摘要，把 `summary_source` 设为 `curated`，"
+            "移出方法：读引用的文件，写一条说明该项目让 Jev 决定什么的摘要，其中要含有上面列出的某个词（写出 Jev 即可；规则只看这些词），把 `summary_source` 设为 `curated`，"
             "并相应更新 `summary_zh`（见 [CONTRIBUTING](../CONTRIBUTING.md#field-rules) 中关于 `summary` 的字段规则）；"
             "或者保留摘要，加一行 `notes` 说明这一点。"
         ),

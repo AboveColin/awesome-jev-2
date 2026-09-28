@@ -499,9 +499,9 @@ The row has code, is not TypeSafe AI's own (`official`), has no `notes`, and its
 
 该行带代码，不是 TypeSafe AI 自己发布的（`official`），没有 `notes`，而且英文摘要里没有 `jev`、`typesafe`、`System One`、`choice`、`score`、`noul`、`decision`、`confidence` 中的任何一个（不分大小写，出现在更长的词里也算）。其中多数是项目自己在 GitHub 上的描述（`summary_source`），它没有理由提到 Jev，于是读列表的人看不出这个项目让 Jev 做什么决策。这些词只是底线，不是检验：没有这些词的摘要也可能说清楚了，有这些词的也可能什么都没说。最后一列链接到该行引用的文件，与 README 和模式页面一样。
 
-To take a row off, read the cited file and write a summary that says what the project asks Jev to decide, with `summary_source` set to `curated` and `summary_zh` to match (see the `summary` field rules in [CONTRIBUTING](../CONTRIBUTING.md#field-rules)); or keep the summary and add a `notes` line that says it.
+To take a row off, read the cited file and write a summary that says what the project asks Jev to decide, in words that include one of those above (naming Jev is enough; the rule reads only the words), with `summary_source` set to `curated` and `summary_zh` to match (see the `summary` field rules in [CONTRIBUTING](../CONTRIBUTING.md#field-rules)); or keep the summary and add a `notes` line that says it.
 
-移出方法：读引用的文件，写一条说明该项目让 Jev 决定什么的摘要，把 `summary_source` 设为 `curated`，并相应更新 `summary_zh`（见 [CONTRIBUTING](../CONTRIBUTING.md#field-rules) 中关于 `summary` 的字段规则）；或者保留摘要，加一行 `notes` 说明这一点。
+移出方法：读引用的文件，写一条说明该项目让 Jev 决定什么的摘要，其中要含有上面列出的某个词（写出 Jev 即可；规则只看这些词），把 `summary_source` 设为 `curated`，并相应更新 `summary_zh`（见 [CONTRIBUTING](../CONTRIBUTING.md#field-rules) 中关于 `summary` 的字段规则）；或者保留摘要，加一行 `notes` 说明这一点。
 
 | Row · 行 | Kind · 类型 | Stars · 星标 | Summary · 摘要 | Summary source · 摘要来源 | Cited file · 引用的文件 |
 | --- | --- | --- | --- | --- | --- |
