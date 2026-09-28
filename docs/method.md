@@ -235,16 +235,16 @@ whose cited file is `jev-shadow-decision-provider.ts`. Official rows are left
 out of the first signal because `official` is held to the vendor's own hosts,
 so the row is about Jev whatever its summary says.
 
-Since 2026-09-27 the README's "Measured, not claimed" section prints ten of
-the independent measurement reports rather than all of them: first the picks
-of the curated `measured` path in `collections.json`, in that path's order,
-then the first of the others in list order, as each pattern shows its first
-ten. Every report, with its note and caveats, is on `docs/measured.md` and
-`docs/measured.zh-CN.md`, generated with the READMEs. Printed whole, the 70
-reports took 350 of the README's 1,442 lines, all of them ahead of "By decision
-pattern", the section the README calls its primary index. README.md went from
-120,440 to 94,523 bytes and README.zh-CN.md from 117,979 to 93,454, with the
-sections in the same order.
+Since 2026-09-27 the README's "Measured, not claimed" section prints ten of the
+independent measurement reports rather than all of them: first the picks of the
+curated `measured` path in `collections.json`, in that path's order, then the
+first of the others in list order, as each pattern shows its first ten. Every
+report is on `docs/measured.md` and `docs/measured.zh-CN.md`, generated with
+the READMEs, with every note and caveat tag. Printed whole, the 70 reports of
+that day took 350 of the README's 1,442 lines, all of them ahead of "By
+decision pattern", the section the README calls its primary index. README.md
+went from 120,440 to 94,523 bytes and README.zh-CN.md from 117,979 to 93,454,
+with the sections in the same order.
 
 ## Discovery is crowdsourced, verification is not
 

@@ -97,11 +97,11 @@ EN = {
     ),
     "measured_more": (
         "**{shown} of {n}** shown: first the picks of the curated [independent reports]({path}) path, "
-        "in its order, then the first of the others in list order · [all {n}, each with its note, on "
-        "one page →]({page}) · [filter on the site]({site})"
+        "in its order, then the first of the others in list order · [all {n} on one page, with every "
+        "note →]({page}) · [filter on the site]({site})"
     ),
     "measured_page_intro": (
-        "Every independent measurement report in the catalogue — {n} of them — each with its note. "
+        "Every independent measurement report in the catalogue — {n} of them — with every note and caveat tag. "
         "[The README]({readme}) shows the picks of the curated [independent reports]({path}) path and "
         "the first few others; [the site]({site}) lists the same rows and can filter them further."
     ),
@@ -340,11 +340,11 @@ ZH = {
     ),
     "measured_more": (
         "已显示 **{shown} / {n}** 条：先是精选路径[独立测量报告]({path})选出的条目，按该路径的顺序，"
-        "再按列表顺序补上其余条目中靠前的几条 · [在单独页面查看全部 {n} 条及各自的备注 →]({page}) · "
+        "再按列表顺序补上其余条目中靠前的几条 · [在单独页面查看全部 {n} 条及全部备注 →]({page}) · "
         "[在站点上筛选]({site})"
     ),
     "measured_page_intro": (
-        "本目录收录的全部独立测量报告 —— 共 {n} 条，每条附备注。[README]({readme}) 只显示精选路径"
+        "本目录收录的全部独立测量报告 —— 共 {n} 条，附全部备注和警示标记。[README]({readme}) 只显示精选路径"
         "[独立测量报告]({path})选出的条目和其余条目中靠前的几条；[站点]({site})列出同样这些条目，"
         "并可进一步筛选。"
     ),

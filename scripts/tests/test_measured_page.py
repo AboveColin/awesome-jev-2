@@ -7,7 +7,7 @@ with the rest. The section now works the same way. It prints INLINE_MEASURED
 rows: first the picks of the curated `measured` path in collections.json, in
 that path's order, then the first of the others in list order (sort_key: the
 star band, never the exact count). docs/measured.md and docs/measured.zh-CN.md
-list every report with its note, and caveat tags travel with every row on both.
+list every report with every note, and caveat tags travel with every row on both.
 
 Everything here renders in memory: CI runs the unit tests before it
 regenerates, so the committed files need not be current.
@@ -252,6 +252,17 @@ class PageTest(unittest.TestCase):
                 self.assertIn(rows.marked(pack, "call_site_note"), text)
                 self.assertTrue(text.endswith(pack["page_footer"] + "\n"))
         self.assertIn("measured_page_intro", strings.ZH_MACHINE)
+
+    def test_it_promises_every_note_not_one_per_report(self):
+        # Not every report has a note; the page carries every note there is.
+        self.assertTrue([e for e in MEASURED if not e.get("notes")], "some report has no note")
+        for key in ("measured_more", "measured_page_intro"):
+            with self.subTest(key=key):
+                self.assertNotIn("each with its note", strings.EN[key])
+                self.assertIn("with every note", strings.EN[key])
+                self.assertNotIn("各自的备注", strings.ZH[key])
+                self.assertNotIn("每条附备注", strings.ZH[key])
+                self.assertIn("全部备注", strings.ZH[key])
 
     def test_file_order_and_star_counts_inside_a_band_change_nothing(self):
         for pack in PACKS:

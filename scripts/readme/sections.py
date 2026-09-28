@@ -76,7 +76,7 @@ START_HERE = [
 INLINE_PER_PATTERN = 10
 
 # "Measured, not claimed" shows this many independent reports and links
-# docs/measured.md, which lists every one with its note.
+# docs/measured.md, which lists every one, with every note.
 #
 # Until 2026-09-27 it printed them all, each with its note: 70 reports, 350 of
 # the README's 1,442 lines, all of them before "By decision pattern", the

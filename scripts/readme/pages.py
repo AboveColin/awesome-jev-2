@@ -100,7 +100,7 @@ def write_pattern_pages(catalog: list[dict]) -> list[pathlib.Path]:
 
 
 def render_measured_page(rows: list[dict], strings: dict) -> str:
-    """Every independent measurement report, each with its note and caveats.
+    """Every independent measurement report, with every note and caveat tag.
 
     Laid out as the README's section used to print them all (the note is why a
     report is worth reading), in list order, with the section's own caveat that
