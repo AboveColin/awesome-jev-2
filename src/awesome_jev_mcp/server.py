@@ -316,6 +316,18 @@ def get_example(slug: str) -> dict[str, Any]:
     absent. A compatible interface implies nothing about calibration: those
     rows are flagged `not-jev`. search_examples() leaves it out.
 
+    `observed_thresholds` lists constants the one file `evidence` cites
+    compares a Jev answer with: the primitive (`question_type`), which of its
+    answer's quantities (`compares`: a noul's `probability`, a choice's or a
+    score's `confidence`, one option's `probability`, a score's value), the
+    constant (`value`), what the code does on which side of it (`decision`),
+    and the text it stands on (`source`, one of `evidence.matched`, re-read
+    weekly). What that project chose for what being wrong costs it, not a
+    recommendation: a threshold tuned on a noul probability says nothing about
+    a choice confidence, and none transfers across model versions. `read_on`
+    dates a person's reading; without it a model read the file.
+    search_examples() leaves it out.
+
     `caveat_glossary`, after the row's own fields, says in English what each
     of its `flags` means (awesome-jev://flags lists them all).
 

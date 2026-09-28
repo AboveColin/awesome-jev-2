@@ -116,6 +116,14 @@ def main() -> int:
         f"(author-stated directions: {directions}), {stats['review_measurement_unread']} not read by a person; "
         f"{stats['independent_reports']} independent reports (benchmarks not flagged vendor-reported)"
     )
+    ranges = "; ".join(
+        f"{group} {r['low']:g}–{r['high']:g} ({r['rows']} rows)" for group, r in stats["threshold_ranges"].items()
+    ) or "none"
+    print(
+        f"thresholds     {stats['thresholds_recorded']} constants on {stats['threshold_rows']} rows compared with "
+        f"a Jev answer (observed_thresholds; observations, not recommendations), "
+        f"{stats['review_thresholds_unread']} rows not read by a person: {ranges}"
+    )
     print(
         f"citations      {stats['cited_rows']} of {stats['citable_rows']} rows with a GitHub repository "
         "linked by at least one sibling directory (sources; a count of mentions, not a review)"

@@ -21,6 +21,10 @@ from measurements import directions as measurement_directions
 from measurements import measured, negative, unread
 from platform_values import load_query
 from sibling_lists import citations_of, own_repository
+from thresholds import ranges as threshold_ranges
+from thresholds import rows as threshold_rows
+from thresholds import sources as threshold_sources
+from thresholds import unread as thresholds_unread
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 
@@ -144,8 +148,11 @@ def examples_unjudged(entry: dict) -> bool:
 
 
 def single_model_name(entry: dict) -> bool:
-    """Machine signal: the citation rests on one model name or the API host."""
-    matched = (entry.get("evidence") or {}).get("matched") or []
+    """Machine signal: the citation rests on one model name or the API host.
+    A threshold's source (observed_thresholds) is matched text about a
+    threshold, not about the call, so it does not count as a second string."""
+    stands_on = threshold_sources(entry)
+    matched = [m for m in (entry.get("evidence") or {}).get("matched") or [] if m not in stands_on]
     return len(matched) == 1 and (
         matched[0] in MODEL_NAMES_AND_HOST or PINNED_MODEL_VERSION.fullmatch(matched[0]) is not None
     )
@@ -504,6 +511,16 @@ def compute() -> dict:
             1 for e in catalog if e.get("primitives_seen") and not e.get("question_types")
         ),
         "primitive_layers": primitive_layers(catalog),
+        # Thresholds a row's cited file compares a Jev answer with
+        # (observed_thresholds, scripts/thresholds.py): observations of what
+        # each project chose, never a recommendation. Per question type and
+        # compared quantity, the lowest and highest constant; a noul
+        # probability and a choice confidence are never one range. And how
+        # many rows carry a threshold no person has read (a model's reading).
+        "threshold_rows": len(threshold_rows(catalog)),
+        "thresholds_recorded": sum(len(e["observed_thresholds"]) for e in threshold_rows(catalog)),
+        "threshold_ranges": threshold_ranges(catalog),
+        "review_thresholds_unread": len(thresholds_unread(catalog)),
         "primitive_layers_by_pattern": primitive_layers_by_pattern(catalog, patterns),
         "no_licence": sum(1 for e in catalog if e.get("repo_license") == "unknown"),
         # GitHub's dates and commit count, as the weekly refresh last read

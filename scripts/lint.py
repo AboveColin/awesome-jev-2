@@ -49,6 +49,7 @@ from picker import problems as picker_problems  # noqa: E402
 from platform_values import problems as platform_problems  # noqa: E402
 from sibling_lists import FIX as CITATION_FIX  # noqa: E402
 from sibling_lists import citation_problems, listed_urls, read_lists, unlisted_citations  # noqa: E402
+from thresholds import row_problems as threshold_problems  # noqa: E402
 from wire import row_problems as wire_problems  # noqa: E402
 from zh_audit import new_rows_since  # noqa: E402
 
@@ -470,6 +471,7 @@ def check_entry_invariants(
     report.add(check_sibling_citations(entry, path))
     report.add(check_measurement(entry, path, today))
     report.add(check_wire(entry, path, today))
+    report.add(check_thresholds(entry, path, today))
     return report.findings()
 
 
@@ -486,6 +488,14 @@ def check_wire(entry: dict, path: str, today: dt.date) -> Findings:
     """An alternative row's `wire`: the rules live in scripts/wire.py."""
     report = Report()
     for problem in wire_problems(entry, today, on_github=on_github(entry)):
+        report.err(path, f"{entry.get('slug', '?')}: {problem}")
+    return report.findings()
+
+
+def check_thresholds(entry: dict, path: str, today: dt.date) -> Findings:
+    """A row's `observed_thresholds`: the rules live in scripts/thresholds.py."""
+    report = Report()
+    for problem in threshold_problems(entry, today):
         report.err(path, f"{entry.get('slug', '?')}: {problem}")
     return report.findings()
 

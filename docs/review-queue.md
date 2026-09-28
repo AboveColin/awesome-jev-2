@@ -17,6 +17,7 @@ Rows a script has singled out for a person to read. Each entry is a machine sign
 | [Rows with code whose summary names nothing about Jev · 带代码、摘要没有提到 Jev 的行](#generic-summary) | 102 |
 | [Benchmark measurements no person has read against the report · 尚无人对照报告核读的基准测试测量](#measurement-unread) | 24 |
 | [Interfaces of alternatives no person has read in the cited files · 尚无人在所引文件中核读的替代实现接口](#wire-unread) | 14 |
+| [Thresholds no person has read in the cited file · 尚无人在所引文件中核读的阈值](#thresholds-unread) | 33 |
 
 <a id="examples-dir"></a>
 
@@ -677,3 +678,51 @@ To take a row off, read each file in `wire.source` against every field, correct 
 | [rizzo-flow](https://kydlikebtc.github.io/awesome-jev/?lang=en#rizzo-flow) | ★100+ | `open` | `src/rizzo_flow/api.py` `src/rizzo_flow/compat.py` `src/rizzo_flow/config.py` |
 | [simple-jev](https://kydlikebtc.github.io/awesome-jev/?lang=en#simple-jev) | ★100+ | `open` | `hf-server/hf_server.py` `eval/benchmarks/jev-1.13/2026-09-20/RUN.md` |
 | [von](https://kydlikebtc.github.io/awesome-jev/?lang=en#von) | ★100+ | `open` | `src/von/server.py` `src/von/types.py` `src/von/backends/option_marker_backend.py` |
+
+<a id="thresholds-unread"></a>
+
+## Thresholds no person has read in the cited file · 尚无人在所引文件中核读的阈值
+
+The row's `observed_thresholds` has an item without a `read_on`: a script or a model read the cited file for the constants it compares a Jev answer with, and no person has checked since. Each item's `source` is a string in `evidence.matched`, which the weekly `claims` run re-reads, and its `value` is written in it; which answer the constant is compared with, and what the code does on each side, is the reading. They are what the project chose, not recommendations. The thresholds first recorded on 2026-09-28 were read by a model; [method.md](method.md) says how.
+
+该行的 `observed_thresholds` 中有条目没有 `read_on`：由脚本或模型阅读所引文件，找出其中与 Jev 答案比较的常量，此后没有人核对过。每个条目的 `source` 是 `evidence.matched` 中的一段字符串，每周的 `claims` 任务会重读它，`value` 就写在其中；常量与哪个答案比较、两侧代码各做什么，则要靠人读。这些是该项目自己的选择，不是推荐值。2026-09-28 首次记录的阈值由模型阅读得出，做法见 [method.md](method.md)。
+
+To take a row off, read the cited file against every item: correct `question_type`, `compares` and `decision`, remove any item that is not a decision on a Jev answer, and set each item's `read_on` to the day you read it (see the `observed_thresholds` field rules in [CONTRIBUTING](../CONTRIBUTING.md#field-rules)).
+
+移出方法：对照所引文件逐条核读，改正 `question_type`、`compares` 和 `decision`，删去不是基于 Jev 答案做决定的条目，再把每个条目的 `read_on` 设为核读当天（见 [CONTRIBUTING](../CONTRIBUTING.md#field-rules) 中关于 `observed_thresholds` 的字段规则）。
+
+| Row · 行 | Stars · 星标 | Thresholds · 阈值 | Cited file · 引用的文件 |
+| --- | --- | --- | --- |
+| [classifier-dev](https://kydlikebtc.github.io/awesome-jev/?lang=en#classifier-dev) | ★100+ | `noul probability 0.7` | [`src/jev.ts`](https://github.com/mrmps/classifier-dev/blob/HEAD/src/jev.ts) |
+| [macbrow](https://kydlikebtc.github.io/awesome-jev/?lang=en#macbrow) | ★100+ | `choice confidence 0.6` | [`macbrow/generator.py`](https://github.com/timpratim/macbrow/blob/HEAD/macbrow/generator.py) |
+| [neo4jev](https://kydlikebtc.github.io/awesome-jev/?lang=en#neo4jev) | ★100+ | `choice probability 0.05` `noul probability 0.5` | [`src/neo4jev/navigator.py`](https://github.com/jexp/neo4jev/blob/HEAD/src/neo4jev/navigator.py) |
+| [third-hand](https://kydlikebtc.github.io/awesome-jev/?lang=en#third-hand) | ★100+ | `noul probability 0.7` | [`Sources/ThirdHand/JevClient.swift`](https://github.com/shhivv/third-hand/blob/HEAD/Sources/ThirdHand/JevClient.swift) |
+| [unclutter](https://kydlikebtc.github.io/awesome-jev/?lang=en#unclutter) | ★100+ | `choice confidence 0.9` | [`lib/jev.ts`](https://github.com/kitze/unclutter/blob/HEAD/lib/jev.ts) |
+| [vexjoy-agent](https://kydlikebtc.github.io/awesome-jev/?lang=en#vexjoy-agent) | ★100+ | `noul probability 0.5` `noul probability 0.35` | [`plugins/jev-auto-compact/hooks/jev-auto-compact.mjs`](https://github.com/notque/vexjoy-agent/blob/HEAD/plugins/jev-auto-compact/hooks/jev-auto-compact.mjs) |
+| [ask-jev-skill](https://kydlikebtc.github.io/awesome-jev/?lang=en#ask-jev-skill) | ★10+ | `noul probability 0.7` `noul probability 0.3` `choice confidence 0.6` | [`scripts/askjev.py`](https://github.com/shantanugoel/ask-jev-skill/blob/HEAD/scripts/askjev.py) |
+| [cmd-mod-jev-nudge](https://kydlikebtc.github.io/awesome-jev/?lang=en#cmd-mod-jev-nudge) | ★10+ | `noul probability 0.5` | [`src/protocol.ts`](https://github.com/CommandCodeAI/cmd-mod-jev-nudge/blob/HEAD/src/protocol.ts) |
+| [hono-jev-router](https://kydlikebtc.github.io/awesome-jev/?lang=en#hono-jev-router) | ★10+ | `noul probability 0.5` | [`src/index.ts`](https://github.com/yusukebe/hono-jev-router/blob/HEAD/src/index.ts) |
+| [jev-belay](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-belay) | ★10+ | `noul probability 0.7` `noul probability 0.5` `choice confidence 0.4` | [`belay.mjs`](https://github.com/valentynkit/jev-belay/blob/HEAD/belay.mjs) |
+| [jev-seo](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-seo) | ★10+ | `noul probability 0.7` `noul probability 0.5` | [`src/engine.rs`](https://github.com/AkashPriyadarshii/jev-seo/blob/HEAD/src/engine.rs) |
+| [jev-social](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-social) | ★10+ | `choice confidence 0.35` | [`src/actions.js`](https://github.com/socai-io/jev-social/blob/HEAD/src/actions.js) |
+| [jevernetes](https://kydlikebtc.github.io/awesome-jev/?lang=en#jevernetes) | ★10+ | `choice confidence 0.7` | [`jevernetes/jev.py`](https://github.com/sunil-sadasivan/jevernetes/blob/HEAD/jevernetes/jev.py) |
+| [jevgpt](https://kydlikebtc.github.io/awesome-jev/?lang=en#jevgpt) | ★10+ | `noul probability 0.9` | [`src/jevgpt/sampler.py`](https://github.com/Bewinxed/jevgpt/blob/HEAD/src/jevgpt/sampler.py) |
+| [alphaoptimizer](https://kydlikebtc.github.io/awesome-jev/?lang=en#alphaoptimizer) |  | `noul probability 0.8` `noul probability 0.2` | [`dist/src/providers/jev.js`](https://github.com/alpha-tales/alphaoptimizer/blob/HEAD/dist/src/providers/jev.js) |
+| [ask-jev](https://kydlikebtc.github.io/awesome-jev/?lang=en#ask-jev) |  | `choice confidence 0.85` | [`scripts/jev_context.py`](https://github.com/logicrw/ask-jev/blob/HEAD/scripts/jev_context.py) |
+| [browser-use-olympics](https://kydlikebtc.github.io/awesome-jev/?lang=en#browser-use-olympics) |  | `noul probability 0.85` `noul probability 0.7` | [`almond-fastloop.mjs`](https://github.com/eriestra/browser-use-olympics/blob/HEAD/almond-fastloop.mjs) |
+| [codex-jev-router-suenot](https://kydlikebtc.github.io/awesome-jev/?lang=en#codex-jev-router-suenot) |  | `noul probability 0.8` `choice confidence 0.75` | [`src/router.mjs`](https://github.com/suenot/codex-jev-router/blob/HEAD/src/router.mjs) |
+| [construct-auto-classifier](https://kydlikebtc.github.io/awesome-jev/?lang=en#construct-auto-classifier) |  | `noul probability 0.7` `choice confidence 0.6` `choice probability 0.6` | [`src/classifier/jev-client.ts`](https://github.com/godspede/construct-auto-classifier/blob/HEAD/src/classifier/jev-client.ts) |
+| [jev-boe-demo](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-boe-demo) |  | `noul probability 0.6` `score score 2` | [`pipeline/analyze.ts`](https://github.com/Tatuck/jev-boe-demo/blob/HEAD/pipeline/analyze.ts) |
+| [jev-builder-loop](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-builder-loop) |  | `noul probability 0.7` `noul probability 0.65` `noul probability 0.35` | [`scripts/loop.py`](https://github.com/rainbowpuffpuff/jev-builder-loop/blob/HEAD/scripts/loop.py) |
+| [jev-in-codex](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-in-codex) |  | `choice confidence 0.8` | [`src/labelling.ts`](https://github.com/teempai/jev-in-codex/blob/HEAD/src/labelling.ts) |
+| [jev-mcp-spring](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-mcp-spring) |  | `noul probability 0.7` `noul probability 0.3` | [`src/main/java/dev/ashfaqbs/jevmcp/tools/JevTools.java`](https://github.com/Ashfaqbs/jev-mcp-spring/blob/HEAD/src/main/java/dev/ashfaqbs/jevmcp/tools/JevTools.java) |
+| [jev-mobile-xinwang-nwpu](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-mobile-xinwang-nwpu) |  | `noul probability 0.5` | [`jev_mobile/model.py`](https://github.com/xinwang-nwpu/jev-mobile/blob/HEAD/jev_mobile/model.py) |
+| [jev-robotics-demo](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-robotics-demo) |  | `noul probability 0.9` | [`jev_agent.py`](https://github.com/FazalAAli/jev-robotics-demo/blob/HEAD/jev_agent.py) |
+| [jev-skill-scout](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-skill-scout) |  | `noul probability 0.3` | [`lib/scout.js`](https://github.com/karanb192/jev-skill-scout/blob/HEAD/lib/scout.js) |
+| [jev-tetris-machinelearning-nerd](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-tetris-machinelearning-nerd) |  | `noul probability 0.75` `score score 2` `score confidence 0.55` | [`courtroom.py`](https://github.com/MachineLearning-Nerd/jev-tetris/blob/HEAD/courtroom.py) |
+| [jev-voice-control](https://kydlikebtc.github.io/awesome-jev/?lang=en#jev-voice-control) |  | `noul probability 0.7` `choice confidence 0.3` | [`Sources/JevVoice/Agent/JevStepPlanner.swift`](https://github.com/chris-wozniczek/jev-voice-control/blob/HEAD/Sources/JevVoice/Agent/JevStepPlanner.swift) |
+| [jevatar](https://kydlikebtc.github.io/awesome-jev/?lang=en#jevatar) |  | `choice confidence 0.4` | [`server.ts`](https://github.com/AppChainAI/Jevatar/blob/HEAD/server.ts) |
+| [jevcumber](https://kydlikebtc.github.io/awesome-jev/?lang=en#jevcumber) |  | `choice confidence 0.75` | [`src/resolver.ts`](https://github.com/RubyBrewsday/jevcumber/blob/HEAD/src/resolver.ts) |
+| [jevpdf](https://kydlikebtc.github.io/awesome-jev/?lang=en#jevpdf) |  | `noul probability 0.55` `noul probability 0.3` | [`src/lib/jev-config.ts`](https://github.com/kylemclaren/jevpdf/blob/HEAD/src/lib/jev-config.ts) |
+| [omp-jevens-classifier](https://kydlikebtc.github.io/awesome-jev/?lang=en#omp-jevens-classifier) |  | `choice probability 0.8` `noul probability 0.9` `noul probability 0.55` | [`jev.ts`](https://github.com/STRML/omp-jevens-classifier/blob/HEAD/jev.ts) |
+| [river-run-typesafe](https://kydlikebtc.github.io/awesome-jev/?lang=en#river-run-typesafe) |  | `noul probability 0.5` | [`typesafe_pilot/pilot.py`](https://github.com/ashaazami/river-run-typesafe/blob/HEAD/typesafe_pilot/pilot.py) |

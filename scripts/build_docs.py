@@ -43,6 +43,7 @@ from _markers import normalise, replace_block, replace_inline  # noqa: E402
 from measurements import negative as negative_rows  # noqa: E402
 from platform_values import load_query  # noqa: E402
 from sibling_lists import SIBLINGS, citations_of, is_citation, listed_urls, read_lists  # noqa: E402
+from thresholds import number as threshold_number  # noqa: E402
 
 ROOT = _stats.ROOT
 
@@ -90,6 +91,8 @@ def shape_block(s: dict) -> str:
             ["Machine signal: rows with code, not TypeSafe AI's own, whose summary names nothing about Jev and that carry no `notes` ([review queue](review-queue.md#generic-summary))", s["review_generic_summary"]],
             ["Benchmark rows indexing their own author's measurement (`measurement`: task, datasets, comparators, the author's direction; author-stated, not reproduced here; [side by side](benchmarks.md))", s["measured_rows"]],
             ["Machine signal: of those, measurements no person has read against the author's report ([review queue](review-queue.md#measurement-unread))", s["review_measurement_unread"]],
+            ["Rows recording thresholds their cited file compares a Jev answer with (`observed_thresholds`: each a constant written in that file; what one project chose, not a recommendation)", s["threshold_rows"]],
+            ["Machine signal: of those, rows with a threshold no person has read in the file ([review queue](review-queue.md#thresholds-unread))", s["review_thresholds_unread"]],
             ["Negative results: rows whose own author measured Jev for the use and concluded against it (a benchmark's `measurement.direction` unfavourable, the `negative-result` flag on any other row; author-stated, not reproduced here; [listed below](#negative-results))", s["negative_results"]],
             ["Patterns covered", f"{s['patterns_covered']} of {s['patterns_total']}"],
             ["Rows whose `patterns` are exactly what the keyword rules suggest for their summary (agreement with the rules, not a review: any review of these rows was not recorded)", f"{s['patterns_rule_identical']} of {s['entries']}"],
@@ -361,9 +364,32 @@ def pattern_blocks(s: dict, patterns: list[dict], lang: str) -> dict[str, str]:
 
 # ---- driver ----------------------------------------------------------------
 
+# The two ranges SKILL.md and examples/README.md state instead of a typed
+# "0.3 to 0.9": (inline key part, _stats threshold_ranges group). Never one
+# range across both: a noul probability is not a choice confidence.
+THRESHOLD_RANGES = (("noul", "noul probability"), ("choice", "choice confidence"))
+
+
+def threshold_values(s: dict) -> dict[str, object]:
+    """Inline values for what catalogued files compare Jev's answers with
+    (observed_thresholds): rows, thresholds, rows no person has read, and per
+    THRESHOLD_RANGES group its rows and lowest and highest constant."""
+    out: dict[str, object] = {
+        "threshold_rows": s["threshold_rows"],
+        "thresholds_recorded": s["thresholds_recorded"],
+        "thresholds_unread": s["review_thresholds_unread"],
+    }
+    for key, group in THRESHOLD_RANGES:
+        found = s["threshold_ranges"].get(group, {})
+        out[f"threshold_{key}_rows"] = found.get("rows", 0)
+        out[f"threshold_{key}_low"] = threshold_number(found.get("low"))
+        out[f"threshold_{key}_high"] = threshold_number(found.get("high"))
+    return out
+
 
 def inline_values(s: dict) -> dict[str, object]:
     return {
+        **threshold_values(s),
         "entries": s["entries"],
         "with_code": s["with_code"],
         "official": s["official"],
@@ -419,6 +445,9 @@ def render() -> dict[pathlib.Path, str]:
         "llms.txt": {},
         "docs/patterns.md": pattern_blocks(s, patterns, "en"),
         "docs/patterns.zh-CN.md": pattern_blocks(s, patterns, "zh"),
+        # Inline values only: the threshold ranges a hand-typed number stated.
+        "skills/awesome-jev/SKILL.md": {},
+        "examples/README.md": {},
     }
 
     out = {}
@@ -461,8 +490,8 @@ def main() -> int:
             )
             return 1
         print(
-            "generated values in docs/status.md, docs/sources.md, docs/patterns.md, docs/patterns.zh-CN.md "
-            "and llms.txt are up to date"
+            "generated values in docs/status.md, docs/sources.md, docs/patterns.md, docs/patterns.zh-CN.md, "
+            "llms.txt, skills/awesome-jev/SKILL.md and examples/README.md are up to date"
         )
         return 0
 

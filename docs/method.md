@@ -1068,6 +1068,7 @@ catalogue passed 800, and no build ever went red.
 | Generated files after a merge | Whenever a pull request lands | A pull request need only change the sources. `lint` runs `regenerate.py` on every event, then `check_generated.py` decides: on a pull request each generated file must be untouched since the merge base or byte-identical to the regenerated output, with every verdict in the run's summary; on `main`, drift is handed to the `regenerate` job, which rebuilds from the tip, runs `lint`'s checks again and commits `chore: regenerate from catalog.json` as `github-actions[bot]` — rebasing if `main` moved, leaving a `regenerate/<sha>` branch if that no longer applies, never force-pushing. A dispatched or manual `lint` run is strict: any drift fails. |
 | What each benchmark's author measured | When a person reads a benchmark's report | Recorded by hand in the row's `measurement` (`kind: benchmark` rows only). `lint` holds it to its rules and its model string to `compat.json`; `build_benchmarks.py` regenerates `docs/benchmarks.md` and its Chinese twin from it; a measurement without `read_on` stays in the review queue until a person reads the report against it. Every direction is the author's, shown as author-stated, not reproduced here. |
 | The interface each `alternative` offers | When a person reads an alternative's files | Recorded by hand in the row's `wire` (`kind: alternative` rows with the `not-jev` flag only). `lint` holds every value copied out of a file to one of the matched strings in `wire.source` (`scripts/wire.py`); `build_compat.py` regenerates the table in `docs/compatibility.md` §7 and the site draws the same rows; `claims` re-reads every cited file weekly beside the evidence files, marked `wire.source`. A record no person has read (no `read_on` on some source) is listed in the [review queue](review-queue.md#wire-unread). |
+| Which constants cited files compare Jev's answers with | When a person or a model reads a cited file for its thresholds | Recorded by hand in the row's `observed_thresholds` (since 2026-09-28), each item's `source` one of `evidence.matched`: `lint` holds each constant to that text and each quantity to what the primitive's answer carries (`scripts/thresholds.py`), and `claims` re-reads the text weekly with the rest of the evidence. `_stats` counts the rows and the lowest and highest constant per primitive and quantity, which `build_docs.py` writes into SKILL.md and examples/README.md; `lint_docs` rejects a range of thresholds typed anywhere else. Items without `read_on` keep their row in the [review queue](review-queue.md#thresholds-unread). Observations of what each project chose, never a recommendation. |
 | Images that show data | Same | Rendered from the data on every Pages deploy by `render_images.py` and never committed: the site's `og:image`, and the README and compatibility screenshots. The deploy refuses to publish a page that did not finish loading its data. |
 | Files the site serves to agents | Same | Written into the Pages artifact at deploy by `assemble_site.py` and never committed: `retired.json`, the entry schema and `llms.txt` beside the page's own data, and under `api/v1/` an index plus one JSON file per decision pattern (`site_api.py`), each row shaped and ordered by the MCP server's own `query.py`. `check_site_data.py` refuses to publish a pattern file that differs from a rebuild or holds a different number of rows than `stats.json` counts for its pattern, and an index whose keys are not `patterns.json`'s. `llms.txt` is published with its values refilled from the same stats, so the site's copy never trails the data beside it. |
 | The GitHub social preview | Never | It can only be uploaded by hand, so it is the durable card: its one figure is a floor ("800+") that growth can only make an understatement, never wrong. `description` reports whether one is uploaded. |
@@ -1332,6 +1333,52 @@ figure cannot draw, and `build_assets.py` fails when a text no longer fits its
 box. The versioned-link rule in `lint_docs` now reads a link to a heading of
 the page `compat.json` records as that page, so the release rehearsal lists
 `picker.json`'s links to the limitations page among the copies to edit.
+
+Since 2026-09-28 a row may record, in `observed_thresholds`, the constants the
+one file its `evidence` cites compares a Jev answer with: the primitive, which
+quantity of its answer (a noul's probability, a choice's or a score's
+confidence, one option's probability, a score's value), the constant, what the
+code does on which side of it, and the text in the file that holds it
+(`source`). Each `source` is also one of `evidence.matched`, so `claims`
+re-reads it every week with the rest, and `lint` (`scripts/thresholds.py`)
+requires the constant to be written in it, keeps the field off `not-jev` rows
+and off this repository's own examples, and refuses a quantity the primitive's
+answer does not carry. Until then the one number the docs gave, in SKILL.md and
+in examples/README.md, was a range copied by hand from one row's notes, and
+nothing would have noticed the row change. The first records were read by a
+model, not a person, on 2026-09-28: a read-only GET of each of the 1,129 cited
+files at HEAD (1,120 answered), a text search for a decimal on a line naming a
+threshold, cutoff, gate, confidence or probability (334 files, 324 of them on
+rows not flagged `not-jev`), then for a comparison with a decimal or a named
+threshold constant (143 files), and a look at each hit in a few lines of
+context, reading further in the files it recorded from. It recorded 55
+constants on 33 rows, a first pass rather than every constant in those files:
+only where the file itself, in its code or its own comment on the constant,
+shows which answer's quantity the constant is compared with and what the code
+then does, and not a check that a probability
+lies between 0 and 1 or that probabilities sum to one, a test, a mock, a
+benchmark's scoring or a report's filter, a score derived from several answers,
+or a file under an examples or demos directory, and never more than the six
+strings `evidence.matched` holds. Each of the 33 rows was then re-checked with
+`verify_claims.py --only`, and every string was present at HEAD. None carries
+`read_on`, so all 33 are listed in the review queue until a person reads them.
+A project that retunes a recorded constant turns its row's claim red in the
+weekly `claims` issue, as any lost matched string does, and the weekly signal
+step then drops the row's `primitives_seen` until a person updates the item and
+its string. Inbox Zero's cited file is its API client, which holds no
+threshold (its per-decision thresholds live in other files of that
+repository), so it records none, and the docs no longer quote its notes'
+range: SKILL.md and examples/README.md state the lowest and highest constant
+recorded for a noul probability and for a choice confidence, as `build_docs.py`
+inline values from `_stats`, never one range across both. SKILL.md now carries
+those markers as HTML comments; how the Claude Code skill loader treats them
+was not tested here, and the text reads the same with them left in, as
+`llms.txt`'s does. `lint_docs` rejects a range of decimals typed into a
+hand-written Markdown or text file. The evidence queue's single-model-name
+signal ignores a threshold's `source`, which is text about a threshold, not
+about the call. examples/04's two cutoffs stay constants, with a comment saying
+they are unverified starting points. No page tabulates the thresholds yet:
+`get_example` returns them with the row.
 
 ### When the vendor ships a model
 

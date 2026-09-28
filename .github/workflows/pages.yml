@@ -35,6 +35,7 @@ on:
       - "scripts/render_images.py"
       - "scripts/sibling_lists.py"
       - "scripts/site_api.py"
+      - "scripts/thresholds.py"
       - "src/awesome_jev_mcp/query.py"
       - ".github/workflows/pages.yml"
   workflow_dispatch:

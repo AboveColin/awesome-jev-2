@@ -16,6 +16,7 @@
 - [ ] `evidence.kind` says what the cited file shows when it is not a call site: `wire-shape` for an `alternative` (lint requires it), `example-only` for an example
 - [ ] A benchmark's `measurement` records only what its author's report states (no guessed `n`, dataset or direction; `direction` only where the author concludes in words), and `measurement.read_on` is set only if I read the report against every field
 - [ ] An alternative's `wire` records only what the files in `wire.source` show, each copied value inside one of their `matched` strings (lint checks), and `read_on` is set on a source only if I read that file against every field
+- [ ] Each `observed_thresholds` item is a constant the cited file compares a Jev answer with, its `source` copied exactly and also in `evidence.matched` (lint checks), `compares` naming Jev's answer rather than the project's variable, and `read_on` set only on items I read in the file myself
 - [ ] `stars` / `repo_license` came from the GitHub API, not a badge, and I left `repo_created_at`, `repo_pushed_at` and `repo_commits` to the weekly refresh
 - [ ] `sources` names where I found the row; I left the sibling-list citations (`{"catalog": "owner/name", …}` items) to the weekly refresh
 - [ ] Caveats are flagged, and any flag needing an explanation has a `notes` line; `negative-result` only on a row that is not a benchmark, whose own author measured Jev and did not adopt it, with a `notes` line naming where they say so
@@ -35,7 +36,7 @@
 
 ## If you touched any doc
 
-- [ ] No catalogue count typed by hand — reworded, or filled by `build_docs.py` (see CONTRIBUTING, *Numbers in prose*)
+- [ ] No catalogue count or range of thresholds typed by hand — reworded, or filled by `build_docs.py` (see CONTRIBUTING, *Numbers in prose*)
 
 ## If you added a runnable example
 

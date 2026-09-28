@@ -164,6 +164,10 @@ and splits the sentence in two. `lint_docs.py` rejects bare counts, hand-written
 count tables and line-leading markers. Dated history in `docs/method.md` is
 exempt: a log entry about the first build is true forever.
 
+A range of thresholds typed into a doc ("from 0.x to 0.y", with digits) is
+rejected the same way. State what catalogued files use with the `threshold_…` inline values,
+which `_stats` computes from the rows' `observed_thresholds`.
+
 Model strings and limits are held to `compat.json` the same way: write
 `jev-latest` or `max 255` anywhere and `lint_docs.py` checks it against that
 file — in the docs, the MCP server's source, the plugin manifests and the prose
@@ -231,6 +235,25 @@ turn red, and writes nothing (the runbook is in
   filter, count or lint rule reads it as a primitive claim, and a shape in a
   file (a type definition, a test double) is not a call. Lint allows it only on
   a row with `evidence`.
+- **`observed_thresholds`** — optional: the constants the one file `evidence`
+  cites compares a Jev answer with. Each item names the primitive
+  (`question_type`), the answer's quantity it is compared with (`compares`:
+  a `noul`'s `probability`, a `choice`'s or `score`'s `confidence`, one
+  option's `probability`, or a `score`'s value as `score`; a `noul` answer
+  carries a probability alone), the constant (`value`), what the code does on
+  which side of it in eighty characters (`decision`: `at or above: …`,
+  `below: …`), and `source`, the text in the file that holds the constant,
+  copied exactly — a named constant's definition or the comparison itself.
+  Add that `source` to `evidence.matched` too (at most six strings): lint
+  requires it there, and the weekly `claims` run then re-reads it, so a
+  project that moves its threshold turns the claim red. Record only a constant
+  that decides something about a Jev answer — not a range check, a test, a
+  mock or a derived score — and never on a `not-jev` row or on this
+  repository's own examples. Set `read_on` on each item you read yourself;
+  without it the row is listed in the
+  [review queue](docs/review-queue.md#thresholds-unread). It records what that
+  project chose, not a recommendation, and a `noul` probability is never a
+  `choice` confidence.
 - **`platforms`** — how the code reaches Jev, in the values the catalogue
   already uses: one that a surface in [`compat.json`](compat.json) lists in its
   `catalog_platforms` (`typesafe-api`, `vercel-ai-gateway`,

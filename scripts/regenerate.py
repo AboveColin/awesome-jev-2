@@ -41,7 +41,8 @@ GENERATORS = (
     ("build_assets.py", "the coverage, primitive and primitive-picker figures in docs/assets/"),
     (
         "build_docs.py",
-        "the generated values in docs/status.md, docs/sources.md, docs/patterns.md, docs/patterns.zh-CN.md and llms.txt",
+        "the generated values in docs/status.md, docs/sources.md, docs/patterns.md, docs/patterns.zh-CN.md, llms.txt, "
+        "skills/awesome-jev/SKILL.md and examples/README.md",
     ),
     ("build_compat.py", "the generated tables in docs/compatibility.md"),
     ("build_review_queue.py", "docs/review-queue.md, the rows a script marks for a person to read"),
@@ -76,6 +77,8 @@ OUTPUTS = (
     "docs/shape.zh-CN.md",
     "llms.txt",
     "examples/index.json",
+    "examples/README.md",
+    "skills/awesome-jev/SKILL.md",
 )
 
 

@@ -94,6 +94,30 @@ STAT_LABEL = re.compile(
 )
 
 
+# A range of probabilities or confidences typed into prose: "0.3 to 0.9",
+# "0.55–0.8", "0.3 到 0.9". SKILL.md and examples/README.md once said a
+# catalogued system's thresholds ranged "from 0.3 to 0.9", copied by hand from
+# one row's notes, and nothing would have noticed the row change. The ranges
+# come from observed_thresholds now, as build_docs.py inline values. Narrow:
+# two decimals at most 1 with a range word between them, a full stop after
+# the second allowed. A version (1.13) or a level scale (2–10) does not match.
+DECIMAL_RANGE = re.compile(
+    r"(?<![\w.])(?:0?\.\d+|1\.0+)\s*(?:to|–|—|-|~|到|至)\s*(?:0?\.\d+|1(?:\.0+)?)(?!\w|\.\d)",
+    re.I,
+)
+
+
+def check_decimal_ranges(rel: str, text: str) -> list[str]:
+    """A typed range of thresholds outside a generated marker is a number nothing re-derives."""
+    masked = BLOCK.sub(lambda m: re.sub(r"[^\n]", " ", m.group(0)), text)
+    masked = INLINE.sub(lambda m: " " * len(m.group(0)), masked)
+    return [
+        f"{rel}:{line_of(masked, m.start())}: typed decimal range {m.group(0)!r} — state the thresholds "
+        "catalogued files use as <!--n:threshold_…--> inline values (scripts/build_docs.py), or reword it"
+        for m in DECIMAL_RANGE.finditer(masked)
+    ]
+
+
 def tracked(*patterns: str) -> list[str]:
     out = subprocess.run(
         ["git", "ls-files", *patterns],
@@ -626,6 +650,8 @@ def main(argv: list[str] | None = None) -> int:
         text = (ROOT / rel).read_text()
         if rel not in HISTORY:
             problems += check_bare_counts(rel, text)
+            if rel.endswith((".md", ".txt")):
+                problems += check_decimal_ranges(rel, text)
         if rel.endswith((".md", ".txt")):
             problems += check_leading_markers(rel, text)
 

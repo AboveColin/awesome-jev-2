@@ -206,6 +206,7 @@ class MetadataStepsTest(unittest.TestCase):
             "catalog.json": "v1\n", "README.md": "generated from v1\n", "README.zh-CN.md": "zh\n",
             "docs/status.md": "status\n", "llms.txt": "llms\n", "scripts/regenerate.py": self.REGENERATE,
             ".discover/seen.json": "{}\n", "examples/index.json": "{}\n", "history/README.md": "# history/\n",
+            "examples/README.md": "examples\n", "skills/awesome-jev/SKILL.md": "skill\n",
         }
         for rel, body in files.items():
             (seed / rel).parent.mkdir(parents=True, exist_ok=True)

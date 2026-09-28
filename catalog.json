@@ -2060,12 +2060,30 @@
       "matched": [
         "api.typesafe.ai",
         "jev-1.13",
-        "/v1/systemone"
+        "/v1/systemone",
+        "verdict: probability >= 0.8",
+        ": probability <= 0.2"
       ],
       "read_on": "2026-09-22"
     },
     "primitives_seen": [
       "noul"
+    ],
+    "observed_thresholds": [
+      {
+        "question_type": "noul",
+        "compares": "probability",
+        "value": 0.8,
+        "decision": "at or above: mark the candidate relevant",
+        "source": "verdict: probability >= 0.8"
+      },
+      {
+        "question_type": "noul",
+        "compares": "probability",
+        "value": 0.2,
+        "decision": "at or below: mark the candidate irrelevant",
+        "source": ": probability <= 0.2"
+      }
     ],
     "first_seen": "2026-09-22",
     "sources": [
@@ -2393,13 +2411,23 @@
       "matched": [
         "api.typesafe.ai",
         "jev-latest",
-        "/v1/systemone"
+        "/v1/systemone",
+        "answer['confidence'] >= 0.85"
       ],
       "read_on": "2026-09-24"
     },
     "primitives_seen": [
       "choice",
       "noul"
+    ],
+    "observed_thresholds": [
+      {
+        "question_type": "choice",
+        "compares": "confidence",
+        "value": 0.85,
+        "decision": "at or above: write the chosen category into the record",
+        "source": "answer['confidence'] >= 0.85"
+      }
     ],
     "zh_machine": true,
     "languages": [
@@ -2506,7 +2534,10 @@
       "matched": [
         "api.typesafe.ai",
         "jev-latest",
-        "/v1/systemone"
+        "/v1/systemone",
+        "NOUL_YES = 0.7",
+        "NOUL_NO = 0.3",
+        "DEFAULT_MIN_CONF = 0.6"
       ],
       "read_on": "2026-09-22"
     },
@@ -2514,6 +2545,29 @@
       "choice",
       "score",
       "noul"
+    ],
+    "observed_thresholds": [
+      {
+        "question_type": "noul",
+        "compares": "probability",
+        "value": 0.7,
+        "decision": "at or above: read the answer as yes and act",
+        "source": "NOUL_YES = 0.7"
+      },
+      {
+        "question_type": "noul",
+        "compares": "probability",
+        "value": 0.3,
+        "decision": "at or below: read the answer as no and act",
+        "source": "NOUL_NO = 0.3"
+      },
+      {
+        "question_type": "choice",
+        "compares": "confidence",
+        "value": 0.6,
+        "decision": "at or above (default, flag can override): act on the choice",
+        "source": "DEFAULT_MIN_CONF = 0.6"
+      }
     ],
     "first_seen": "2026-09-22",
     "sources": [
@@ -4685,13 +4739,31 @@
       "matched": [
         "api.typesafe.ai",
         "jev-latest",
-        "/v1/systemone"
+        "/v1/systemone",
+        "a.complete.noul > 0.85",
+        "a.blocked.noul > 0.7"
       ],
       "read_on": "2026-09-22"
     },
     "primitives_seen": [
       "choice",
       "noul"
+    ],
+    "observed_thresholds": [
+      {
+        "question_type": "noul",
+        "compares": "probability",
+        "value": 0.85,
+        "decision": "above: end the task as done",
+        "source": "a.complete.noul > 0.85"
+      },
+      {
+        "question_type": "noul",
+        "compares": "probability",
+        "value": 0.7,
+        "decision": "above: escalate the step as blocked",
+        "source": "a.blocked.noul > 0.7"
+      }
     ],
     "first_seen": "2026-09-22",
     "sources": [
@@ -5917,7 +5989,8 @@
       "matched": [
         "api.typesafe.ai",
         "typesafe-ai/jev",
-        "jev-latest"
+        "jev-latest",
+        "MULTI_THRESHOLD = 0.7"
       ],
       "read_on": "2026-09-22"
     },
@@ -5925,6 +5998,15 @@
       "choice",
       "score",
       "noul"
+    ],
+    "observed_thresholds": [
+      {
+        "question_type": "noul",
+        "compares": "probability",
+        "value": 0.7,
+        "decision": "below: a multi-label yes does not count (tuned for F1 on its eval set)",
+        "source": "MULTI_THRESHOLD = 0.7"
+      }
     ],
     "first_seen": "2026-09-22",
     "sources": [
@@ -6548,12 +6630,22 @@
       "path": "src/protocol.ts",
       "matched": [
         "typesafe/jev",
-        "/v1/systemone"
+        "/v1/systemone",
+        "DEFAULT_THRESHOLD = 0.5"
       ],
       "read_on": "2026-09-24"
     },
     "primitives_seen": [
       "noul"
+    ],
+    "observed_thresholds": [
+      {
+        "question_type": "noul",
+        "compares": "probability",
+        "value": 0.5,
+        "decision": "at or above (default): nudge the agent to keep going",
+        "source": "DEFAULT_THRESHOLD = 0.5"
+      }
     ],
     "zh_machine": true,
     "languages": [
@@ -6728,13 +6820,31 @@
       "matched": [
         "type: 'choice'",
         "type: 'noul'",
-        "evaluateDecision"
+        "evaluateDecision",
+        "exceptional.noul >= 0.8",
+        "tier.confidence >= 0.75"
       ],
       "read_on": "2026-09-24"
     },
     "primitives_seen": [
       "choice",
       "noul"
+    ],
+    "observed_thresholds": [
+      {
+        "question_type": "noul",
+        "compares": "probability",
+        "value": 0.8,
+        "decision": "at or above: send the task to the strongest model at its highest effort",
+        "source": "exceptional.noul >= 0.8"
+      },
+      {
+        "question_type": "choice",
+        "compares": "confidence",
+        "value": 0.75,
+        "decision": "at or above, for a simple tier: route to the small model at low effort",
+        "source": "tier.confidence >= 0.75"
+      }
     ],
     "notes": "Instruction-driven Codex subagent routing; no tool-boundary enforcement or measured savings are claimed. Hosted Jev needs a key and receives the sanitized task summary. Its author disclosed that it was built with Codex assistance and that a Codex agent prepared this submission; the flag records that disclosure, not a defect.",
     "author": {
@@ -7217,13 +7327,39 @@
       "matched": [
         "api.typesafe.ai",
         "jev-latest",
-        "jev-1.13"
+        "jev-1.13",
+        "riskThreshold: 0.7",
+        "minConfidence: 0.6",
+        "lowRiskMinAllow: 0.6"
       ],
       "read_on": "2026-09-24"
     },
     "primitives_seen": [
       "choice",
       "noul"
+    ],
+    "observed_thresholds": [
+      {
+        "question_type": "noul",
+        "compares": "probability",
+        "value": 0.7,
+        "decision": "at or above on any risk question (default): deny the command",
+        "source": "riskThreshold: 0.7"
+      },
+      {
+        "question_type": "choice",
+        "compares": "confidence",
+        "value": 0.6,
+        "decision": "below (default): do not run the allowed command unattended",
+        "source": "minConfidence: 0.6"
+      },
+      {
+        "question_type": "choice",
+        "compares": "probability",
+        "value": 0.6,
+        "decision": "at or above for allow, every risk quiet (default): allow anyway",
+        "source": "lowRiskMinAllow: 0.6"
+      }
     ],
     "zh_machine": true,
     "languages": [
@@ -16082,12 +16218,22 @@
       "matched": [
         "api.typesafe.ai",
         "typesafe/jev",
-        "jev-latest"
+        "jev-latest",
+        "DEFAULT_THRESHOLD = 0.5"
       ],
       "read_on": "2026-09-22"
     },
     "primitives_seen": [
       "noul"
+    ],
+    "observed_thresholds": [
+      {
+        "question_type": "noul",
+        "compares": "probability",
+        "value": 0.5,
+        "decision": "at or above (default): hand the request to that route",
+        "source": "DEFAULT_THRESHOLD = 0.5"
+      }
     ],
     "first_seen": "2026-09-22",
     "sources": [
@@ -20949,13 +21095,39 @@
       "matched": [
         "api.typesafe.ai",
         "jev-1.13",
-        "/v1/systemone"
+        "/v1/systemone",
+        "DEFAULT_THRESHOLD = 0.7",
+        "APPLIES_THRESHOLD = 0.5",
+        "OUTCOME_FLOOR = 0.4"
       ],
       "read_on": "2026-09-24"
     },
     "primitives_seen": [
       "choice",
       "noul"
+    ],
+    "observed_thresholds": [
+      {
+        "question_type": "noul",
+        "compares": "probability",
+        "value": 0.7,
+        "decision": "at or above (default): treat the turn as claiming its work is done",
+        "source": "DEFAULT_THRESHOLD = 0.7"
+      },
+      {
+        "question_type": "noul",
+        "compares": "probability",
+        "value": 0.5,
+        "decision": "at or above: treat the checks as applying to the claim",
+        "source": "APPLIES_THRESHOLD = 0.5"
+      },
+      {
+        "question_type": "choice",
+        "compares": "confidence",
+        "value": 0.4,
+        "decision": "below: read the outcome pick as other",
+        "source": "OUTCOME_FLOOR = 0.4"
+      }
     ],
     "zh_machine": true,
     "languages": [
@@ -21698,12 +21870,30 @@
       "matched": [
         "@typesafe-ai/sdk",
         "jev-latest",
-        "systemOne"
+        "systemOne",
+        "CATEGORY_THRESHOLD = 0.6",
+        "RELEVANT_SCORE = 2.0"
       ],
       "read_on": "2026-09-24"
     },
     "primitives_seen": [
       "noul"
+    ],
+    "observed_thresholds": [
+      {
+        "question_type": "noul",
+        "compares": "probability",
+        "value": 0.6,
+        "decision": "at or above: tag the item with the category",
+        "source": "CATEGORY_THRESHOLD = 0.6"
+      },
+      {
+        "question_type": "score",
+        "compares": "score",
+        "value": 2.0,
+        "decision": "at or above: treat the item as relevant",
+        "source": "RELEVANT_SCORE = 2.0"
+      }
     ],
     "zh_machine": true,
     "languages": [
@@ -23377,10 +23567,36 @@
       "matched": [
         "api.typesafe.ai",
         "jev-latest",
-        "/v1/systemone"
+        "/v1/systemone",
+        "noul.get(\"repeat_failure\", 0) >= 0.7",
+        "noul.get(\"missing_context\", 0) >= 0.65",
+        "noul.get(\"progress\", 1) < 0.35"
       ],
       "read_on": "2026-09-22"
     },
+    "observed_thresholds": [
+      {
+        "question_type": "noul",
+        "compares": "probability",
+        "value": 0.7,
+        "decision": "at or above, on the same action: change approach",
+        "source": "noul.get(\"repeat_failure\", 0) >= 0.7"
+      },
+      {
+        "question_type": "noul",
+        "compares": "probability",
+        "value": 0.65,
+        "decision": "at or above: gather facts before acting",
+        "source": "noul.get(\"missing_context\", 0) >= 0.65"
+      },
+      {
+        "question_type": "noul",
+        "compares": "probability",
+        "value": 0.35,
+        "decision": "below, after two attempts: change approach",
+        "source": "noul.get(\"progress\", 1) < 0.35"
+      }
+    ],
     "first_seen": "2026-09-22",
     "sources": [
       {
@@ -32415,12 +32631,22 @@
       "matched": [
         "api.typesafe.ai",
         "jev-1.13",
-        "/v1/systemone"
+        "/v1/systemone",
+        "item.confidence < 0.8"
       ],
       "read_on": "2026-09-24"
     },
     "primitives_seen": [
       "choice"
+    ],
+    "observed_thresholds": [
+      {
+        "question_type": "choice",
+        "compares": "confidence",
+        "value": 0.8,
+        "decision": "below: list the record for human review",
+        "source": "item.confidence < 0.8"
+      }
     ],
     "zh_machine": true,
     "languages": [
@@ -35983,12 +36209,30 @@
     "evidence": {
       "path": "src/main/java/dev/ashfaqbs/jevmcp/tools/JevTools.java",
       "matched": [
-        "dev.danvega.jev.JevClient"
+        "dev.danvega.jev.JevClient",
+        "FLAG_THRESHOLD = 0.70",
+        "UNCERTAIN_MIN = 0.30"
       ],
       "read_on": "2026-09-24"
     },
     "primitives_seen": [
       "noul"
+    ],
+    "observed_thresholds": [
+      {
+        "question_type": "noul",
+        "compares": "probability",
+        "value": 0.7,
+        "decision": "at or above: count the claim as supported",
+        "source": "FLAG_THRESHOLD = 0.70"
+      },
+      {
+        "question_type": "noul",
+        "compares": "probability",
+        "value": 0.3,
+        "decision": "at or above, below the flag line: report the claim as uncertain",
+        "source": "UNCERTAIN_MIN = 0.30"
+      }
     ],
     "zh_machine": true,
     "languages": [
@@ -36369,13 +36613,23 @@
       "matched": [
         "api.typesafe.ai",
         "jev-latest",
-        "/v1/systemone"
+        "/v1/systemone",
+        "GOAL_THRESHOLD = 0.5"
       ],
       "read_on": "2026-09-24"
     },
     "primitives_seen": [
       "choice",
       "noul"
+    ],
+    "observed_thresholds": [
+      {
+        "question_type": "noul",
+        "compares": "probability",
+        "value": 0.5,
+        "decision": "at or above: accept the goal as achieved",
+        "source": "GOAL_THRESHOLD = 0.5"
+      }
     ],
     "zh_machine": true,
     "languages": [
@@ -42193,13 +42447,23 @@
       "matched": [
         "typesafe_sdk",
         "system_one",
-        "TypeSafeClient"
+        "TypeSafeClient",
+        "a[\"done\"].noul > 0.9"
       ],
       "read_on": "2026-09-22"
     },
     "primitives_seen": [
       "choice",
       "noul"
+    ],
+    "observed_thresholds": [
+      {
+        "question_type": "noul",
+        "compares": "probability",
+        "value": 0.9,
+        "decision": "above: end the run as done",
+        "source": "a[\"done\"].noul > 0.9"
+      }
     ],
     "first_seen": "2026-09-22",
     "sources": [
@@ -43931,7 +44195,9 @@
       "matched": [
         "api.typesafe.ai",
         "jev-latest",
-        "/v1/systemone"
+        "/v1/systemone",
+        "Ok(p >= 0.70)",
+        "direct_answer_p >= 0.5"
       ],
       "read_on": "2026-09-24"
     },
@@ -43939,6 +44205,22 @@
       "choice",
       "score",
       "noul"
+    ],
+    "observed_thresholds": [
+      {
+        "question_type": "noul",
+        "compares": "probability",
+        "value": 0.7,
+        "decision": "at or above: flag the page as an injection risk",
+        "source": "Ok(p >= 0.70)"
+      },
+      {
+        "question_type": "noul",
+        "compares": "probability",
+        "value": 0.5,
+        "decision": "at or above: record that the page answers the query directly",
+        "source": "direct_answer_p >= 0.5"
+      }
     ],
     "first_seen": "2026-09-22",
     "sources": [
@@ -44791,13 +45073,23 @@
       "matched": [
         "api.typesafe.ai",
         "jev-latest",
-        "/v1/systemone"
+        "/v1/systemone",
+        "fitsThreshold: 0.3"
       ],
       "read_on": "2026-09-24"
     },
     "primitives_seen": [
       "choice",
       "noul"
+    ],
+    "observed_thresholds": [
+      {
+        "question_type": "noul",
+        "compares": "probability",
+        "value": 0.3,
+        "decision": "below (default): suggest no skill",
+        "source": "fitsThreshold: 0.3"
+      }
     ],
     "zh_machine": true,
     "languages": [
@@ -45670,12 +45962,22 @@
       "matched": [
         "~typesafe/jev-latest",
         "type: \"choice\"",
-        "Choose the next concrete browser operation or socai CLI tool"
+        "Choose the next concrete browser operation or socai CLI tool",
+        "decision.confidence < 0.35"
       ],
       "read_on": "2026-09-23"
     },
     "primitives_seen": [
       "choice"
+    ],
+    "observed_thresholds": [
+      {
+        "question_type": "choice",
+        "compares": "confidence",
+        "value": 0.35,
+        "decision": "below: refuse the operation and ask for a narrower request",
+        "source": "decision.confidence < 0.35"
+      }
     ],
     "first_seen": "2026-09-22",
     "sources": [
@@ -47420,7 +47722,10 @@
       "matched": [
         "typesafe_sdk",
         "jev-latest",
-        "system_one"
+        "system_one",
+        "permission_breach >= 0.75",
+        "review_priority >= 2.0",
+        "review_confidence < 0.55"
       ],
       "read_on": "2026-09-24"
     },
@@ -47428,6 +47733,29 @@
       "choice",
       "score",
       "noul"
+    ],
+    "observed_thresholds": [
+      {
+        "question_type": "noul",
+        "compares": "probability",
+        "value": 0.75,
+        "decision": "at or above: page the on-call person",
+        "source": "permission_breach >= 0.75"
+      },
+      {
+        "question_type": "score",
+        "compares": "score",
+        "value": 2.0,
+        "decision": "at or above: send the run to human review",
+        "source": "review_priority >= 2.0"
+      },
+      {
+        "question_type": "score",
+        "compares": "confidence",
+        "value": 0.55,
+        "decision": "below: send the run to human review",
+        "source": "review_confidence < 0.55"
+      }
     ],
     "zh_machine": true,
     "languages": [
@@ -49899,12 +50227,30 @@
     "evidence": {
       "path": "Sources/JevVoice/Agent/JevStepPlanner.swift",
       "matched": [
-        "systemOne"
+        "systemOne",
+        "wrongSurfaceNoul >= 0.7",
+        "confidence < 0.30"
       ],
       "read_on": "2026-09-22"
     },
     "primitives_seen": [
       "noul"
+    ],
+    "observed_thresholds": [
+      {
+        "question_type": "noul",
+        "compares": "probability",
+        "value": 0.7,
+        "decision": "at or above: treat the screen as the wrong one and back out",
+        "source": "wrongSurfaceNoul >= 0.7"
+      },
+      {
+        "question_type": "choice",
+        "compares": "confidence",
+        "value": 0.3,
+        "decision": "below: return an uncertain turn",
+        "source": "confidence < 0.30"
+      }
     ],
     "first_seen": "2026-09-22",
     "sources": [
@@ -51831,12 +52177,22 @@
       "matched": [
         "api.typesafe.ai",
         "jev-latest",
-        "/v1/systemone"
+        "/v1/systemone",
+        "CONFIDENCE_FLOOR = 0.4"
       ],
       "read_on": "2026-09-24"
     },
     "primitives_seen": [
       "choice"
+    ],
+    "observed_thresholds": [
+      {
+        "question_type": "choice",
+        "compares": "confidence",
+        "value": 0.4,
+        "decision": "below: show the unsure face instead of the pick",
+        "source": "CONFIDENCE_FLOOR = 0.4"
+      }
     ],
     "zh_machine": true,
     "languages": [
@@ -53043,13 +53399,23 @@
       "matched": [
         "@typesafe-ai/sdk",
         "jev-latest",
-        "systemOne"
+        "systemOne",
+        "PAGE_SOURCED_MIN_CONFIDENCE = 0.75"
       ],
       "read_on": "2026-09-24"
     },
     "primitives_seen": [
       "choice",
       "noul"
+    ],
+    "observed_thresholds": [
+      {
+        "question_type": "choice",
+        "compares": "confidence",
+        "value": 0.75,
+        "decision": "at or above: accept a pick sourced from the page",
+        "source": "PAGE_SOURCED_MIN_CONFIDENCE = 0.75"
+      }
     ],
     "zh_machine": true,
     "languages": [
@@ -53214,12 +53580,22 @@
       "matched": [
         "api.typesafe.ai",
         "jev-latest",
-        "/v1/systemone"
+        "/v1/systemone",
+        "event[\"importance_confidence\"] < 0.7"
       ],
       "read_on": "2026-09-22"
     },
     "primitives_seen": [
       "choice"
+    ],
+    "observed_thresholds": [
+      {
+        "question_type": "choice",
+        "compares": "confidence",
+        "value": 0.7,
+        "decision": "below, for a routine label: mark the event's importance uncertain",
+        "source": "event[\"importance_confidence\"] < 0.7"
+      }
     ],
     "first_seen": "2026-09-22",
     "sources": [
@@ -53998,13 +54374,23 @@
       "matched": [
         "api.typesafe.ai",
         "jev-latest",
-        "/v1/systemone"
+        "/v1/systemone",
+        "STOP_THRESHOLD = 0.9"
       ],
       "read_on": "2026-09-22"
     },
     "primitives_seen": [
       "choice",
       "noul"
+    ],
+    "observed_thresholds": [
+      {
+        "question_type": "noul",
+        "compares": "probability",
+        "value": 0.9,
+        "decision": "at or above, past a minimum length: stop generating",
+        "source": "STOP_THRESHOLD = 0.9"
+      }
     ],
     "first_seen": "2026-09-22",
     "sources": [
@@ -56732,12 +57118,30 @@
       "path": "src/lib/jev-config.ts",
       "matched": [
         "type: \"noul\" as const",
-        "HIT_THRESHOLD"
+        "HIT_THRESHOLD",
+        "HIT_THRESHOLD = 0.55",
+        "NEAR_MISS_FLOOR = 0.3"
       ],
       "read_on": "2026-09-23"
     },
     "primitives_seen": [
       "noul"
+    ],
+    "observed_thresholds": [
+      {
+        "question_type": "noul",
+        "compares": "probability",
+        "value": 0.55,
+        "decision": "at or above: highlight the line as a hit",
+        "source": "HIT_THRESHOLD = 0.55"
+      },
+      {
+        "question_type": "noul",
+        "compares": "probability",
+        "value": 0.3,
+        "decision": "at or above, when no line is a hit: offer the line as a near miss",
+        "source": "NEAR_MISS_FLOOR = 0.3"
+      }
     ],
     "first_seen": "2026-09-23",
     "flags": [
@@ -64130,13 +64534,23 @@
       "matched": [
         "typesafe_sdk",
         "system_one",
-        "TypeSafeClient"
+        "TypeSafeClient",
+        "ans.confidence >= 0.6"
       ],
       "read_on": "2026-09-22"
     },
     "primitives_seen": [
       "choice",
       "noul"
+    ],
+    "observed_thresholds": [
+      {
+        "question_type": "choice",
+        "compares": "confidence",
+        "value": 0.6,
+        "decision": "at or above: reuse the existing tool instead of adding a duplicate",
+        "source": "ans.confidence >= 0.6"
+      }
     ],
     "first_seen": "2026-09-22",
     "sources": [
@@ -66201,13 +66615,31 @@
         "typesafe_sdk",
         "system_one",
         "noul",
-        "Noul"
+        "Noul",
+        "cutoff: float = 0.05",
+        "goal_threshold: float = 0.5"
       ],
       "read_on": "2026-09-22"
     },
     "primitives_seen": [
       "choice",
       "noul"
+    ],
+    "observed_thresholds": [
+      {
+        "question_type": "choice",
+        "compares": "probability",
+        "value": 0.05,
+        "decision": "at or above (default): follow the relationship in the beam search",
+        "source": "cutoff: float = 0.05"
+      },
+      {
+        "question_type": "noul",
+        "compares": "probability",
+        "value": 0.5,
+        "decision": "at or above (default): stop at the node as the goal",
+        "source": "goal_threshold: float = 0.5"
+      }
     ]
   },
   {
@@ -67085,7 +67517,10 @@
       "matched": [
         "api.typesafe.ai",
         "jev-latest",
-        "jev-1.13"
+        "jev-1.13",
+        "safeMinProbability: 0.8",
+        "hazardBlock: 0.9",
+        "hazardReview: 0.55"
       ],
       "read_on": "2026-09-22"
     },
@@ -67093,6 +67528,29 @@
       "choice",
       "score",
       "noul"
+    ],
+    "observed_thresholds": [
+      {
+        "question_type": "choice",
+        "compares": "probability",
+        "value": 0.8,
+        "decision": "at or above for safe, with the other checks: allow the command",
+        "source": "safeMinProbability: 0.8"
+      },
+      {
+        "question_type": "noul",
+        "compares": "probability",
+        "value": 0.9,
+        "decision": "at or above on a gating hazard: block the command",
+        "source": "hazardBlock: 0.9"
+      },
+      {
+        "question_type": "noul",
+        "compares": "probability",
+        "value": 0.55,
+        "decision": "at or above on a gating hazard: ask a person",
+        "source": "hazardReview: 0.55"
+      }
     ],
     "first_seen": "2026-09-22",
     "sources": [
@@ -75218,13 +75676,23 @@
       "matched": [
         "typesafe_sdk",
         "system_one",
-        "TypeSafeClient"
+        "TypeSafeClient",
+        "FIRE_THRESHOLD = 0.5"
       ],
       "read_on": "2026-09-22"
     },
     "primitives_seen": [
       "choice",
       "noul"
+    ],
+    "observed_thresholds": [
+      {
+        "question_type": "noul",
+        "compares": "probability",
+        "value": 0.5,
+        "decision": "at or above: fire",
+        "source": "FIRE_THRESHOLD = 0.5"
+      }
     ],
     "first_seen": "2026-09-22",
     "sources": [
@@ -82333,13 +82801,23 @@
       "matched": [
         "api.typesafe.ai",
         "jev-latest",
-        "/v1/systemone"
+        "/v1/systemone",
+        "doneThreshold = 0.70"
       ],
       "read_on": "2026-09-22"
     },
     "primitives_seen": [
       "choice",
       "noul"
+    ],
+    "observed_thresholds": [
+      {
+        "question_type": "noul",
+        "compares": "probability",
+        "value": 0.7,
+        "decision": "at or above: treat the task as done",
+        "source": "doneThreshold = 0.70"
+      }
     ],
     "first_seen": "2026-09-22",
     "sources": [
@@ -91636,12 +92114,22 @@
       "matched": [
         "api.typesafe.ai",
         "typesafe-ai/jev",
-        "jev-latest"
+        "jev-latest",
+        "answer.confidence < 0.9"
       ],
       "read_on": "2026-09-22"
     },
     "primitives_seen": [
       "choice"
+    ],
+    "observed_thresholds": [
+      {
+        "question_type": "choice",
+        "compares": "confidence",
+        "value": 0.9,
+        "decision": "below: leave the element alone",
+        "source": "answer.confidence < 0.9"
+      }
     ],
     "first_seen": "2026-09-22",
     "sources": [
@@ -92018,12 +92506,30 @@
       "matched": [
         "api.typesafe.ai",
         "jev-latest",
-        "/v1/systemone"
+        "/v1/systemone",
+        "KEEP_THRESHOLD = 0.5",
+        "TOOL_THRESHOLDS = { Edit: 0.35, Write: 0.35, NotebookEdit: 0.35 }"
       ],
       "read_on": "2026-09-22"
     },
     "primitives_seen": [
       "noul"
+    ],
+    "observed_thresholds": [
+      {
+        "question_type": "noul",
+        "compares": "probability",
+        "value": 0.5,
+        "decision": "at or above (default): keep the tool call or its result when compacting",
+        "source": "KEEP_THRESHOLD = 0.5"
+      },
+      {
+        "question_type": "noul",
+        "compares": "probability",
+        "value": 0.35,
+        "decision": "at or above, for edit and write calls: keep them when compacting",
+        "source": "TOOL_THRESHOLDS = { Edit: 0.35, Write: 0.35, NotebookEdit: 0.35 }"
+      }
     ],
     "first_seen": "2026-09-22",
     "sources": [

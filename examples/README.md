@@ -51,9 +51,16 @@ This is not busywork. Where the thresholds sit, whether there is one cutoff or
 two, and whether the cutoff varies by queue are **policy questions, not modelling
 questions** — they depend on what being wrong costs in your system. The docstring
 lays out the trade-offs worth weighing. The Inbox Zero entry in the catalog is
-worth a look first: it uses seven different thresholds for seven decisions,
-ranging roughly from 0.3 to 0.9, which is the honest answer to "what threshold
-should I use".
+worth a look first: it chooses a separate threshold for each of its email
+decisions, which is the honest answer to "what threshold should I use". Across
+the <!--n:threshold_rows-->33<!--/n--> catalogued rows whose cited file compares
+a Jev answer with a constant, a `noul` probability is cut anywhere from <!--n:threshold_noul_low-->0.2<!--/n-->
+to <!--n:threshold_noul_high-->0.9<!--/n--> and a `choice` confidence from <!--n:threshold_choice_low-->0.3<!--/n-->
+to <!--n:threshold_choice_high-->0.9<!--/n--> (each row's `observed_thresholds`; no person has
+yet checked <!--n:thresholds_unread-->33<!--/n--> of those rows, which a model read). They are
+what each project chose, not recommendations, and the cutoffs in
+[`04-tool-selection`](04-tool-selection/main.py) are unverified starting points,
+not taken from any of them.
 
 ## Not covered here
 

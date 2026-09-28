@@ -37,6 +37,7 @@ from classify import classify_broad, suggest  # noqa: E402
 from evidence_url import evidence_url  # noqa: E402
 from measurements import unread  # noqa: E402
 from readme.rows import esc, md_url, star_band, star_label  # noqa: E402
+import thresholds  # noqa: E402
 import wire  # noqa: E402
 
 ROOT = _stats.ROOT
@@ -416,9 +417,59 @@ def wire_unread(catalog: list[dict]) -> Section:
     )
 
 
+def threshold_cell(item: dict) -> str:
+    """One threshold as the row records it: question type, quantity, constant."""
+    return cell(f"{item.get('question_type')} {item.get('compares')} {thresholds.number(item.get('value'))}")
+
+
+def thresholds_unread(catalog: list[dict]) -> Section:
+    marked = by_band(thresholds.unread(catalog))
+    return Section(
+        key="thresholds-unread",
+        title_en="Thresholds no person has read in the cited file",
+        title_zh="尚无人在所引文件中核读的阈值",
+        about_en=(
+            "The row's `observed_thresholds` has an item without a `read_on`: a script or a model read the "
+            "cited file for the constants it compares a Jev answer with, and no person has checked since. "
+            "Each item's `source` is a string in `evidence.matched`, which the weekly `claims` run re-reads, "
+            "and its `value` is written in it; which answer the constant is compared with, and what the code "
+            "does on each side, is the reading. They are what the project chose, not recommendations. The "
+            "thresholds first recorded on 2026-09-28 were read by a model; [method.md](method.md) says how."
+        ),
+        about_zh=(
+            "该行的 `observed_thresholds` 中有条目没有 `read_on`：由脚本或模型阅读所引文件，找出其中与 Jev "
+            "答案比较的常量，此后没有人核对过。每个条目的 `source` 是 `evidence.matched` 中的一段字符串，"
+            "每周的 `claims` 任务会重读它，`value` 就写在其中；常量与哪个答案比较、两侧代码各做什么，则要靠人读。"
+            "这些是该项目自己的选择，不是推荐值。2026-09-28 首次记录的阈值由模型阅读得出，做法见 "
+            "[method.md](method.md)。"
+        ),
+        leave_en=(
+            "To take a row off, read the cited file against every item: correct `question_type`, `compares` "
+            "and `decision`, remove any item that is not a decision on a Jev answer, and set each item's "
+            "`read_on` to the day you read it (see the `observed_thresholds` field rules in "
+            "[CONTRIBUTING](../CONTRIBUTING.md#field-rules))."
+        ),
+        leave_zh=(
+            "移出方法：对照所引文件逐条核读，改正 `question_type`、`compares` 和 `decision`，删去不是基于 Jev "
+            "答案做决定的条目，再把每个条目的 `read_on` 设为核读当天（见 "
+            "[CONTRIBUTING](../CONTRIBUTING.md#field-rules) 中关于 `observed_thresholds` 的字段规则）。"
+        ),
+        columns=(("Row", "行"), ("Stars", "星标"), ("Thresholds", "阈值"), ("Cited file", "引用的文件")),
+        rows=tuple(
+            (
+                row_link(e),
+                star_label(e.get("stars")),
+                " ".join(threshold_cell(item) for item in thresholds.recorded(e)),
+                file_link(e),
+            )
+            for e in marked
+        ),
+    )
+
+
 SECTIONS = (
     examples_dir, single_model_name, tool_selection_broad_words, unsorted_overview, generic_summary, measurement_unread,
-    wire_unread,
+    wire_unread, thresholds_unread,
 )
 
 HEADER = "<!-- Written by scripts/build_review_queue.py from catalog.json. Edit those, not this file. -->"

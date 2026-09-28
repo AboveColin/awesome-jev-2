@@ -72,6 +72,10 @@ class CountsTest(unittest.TestCase):
             "measured_rows": 7030,
             "measurement_directions": {"favourable": 7031, "mixed": 7032, "not stated": 7033},
             "review_measurement_unread": 7034,
+            "threshold_rows": 7035,
+            "thresholds_recorded": 7036,
+            "review_thresholds_unread": 7037,
+            "threshold_ranges": {"noul probability": {"rows": 7038, "thresholds": 7039, "low": 0.25, "high": 0.75}},
         }
         with patch.object(_stats, "compute", return_value=fake):
             text = run_counts()
@@ -95,6 +99,8 @@ class CountsTest(unittest.TestCase):
             "citations      7027 of 7028 rows with a GitHub repository linked by at least one sibling directory",
             "measurements   7030 benchmark rows index their author's measurement (author-stated directions: "
             "favourable 7031, mixed 7032, not stated 7033), 7034 not read by a person",
+            "thresholds     7036 constants on 7035 rows compared with a Jev answer (observed_thresholds; "
+            "observations, not recommendations), 7037 rows not read by a person: noul probability 0.25–0.75 (7038 rows)",
             "next changes at 7,100 entries",
             "  7,000+ public resources for Jev",
         ):
