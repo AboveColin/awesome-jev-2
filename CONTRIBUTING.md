@@ -541,6 +541,21 @@ reference stays searchable. `retired.json` is kept in slug order too, so run
 `scripts/check_links.py` finds them but deliberately never moves them; that
 judgement is a person's.
 
+## Updating what the status page watches
+
+[`watch.json`](watch.json) holds the open questions at the end of
+[`docs/status.md`](docs/status.md) and how each is tracked. A question with a
+`signal` of `independent-reports` or `alternatives-matching` is counted from
+`catalog.json`, so nothing needs editing when rows change. A `listed-rows` item
+names its rows by slug, since no field records the topic: add a row there when
+it belongs, and the generator fails if a listed slug leaves `catalog.json`. A
+`manual` item is a reading of one source (`url`): when you re-read it, update
+`status_en` and `status_zh`, set `as_of` to the day you read it, and set
+`checked_by` to `person` (`model` marks a reading no person has confirmed).
+Keep the English and Chinese in step, and mark model-written Chinese with
+`zh_machine`. `scripts/build_watch.py` regenerates the table; like every
+generated file, it may be left to the bot.
+
 ## Adding a pattern
 
 A pattern earns a heading once **two independent real examples** exist. Adding

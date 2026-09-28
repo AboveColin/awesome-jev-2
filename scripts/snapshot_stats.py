@@ -12,6 +12,8 @@ history/<date>.json, named by the UTC date it runs, holding
     (_stats.shape(), the breakdowns docs/shape.md and counts.py print);
   * `rows`: each row's slug, stars, repo_license and flags, the facts the
     weekly refresh moves, so a later reader can say which rows changed;
+  * `watch`: the value of each question watch.json counts (scripts/watch.py),
+    which docs/status.md's "What to watch" states its recent change against;
 
 under a header that says it is generated. Only metadata.yml runs it, after the
 refresh and before its commit, so every snapshot is the state that refresh
@@ -46,6 +48,7 @@ import tempfile
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 
 import _stats  # noqa: E402
+import watch  # noqa: E402
 
 ROOT = _stats.ROOT
 DIR = "history"
@@ -55,7 +58,8 @@ ABOUT = [
     "Generated, never edited by hand, and not a source of truth: catalog.json is. One file per weekly refresh, "
     "named by the UTC date it ran; a later file never rewrites an earlier one.",
     "stats: every number _stats.compute() published that day. counts: rows per kind, pattern, flag, language and "
-    "declared licence (_stats.shape()). rows: each row's slug, stars, repo_license and flags.",
+    "declared licence (_stats.shape()). watch: each question watch.json counts, as scripts/watch.py counted it. "
+    "rows: each row's slug, stars, repo_license and flags.",
     "Stars are GitHub's count at the refresh: a popularity signal, not a quality verdict.",
 ]
 COUNTS = {"kinds": "kinds", "patterns": "by_pattern", "flags": "flags", "languages": "languages", "licences": "licences"}
@@ -75,9 +79,11 @@ def row_facts(entry: dict) -> dict:
 
 
 def snapshot(catalog: list[dict], patterns: list[dict], compat: dict, schema: dict, *, date: str,
-             stats: dict) -> dict:
-    """One snapshot, from the files it is handed and compute()'s stats."""
+             stats: dict, watched: dict | None = None) -> dict:
+    """One snapshot, from the files it is handed, compute()'s stats and
+    watch.values() (left out when None)."""
     shape = _stats.shape(catalog, patterns, compat, schema)
+    extra = {} if watched is None else {"watch": watched}
     return {
         "generated": True,
         "source": SOURCE,
@@ -85,6 +91,7 @@ def snapshot(catalog: list[dict], patterns: list[dict], compat: dict, schema: di
         "date": date,
         "stats": stats,
         "counts": {name: shape[key] for name, key in COUNTS.items()},
+        **extra,
         "rows": [row_facts(e) for e in sorted(catalog, key=lambda e: e["slug"])],
     }
 
@@ -118,6 +125,9 @@ def problems(name: str, payload: object) -> list[str]:
         isinstance(v, dict) and all(isinstance(n, int) for n in v.values()) for v in counts.values()
     ):
         found.append(f"{name}: counts must map each of {', '.join(COUNTS)} to counts")
+    watched = payload.get("watch", {})
+    if not isinstance(watched, dict) or not all(isinstance(k, str) and isinstance(v, int) for k, v in watched.items()):
+        found.append(f"{name}: watch must map question ids to counts")
     rows = payload.get("rows")
     slugs = [r.get("slug") for r in rows] if isinstance(rows, list) and all(isinstance(r, dict) for r in rows) else None
     if slugs is None or slugs != sorted(set(slugs)) or any(set(r) - set(ROW_FIELDS) for r in rows):
@@ -179,7 +189,8 @@ def main(argv: list[str] | None = None) -> int:
               file=sys.stderr)
         return 1
     catalog, _retired, patterns, compat, schema = _stats.load()
-    text = render(snapshot(catalog, patterns, compat, schema, date=date, stats=_stats.compute()))
+    watched = watch.values(watch.load(), catalog)
+    text = render(snapshot(catalog, patterns, compat, schema, date=date, stats=_stats.compute(), watched=watched))
     path = args.history / f"{date}.json"
     before = path.read_text(encoding="utf-8") if path.exists() else None
     if before != text:

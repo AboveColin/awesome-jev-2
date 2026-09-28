@@ -2,7 +2,8 @@
 """Run every generator, so a tree's generated files match its sources.
 
 The sources are catalog.json, retired.json, compat.json, patterns.json,
-taxonomy.json and collections.json, and the example code under examples/.
+taxonomy.json, collections.json and watch.json, the example code under
+examples/, and the weekly refresh's snapshots in history/.
 Everything listed in OUTPUTS below is derived from them, whole or in marked
 blocks, and is never edited by hand.
 
@@ -44,6 +45,7 @@ GENERATORS = (
     ("build_benchmarks.py", "docs/benchmarks.md and docs/benchmarks.zh-CN.md, the benchmark rows' measurements side by side"),
     ("zh_audit.py", "docs/zh-queue.md, the machine-translated Chinese summaries for a person to replace"),
     ("build_shape.py", "docs/shape.md and docs/shape.zh-CN.md, the catalogue's shape as a dataset"),
+    ("build_watch.py", "the What to watch table in docs/status.md, from watch.json"),
     ("build_examples_index.py", "examples/index.json, the examples by decision pattern for the MCP server's prompt"),
 )
 

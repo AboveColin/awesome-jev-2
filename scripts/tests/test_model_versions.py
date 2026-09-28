@@ -265,7 +265,7 @@ class LintDocsTest(unittest.TestCase):
         files = set(lint_docs.fact_file_list(lint_docs.hand_written_files()))
         wanted = set(lint_docs.tracked("src/**/*.py", "skills/**/*.md", "examples/**/*.py", "site/*.mjs"))
         wanted |= {"collections.json", "patterns.json", "taxonomy.json", "schema/entry.schema.json",
-                   "site/index.html", "llms.txt"}
+                   "site/index.html", "llms.txt", "watch.json"}
         self.assertTrue({"skills/awesome-jev/SKILL.md", "src/awesome_jev_mcp/query.py"} <= wanted)
         self.assertEqual(wanted - files, set())
         # compat.json is the source, checked by its own rule (check_compat_prose);

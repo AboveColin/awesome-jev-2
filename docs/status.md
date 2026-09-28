@@ -4,7 +4,8 @@ This page has two halves that age differently. The first is regenerated from
 `catalog.json` by `scripts/build_docs.py` on every build, so it is current by
 construction. The second is a dated snapshot, written at **2026-09-22** — a week
 after the model entered early access on 2026-09-15 — and is meant to age; that
-is the point of dating it.
+is the point of dating it. Its last section, the questions it left open, is a
+table regenerated like the first half, each reading in it dated on its own.
 
 ## The catalogue, now
 
@@ -183,12 +184,22 @@ source of confusion.
 
 ## What to watch
 
-- Whether independent benchmarks accumulate, and whether they keep landing on
-  "cheap but comparable" rather than "better".
-- Whether the option-ordering sensitivity reproduces. If it does, option order
-  becomes part of everyone's prompt-freezing discipline.
-- Whether a paper appears.
-- Whether the alternatives converge on the wire format well enough that patterns
-  really do become portable, calibration aside.
-- Whether rate limits and pricing settle. The docs currently carry an explicit
-  warning that limits can change without notice.
+The questions the snapshot above left open, and what can be said about each
+since. A number in the table is counted from `catalog.json` when the page is
+regenerated; a status is a reading of its source, dated and marked as a
+person's or a model's. A recent change is counted from the snapshot before the
+newest in [`history/`](../history/) (the newest is the latest weekly refresh's
+own), or, until there are two, over the newest week of `first_seen` dates, and
+either way names its dates. The questions, how each is tracked and the dated
+readings live in [`watch.json`](../watch.json); `scripts/build_watch.py`
+writes the table.
+
+<!-- watch:start -->
+| Question | Now | Recent change | How it is tracked |
+| --- | --- | --- | --- |
+| Whether independent benchmarks accumulate, and whether they keep landing on "cheap but comparable" rather than "better". | **70** independent reports ([on the site](https://kydlikebtc.github.io/awesome-jev/?indep=1&lang=en)); directions their authors state, not reproduced here: favourable 1, mixed 12, unfavourable 3, inconclusive 1, none recorded 53 | +70 first seen 2026-09-18 to 2026-09-24 (history/ does not yet hold two snapshots) | Benchmark rows not flagged vendor-reported, and the directions their authors state in the rows' measurement: author-stated, not reproduced here. A row without a measurement, or whose measurement states none, counts as none recorded. |
+| Whether the option-ordering sensitivity reproduces. If it does, option order becomes part of everyone's prompt-freezing discipline. | [Probing Jev's behaviour with repeated API calls](https://kydlikebtc.github.io/awesome-jev/?lang=en#ahastudio-til-jev-probing), [pijev](https://kydlikebtc.github.io/awesome-jev/?lang=en#pijev-typellm). No independent reproduction is recorded: one listed row reports the effect, the other averages answers over option orderings to guard against it. (read by a model, not yet by a person, 2026-09-28) | — (a reading, dated in the cell before) | Rows listed in watch.json as reporting or addressing option-order sensitivity; no field in the catalogue records it, so a new such row counts only once someone adds it there. |
+| Whether a paper appears. | None linked: the documentation's index links no paper, and its AI primer names the training path (RLCD) without linking one. (read by a model, not yet by a person, 2026-09-28; [source](https://docs.typesafe.ai/introduction/machine-learning-primer)) | — (a reading, dated in the cell before) | A reading at the source: whether the vendor's documentation links a paper on the training method. |
+| Whether the alternatives converge on the wire format well enough that patterns really do become portable, calibration aside. | **37** of the 54 alternatives citing a file ([on the site](https://kydlikebtc.github.io/awesome-jev/?k=alternative&lang=en)) | +37 first seen 2026-09-18 to 2026-09-24 (history/ does not yet hold two snapshots) | A proxy: of the kind: alternative rows citing a file, those whose evidence.matched strings include /v1/systemone. It says the endpoint path is the same, not that the request or answer shapes match, and nothing about calibration. |
+| Whether rate limits and pricing settle. | Not yet: the models page still warns that rate limits are adjusting dynamically and can change without notice. (read by a model, not yet by a person, 2026-09-28; [source](https://docs.typesafe.ai/models)) | — (a reading, dated in the cell before) | A reading at the source: whether the vendor's models page still says its limits can change without notice. |
+<!-- watch:end -->

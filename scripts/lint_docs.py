@@ -343,10 +343,11 @@ def check_leading_markers(rel: str, text: str) -> list[str]:
 # 2026-09-28 also the hand-written prose the site and the MCP server serve
 # from JSON — the curated collections' reasons and cautions, the pattern and
 # label blurbs, the entry schema's field descriptions — and the site's
-# script module; none states a vendor fact today, and this keeps it so.
+# script module; none states a vendor fact today, and this keeps it so. Also
+# watch.json, whose dated readings of the vendor's pages the status page shows.
 EXTRA_FACT_FILES = (
     "examples/*.py", "docs/assets/*.svg", "src/**/*.py", ".claude-plugin/**", ".github/ISSUE_TEMPLATE/*",
-    "collections.json", "patterns.json", "taxonomy.json", "schema/*.json", "site/*.mjs",
+    "collections.json", "patterns.json", "taxonomy.json", "schema/*.json", "site/*.mjs", "watch.json",
 )
 
 
