@@ -314,22 +314,26 @@ them, rows flagged `shadow-mode-only` included, which a default search leaves
 out; `list_patterns` counts them per pattern.
 
 Of the seven rows the proposal named, reading each source the same day (a
-model, as above) gave five. hermes-agent-jev-evaluation,
-worldmonitor-shadow-mode and no-mistakes-review-context are benchmarks whose
-authors conclude against Jev, so their direction is `unfavourable`.
-hermes-jev-skills, a plugin, published a handoff use it measured and dropped
-(its README: a handoff written from Jev's digest recalled less than one written
-from the plain transcript), and jev-skill-router, a plugin whose author
+model, as above) gave four negative results; a fifth row, outside the seven,
+was found in the same reading.
+hermes-agent-jev-evaluation, worldmonitor-shadow-mode and
+no-mistakes-review-context are benchmarks whose authors conclude against Jev,
+so their direction is `unfavourable`. hermes-jev-skills, a plugin, published a
+handoff use it measured and dropped (its README: a handoff written from Jev's
+digest recalled less than one written from the plain transcript) and got the
+flag. So did the fifth, jev-skill-router, a plugin whose author ran it,
 published that it is unlikely to help a strong model and keeps it in shadow
-mode, got the flag, with a `notes` line citing the author's write-up.
-ahastudio-til-jev-probing states no conclusion against Jev (it summarises
-another author's probing), so it has no direction and is not a negative
-result; nearhere-three-way-comparison's post answers only behind a JavaScript
-challenge, so it was not read; jev-orderby-bench, below five stars and mixed
-in its own words, was left for a person. A scan of every other row's summary
-and notes for measurement words found no further row whose author reports
-measuring and not adopting. No flag was set from a reading of an author's
-numbers alone.
+mode, with a `notes` line citing its README's measurements and the author's
+write-up. ahastudio-til-jev-probing states no conclusion against Jev (it
+summarises another author's probing), so it has no direction and is not a
+negative result; nearhere-three-way-comparison's post answers only behind a
+JavaScript challenge, so it was not read; jev-orderby-bench, below five stars
+and mixed in its own words, was left for a person. A scan of every other
+row's summary and notes for measurement words found no further row whose
+author reports measuring and not adopting. No flag was set from a
+reading of an author's numbers alone. The flag marks a whole row, not one use:
+hermes-jev-skills keeps Jev for its other uses, and `list_patterns` counts it
+as a negative result under every pattern the row files under.
 
 ## Discovery is crowdsourced, verification is not
 
