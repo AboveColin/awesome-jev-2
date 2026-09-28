@@ -120,7 +120,10 @@ class SignalTest(unittest.TestCase):
         for history in ((), (snap("2026-10-07", {"reports": 1}),), (snap("2026-10-07", {}), snap("2026-10-14", {}))):
             with self.subTest(snapshots=len(history)):
                 text = watch.change(COUNTED, ROWS, history, 2)
-                self.assertEqual(text, "+1 first seen 2026-09-18 to 2026-09-24 (history/ does not yet hold two snapshots)")
+                self.assertEqual(
+                    text, "+1 first seen 2026-09-18 to 2026-09-24 (history/ does not yet hold this count from two "
+                    "snapshots)"
+                )
 
     def test_then_the_snapshot_before_the_newest(self):
         history = (snap("2026-10-07", {"reports": 5}), snap("2026-10-14", {"reports": 6}),
@@ -143,6 +146,33 @@ class RenderTest(unittest.TestCase):
         self.assertIn("None yet. (read by a person, 2026-09-20; [source](https://docs.example/p))", text)
         self.assertIn("[A](https://kydlikebtc.github.io/awesome-jev/?lang=en#a). None yet. (read by a model, not yet by a "
                       "person, 2026-09-20)", text)
+
+    def test_listed_rows_carry_their_caveats_and_a_negative_result(self):
+        # Caveat flags travel with every row on every surface, and a negative
+        # result is said as such (B27), here as on the status page's list.
+        rows = [row("a", flags=["unverified-claims", "no-license"]),
+                row("n", kind="plugin", flags=["negative-result", "archived"], notes="recall fell, see PR #1")]
+        text = watch.render({"items": [{**LISTED, "rows": ["a", "n"]}]}, rows)
+        self.assertIn("[A](https://kydlikebtc.github.io/awesome-jev/?lang=en#a) (caveats: `no-license`, "
+                      "`unverified-claims`)", text)
+        self.assertIn("#n) (caveats: `archived`; negative result, author-stated, not reproduced here)", text)
+        self.assertNotIn("`negative-result`", text)
+        real = watch.render(SPEC, CATALOG)
+        for item in SPEC["items"]:
+            for slug in item.get("rows") or []:
+                entry = next(e for e in CATALOG if e["slug"] == slug)
+                for flag in entry.get("flags") or []:
+                    with self.subTest(slug=slug, flag=flag):
+                        self.assertIn(f"`{flag}`", real)
+
+    def test_directions_no_person_has_read_are_counted_as_such(self):
+        rows = [*ROWS, row("r", kind="benchmark", measurement={"task": "t", "direction": "favourable",
+                                                                "read_on": "2026-09-25"})]
+        text = watch.render({"items": [COUNTED]}, rows)
+        self.assertIn("favourable 1, mixed 1, none recorded 1; 1 of these 2 directions not yet read against the "
+                      "report by a person ([review queue](review-queue.md#measurement-unread))", text)
+        read = [e for e in rows if e["slug"] != "a"]
+        self.assertNotIn("not yet read against the report", watch.render({"items": [COUNTED]}, read))
 
     def test_readings_are_never_presented_as_counts_and_dates_are_absolute(self):
         text = watch.render(SPEC, CATALOG)

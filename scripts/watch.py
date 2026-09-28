@@ -154,7 +154,7 @@ def change(item: dict, catalog: list[dict], history, now: int) -> str:
     if not week:
         return "—"
     new = sum(1 for e in catalog if matches(item, e) and week[0] <= e.get("first_seen", "") <= week[1])
-    return f"{new:+d} first seen {week[0]} to {week[1]} (history/ does not yet hold two snapshots)"
+    return f"{new:+d} first seen {week[0]} to {week[1]} (history/ does not yet hold this count from two snapshots)"
 
 
 def reading(item: dict) -> str:
@@ -165,7 +165,19 @@ def reading(item: dict) -> str:
 
 
 def row_link(entry: dict) -> str:
-    return f"[{entry['title']}]({SITE}?lang=en#{entry['slug']})"
+    """A listed row with its caveat flags, in taxonomy order (they travel with
+    every row on every surface), and, when its own author concluded against
+    Jev, that too."""
+    from readme.rows import FLAG_ORDER
+
+    query = load_query()
+    flags = entry.get("flags") or []
+    notes = [f"`{flag}`" for flag in FLAG_ORDER if flag in flags and flag != query.NEGATIVE_FLAG]
+    bits = [f"caveats: {', '.join(notes)}"] if notes else []
+    if query.is_negative_result(entry):
+        bits.append("negative result, author-stated, not reproduced here")
+    suffix = f" ({'; '.join(bits)})" if bits else ""
+    return f"[{entry['title']}]({SITE}?lang=en#{entry['slug']}){suffix}"
 
 
 def now_cell(item: dict, catalog: list[dict]) -> str:
@@ -177,9 +189,17 @@ def now_cell(item: dict, catalog: list[dict]) -> str:
         stated = [(query.measurement_of(e) or {}).get("direction") for e in rows]
         parts = [f"{d} {stated.count(d)}" for d in query.DIRECTIONS if stated.count(d)]
         parts.append(f"none recorded {sum(1 for d in stated if d not in query.DIRECTIONS)}")
+        # A direction indexed from the report but not yet read against it by a
+        # person (no measurement.read_on) is a model's or a script's reading.
+        directed = [e for e in rows if (query.measurement_of(e) or {}).get("direction") in query.DIRECTIONS]
+        unread = sum(1 for e in directed if not query.measurement_of(e).get("read_on"))
+        unread_note = (
+            f"; {unread} of these {len(directed)} directions not yet read against the report by a person "
+            f"([review queue](review-queue.md#measurement-unread))" if unread else ""
+        )
         return (
             f"**{len(rows)}** independent reports ([on the site]({SITE}?indep=1&lang=en)); directions their "
-            f"authors state, not reproduced here: {', '.join(parts)}"
+            f"authors state, not reproduced here: {', '.join(parts)}{unread_note}"
         )
     if signal == "alternatives-matching":
         cited = [e for e in catalog if e.get("kind") == ALTERNATIVE and e.get("evidence")]
