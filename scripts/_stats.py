@@ -19,6 +19,7 @@ from collections import Counter
 from classify import classify_broad, suggest
 from measurements import directions as measurement_directions
 from measurements import measured, negative, unread
+from platform_values import load_query
 from sibling_lists import citations_of, own_repository
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
@@ -363,6 +364,21 @@ def authors(catalog: list[dict]) -> dict[str, int]:
     }
 
 
+def evidence_ladder(catalog: list[dict], key: str | None = None) -> dict[str, int]:
+    """What the catalogue records about the rows filed under pattern `key`:
+    TypeSafe AI's documentation pages, the cited file by evidence.kind,
+    independent reports, negative results and rows citing no file. Reports
+    counted, not a verdict. The definition is the MCP server's
+    (query.evidence_ladder), so list_patterns, the Pages API, docs/shape.md
+    and the pattern pages print the same numbers."""
+    return load_query().evidence_ladder(catalog, key)
+
+
+def ladder_by_pattern(catalog: list[dict], patterns: list[dict]) -> dict[str, dict[str, int]]:
+    """evidence_ladder() for every pattern, in patterns.json's order."""
+    return {p["key"]: evidence_ladder(catalog, p["key"]) for p in patterns}
+
+
 def shape(catalog: list[dict], patterns: list[dict], compat: dict, schema: dict) -> dict:
     """Every breakdown docs/shape.md, counts.py and the history/ snapshots
     print, from the files they are handed."""
@@ -389,6 +405,12 @@ def shape(catalog: list[dict], patterns: list[dict], compat: dict, schema: dict)
         "multi_pattern_rows": sum(1 for e in catalog if len(set(e["patterns"])) > 1),
         "pattern_pairs": pattern_pairs(catalog, patterns),
         "authors": authors(catalog),
+        "evidence_by_pattern": ladder_by_pattern(catalog, patterns),
+        # Independent reports filed under `overview` and no other pattern:
+        # the table above cannot count them for the decision they measured.
+        "overview_only_reports": sum(
+            1 for e in catalog if e["patterns"] == [OVERVIEW] and load_query().is_independent_report(e)
+        ),
     }
 
 

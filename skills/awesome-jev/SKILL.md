@@ -84,7 +84,10 @@ If the MCP server is available, prefer it over guessing:
   shares its catalogue value with another route, so a row listed there may use
   that other route
 - `list_patterns()` — the taxonomy, including which decisions nobody has
-  published an example of
+  published an example of, and per pattern what the catalogue records about
+  its rows (`evidence`: documentation pages, cited files by kind, independent
+  reports, negative results, rows citing no file) — reports counted, not a
+  verdict
 
 It also serves resources, for a client that reads them:
 

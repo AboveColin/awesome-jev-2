@@ -55,6 +55,28 @@ TEXT = {
             "verdict, and nothing here was run or reproduced by this repository. `python3 scripts/counts.py` "
             "prints the same numbers as text; the headline figures are on [the status page](status.md)."
         ),
+        "evidence_h": "Evidence by decision pattern",
+        "evidence_intro": (
+            "What the catalogue records about the rows filed under each pattern: reports counted, not a "
+            "verdict. A row counts in every column that applies and under every pattern it is filed under. "
+            "**Official documentation** is TypeSafe AI's own documentation pages (`kind: official-docs`). "
+            "**Call site**, **wire shape** and **example only** count rows citing a file, by what "
+            "`evidence.kind` records it shows: where the project calls Jev; a file speaking Jev's request "
+            "shape rather than building on Jev; only an example the project ships. **Independent reports** "
+            "are benchmark rows not flagged `vendor-reported`: their authors' measurements, not reproduced by "
+            "this repository. **Negative results** are rows whose own author measured Jev for the use and "
+            "concluded against it (author-stated; [listed on the status page](status.md#negative-results)). "
+            "**No file cited** counts rows with no `evidence` (`evidence_none` may say why). The MCP server's "
+            "`list_patterns` and each pattern's page give the same numbers."
+        ),
+        "overview_reports": (
+            "{n} independent reports are filed under `overview` and no other pattern, so this table cannot "
+            "count them for the decision they measured until a person files them under it."
+        ),
+        "ladder_cols": (
+            "Rows", "Official documentation", "Call site", "Wire shape", "Example only", "Independent reports",
+            "Negative results", "No file cited",
+        ),
         "languages_h": "Languages",
         "languages_intro": (
             "Rows recording each language (`languages`; a row may record several). {none} rows record none."
@@ -137,6 +159,21 @@ TEXT = {
             "而不是整个生态。star 区间是热度信号，不是质量结论；这里的一切都没有被本仓库运行或复现。"
             "`python3 scripts/counts.py` 以文本形式打印同样的数字；主要数字见[状态页](status.md)。"
         ),
+        "evidence_h": "按决策模式看证据",
+        "evidence_intro": (
+            "目录对归入每个模式的行记录了什么：只是计数，不是结论。一行在所有适用的列里都计数，归入几个模式就在几个模式下计数。"
+            "**官方文档**是 TypeSafe AI 自己的文档页（`kind: official-docs`）。**调用点**、**接口形态**和**仅示例**"
+            "按 `evidence.kind` 记录的文件内容，统计引用了文件的行：项目调用 Jev 的位置；只采用了 Jev 的请求结构、"
+            "并非基于 Jev 构建的文件；项目附带的示例。**独立报告**是没有标 `vendor-reported` 的基准测试行："
+            "测量是其作者的，未经本仓库复现。**负面结果**是作者本人为该用途测过 Jev 后决定不用的行"
+            "（作者自述；[在状态页列出](status.md#negative-results)）。**未引用文件**统计没有 `evidence` 的行"
+            "（`evidence_none` 可能说明了原因）。MCP server 的 `list_patterns` 和每个模式的页面给出同样的数字。"
+        ),
+        "overview_reports": (
+            "有 {n} 份独立报告只归入了 `overview`、没有归入任何其他模式，所以在有人把它们归入所测的决策之前，"
+            "这张表无法把它们计入那个决策。"
+        ),
+        "ladder_cols": ("行数", "官方文档", "调用点", "接口形态", "仅示例", "独立报告", "负面结果", "未引用文件"),
         "languages_h": "语言",
         "languages_intro": "记录了每种语言的行数（`languages`；一行可以记录多种语言）。有 {none} 行没有记录语言。",
         "language": "语言",
@@ -229,6 +266,19 @@ def pattern_name(patterns: list[dict], key: str, lang: str) -> str:
     return f"[{name}](by-pattern/{page_name(key, lang)})"
 
 
+def evidence_section(shape: dict, patterns: list[dict], lang: str) -> list[str]:
+    """The pattern x evidence matrix (_stats.evidence_ladder, the MCP server's own definition)."""
+    text = TEXT[lang]
+    rows = [
+        [pattern_name(patterns, key, lang), *ladder.values()] for key, ladder in shape["evidence_by_pattern"].items()
+    ]
+    out = [f"## {text['evidence_h']}", "", text["evidence_intro"], ""]
+    out += table([text["pattern"], *text["ladder_cols"]], rows)
+    if shape["overview_only_reports"]:
+        out += ["", text["overview_reports"].format(n=shape["overview_only_reports"])]
+    return out
+
+
 def languages_section(shape: dict, lang: str) -> list[str]:
     text = TEXT[lang]
     out = [f"## {text['languages_h']}", "", text["languages_intro"].format(none=shape["rows_without_language"]), ""]
@@ -300,6 +350,7 @@ def render(inputs: Inputs, lang: str) -> str:
         out += [text["provenance"], ""]
     out += [text["intro"].format(last_sweep=_stats.newest_check(inputs.catalog)), ""]
     for section in (
+        evidence_section(shape, inputs.patterns, lang),
         languages_section(shape, lang),
         platforms_section(shape, inputs.compat, lang),
         [f"## {text['licences_h']}", "", text["licences"]],

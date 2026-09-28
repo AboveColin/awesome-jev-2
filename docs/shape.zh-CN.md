@@ -8,6 +8,33 @@
 
 把本目录当作一个数据集来描述的计数，每当 `catalog.json` 变化就重新生成；其背后最新一次链接检查的日期是 **2026-09-24**。这些数字描述的是目录收录了什么——即经由兄弟目录、本仓库的发现流程和贡献者进入目录的内容——而不是整个生态。star 区间是热度信号，不是质量结论；这里的一切都没有被本仓库运行或复现。`python3 scripts/counts.py` 以文本形式打印同样的数字；主要数字见[状态页](status.md)。
 
+## 按决策模式看证据
+
+目录对归入每个模式的行记录了什么：只是计数，不是结论。一行在所有适用的列里都计数，归入几个模式就在几个模式下计数。**官方文档**是 TypeSafe AI 自己的文档页（`kind: official-docs`）。**调用点**、**接口形态**和**仅示例**按 `evidence.kind` 记录的文件内容，统计引用了文件的行：项目调用 Jev 的位置；只采用了 Jev 的请求结构、并非基于 Jev 构建的文件；项目附带的示例。**独立报告**是没有标 `vendor-reported` 的基准测试行：测量是其作者的，未经本仓库复现。**负面结果**是作者本人为该用途测过 Jev 后决定不用的行（作者自述；[在状态页列出](status.md#negative-results)）。**未引用文件**统计没有 `evidence` 的行（`evidence_none` 可能说明了原因）。MCP server 的 `list_patterns` 和每个模式的页面给出同样的数字。
+
+| 模式 | 行数 | 官方文档 | 调用点 | 接口形态 | 仅示例 | 独立报告 | 负面结果 | 未引用文件 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| [工具选择](by-pattern/tool-selection.zh-CN.md) | 230 | 3 | 222 | 4 | 0 | 12 | 1 | 4 |
+| [意图路由](by-pattern/intent-routing.zh-CN.md) | 35 | 3 | 25 | 0 | 0 | 2 | 0 | 10 |
+| [上下文压缩](by-pattern/context-compaction.zh-CN.md) | 34 | 0 | 34 | 0 | 0 | 2 | 2 | 0 |
+| [安全闸门](by-pattern/safety-gating.zh-CN.md) | 138 | 2 | 133 | 1 | 0 | 10 | 0 | 4 |
+| [输出校验](by-pattern/output-validation.zh-CN.md) | 134 | 2 | 129 | 1 | 0 | 11 | 0 | 4 |
+| [重试控制](by-pattern/retry-control.zh-CN.md) | 6 | 0 | 6 | 0 | 0 | 0 | 0 | 0 |
+| [人工升级](by-pattern/human-escalation.zh-CN.md) | 67 | 7 | 53 | 4 | 0 | 9 | 0 | 10 |
+| [模型路由](by-pattern/model-routing.zh-CN.md) | 43 | 2 | 38 | 0 | 0 | 0 | 1 | 5 |
+| [并行扇出](by-pattern/fan-out.zh-CN.md) | 32 | 3 | 25 | 1 | 0 | 1 | 0 | 6 |
+| [检索与排序](by-pattern/search-ranking.zh-CN.md) | 64 | 3 | 60 | 0 | 0 | 6 | 1 | 4 |
+| [结构化抽取](by-pattern/data-extraction.zh-CN.md) | 16 | 4 | 12 | 0 | 0 | 1 | 0 | 4 |
+| [分类](by-pattern/classification.zh-CN.md) | 119 | 4 | 109 | 1 | 0 | 11 | 1 | 9 |
+| [机器学习特征抽取](by-pattern/feature-extraction.zh-CN.md) | 8 | 1 | 7 | 0 | 0 | 0 | 0 | 1 |
+| [文档分拣](by-pattern/document-triage.zh-CN.md) | 20 | 0 | 19 | 0 | 0 | 2 | 0 | 1 |
+| [工单分拣](by-pattern/support-triage.zh-CN.md) | 8 | 1 | 4 | 0 | 0 | 0 | 0 | 4 |
+| [内容评分](by-pattern/content-scoring.zh-CN.md) | 164 | 2 | 155 | 5 | 0 | 9 | 1 | 4 |
+| [实时推荐](by-pattern/recommendation.zh-CN.md) | 1 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
+| [总览](by-pattern/overview.zh-CN.md) | 451 | 6 | 370 | 45 | 0 | 23 | 1 | 36 |
+
+有 23 份独立报告只归入了 `overview`、没有归入任何其他模式，所以在有人把它们归入所测的决策之前，这张表无法把它们计入那个决策。
+
 ## 语言
 
 记录了每种语言的行数（`languages`；一行可以记录多种语言）。有 28 行没有记录语言。

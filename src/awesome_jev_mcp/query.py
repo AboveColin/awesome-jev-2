@@ -103,6 +103,31 @@ OUTCOME_NOTES = {
     ),
 }
 
+# What the catalogue records about the rows filed under a decision pattern,
+# counted: TypeSafe AI's own documentation pages, the file a row cites (by
+# evidence.kind: a call site, a file speaking Jev's request shape, only an
+# example), independent reports (is_independent_report), negative results
+# (is_negative_result) and rows citing no file. Counts of records, never a
+# verdict: a row may count in several columns, and none of it was reproduced
+# here. list_patterns, the Pages API index, docs/shape.md and every
+# docs/by-pattern/ page print these numbers; scripts/_stats.py reads them
+# from here, so there is one definition.
+OFFICIAL_DOCS = "official-docs"
+EVIDENCE_KINDS = ("call-site", "wire-shape", "example-only")
+LADDER = (
+    "total", "official_docs", "call_site", "wire_shape", "example_only", "independent_reports",
+    "negative_results", "no_file_cited",
+)
+EVIDENCE_NOTE = (
+    "Reports counted, not a verdict: evidence counts what the catalogue records about the rows filed under "
+    "each pattern, and a row may count in several. official_docs: TypeSafe AI's own documentation pages "
+    "(kind official-docs). call_site, wire_shape, example_only: rows citing a file, by evidence.kind (a call "
+    "site; a file speaking Jev's request shape rather than building on Jev; only an example the project ships). "
+    "independent_reports: benchmark rows not flagged vendor-reported, whose measurements are their authors', "
+    "not reproduced by this repository. negative_results: rows whose own author concluded against Jev for the "
+    "use (author-stated). no_file_cited: rows citing no file (evidence_none may say why)."
+)
+
 NOUL_WARNING = (
     "`noul` answers carry no confidence field on any surface — the probability "
     "is the answer. A helper reading .confidence uniformly returns nothing for "
@@ -183,6 +208,32 @@ def is_independent_report(entry: dict) -> bool:
     claimed", docs/benchmarks.md's Independent column and the site's
     independent-reports toggle (isIndependentReport in site/catalog-core.mjs)."""
     return entry.get("kind") == BENCHMARK and "vendor-reported" not in (entry.get("flags") or [])
+
+
+def evidence_kind(entry: dict) -> str | None:
+    """What the file a row cites shows (EVIDENCE_KINDS; a record without
+    `kind` is a call site), or None for a row citing no file."""
+    evidence = entry.get("evidence")
+    if not evidence:
+        return None
+    return evidence.get("kind") or "call-site"
+
+
+def evidence_ladder(rows: list[dict], key: str | None = None) -> dict[str, int]:
+    """The LADDER counts over the rows filed under pattern `key` (every row
+    when `key` is None). Records counted, not a verdict (EVIDENCE_NOTE)."""
+    picked = [e for e in rows if key is None or key in (e.get("patterns") or [])]
+    kinds = [evidence_kind(e) for e in picked]
+    return {
+        "total": len(picked),
+        "official_docs": sum(1 for e in picked if e.get("kind") == OFFICIAL_DOCS),
+        "call_site": kinds.count("call-site"),
+        "wire_shape": kinds.count("wire-shape"),
+        "example_only": kinds.count("example-only"),
+        "independent_reports": sum(1 for e in picked if is_independent_report(e)),
+        "negative_results": sum(1 for e in picked if is_negative_result(e)),
+        "no_file_cited": kinds.count(None),
+    }
 
 
 def _names_match(names: object, asked: str) -> bool:
@@ -486,28 +537,22 @@ def find_example(rows: list[dict], slug: str, flags: list[dict] = ()) -> dict[st
 
 def pattern_counts(rows: list[dict], patterns: list[dict]) -> dict[str, Any]:
     """list_patterns' answer: the taxonomy in its own order, each pattern with
-    how many rows file under it (every row, caveats or not) and how many of
-    those are negative results (is_negative_result)."""
-    counts: dict[str, int] = {}
-    negative: dict[str, int] = {}
-    for entry in rows:
-        for key in entry["patterns"]:
-            counts[key] = counts.get(key, 0) + 1
-            if is_negative_result(entry):
-                negative[key] = negative.get(key, 0) + 1
-    return {
-        "patterns": [
-            {
-                "key": p["key"],
-                "name": p["en"],
-                "description": p["blurb_en"],
-                "examples": counts.get(p["key"], 0),
-                "negative_results": negative.get(p["key"], 0),
-            }
-            for p in patterns
-        ],
-        "note": PATTERNS_NOTE,
-    }
+    how many rows file under it (every row, caveats or not), how many of those
+    are negative results (is_negative_result), and what the catalogue records
+    about them (`evidence`: evidence_ladder() without its total, which is
+    `examples`), with EVIDENCE_NOTE saying what those counts are."""
+    items = []
+    for p in patterns:
+        ladder = evidence_ladder(rows, p["key"])
+        items.append({
+            "key": p["key"],
+            "name": p["en"],
+            "description": p["blurb_en"],
+            "examples": ladder["total"],
+            "negative_results": ladder["negative_results"],
+            "evidence": {k: v for k, v in ladder.items() if k != "total"},
+        })
+    return {"patterns": items, "note": PATTERNS_NOTE, "evidence_note": EVIDENCE_NOTE}
 
 
 def flag_list(taxonomy: dict) -> dict[str, Any]:

@@ -9,6 +9,8 @@ from __future__ import annotations
 
 import pathlib
 
+import _stats
+
 from .rows import (
     PATTERN_LABELS,
     ROOT,
@@ -59,6 +61,8 @@ def render_page(key: str, rows: list[dict], strings: dict) -> str:
             site=site_link(key, lang),
         ),
         "",
+        evidence_line(key, rows, strings),
+        "",
         stars_note(strings, catalog="../../catalog.json"),
         "",
         marked(strings, "call_site_note"),
@@ -80,6 +84,17 @@ def render_page(key: str, rows: list[dict], strings: dict) -> str:
         out.extend(entry_list(later, strings))
     out += ["---", "", strings["page_footer"], ""]
     return "\n".join(out)
+
+
+# Where the shape page's evidence matrix is, from a pattern page.
+SHAPE_EVIDENCE = {"en": "../shape.md#evidence-by-decision-pattern", "zh": "../shape.zh-CN.md#按决策模式看证据"}
+
+
+def evidence_line(key: str, rows: list[dict], strings: dict) -> str:
+    """What the catalogue records about this pattern's rows: _stats.evidence_ladder(),
+    the numbers docs/shape.md and the MCP server's list_patterns give too."""
+    ladder = _stats.evidence_ladder(rows, key)
+    return marked(strings, "pattern_evidence", **ladder, shape=SHAPE_EVIDENCE[strings["lang_code"]])
 
 
 def write_pattern_pages(catalog: list[dict]) -> list[pathlib.Path]:

@@ -6,6 +6,33 @@
 
 Counts that describe this catalogue as a dataset, regenerated from `catalog.json` whenever it changes; the newest link check behind them is dated **2026-09-24**. They describe what the catalogue holds, which is what reached it through the sibling directories, this repository's discovery and its contributors, not the ecosystem at large. A star band is a popularity signal, not a quality verdict, and nothing here was run or reproduced by this repository. `python3 scripts/counts.py` prints the same numbers as text; the headline figures are on [the status page](status.md).
 
+## Evidence by decision pattern
+
+What the catalogue records about the rows filed under each pattern: reports counted, not a verdict. A row counts in every column that applies and under every pattern it is filed under. **Official documentation** is TypeSafe AI's own documentation pages (`kind: official-docs`). **Call site**, **wire shape** and **example only** count rows citing a file, by what `evidence.kind` records it shows: where the project calls Jev; a file speaking Jev's request shape rather than building on Jev; only an example the project ships. **Independent reports** are benchmark rows not flagged `vendor-reported`: their authors' measurements, not reproduced by this repository. **Negative results** are rows whose own author measured Jev for the use and concluded against it (author-stated; [listed on the status page](status.md#negative-results)). **No file cited** counts rows with no `evidence` (`evidence_none` may say why). The MCP server's `list_patterns` and each pattern's page give the same numbers.
+
+| Pattern | Rows | Official documentation | Call site | Wire shape | Example only | Independent reports | Negative results | No file cited |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| [Tool selection](by-pattern/tool-selection.md) | 230 | 3 | 222 | 4 | 0 | 12 | 1 | 4 |
+| [Intent routing](by-pattern/intent-routing.md) | 35 | 3 | 25 | 0 | 0 | 2 | 0 | 10 |
+| [Context compaction](by-pattern/context-compaction.md) | 34 | 0 | 34 | 0 | 0 | 2 | 2 | 0 |
+| [Safety gating](by-pattern/safety-gating.md) | 138 | 2 | 133 | 1 | 0 | 10 | 0 | 4 |
+| [Output validation](by-pattern/output-validation.md) | 134 | 2 | 129 | 1 | 0 | 11 | 0 | 4 |
+| [Retry control](by-pattern/retry-control.md) | 6 | 0 | 6 | 0 | 0 | 0 | 0 | 0 |
+| [Human escalation](by-pattern/human-escalation.md) | 67 | 7 | 53 | 4 | 0 | 9 | 0 | 10 |
+| [Model routing](by-pattern/model-routing.md) | 43 | 2 | 38 | 0 | 0 | 0 | 1 | 5 |
+| [Speculative fan-out](by-pattern/fan-out.md) | 32 | 3 | 25 | 1 | 0 | 1 | 0 | 6 |
+| [Search & ranking](by-pattern/search-ranking.md) | 64 | 3 | 60 | 0 | 0 | 6 | 1 | 4 |
+| [Structured extraction](by-pattern/data-extraction.md) | 16 | 4 | 12 | 0 | 0 | 1 | 0 | 4 |
+| [Classification](by-pattern/classification.md) | 119 | 4 | 109 | 1 | 0 | 11 | 1 | 9 |
+| [ML feature extraction](by-pattern/feature-extraction.md) | 8 | 1 | 7 | 0 | 0 | 0 | 0 | 1 |
+| [Document triage](by-pattern/document-triage.md) | 20 | 0 | 19 | 0 | 0 | 2 | 0 | 1 |
+| [Support triage](by-pattern/support-triage.md) | 8 | 1 | 4 | 0 | 0 | 0 | 0 | 4 |
+| [Content scoring](by-pattern/content-scoring.md) | 164 | 2 | 155 | 5 | 0 | 9 | 1 | 4 |
+| [Recommendation](by-pattern/recommendation.md) | 1 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
+| [Overview](by-pattern/overview.md) | 451 | 6 | 370 | 45 | 0 | 23 | 1 | 36 |
+
+23 independent reports are filed under `overview` and no other pattern, so this table cannot count them for the decision they measured until a person files them under it.
+
 ## Languages
 
 Rows recording each language (`languages`; a row may record several). 28 rows record none.

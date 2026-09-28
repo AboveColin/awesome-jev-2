@@ -322,7 +322,12 @@ def list_patterns() -> dict[str, Any]:
     `negative_results` counts the rows under each pattern whose own author
     measured Jev for the use and concluded against it (author-stated, not
     reproduced here); search_examples(pattern=…, outcome="negative") lists
-    them.
+    them. `evidence` counts what the catalogue records about each pattern's
+    rows — TypeSafe AI's documentation pages, the cited file by evidence.kind,
+    independent reports, negative results, rows citing no file — as
+    evidence_note explains: reports counted, not a verdict, and a row may
+    count in several. Whether a pattern has any independent report is there;
+    search_examples(pattern=…, outcome="independent") lists them.
     """
     return pattern_counts(CATALOG, PATTERNS)
 

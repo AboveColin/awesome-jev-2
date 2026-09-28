@@ -279,6 +279,13 @@ EN = {
         "are in [the index]({readme}); [the site]({site}) can filter them further by language, "
         "primitive and kind."
     ),
+    "pattern_evidence": (
+        "Evidence recorded for this pattern's rows (reports counted, not a verdict; a row may count more than "
+        "once): official documentation {official_docs} · call site {call_site} · wire shape {wire_shape} · "
+        "example only {example_only} · independent reports {independent_reports} · negative results "
+        "{negative_results} · no file cited {no_file_cited}. “Independent” = a benchmark not flagged "
+        "vendor-reported, not reproduced by this repository. [Every pattern side by side]({shape})."
+    ),
     "page_other_lang": "[中文]({other})",
     "page_footer": (
         "<sub>Generated from `catalog.json` by `scripts/build_readme.py`. "
@@ -525,6 +532,12 @@ ZH = {
         "这个决策的全部已收录例子 —— 共 {n} 条。"
         "同样这些行及其警示也在[索引]({readme})里；[站点]({site})还能按语言、原语和形态进一步筛选。"
     ),
+    "pattern_evidence": (
+        "本模式各行记录的证据（只是计数，不是结论；一行可能计入多项）：官方文档 {official_docs} · "
+        "调用点 {call_site} · 接口形态 {wire_shape} · 仅示例 {example_only} · "
+        "独立报告 {independent_reports} · 负面结果 {negative_results} · 未引用文件 {no_file_cited}。"
+        "“独立”指未标 vendor-reported 的基准测试，未经本仓库复现。[各模式并排对照]({shape})。"
+    ),
     "page_other_lang": "[English]({other})",
     "page_footer": (
         "<sub>由 `scripts/build_readme.py` 从 `catalog.json` 生成。"
@@ -547,7 +560,7 @@ ZH_MACHINE = frozenset(
         "stars_note", "verified_recheck", "verified_summaries", "license_summaries", "unindexed_readme",
         "unindexed_page", "prims_layers", "verified_primitives", "verified_translations",
         "call_site_note", "measured_more", "measured_page_intro", "repo_skill_division", "direction_note",
-        "measured_more_negative", "negative_note",
+        "measured_more_negative", "negative_note", "pattern_evidence",
     }
 )
 

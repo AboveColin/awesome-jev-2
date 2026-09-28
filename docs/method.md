@@ -848,6 +848,25 @@ rather than a bare "other than `typesafe-api`", which would have called
 first group is: discovery does not tag `platforms`, so `typesafe-api` is what
 a row records when nobody named another route.
 
+Since 2026-09-28, the same page also sets the decision patterns against what
+the catalogue records about their rows: TypeSafe AI's documentation pages,
+the file a row cites by `evidence.kind` (a call site, a file speaking Jev's
+request shape, only an example), independent reports (benchmarks not flagged
+`vendor-reported`), negative results and rows citing no file. The counts are
+the MCP server's own (`query.evidence_ladder()`, which `_stats.py` reads), so
+`list_patterns` and the Pages API index (an `evidence` object per pattern),
+`docs/shape.md` and a line at the top of every `docs/by-pattern/` page cannot
+disagree. Every one says the counts are reports counted, not a verdict, and a
+row counts in every column and under every pattern that applies. The column
+first proposed for negative results would have counted a missing evidence file
+(`evidence_none: removed-upstream`) and a row kept in shadow as measurements
+that came out against Jev; it counts `query.is_negative_result()` instead, the
+predicate every other surface uses, and "official documentation" means
+`kind: official-docs`, not TypeSafe's SDKs. The table showed on its first day
+that 23 independent reports were filed under `overview` alone, so no pattern
+counts them for the decision they measured; the page says so, and re-filing
+them is a person's reading.
+
 Since 2026-09-27, `scripts/check.py` holds the one list of the checks `lint`
 runs, in its order. The list used to be written out four times — in
 `lint.yml`, in `CONTRIBUTING.md`, in the pull-request template and in the
