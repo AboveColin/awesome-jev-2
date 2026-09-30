@@ -14885,39 +14885,47 @@
   {
     "slug": "ha-jev",
     "title": "ha-jev",
-    "summary": "A Home Assistant integration: typed answers as sensors, with actions for automations.",
-    "summary_zh": "一个 Home Assistant 集成：把类型化答案变成传感器，并提供可用于自动化的动作。",
+    "summary": "A Home Assistant integration: typed answers about the house as sensors, noul, choice and score actions for automations, and a conversation agent.",
+    "summary_zh": "一个 Home Assistant 集成：把关于家的类型化答案变成传感器，提供可用于自动化的 noul、choice 和 score 动作，以及一个对话代理。",
     "url": "https://github.com/AboveColin/HA-Jev",
     "kind": "integration",
     "patterns": [
       "intent-routing",
-      "classification"
+      "classification",
+      "content-scoring"
     ],
     "platforms": [
-      "typesafe-api"
+      "typesafe-api",
+      "openrouter"
     ],
     "author": {
       "name": "abovecolin",
       "url": "https://github.com/abovecolin"
     },
     "has_code": true,
-    "stars": 58,
+    "stars": 69,
     "repo_license": "MIT",
     "repo_created_at": "2026-09-17T11:01:48Z",
     "repo_pushed_at": "2026-09-27T14:31:08Z",
     "repo_commits": 67,
     "evidence": {
-      "path": "custom_components/jev/config_flow.py",
+      "path": "custom_components/jev/services.py",
       "matched": [
-        "/v1/systemone"
+        "Noul(",
+        "Choice(",
+        "Score("
       ],
-      "read_on": "2026-09-22"
+      "read_on": "2026-09-30"
     },
     "primitives_seen": [
       "noul"
     ],
     "first_seen": "2026-09-22",
     "sources": [
+      {
+        "catalog": "author submission",
+        "url": "https://github.com/kydlikebtc/awesome-jev/pulls"
+      },
       {
         "catalog": "sibling-list aggregate (docs/sibling-lists.txt)",
         "url": "https://github.com/kydlikebtc/awesome-jev/blob/main/docs/sibling-lists.txt"
@@ -15052,7 +15060,19 @@
       "python"
     ],
     "checked": "2026-09-24",
-    "link_status": 200
+    "link_status": 200,
+    "zh_machine": true,
+    "question_types": [
+      "noul",
+      "choice",
+      "score"
+    ],
+    "flags": [
+      "ai-generated",
+      "self-submitted"
+    ],
+    "notes": "HA-Jev is developed with Claude Code, and Claude Code wrote this row and its Chinese summary from the code at commit a4714ea. The OpenRouter route is in custom_components/jev/const.py, not in the cited file.",
+    "summary_source": "curated"
   },
   {
     "slug": "harden-jev-decides",
